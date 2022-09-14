@@ -1,0 +1,12 @@
+//
+// Created by Aleksei Lukianchuk on 12-Sep-22.
+//
+
+#ifndef EFTPROFILER_TOREFACT_WRAPVARS_H
+#define EFTPROFILER_TOREFACT_WRAPVARS_H
+
+
+
+
+
+#endif //EFTPROFILER_TOREFACT_WRAPVARS_H
