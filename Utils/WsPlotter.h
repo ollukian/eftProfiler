@@ -13,7 +13,7 @@ namespace eft {
 
 class WsPlotter {
 public:
-    static bool plotDS(RooAbsData* data, RooAbsPdf* pdf) const noexcept;
+    static bool plotDS(RooAbsData* data, RooAbsPdf* pdf) noexcept;
 
 };
 
