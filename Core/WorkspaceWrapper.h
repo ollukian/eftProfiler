@@ -12,6 +12,8 @@
 #include <vector>
 #include <memory>
 
+#include <spdlog/fmt/fmt.h>
+
 #include "TFile.h"
 #include "RooStats/ModelConfig.h"
 #include "RooWorkspace.h"
@@ -19,7 +21,7 @@
 #include "RooRealVar.h"
 #include "RooAbsPdf.h"
 
-#include <spdlog/fmt/fmt.h>
+
 
 namespace eft {
 namespace stats {

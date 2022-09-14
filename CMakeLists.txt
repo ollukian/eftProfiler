@@ -15,13 +15,14 @@ endif()
 #########################################################
 # bind root packages - it's required only to open TFiles with TH1D to extract cross-section
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
-find_package( ROOT REQUIRED COMPONENTS RIO Hist RooFit )
+find_package( ROOT REQUIRED COMPONENTS RIO Hist RooFit RooStats RooFitCore)
 include(${ROOT_USE_FILE})
 
 # bind spdlog
 list(APPEND CMAKE_PREFIX_PATH Vendors)
 include_directories(Vendors)
 #find_package(spdlog REQUIRED)
+
 
 include_directories(Core)
 include_directories(Utils)
