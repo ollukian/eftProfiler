@@ -54,6 +54,9 @@ public:
     inline const FuncClosure& GetFuncClosure() const noexcept override {return funcs_;}
 
     [[nodiscard]]
+    inline const ArgsClosure & GetArgsClosure() const noexcept override {return args_;}
+
+    [[nodiscard]]
     inline const RooAbsData* GetData(std::string&& name) const override {return data_.at(name);}
     [[nodiscard]]
     inline const RooAbsPdf*  GetPdf (std::string&& name) const override {return funcs_.at(name);}
@@ -62,6 +65,8 @@ public:
 private:
     DataClosure data_{};
     FuncClosure funcs_{};
+    ArgsClosure args_{};
+
     IWorkspaceWrapper* ws_ = nullptr;
 
     mutable std::string np_names{};
@@ -89,17 +94,17 @@ inline void FitManager::SetCatsNames(std::string name) const noexcept
 inline void FitManager::ExtractNP()      noexcept
 {
     assert(ws_ != nullptr);
-    data_["np"] = (RooAbsData *) ws_->GetNp();
+    args_["np"] = (RooArgSet *) ws_->GetNp();
 }
 inline void FitManager::ExtractObs() noexcept
 {
     assert(ws_ != nullptr);
-    data_["obs"] = (RooAbsData *) ws_->GetObs();
+    args_["obs"] = (RooArgSet *) ws_->GetObs();
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
     assert(ws_ != nullptr);
-    data_["globObs"] = (RooAbsData *) ws_->GetGlobObs();
+    args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
 }
 inline void FitManager::ExtractCats() noexcept
 {

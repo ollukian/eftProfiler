@@ -27,6 +27,7 @@ namespace eft::stats {
 class IFitManager {
 public:
     using DataClosure = std::unordered_map<std::string, RooAbsData*> ;
+    using ArgsClosure = std::unordered_map<std::string, RooArgSet*> ;
     using FuncClosure = std::unordered_map<std::string, RooAbsPdf*>  ;
 
     //IFitManager() = default;
@@ -53,6 +54,7 @@ public:
     virtual void CreateAsimovData() noexcept = 0;
 
     virtual const DataClosure& GetDataClosure() const noexcept = 0;
+    virtual const ArgsClosure& GetArgsClosure() const noexcept = 0;
     virtual const FuncClosure& GetFuncClosure() const noexcept = 0;
 
     virtual const RooAbsData* GetData(std::string&& name) const = 0;

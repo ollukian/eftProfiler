@@ -15,7 +15,7 @@ void FitManager::DoGlobalFit()
     cout << "[DoGlobalFit]" << endl;
     auto* pdf = funcs_["pdf_total"];
     auto* ds = data_["ds_total"];
-    auto* globObs= dynamic_cast<RooArgSet*> (data_["globObs"]);
+    auto* globObs = (args_["globObs"]);
 
     cout << "print pdf:" << endl;
     pdf->Print("V");
