@@ -36,6 +36,7 @@ add_executable(eftProfiler main.cpp)
 
 # target ROOT
 target_link_libraries( eftProfiler PUBLIC ${ROOT_LIBRARIES} )
+target_link_libraries(eftProfiler PUBLIC core fitter utils app)
 
 
 install(TARGETS eftProfiler LIBRARY DESTINATION lib)

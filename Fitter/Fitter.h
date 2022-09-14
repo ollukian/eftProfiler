@@ -21,10 +21,10 @@ public:
     ~Fitter() noexcept override = default;
 
      RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs) override;
-     RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{};
+     RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{ return nullptr; }
      FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       override;
-     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           override{};
-     FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{};
+     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           override{return {};}
+     FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{return {};}
 };
 
 class RooMinimizerWrapper : public RooMinimizer {

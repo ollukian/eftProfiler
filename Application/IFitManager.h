@@ -29,7 +29,7 @@ public:
     using DataClosure = std::unordered_map<std::string, RooAbsData*> ;
     using FuncClosure = std::unordered_map<std::string, RooAbsPdf*>  ;
 
-    IFitManager() = default;
+    //IFitManager() = default;
     virtual ~IFitManager() noexcept = default;
 
     virtual void SetWsWrapper() noexcept = 0;

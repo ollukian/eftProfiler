@@ -17,6 +17,15 @@ void FitManager::DoGlobalFit()
     auto* ds = data_["ds_total"];
     auto* globObs= dynamic_cast<RooArgSet*> (data_["globObs"]);
 
+    cout << "print pdf:" << endl;
+    pdf->Print("V");
+
+    cout << "print ds:" << endl;
+    ds->Print("V");
+
+    cout << "print global obs:" << endl;
+    globObs->Print("V");
+
     cout << "[create nll]" << endl;
 
     fit::Fitter fitter;

@@ -25,10 +25,10 @@ int main() {
     //manager->ws()
     //ws.raw()->Print("v");
 
-    cout << "cats:" << endl;
-    for(const auto & cat : manager->ws()->GetCats()) {
-        cout << cat << endl;
-    }
+    //cout << "cats:" << endl;
+    //for(const auto & cat : manager->ws()->GetCats()) {
+    //    cout << cat << endl;
+    //}
 
 
     cout << "[NP]:" << endl;
