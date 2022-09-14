@@ -12,8 +12,9 @@
 #include <RooAbsData.h>
 #include <RooAbsPdf.h>
 #include <RooStats/ModelConfig.h>
+#include <RooWorkspace.h>
 
-//#include <experimental/filesystem>
+#include <filesystem>
 
 class IWorksSpaceWrapper {
 public:
@@ -24,6 +25,8 @@ public:
     IWorksSpaceWrapper(IWorksSpaceWrapper&&)      = delete;
     IWorksSpaceWrapper& operator = (const IWorksSpaceWrapper&) = delete;
     IWorksSpaceWrapper& operator = (IWorksSpaceWrapper&&) = delete;
+
+    virtual RooWorkspace* raw() const noexcept;
 
     // name & path to be moved
     virtual bool SetWS(std::string path, std::string name) = 0;

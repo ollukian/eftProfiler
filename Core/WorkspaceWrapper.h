@@ -35,6 +35,8 @@ public:
     inline bool SetWS(std::string path, std::string name) override;
     inline RooStats::ModelConfig* SetModelConfig(std::string name) override;
 
+    inline RooWorkspace* raw() const noexcept override { return ws_.get();}
+
     inline void FixPoi(const std::string& poi) override;
     inline void FixPois(const std::vector<std::string>& pois) override;
     //inline void FixPois(std::initializer_list<std::vector<std::string>> pois) override;
