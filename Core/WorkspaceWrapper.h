@@ -39,16 +39,16 @@ public:
     inline RooWorkspace* raw() const noexcept override { return ws_.get();}
 
 
-    inline void FixPoi(const std::string& poi) override;
-    inline void FixPois(const std::vector<std::string>& pois) override;
-    //inline void FixPois(std::initializer_list<std::vector<std::string>> pois) override;
+    inline void FixValConst(const std::string& poi) override;
+    inline void FixValConst(const std::vector<std::string>& pois) override;
+    //inline void FixValConst(std::initializer_list<std::vector<std::string>> pois) override;
 
     //inline void FixAllPois()   noexcept override;
     //inline void FloatAllPois() noexcept override;
 
-    inline void FloatPoi(const std::string& poi) override;
-    inline void FloatPois(const std::vector<std::string>& pois) override;
-    //inline void FloatPois(std::initializer_list<std::vector<std::string>> pois) override;
+    inline void FloatVal(const std::string& poi) override;
+    inline void FloatVals(const std::vector<std::string>& pois) override;
+    //inline void FloatVals(std::initializer_list<std::vector<std::string>> pois) override;
 
     inline void SetVarVal(const std::string& name, double val) override;
     inline void SetVarErr(const std::string& name, double err) override;
@@ -115,7 +115,7 @@ private:
     mutable std::string pdf_sig_prefix_{};
 
 
-    //inline void FixPois(const std::vector<std::string>& pois) { for (const std::string& poi : pois) { ws_->var( poi.c_str() )->setConstant(true) override; } } override;
+    //inline void FixValConst(const std::vector<std::string>& pois) { for (const std::string& poi : pois) { ws_->var( poi.c_str() )->setConstant(true) override; } } override;
 };
 
 
@@ -131,27 +131,27 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
     return false;
 }
 
-inline void WorkspaceWrapper::FixPoi(const std::string& poi)
+inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
     ws_->var( poi.c_str() )->setConstant(true);
 }
 
-inline void WorkspaceWrapper::FixPois(const std::vector<std::string>& pois)
+inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 {
     for (const auto& poi : pois) {
-        FixPoi(poi);
+        FixValConst(poi);
     }
 }
 
-inline void WorkspaceWrapper::FloatPoi(const std::string& poi)
+inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
     ws_->var( poi.c_str() )->setConstant(false);
 }
 
-inline void WorkspaceWrapper::FloatPois(const std::vector<std::string>& pois)
+inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
 {
     for (const auto& poi : pois) {
-        FixPoi(poi);
+        FloatVal(poi);
     }
 }
 
@@ -235,11 +235,11 @@ inline double WorkspaceWrapper::GetParErr(const std::string& par)   const  { ret
 inline double WorkspaceWrapper::GetParErrHi(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorHi();}
 inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorLo();}
 
-//inline void WorkspaceWrapper::FixPois(std::initializer_list<std::vector<std::string>> pois)
+//inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)
 //{
 //    const std::vector<std::string> pois_{pois};
 //    for (const auto& poi : pois) {
-//        FixPoi(poi);
+//        FixValConst(poi);
 //    }
 //}
 

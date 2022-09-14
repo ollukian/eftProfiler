@@ -35,16 +35,11 @@ public:
     virtual bool SetWS(std::string path, std::string name) = 0;
     virtual RooStats::ModelConfig* SetModelConfig(std::string name)          = 0;
 
-    virtual void FixPoi(const std::string& poi)  = 0;
-    virtual void FixPois(const std::vector<std::string>& pois) = 0;
-    //virtual void FixPois(std::initializer_list<std::vector<std::string>> pois) = 0;
+    virtual void FixValConst(const std::string& poi)  = 0;
+    virtual void FixValConst(const std::vector<std::string>& pois) = 0;
 
-    //virtual void FixAllPois()   noexcept = 0;
-    //virtual void FloatAllPois() noexcept = 0;
-
-    virtual void FloatPoi(const std::string& poi)  = 0;
-    virtual void FloatPois(const std::vector<std::string>& pois) = 0;
-    //virtual void FloatPois(std::initializer_list<std::vector<std::string>> pois) = 0;
+    virtual void FloatVal(const std::string& poi)  = 0;
+    virtual void FloatVals(const std::vector<std::string>& pois) = 0;
 
     virtual void SetVarVal(const std::string& name, double val) = 0;
     virtual void SetVarErr(const std::string& name, double err) = 0;
@@ -53,6 +48,18 @@ public:
     virtual double GetParErr(const std::string& par)   const = 0;
     virtual double GetParErrHi(const std::string& par) const = 0;
     virtual double GetParErrLo(const std::string& par) const = 0;
+
+    //virtual void FixValConst(std::initializer_list<std::vector<std::string>> pois) = 0;
+
+    //virtual void FixAllPois()   noexcept = 0;
+    //virtual void FloatAllPois() noexcept = 0;
+
+
+    //virtual void FloatVals(std::initializer_list<std::vector<std::string>> pois) = 0;
+
+
+
+
 
     virtual RooAbsPdf* GetPdfModelGivenCategory(const std::string& cat)  = 0;
     virtual RooAbsPdf* GetPdfSBGivenCategory(const std::string& cat)     = 0;

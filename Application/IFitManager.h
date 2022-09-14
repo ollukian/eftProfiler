@@ -16,9 +16,11 @@
 #include "RooAbsReal.h"
 
 #include "IWorkspaceWrapper.h"
-
+//#include "NpRankingStudyRes.h"
 
 namespace eft::stats {
+
+struct NpRankingStudySettings;
 
 
 // Interface to the fit engine
@@ -29,6 +31,10 @@ public:
     using DataClosure = std::unordered_map<std::string, RooAbsData*> ;
     using ArgsClosure = std::unordered_map<std::string, RooArgSet*> ;
     using FuncClosure = std::unordered_map<std::string, RooAbsPdf*>  ;
+
+    // global tasks
+    virtual void DoGlobalFit() = 0;
+    virtual void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) = 0;
 
     //IFitManager() = default;
     virtual ~IFitManager() noexcept = default;
@@ -66,10 +72,6 @@ public:
     virtual void SetAllNuisanceParamsFloat() noexcept = 0;
     virtual void SetAllNuisanceParamsToValue(float val) noexcept = 0;
     virtual void SetGlobalObservablesToValueFoundInFit() noexcept = 0;
-
-    // global tasks
-    virtual void DoGlobalFit() = 0;
-
 
 //private:
     //std::unique_ptr<IWorkspaceWrapper> ws_;

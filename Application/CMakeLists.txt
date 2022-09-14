@@ -1,6 +1,9 @@
 set(app_source_files
         IFitManager.cpp IFitManager.h
-        FitManager.cpp FitManager.h)
+        FitManager.cpp FitManager.h
+        NpRankingStudyRes.cpp NpRankingStudyRes.h)
+
+include_directories(../Vendors)
 
 add_library(app ${app_source_files})
 

@@ -6,6 +6,8 @@
 #include "../Fitter/IFitter.h"
 #include "../Fitter/Fitter.h"
 
+#include "NpRankingStudyRes.h"
+
 using namespace std;
 
 namespace eft::stats {
@@ -35,6 +37,41 @@ void FitManager::DoGlobalFit()
     cout << "[minimisation done]" << endl;
     cout << "res: " << endl;
     res->Print("v");
+}
+
+void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
+{
+    RooAbsData* data;
+    RooAbsPdf*  pdf = funcs_["pdf_total"];
+    auto* globObs = (args_["globObs"]);
+
+    if (settings.studyType == StudyType::EXPECTED) {
+        data = data_["asimov_full"];
+    }
+    else {
+        data = data_["ds_total"];
+    }
+
+    NpRankingStudyRes res;
+    res.poi_name = settings.poi;
+    res.statType = settings.statType;
+    res.studyType = settings.studyType;
+
+    SetAllNuisanceParamsFloat();
+    ws_->FixValConst(res.np_name);
+
+    if (settings.prePostFit == PrePostFit::POSTFIT) {
+        // TODO: set np to the values found in fit;
+    }
+
+    // * take np # worker_id
+    // * create nll
+    // * minimise it
+    // * fill in results
+    // * write them down
+
+    //settings.poi
+
 }
 
 //    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {

@@ -21,6 +21,10 @@ list(APPEND CMAKE_PREFIX_PATH Vendors)
 include_directories(Vendors)
 #find_package(spdlog REQUIRED)
 
+# bind json
+set(JSON_BuildTests OFF CACHE INTERNAL "")
+add_subdirectory(Vendors/nlohmann_json)
+#########################################################
 
 include_directories(Core)
 include_directories(Utils)
@@ -36,6 +40,8 @@ add_executable(eftProfiler main.cpp)
 
 # target ROOT
 target_link_libraries( eftProfiler PUBLIC ${ROOT_LIBRARIES} )
+target_link_libraries(eftProfiler PRIVATE nlohmann_json::nlohmann_json)
+
 target_link_libraries(eftProfiler PUBLIC core fitter utils app)
 
 

@@ -4,6 +4,7 @@
 
 #include "ToRefact_FitManager.h"
 
+using namespace std;
 
 namespace stats {
 
@@ -2478,6 +2479,10 @@ namespace stats {
     };
     //**************************************************************************************************
     void FitManager::RunWorker1DSensitivity(const string& mu, size_t workerId) {
+        using std::string;
+        using std::map;
+        using std::cout;
+        using std::endl;
         // const static std::array<string, 4> mus = {"mu_ggF", "mu_VBF", "mu_VH", "mu_top"};
 
         //const string muThisWorker = mus[muNb];
