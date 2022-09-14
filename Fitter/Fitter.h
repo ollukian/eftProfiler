@@ -18,13 +18,13 @@ class Fitter;
 class Fitter : public IFitter {
 public:
     Fitter() = default;
-    ~Fitter() override = default;
+    ~Fitter() noexcept override = default;
 
      RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs) override;
-     RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override;
+     RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{};
      FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       override;
-     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           override;
-     FitResPtr   Fit(std::string&& data, std::string&& pdf)      override;
+     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           override{};
+     FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{};
 };
 
 class RooMinimizerWrapper : public RooMinimizer {
@@ -36,7 +36,7 @@ public:
     explicit RooMinimizerWrapper(RooAbsReal& function) : RooMinimizer(function){}
     void applyCovMatrix(TMatrixDSym& V){RooMinimizer::applyCovarianceMatrix(V);}
     [[nodiscard]] inline size_t getNPar() const  { return fitterFcn()->NDim(); }
-    [[nodiscard]] inline void setStrategy(Int_t i) { RooMinimizer::setStrategy(i); };
+    inline void setStrategy(Int_t i) { RooMinimizer::setStrategy(i); };
 };
 
 } // eft::stats::fit

@@ -14,7 +14,7 @@ namespace eft::stats {
 class FitManager : public IFitManager {
 public:
     FitManager() = default;
-    ~FitManager() override = default;
+    ~FitManager() noexcept override = default;
 
     void DoGlobalFit() override;
 

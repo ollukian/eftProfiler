@@ -4,7 +4,5 @@
 
 #include "IFitManager.h"
 
-namespace eft {
-    namespace stats {
-    } // eft
-} // stats
+namespace eft::stats {
+    } // stats

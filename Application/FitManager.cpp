@@ -3,6 +3,7 @@
 //
 
 #include "FitManager.h"
+#include "../Fitter/IFitter.h"
 #include "../Fitter/Fitter.h"
 
 using namespace std;

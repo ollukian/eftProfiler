@@ -30,7 +30,7 @@ public:
     using FuncClosure = std::unordered_map<std::string, RooAbsPdf*>  ;
 
     IFitManager() = default;
-    virtual ~IFitManager() = default;
+    virtual ~IFitManager() noexcept = default;
 
     virtual void SetWsWrapper() noexcept = 0;
 

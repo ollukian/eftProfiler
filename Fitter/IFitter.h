@@ -15,7 +15,7 @@ namespace eft::stats::fit {
 class IFitter {
 public:
     using FitResPtr = std::unique_ptr<RooFitResult>;
-    virtual ~IFitter() = default;
+    virtual ~IFitter() noexcept = default;
 
     virtual RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs)      = 0;
     virtual RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) = 0;
