@@ -3,8 +3,8 @@
 // AlekseiLukianchuk@gmail.com
 //
 
-#ifndef EFTPROFILER_IWORKSSPACEWRAPPER_H
-#define EFTPROFILER_IWORKSSPACEWRAPPER_H
+#ifndef EFTPROFILER_IWORKSPACEWRAPPER_H
+#define EFTPROFILER_IWORKSPACEWRAPPER_H
 
 #include <vector>
 #include <string>
@@ -13,20 +13,23 @@
 #include <RooAbsPdf.h>
 #include <RooStats/ModelConfig.h>
 #include <RooWorkspace.h>
+#include "RooCategory.h"
 
 #include <filesystem>
 
-class IWorksSpaceWrapper {
+class IWorkspaceWrapper {
 public:
-    virtual ~IWorksSpaceWrapper() noexcept = default;
-    IWorksSpaceWrapper() = default;
+    using Categories = std::vector<std::string>;
 
-    IWorksSpaceWrapper(const IWorksSpaceWrapper&) = delete;
-    IWorksSpaceWrapper(IWorksSpaceWrapper&&)      = delete;
-    IWorksSpaceWrapper& operator = (const IWorksSpaceWrapper&) = delete;
-    IWorksSpaceWrapper& operator = (IWorksSpaceWrapper&&) = delete;
+    virtual ~IWorkspaceWrapper() noexcept = default;
+    IWorkspaceWrapper() = default;
 
-    virtual RooWorkspace* raw() const noexcept;
+    IWorkspaceWrapper(const IWorkspaceWrapper&) = delete;
+    IWorkspaceWrapper(IWorkspaceWrapper&&)      = delete;
+    IWorkspaceWrapper& operator = (const IWorkspaceWrapper&) = delete;
+    IWorkspaceWrapper& operator = (IWorkspaceWrapper&&) = delete;
+
+    virtual RooWorkspace* raw() const noexcept = 0;
 
     // name & path to be moved
     virtual bool SetWS(std::string path, std::string name) = 0;
@@ -50,6 +53,15 @@ public:
     virtual RooAbsPdf* GetPdfSBGivenCategory(const std::string& cat)     = 0;
     virtual RooAbsPdf* GetPdfBkgGivenCategory(const std::string& cat)    = 0;
     virtual RooAbsPdf* GetPdfSigGivenCategory(const std::string& cat)    = 0;
+    //virtual const Categories& GetCategories() const = 0;
+
+    virtual const RooArgSet* GetNp() const = 0;
+    virtual const RooArgSet* GetObs() const = 0;
+    virtual const RooArgSet* GetGlobObs() const = 0;
+    virtual const RooArgSet* GetPOIs() const = 0;
+    virtual const Categories& GetCats() const = 0;
+
+    virtual
 
 #if 0
     virtual RooDataSet* GetDataSetGivenCategory(const std::string& cat) = 0;
@@ -91,4 +103,4 @@ public:
 };
 
 
-#endif //EFTPROFILER_IWORKSSPACEWRAPPER_H
+#endif //EFTPROFILER_IWORKSPACEWRAPPER_H

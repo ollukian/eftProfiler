@@ -5,7 +5,7 @@
 #ifndef EFTPROFILER_IFITMANAGER_H
 #define EFTPROFILER_IFITMANAGER_H
 
-#include "IWorksSpaceWrapper.h"
+#include "IWorkspaceWrapper.h"
 #include <memory>
 #include <unordered_map>
 
@@ -15,9 +15,10 @@
 #include "RooAbsPdf.h"
 #include "RooAbsReal.h"
 
+#include "IWorkspaceWrapper.h"
 
-namespace eft {
-namespace stats {
+
+namespace eft::stats {
 
 
 // Interface to the fit engine
@@ -25,7 +26,6 @@ namespace stats {
 // to the global closure
 class IFitManager {
 public:
-    using FitResPtr = std::unique_ptr<RooFitResult>;
 
     using DataClosure = std::unordered_map<std::string, RooAbsData*> ;
     using FuncClosure = std::unordered_map<std::string, RooAbsPdf*>  ;
@@ -33,16 +33,17 @@ public:
     IFitManager() = default;
     virtual ~IFitManager() = default;
 
+    virtual void SetWsWrapper() const noexcept = 0;
+
+    virtual void SetNpNames(std::string name) const noexcept = 0;
+    virtual void SetObsNames(std::string name) const noexcept = 0;
+    virtual void SetGlobObsNames(std::string name) const noexcept = 0;
+    virtual void SetCatsNames(std::string name) const noexcept = 0;
+
     virtual void ExtractNP()      noexcept = 0;
     virtual void ExtractObs()     noexcept = 0;
     virtual void ExtractGlobObs() noexcept = 0;
     virtual void ExtractCats()    noexcept = 0;
-
-    virtual RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf)      = 0;
-    virtual RooAbsReal* CreatNll(std::string&& data, std::string&& pdf) = 0;
-    virtual FitResPtr   Minimize(RooAbsReal* nll)                       = 0;
-    virtual FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           = 0;
-    virtual FitResPtr   Fit(std::string&& data, std::string&& pdf)      = 0;
 
     virtual void CreateAsimovData() noexcept = 0;
 
@@ -54,10 +55,9 @@ public:
 
 
 //private:
-    //std::unique_ptr<IWorksSpaceWrapper> ws_;
+    //std::unique_ptr<IWorkspaceWrapper> ws_;
 };
 
-} // eft
 } // stats
 
 #endif //EFTPROFILER_IFITMANAGER_H

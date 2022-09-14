@@ -4,7 +4,6 @@
 
 #include "WorkspaceWrapper.h"
 
-namespace eft {
-    namespace stats {
-    } // eft
+namespace eft::stats {
+
 } // stats

@@ -24,9 +24,13 @@ include_directories(Vendors)
 
 include_directories(Core)
 include_directories(Utils)
+include_directories(Fitter)
+include_directories(Application)
 
 add_subdirectory(Core)
 add_subdirectory(Utils)
+add_subdirectory(Fitter)
+add_subdirectory(Application)
 
 add_executable(eftProfiler main.cpp)
 

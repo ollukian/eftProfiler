@@ -1,2 +1,8 @@
 # Project exclude paths
 /cmake-build-debug/
+Core/ToRefact_WrapVars.cpp
+Core/ToRefact_WrapVars.h
+Core/ToRefact_FitManager.C
+Core/ToRefact_FitManager.h
+Core/ToRefactor_Catgories.h
+Core/ToRefactor_MuTypes.h

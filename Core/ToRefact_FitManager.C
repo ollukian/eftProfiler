@@ -160,7 +160,7 @@ namespace stats {
     }
     //**************************************************************************************************
     inline void FitManager::GetListOfCategories(vector<string>& cats) {
-        if (channelList_ == nullptr) channelList_ = dynamic_cast<RooCategory *>( ws_->cat("channellist") );
+            if (channelList_ == nullptr) channelList_ = dynamic_cast<RooCategory *>( ws_->cat("channellist") );
 
         cats.clear();
         size_t nbCats = channelList_->size();

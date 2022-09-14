@@ -6,7 +6,7 @@
 #ifndef EFTPROFILER_WORKSPACEWRAPPER_H
 #define EFTPROFILER_WORKSPACEWRAPPER_H
 
-#include "IWorksSpaceWrapper.h"
+#include "IWorkspaceWrapper.h"
 
 #include <string>
 #include <vector>
@@ -23,11 +23,10 @@
 
 
 
-namespace eft {
-namespace stats {
+namespace eft::stats {
 
 // Wraps the workspace, to simplify access to it
-class WorkspaceWrapper : public IWorksSpaceWrapper {
+class WorkspaceWrapper : public IWorkspaceWrapper {
 public:
     ~WorkspaceWrapper() override = default;
     WorkspaceWrapper() = default;
@@ -35,7 +34,8 @@ public:
     inline bool SetWS(std::string path, std::string name) override;
     inline RooStats::ModelConfig* SetModelConfig(std::string name) override;
 
-    inline RooWorkspace* raw() const noexcept override { return ws_.get();}
+    inline RooWorkspace* raw() const noexcept override { return ws_.get(); ws_.  }
+
 
     inline void FixPoi(const std::string& poi) override;
     inline void FixPois(const std::vector<std::string>& pois) override;
@@ -55,6 +55,12 @@ public:
     inline RooAbsPdf* GetPdfSBGivenCategory(const std::string& cat)    noexcept override;
     inline RooAbsPdf* GetPdfBkgGivenCategory(const std::string& cat)   noexcept override;
     inline RooAbsPdf* GetPdfSigGivenCategory(const std::string& cat)   noexcept override;
+
+    inline const RooArgSet* GetNp() const override;
+    inline const RooArgSet* GetObs() const override;
+    inline const RooArgSet* GetGlobObs() const override;
+    inline const RooArgSet* GetPOIs() const override;
+    inline const Categories& GetCats() const override;
 #if 0
     inline RooDataSet* GetDataSetGivenCategory(const std::string& cat) override;
     inline RooRealVar* GetVar(const std::string& name) override;
@@ -84,6 +90,10 @@ public:
 #endif // if 0 to screen
 private:
     std::unique_ptr<RooWorkspace> ws_;
+    std::unique_ptr<RooStats::ModelConfig> modelConfig_;
+    std::unique_ptr<RooCategory> channelList_;
+    mutable Categories categories_;
+
     mutable std::string pdf_model_sufix_;
     mutable std::string pdf_model_prefix_;
     mutable std::string pdf_sb_sufix_;
@@ -163,10 +173,43 @@ inline RooAbsPdf* WorkspaceWrapper::GetPdfSigGivenCategory(const std::string& ca
 
 inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
 {
-    return dynamic_cast<RooStats::ModelConfig*> (
+    modelConfig_.reset( dynamic_cast<RooStats::ModelConfig*> (
              ws_->obj(name.c_str() )
-            );
+            ))
+            ;
+    return modelConfig_.get();
 }
+
+inline const RooArgSet* WorkspaceWrapper::GetNp() const
+{
+    return modelConfig_->GetNuisanceParameters();
+}
+inline const RooArgSet* WorkspaceWrapper::GetObs() const
+{
+    return modelConfig_->GetObservables();
+}
+inline const RooArgSet* WorkspaceWrapper::GetGlobObs() const
+{
+    return modelConfig_->GetGlobalObservables();
+}
+inline const RooArgSet* WorkspaceWrapper::GetPOIs() const
+{
+    return modelConfig_->GetParametersOfInterest();
+}
+
+inline const WorkspaceWrapper::Categories& WorkspaceWrapper::GetCats() const
+{
+    if (categories_.empty())
+    {
+        Categories cats;
+        cats.reserve(channelList_->size());
+        for (const auto& cat : *channelList_) {
+            cats.push_back( cat.first );
+        }
+    }
+    return categories_;
+}
+
 //inline void WorkspaceWrapper::FixPois(std::initializer_list<std::vector<std::string>> pois)
 //{
 //    const std::vector<std::string> pois_{pois};
@@ -175,7 +218,6 @@ inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
 //    }
 //}
 
-} // eft
 } // stats
 
 #endif //EFTPROFILER_WORKSPACEWRAPPER_H
