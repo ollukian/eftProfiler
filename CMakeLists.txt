@@ -1,13 +1,11 @@
 cmake_minimum_required(VERSION 3.17)
 project(eftProfiler)
 
-set(CMAKE_CXX_STANDARD 14)
-
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-if(CMAKE_CXX_STANDARD LESS 14)
-    message(WARNING "Incompatible C++ standard ${CMAKE_CXX_STANDARD}. EFT requires C++14")
+if(CMAKE_CXX_STANDARD LESS 17)
+    message(WARNING "Incompatible C++ standard ${CMAKE_CXX_STANDARD}. EFT requires C++17")
 endif()
 
 #########################################################
@@ -38,7 +36,7 @@ target_link_libraries( eftProfiler PUBLIC ${ROOT_LIBRARIES} )
 
 install(TARGETS eftProfiler LIBRARY DESTINATION lib)
 
-install(TARGETS
+install(TARGETS eftProfiler
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin)
