@@ -30,6 +30,9 @@ public:
     inline void ExtractGlobObs() noexcept override;
     inline void ExtractCats()    noexcept override;
 
+    inline void ExtractDataTotal(std::string name) override;
+    inline void ExtractPdfTotal(std::string name)  override;
+
     //TODO: imlement: create asimov data
     inline void CreateAsimovData() noexcept override {
         std::cerr << "TO IMPLEMENT~" << std::endl;
@@ -112,6 +115,17 @@ inline void FitManager::SetModelConfig(std::string name)
     std::cout << "set model config" << std::endl;
     ws_->SetModelConfig(std::move(name));
     std::cout << "set model config DONE" << std::endl;
+}
+
+inline void FitManager::ExtractDataTotal(std::string name)
+{
+    assert(ws_ != nullptr);
+    data_["ds_total"] = ws_->GetData(name);
+}
+
+inline void FitManager::ExtractPdfTotal(std::string name) {
+    assert(ws_ != nullptr);
+    funcs_["pdf_total"] = ws_->GetCombinedPdf(name);
 }
 
 } // eft::stats

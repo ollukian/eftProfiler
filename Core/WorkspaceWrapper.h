@@ -20,6 +20,8 @@
 #include "RooAbsArg.h"
 #include "RooRealVar.h"
 #include "RooAbsPdf.h"
+#include "RooDataSet.h"
+#include "RooSimultaneous.h"
 
 
 
@@ -56,11 +58,17 @@ public:
     inline RooAbsPdf* GetPdfBkgGivenCategory(const std::string& cat)   noexcept override;
     inline RooAbsPdf* GetPdfSigGivenCategory(const std::string& cat)   noexcept override;
 
+
+
     inline const RooArgSet* GetNp() const override;
     inline const RooArgSet* GetObs() const override;
     inline const RooArgSet* GetGlobObs() const override;
     inline const RooArgSet* GetPOIs() const override;
     inline const Categories& GetCats() const override;
+
+    inline RooDataSet*      GetData(const std::string& name) override;
+    inline RooSimultaneous* GetCombinedPdf(const std::string& name) override;
+
 #if 0
     inline RooDataSet* GetDataSetGivenCategory(const std::string& cat) override;
     inline RooRealVar* GetVar(const std::string& name) override;
@@ -208,6 +216,15 @@ inline const WorkspaceWrapper::Categories& WorkspaceWrapper::GetCats() const
         }
     }
     return categories_;
+}
+
+inline RooDataSet*      WorkspaceWrapper::GetData(const std::string& name)
+{
+    return dynamic_cast<RooDataSet*> ( ws_->data( name.c_str() ) );
+}
+inline RooSimultaneous* WorkspaceWrapper::GetCombinedPdf(const std::string& name)
+{
+    return dynamic_cast<RooSimultaneous*> ( ws_->pdf(  name.c_str() ) );
 }
 
 //inline void WorkspaceWrapper::FixPois(std::initializer_list<std::vector<std::string>> pois)

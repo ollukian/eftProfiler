@@ -17,9 +17,9 @@ public:
     using FitResPtr = std::unique_ptr<RooFitResult>;
     virtual ~IFitter() = default;
 
-    virtual RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf)      = 0;
-    virtual RooAbsReal* CreatNll(std::string&& data, std::string&& pdf) = 0;
-    virtual FitResPtr   Minimize(RooAbsReal* nll)                       = 0;
+    virtual RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs)      = 0;
+    virtual RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) = 0;
+    virtual FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       = 0;
     virtual FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           = 0;
     virtual FitResPtr   Fit(std::string&& data, std::string&& pdf)      = 0;
 };

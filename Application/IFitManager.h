@@ -48,6 +48,9 @@ public:
     virtual void ExtractGlobObs() noexcept = 0;
     virtual void ExtractCats()    noexcept = 0;
 
+    virtual void ExtractDataTotal(std::string name) = 0;
+    virtual void ExtractPdfTotal(std::string name)  = 0;
+
     virtual void CreateAsimovData() noexcept = 0;
 
     virtual const DataClosure& GetDataClosure() const noexcept = 0;

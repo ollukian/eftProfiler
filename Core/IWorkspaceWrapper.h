@@ -61,6 +61,9 @@ public:
     virtual const RooArgSet* GetPOIs() const = 0;
     virtual const Categories& GetCats() const = 0;
 
+    virtual RooDataSet*      GetData(const std::string& name) = 0;
+    virtual RooSimultaneous* GetCombinedPdf(const std::string& name) = 0;
+
 #if 0
     virtual RooDataSet* GetDataSetGivenCategory(const std::string& cat) = 0;
     virtual RooRealVar* GetVar(const std::string& name) = 0;
