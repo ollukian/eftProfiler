@@ -14,7 +14,7 @@ namespace eft::stats {
 class FitManager : public IFitManager {
 public:
     FitManager() = default;
-    ~FitManager() override= default;
+    ~FitManager() override = default;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;
@@ -22,6 +22,8 @@ public:
     inline void SetCatsNames(std::string name) const noexcept override;
 
     inline void SetWsWrapper() noexcept override;
+    inline void SetWS(std::string path, std::string name) override;
+    inline void SetModelConfig(std::string name) override;
 
     inline void ExtractNP()      noexcept override;
     inline void ExtractObs()     noexcept override;
@@ -42,15 +44,17 @@ public:
     inline const RooAbsData* GetData(std::string&& name) const override {return data_.at(name);}
     [[nodiscard]]
     inline const RooAbsPdf*  GetPdf (std::string&& name) const override {return funcs_.at(name);}
-private:
-    DataClosure data_;
-    FuncClosure funcs_;
-    IWorkspaceWrapper* ws_;
 
-    mutable std::string np_names;
-    mutable std::string obs_names;
-    mutable std::string glob_obs_names;
-    mutable std::string cat_names;
+    inline IWorkspaceWrapper* ws() override { return ws_; }
+private:
+    DataClosure data_{};
+    FuncClosure funcs_{};
+    IWorkspaceWrapper* ws_ = nullptr;
+
+    mutable std::string np_names{};
+    mutable std::string obs_names{};
+    mutable std::string glob_obs_names{};
+    mutable std::string cat_names{};
 };
 
 inline void FitManager::SetNpNames(std::string name) const noexcept
@@ -71,24 +75,37 @@ inline void FitManager::SetCatsNames(std::string name) const noexcept
 };
 inline void FitManager::ExtractNP()      noexcept
 {
+    assert(ws_ != nullptr);
     data_["np"] = (RooAbsData *) ws_->GetNp();
 }
 inline void FitManager::ExtractObs() noexcept
 {
+    assert(ws_ != nullptr);
     data_["np"] = (RooAbsData *) ws_->GetObs();
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
+    assert(ws_ != nullptr);
     data_["np"] = (RooAbsData *) ws_->GetGlobObs();
 }
 inline void FitManager::ExtractCats() noexcept
 {
+    assert(ws_ != nullptr);
     data_["np"] = (RooAbsData *) ws_->GetNp();
 }
 
 inline void FitManager::SetWsWrapper() noexcept
 {
     ws_ = new WorkspaceWrapper();
+}
+
+inline void FitManager::SetWS(std::string path, std::string name)
+{
+    ws_->SetWS(std::move(path), std::move(name));
+}
+inline void FitManager::SetModelConfig(std::string name)
+{
+    ws_->SetModelConfig(std::move(name));
 }
 
 } // eft::stats

@@ -40,6 +40,9 @@ public:
     virtual void SetGlobObsNames(std::string name) const noexcept = 0;
     virtual void SetCatsNames(std::string name) const noexcept = 0;
 
+    virtual void SetWS(std::string path, std::string name)  = 0;
+    virtual void SetModelConfig(std::string name)  = 0;
+
     virtual void ExtractNP()      noexcept = 0;
     virtual void ExtractObs()     noexcept = 0;
     virtual void ExtractGlobObs() noexcept = 0;
@@ -52,6 +55,8 @@ public:
 
     virtual const RooAbsData* GetData(std::string&& name) const = 0;
     virtual const RooAbsPdf*  GetPdf (std::string&& name) const = 0;
+
+    virtual IWorkspaceWrapper* ws() = 0;
 
 
 //private:

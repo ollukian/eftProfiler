@@ -1,32 +1,45 @@
 #include <iostream>
 
 #include "Core/WorkspaceWrapper.h"
+#include "Application/FitManager.h"
 
 using namespace std;
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
 
-    eft::stats::WorkspaceWrapper ws;
-    ws.SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
-             "combWS");
+    //eft::stats::WorkspaceWrapper ws;
+    //ws.SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
+    //         "combWS");
 
+    eft::stats::FitManager* manager;
+    cout << "set ws wrapper" << endl;
+    manager->SetWsWrapper();
+    cout << "set" << endl;
+    manager->SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
+                          "combWS");
+    cout << "set model config" << endl;
+    manager->SetModelConfig("ModelConfig");
+
+    //manager->ws()
     //ws.raw()->Print("v");
 
     cout << "cats:" << endl;
-    for(const auto & cat : ws.GetCats()) {
+    for(const auto & cat : manager->ws()->GetCats()) {
         cout << cat << endl;
     }
 
 
+
+
     cout << "[NP]:" << endl;
-    ws.GetNp()->Print("v");
+    manager->ws()->GetNp()->Print("v");
     cout << "[GlobalObs]:" << endl;
-    ws.GetGlobObs()->Print("v");
+    manager->ws()->GetGlobObs()->Print("v");
     cout << "[Obs]:" << endl;
-    ws.GetObs()->Print("v");
+    manager->ws()->GetObs()->Print("v");
     cout << "[POIs]:" << endl;
-    ws.GetPOIs()->Print("v");
+    manager->ws()->GetPOIs()->Print("v");
 
     return 0;
 }
