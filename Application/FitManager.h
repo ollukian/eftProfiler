@@ -96,16 +96,22 @@ inline void FitManager::ExtractCats() noexcept
 
 inline void FitManager::SetWsWrapper() noexcept
 {
+    std::cout << "set ws wrapper" << std::endl;
     ws_ = new WorkspaceWrapper();
+    std::cout << "set ws wrapper DONE" << std::endl;
 }
 
 inline void FitManager::SetWS(std::string path, std::string name)
 {
+    std::cout << "set ws" << std::endl;
     ws_->SetWS(std::move(path), std::move(name));
+    std::cout << "set ws DONE" << std::endl;
 }
 inline void FitManager::SetModelConfig(std::string name)
 {
+    std::cout << "set model config" << std::endl;
     ws_->SetModelConfig(std::move(name));
+    std::cout << "set model config DONE" << std::endl;
 }
 
 } // eft::stats

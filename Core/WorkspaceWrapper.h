@@ -89,19 +89,19 @@ public:
     bool LoadSnapshot(std::string name)  override;
 #endif // if 0 to screen
 private:
-    std::unique_ptr<RooWorkspace> ws_;
-    std::unique_ptr<RooStats::ModelConfig> modelConfig_;
-    std::unique_ptr<RooCategory> channelList_;
-    mutable Categories categories_;
+    std::unique_ptr<RooWorkspace> ws_{};
+    std::unique_ptr<RooStats::ModelConfig> modelConfig_{};
+    std::unique_ptr<RooCategory> channelList_{};
+    mutable Categories categories_{};
 
-    mutable std::string pdf_model_sufix_;
-    mutable std::string pdf_model_prefix_;
-    mutable std::string pdf_sb_sufix_;
-    mutable std::string pdf_sb_prefix_;
-    mutable std::string pdf_bkg_sufix_;
-    mutable std::string pdf_bkg_prefix_;
-    mutable std::string pdf_sig_sufix_;
-    mutable std::string pdf_sig_prefix_;
+    mutable std::string pdf_model_sufix_{};
+    mutable std::string pdf_model_prefix_{};
+    mutable std::string pdf_sb_sufix_{};
+    mutable std::string pdf_sb_prefix_{};
+    mutable std::string pdf_bkg_sufix_{};
+    mutable std::string pdf_bkg_prefix_{};
+    mutable std::string pdf_sig_sufix_{};
+    mutable std::string pdf_sig_prefix_{};
 
 
     //inline void FixPois(const std::vector<std::string>& pois) { for (const std::string& poi : pois) { ws_->var( poi.c_str() )->setConstant(true) override; } } override;
