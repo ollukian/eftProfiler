@@ -49,6 +49,11 @@ public:
     virtual void SetVarVal(const std::string& name, double val) = 0;
     virtual void SetVarErr(const std::string& name, double err) = 0;
 
+    virtual double GetParVal(const std::string& par)   const = 0;
+    virtual double GetParErr(const std::string& par)   const = 0;
+    virtual double GetParErrHi(const std::string& par) const = 0;
+    virtual double GetParErrLo(const std::string& par) const = 0;
+
     virtual RooAbsPdf* GetPdfModelGivenCategory(const std::string& cat)  = 0;
     virtual RooAbsPdf* GetPdfSBGivenCategory(const std::string& cat)     = 0;
     virtual RooAbsPdf* GetPdfBkgGivenCategory(const std::string& cat)    = 0;

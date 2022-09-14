@@ -3,8 +3,42 @@
 //
 
 #include "FitManager.h"
+#include "../Fitter/Fitter.h"
 
-namespace eft {
-    namespace stats {
-    } // eft
+using namespace std;
+
+namespace eft::stats {
+
+void FitManager::DoGlobalFit()
+{
+    cout << "[DoGlobalFit]" << endl;
+    auto* pdf = funcs_["pdf_total"];
+    auto* ds = data_["ds_total"];
+    auto* globObs= dynamic_cast<RooArgSet*> (data_["globObs"]);
+
+    cout << "[create nll]" << endl;
+
+    fit::Fitter fitter;
+    auto nll = fitter.CreatNll(ds, pdf, globObs);
+    cout << "[minimize it]" << endl;
+    auto res = fitter.Minimize(nll, pdf);
+    cout << "[minimisation done]" << endl;
+    cout << "res: " << endl;
+    res->Print("v");
+}
+
+//    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {
+//        for (auto& obs : *globalObservables_) {
+//            cout << " # set global obs: |" << obs->GetName() << "|";
+//
+//            string name = string(obs->GetName());
+//            name = name.substr(string("RNDM__").size(), name.size() );
+//
+//            double foundValue = ws_->var( name.c_str() )->getVal();
+//            static_cast<RooRealVar*>( obs )->setVal( foundValue  );
+//
+//            cout << " to " << foundValue << endl;
+//        }
+//    }
+
 } // stats

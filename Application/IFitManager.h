@@ -26,7 +26,6 @@ namespace eft::stats {
 // to the global closure
 class IFitManager {
 public:
-
     using DataClosure = std::unordered_map<std::string, RooAbsData*> ;
     using FuncClosure = std::unordered_map<std::string, RooAbsPdf*>  ;
 
@@ -60,6 +59,14 @@ public:
     virtual const RooAbsPdf*  GetPdf (std::string&& name) const = 0;
 
     virtual IWorkspaceWrapper* ws() = 0;
+
+    virtual void SetAllNuisanceParamsConst() noexcept = 0;
+    virtual void SetAllNuisanceParamsFloat() noexcept = 0;
+    virtual void SetAllNuisanceParamsToValue(float val) noexcept = 0;
+    virtual void SetGlobalObservablesToValueFoundInFit() noexcept = 0;
+
+    // global tasks
+    virtual void DoGlobalFit() = 0;
 
 
 //private:

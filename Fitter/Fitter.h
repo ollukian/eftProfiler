@@ -16,6 +16,10 @@ class RooMinimizerWrapper;
 class Fitter;
 
 class Fitter : public IFitter {
+public:
+    Fitter() = default;
+    ~Fitter() override = default;
+
      RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs) override;
      RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override;
      FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       override;

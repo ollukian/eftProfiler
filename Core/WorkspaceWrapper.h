@@ -58,7 +58,10 @@ public:
     inline RooAbsPdf* GetPdfBkgGivenCategory(const std::string& cat)   noexcept override;
     inline RooAbsPdf* GetPdfSigGivenCategory(const std::string& cat)   noexcept override;
 
-
+    inline double GetParVal(const std::string& par)   const override;
+    inline double GetParErr(const std::string& par)   const override;
+    inline double GetParErrHi(const std::string& par) const override;
+    inline double GetParErrLo(const std::string& par) const override;
 
     inline const RooArgSet* GetNp() const override;
     inline const RooArgSet* GetObs() const override;
@@ -226,6 +229,11 @@ inline RooSimultaneous* WorkspaceWrapper::GetCombinedPdf(const std::string& name
 {
     return dynamic_cast<RooSimultaneous*> ( ws_->pdf(  name.c_str() ) );
 }
+
+inline double WorkspaceWrapper::GetParVal(const std::string& par)   const  { return ws_->var( par.c_str() )->getVal(); };
+inline double WorkspaceWrapper::GetParErr(const std::string& par)   const  { return ws_->var( par.c_str() )->getError(); };
+inline double WorkspaceWrapper::GetParErrHi(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorHi();}
+inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorLo();}
 
 //inline void WorkspaceWrapper::FixPois(std::initializer_list<std::vector<std::string>> pois)
 //{

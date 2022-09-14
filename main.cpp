@@ -55,5 +55,8 @@ int main() {
     cout << "[INFO] extract data total" << endl;
     manager->ExtractDataTotal("combData");
 
+    cout << "[INFO] try to fit..." << endl;
+    manager->DoGlobalFit();
+
     return 0;
 }

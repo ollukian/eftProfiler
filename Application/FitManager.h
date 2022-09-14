@@ -16,6 +16,8 @@ public:
     FitManager() = default;
     ~FitManager() override = default;
 
+    void DoGlobalFit();
+
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;
     inline void SetGlobObsNames(std::string name) const noexcept override;
@@ -32,6 +34,14 @@ public:
 
     inline void ExtractDataTotal(std::string name) override;
     inline void ExtractPdfTotal(std::string name)  override;
+
+    // TODO: to implement from the prev code
+    void SetAllNuisanceParamsConst() noexcept override{};
+    void SetAllNuisanceParamsFloat() noexcept override{};
+    void SetAllNuisanceParamsToValue(float val) noexcept override{};
+    void SetGlobalObservablesToValueFoundInFit() noexcept override{};
+
+
 
     //TODO: imlement: create asimov data
     inline void CreateAsimovData() noexcept override {
@@ -84,17 +94,18 @@ inline void FitManager::ExtractNP()      noexcept
 inline void FitManager::ExtractObs() noexcept
 {
     assert(ws_ != nullptr);
-    data_["np"] = (RooAbsData *) ws_->GetObs();
+    data_["obs"] = (RooAbsData *) ws_->GetObs();
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
     assert(ws_ != nullptr);
-    data_["np"] = (RooAbsData *) ws_->GetGlobObs();
+    data_["globObs"] = (RooAbsData *) ws_->GetGlobObs();
 }
 inline void FitManager::ExtractCats() noexcept
 {
     assert(ws_ != nullptr);
-    data_["np"] = (RooAbsData *) ws_->GetNp();
+    std::cout << "ERROR NOT IMPLEMENTED" << std::endl;
+    //data_["np"] = (RooAbsData *) ws_->GetNp();
 }
 
 inline void FitManager::SetWsWrapper() noexcept
