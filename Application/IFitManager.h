@@ -33,7 +33,7 @@ public:
     IFitManager() = default;
     virtual ~IFitManager() = default;
 
-    virtual void SetWsWrapper() const noexcept = 0;
+    virtual void SetWsWrapper() noexcept = 0;
 
     virtual void SetNpNames(std::string name) const noexcept = 0;
     virtual void SetObsNames(std::string name) const noexcept = 0;

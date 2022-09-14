@@ -21,7 +21,7 @@ public:
     inline void SetGlobObsNames(std::string name) const noexcept override;
     inline void SetCatsNames(std::string name) const noexcept override;
 
-    inline void SetWsWrapper() const noexcept override;
+    inline void SetWsWrapper() noexcept override;
 
     inline void ExtractNP()      noexcept override;
     inline void ExtractObs()     noexcept override;
