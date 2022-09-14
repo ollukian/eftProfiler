@@ -16,7 +16,7 @@ public:
     FitManager() = default;
     ~FitManager() override = default;
 
-    void DoGlobalFit();
+    void DoGlobalFit() override;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;
