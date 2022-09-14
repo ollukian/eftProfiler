@@ -86,7 +86,7 @@ inline void FitManager::ExtractCats() noexcept
     data_["np"] = (RooAbsData *) ws_->GetNp();
 }
 
-inline void FitManager::SetWsWrapper() const noexcept
+inline void FitManager::SetWsWrapper() noexcept
 {
     ws_ = new WorkspaceWrapper();
 }
