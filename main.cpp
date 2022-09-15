@@ -13,7 +13,7 @@ int main(int argc, char* argv[]) {
     CmdLineArgs cmdLineArgs(argc, argv);
 
     size_t worker_id_nb = 0;
-    if (auto workerId = cmdLineArgs.GetVal("worker_id"); workerId) {
+    if (auto workerId = cmdLineArgs.GetVal("worker"); workerId) {
         worker_id_nb = stoi(string(workerId.value()));
     }
     cout << "worker id: " << worker_id_nb << endl;

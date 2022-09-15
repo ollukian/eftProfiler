@@ -9,6 +9,7 @@
 #include <map>
 #include <vector>
 #include <optional>
+#include <set>
 
 // Wrapper around command line arguments
 
@@ -19,7 +20,7 @@ public:
     using Vals = std::vector<Val>;  // |----------- key
 
 
-    using Keys = std::vector<Key>;
+    using Keys = std::set<Key>;
     //using option = std::string;
 
     CmdLineArgs() = delete;

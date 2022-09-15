@@ -98,7 +98,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     nlohmann::json j;
     j = res;
 
-    const string name = fmt::format("res_{}_worker_{}.json", res.np_name, workerId);
+    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_{}_worker_{}.json", res.np_name, workerId);
 
     ofstream f_res;
     f_res.exceptions(ofstream::failbit | ofstream::badbit);

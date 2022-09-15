@@ -11,8 +11,7 @@
 using namespace std;
 
 CmdLineArgs::CmdLineArgs(int argc, char **argv) {
-    keys.reserve(argc - 1);
-
+    //keys.reserve(argc - 1);
 
     cout << fmt::format("[CmdLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
 
@@ -30,9 +29,11 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
         cout << fmt::format("\t{}", arg) << endl;
 
         auto [key, vals] = ExtractVals(std::move(arg));
-        keys.push_back(key);
+        keys.insert(key);
+        //keys.push_back(key);
         ops[key] = std::move(vals);
     }
+    return true;
 }
 
 std::pair<CmdLineArgs::Key, CmdLineArgs::Vals>
@@ -63,7 +64,8 @@ optional<CmdLineArgs::Vals> CmdLineArgs::GetVals(CmdLineArgs::Key&& option) cons
 {
     cout << fmt::format("[CmdLine] GetVals for {} key", option);
 
-    if (find( keys.begin(), keys.end(), option ) != keys.end()) {
+    if (keys.find(option) != keys.end()) {
+    //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
     }
     return ops.at(option);
@@ -73,7 +75,8 @@ optional<CmdLineArgs::Val> CmdLineArgs::GetVal(CmdLineArgs::Key&& option) const
 {
     cout << fmt::format("[CmdLine] GetVals for {} key", option);
 
-    if (find( keys.begin(), keys.end(), option ) != keys.end()) {
+    if (keys.find(option) != keys.end()) {
+    //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
     }
     return ops.at(option)[0];
