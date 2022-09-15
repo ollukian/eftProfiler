@@ -81,7 +81,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                                      RooFit::Name("reduced_data_"));
 
     cout << fmt::format("[ComputeNpRanging] reduced data:") << endl;
-    data_reduced->Print("V");
+    data_reduced->Print("");
     //auto nll = fitter.CreatNll(data, pdf, globObs);
     auto nll = fitter.CreatNll(data_reduced, pdf, globObs);
     cout << "[minimize it]" << endl;
