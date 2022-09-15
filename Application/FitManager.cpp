@@ -8,6 +8,9 @@
 
 #include "NpRankingStudyRes.h"
 
+#include <fstream>
+#include <iomanip>
+
 using namespace std;
 
 namespace eft::stats {
@@ -41,6 +44,7 @@ void FitManager::DoGlobalFit()
 
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
+    cout << fmt::format("[ComputeNpRanging] worker: {}", workerId) << endl;
     RooAbsData* data;
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
@@ -57,8 +61,47 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.statType = settings.statType;
     res.studyType = settings.studyType;
 
+    cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float...", workerId) << endl;
     SetAllNuisanceParamsFloat();
+    cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float DONE", workerId) << endl;
+    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const", workerId, settings.poi) << endl;
     ws_->FixValConst(res.np_name);
+    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, settings.poi) << endl;
+
+    cout << fmt::format("[ComputeNpRanging] create nll...");
+
+    fit::Fitter fitter;
+    auto nll = fitter.CreatNll(data, pdf, globObs);
+    cout << "[minimize it]" << endl;
+    auto fitRes = fitter.Minimize(nll, pdf);
+    cout << "save res..." << endl;
+    res.poi_err = ws_->GetParErr(res.poi_name);
+    res.poi_val = ws_->GetParVal(res.poi_name);
+    res.nll     = nll->getVal();
+
+//#ifndef EFT_STRUCT_TO_JSON
+//#define EFT_STRUCT_TO_JSON(j, res, field) j[#field] = res.field;
+//#endif
+
+    nlohmann::json j;
+    j = res;
+
+    const string name = fmt::format("res_{}_worker_{}.json", res.np_name, workerId);
+
+    ofstream f_res;
+    f_res.exceptions(ofstream::failbit | ofstream::badbit);
+
+    try {
+        f_res.open(name);
+        f_res << setw(4) << j << endl;
+    }
+    catch (...) {
+        cout << "impossible to open: " << name << endl;
+        cout << "print to console:" << endl;
+        cout << setw(4) << j << endl;
+    }
+
+    //EFT_STRUCT_TO_JSON(j, res, nll);
 
     if (settings.prePostFit == PrePostFit::POSTFIT) {
         // TODO: set np to the values found in fit;

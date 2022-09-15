@@ -1,4 +1,5 @@
 #include <iostream>
+#include <NpRankingStudyRes.h>
 
 #include "Core/WorkspaceWrapper.h"
 #include "Application/FitManager.h"
@@ -28,7 +29,7 @@ int main() {
     //}
 
 
-    cout << "[NP]:" << endl;
+    /*cout << "[NP]:" << endl;
     manager->ws()->GetNp()->Print("v");
     cout << "[GlobalObs]:" << endl;
     manager->ws()->GetGlobObs()->Print("v");
@@ -38,9 +39,9 @@ int main() {
     manager->ws()->GetPOIs()->Print("v");
 
     cout << "[INFO] extract everything" << endl;
-    cout << "[INFO] extract np" << endl;
+    cout << "[INFO] extract np" << endl;*/
     manager->ExtractNP();
-    cout << "[INFO] extract obd" << endl;
+    cout << "[INFO] extract obs" << endl;
     manager->ExtractObs();
     cout << "[INFO] extract global obs" << endl;
     manager->ExtractGlobObs();
@@ -52,8 +53,15 @@ int main() {
     cout << "[INFO] extract data total" << endl;
     manager->ExtractDataTotal("combData");
 
-    cout << "[INFO] try to fit..." << endl;
-    manager->DoGlobalFit();
+    //cout << "[INFO] try to fit..." << endl;
+    //manager->DoGlobalFit();
+
+    eft::stats::NpRankingStudySettings settings;
+    settings.prePostFit = eft::stats::PrePostFit::PREFIT;
+    settings.studyType = eft::stats::StudyType::OBSERVED;
+    settings.poi = "mu_GG2H_0J_PTH_0_10_ZZ";
+    settings.path_to_save_res = "res.json";
+    manager->ComputeNpRankingOneWorker(settings, 1);
 
     return 0;
 }

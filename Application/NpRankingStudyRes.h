@@ -49,14 +49,6 @@ struct
 NpRankingStudyRes {
     using json = nlohmann::json;
 
-    NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
-                                       poi_name, np_name,
-                                       poi_val, poi_err,
-                                       nll,
-                                       studyType,
-                                       statType,
-                                       prePostFit);
-
     StudyType studyType { StudyType::NOTDEF };
     StatType  statType  { StatType::NOTDEF };
     PrePostFit prePostFit {PrePostFit::PREFIT};
@@ -70,6 +62,14 @@ NpRankingStudyRes {
     double nll;
 
 }; // NpRankingStudyRes
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
+                                   poi_name, np_name,
+                                   poi_val, poi_err,
+                                   nll,
+                                   studyType,
+                                   statType,
+                                   prePostFit);
 
 struct NpRankingStudySettings
 {
