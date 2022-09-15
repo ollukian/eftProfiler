@@ -38,6 +38,7 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
         size_t idx_last_arg_begin  = args.find_first_not_of('-');
         string arg_line = args.substr(idx_first_arg_begin, idx_last_arg_begin - idx_first_arg_begin);
         args = args.substr(idx_last_arg_begin, args.size());
+        //args = args.substr(args.find_first_not_of(' '))
         cout << "to parse: {" << arg_line << "}" << endl;
         auto [key, vals] = ExtractVals(std::move(arg_line));
         keys.insert(key);
@@ -95,7 +96,7 @@ CmdLineArgs::ExtractVals(std::string_view raw) noexcept
     Vals vals;
     while (!raw.empty()) {
         size_t pos {raw.find_first_of(' ')};
-        vals.push_back(raw.substr(0, pos));
+        vals.push_back(raw.substr(raw.find_first_not_of(' '), pos));
         raw.remove_prefix(pos != string::npos ? pos + 1 : raw.size());
         cout << fmt::format("\t add: {}", vals.back()) << endl;
     }
