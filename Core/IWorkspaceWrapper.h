@@ -14,6 +14,7 @@
 #include <RooStats/ModelConfig.h>
 #include <RooWorkspace.h>
 #include "RooCategory.h"
+#include "RooSimultaneous.h"
 
 #include <filesystem>
 

@@ -45,7 +45,7 @@ target_link_libraries(eftProfiler PRIVATE nlohmann_json::nlohmann_json)
 target_link_libraries(eftProfiler PUBLIC core fitter utils app)
 
 
-install(TARGETS eftProfiler LIBRARY DESTINATION lib)
+#install(TARGETS eftProfiler LIBRARY DESTINATION lib)
 
 install(TARGETS eftProfiler
         ARCHIVE DESTINATION lib
