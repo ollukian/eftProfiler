@@ -62,7 +62,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_name = settings.poi;
     res.statType = settings.statType;
     res.studyType = settings.studyType;
-    res.np_name = args_["np"]->operator[](workerId)->GetTitle();
+    res.np_name = args_["np"]->operator[](workerId)->GetName();
     cout << fmt::format("[ComputeNpRanging] worker: {}, identified name of np: {}",
                         workerId, res.np_name) << endl;
 
@@ -73,10 +73,17 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws_->FixValConst(res.np_name);
     cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, settings.poi) << endl;
 
-    cout << fmt::format("[ComputeNpRanging] create nll...");
+    cout << fmt::format("[ComputeNpRanging] create nll...") << endl;
 
     fit::Fitter fitter;
-    auto nll = fitter.CreatNll(data, pdf, globObs);
+    cout << fmt::format("[ComputeNpRanging] reduce data...");
+    auto data_reduced = data->reduce(RooFit::EventRange(0, 100000),
+                                     RooFit::Name("reduced_data_"));
+
+    cout << fmt::format("[ComputeNpRanging] reduced data:") << endl;
+    data_reduced->Print("V");
+    //auto nll = fitter.CreatNll(data, pdf, globObs);
+    auto nll = fitter.CreatNll(data_reduced, pdf, globObs);
     cout << "[minimize it]" << endl;
     auto fitRes = fitter.Minimize(nll, pdf);
     cout << "save res..." << endl;
@@ -162,11 +169,11 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
         cout << fmt::format("dealing with: {} ...", name) << endl;
         //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
         if (name.substr(0, 5) == "ATLAS") {
-            cout << fmt::format("dealing with: {} Set to float", name) << endl;
+            cout << fmt::format("dealing with: {:40} OK", name) << endl;
             dynamic_cast<RooRealVar *>(np)->setConstant(false);
         }
         else {
-            cout << fmt::format("dealing with: {} DO NOT set to float", name) << endl;
+            cout << fmt::format("dealing with: {:40} DO NOT set to float", name) << endl;
         }
     }
     cout << "status after:" << endl;
