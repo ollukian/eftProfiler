@@ -135,6 +135,12 @@ inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
     std::cout << fmt::format("Fix {} const", poi) << std::endl;
     std::cout << "status before: " << std::endl;
+
+    if (ws_->var(poi.c_str()) == nullptr) {
+        std::cout << fmt::format("FixValConst[{}] ERROR, var is not present", poi);
+        return;
+    }
+
     ws_->var(poi.c_str())->Print("V");
     ws_->var( poi.c_str() )->setConstant(true);
     std::cout << "status after: " << std::endl;

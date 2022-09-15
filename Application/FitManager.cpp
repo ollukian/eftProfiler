@@ -50,9 +50,11 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     auto* globObs = (args_["globObs"]);
 
     if (settings.studyType == StudyType::EXPECTED) {
+        assert(data_["asimov_full"]);
         data = data_["asimov_full"];
     }
     else {
+        assert(data_["ds_total"]);
         data = data_["ds_total"];
     }
 
@@ -60,11 +62,14 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_name = settings.poi;
     res.statType = settings.statType;
     res.studyType = settings.studyType;
+    res.np_name = args_["np"]->operator[](workerId)->GetTitle();
+    cout << fmt::format("[ComputeNpRanging] worker: {}, identified name of np: {}",
+                        workerId, res.np_name) << endl;
 
     cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float...", workerId) << endl;
     SetAllNuisanceParamsFloat();
     cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float DONE", workerId) << endl;
-    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const", workerId, settings.poi) << endl;
+    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix np: {} const", workerId, res.np_name) << endl;
     ws_->FixValConst(res.np_name);
     cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, settings.poi) << endl;
 
