@@ -3,11 +3,22 @@
 
 #include "Core/WorkspaceWrapper.h"
 #include "Application/FitManager.h"
+#include "Core/CmdLineArgs.h"
 
 using namespace std;
 
-int main() {
+int main(int argc, char* argv[]) {
     std::cout << "Hello, World!" << std::endl;
+
+    CmdLineArgs cmdLineArgs(argc, argv);
+
+    size_t worker_id_nb = 0;
+    if (auto workerId = cmdLineArgs.GetVal("worker_id"); workerId) {
+        worker_id_nb = stoi(string(workerId.value()));
+    }
+    cout << "worker id: " << worker_id_nb << endl;
+
+
 
     //eft::stats::WorkspaceWrapper ws;
     //ws.SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
@@ -61,7 +72,7 @@ int main() {
     settings.studyType = eft::stats::StudyType::OBSERVED;
     settings.poi = "mu_GG2H_0J_PTH_0_10_ZZ";
     settings.path_to_save_res = "res.json";
-    manager->ComputeNpRankingOneWorker(settings, 1);
+    manager->ComputeNpRankingOneWorker(settings, worker_id_nb);
 
     return 0;
 }

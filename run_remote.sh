@@ -2,7 +2,7 @@ submit_one_worker()
 {
   current_script=/sps/atlas/o/ollukian/scratch/script_ranking_${worker_id}.sh
   echo "cd /pbs/home/o/ollukian/public/EFT/git/eftProfiler" > "${current_script}"
-  echo "source job_script.sh --np_ranking --worker ${worker_id}" >> "${current_script}"
+  echo "sh job_script.sh --np_ranking --worker ${worker_id}" >> "${current_script}"
 
 
   echo "source ${current_script}"

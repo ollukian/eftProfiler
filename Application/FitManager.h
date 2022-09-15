@@ -95,7 +95,24 @@ inline void FitManager::SetCatsNames(std::string name) const noexcept
 inline void FitManager::ExtractNP()      noexcept
 {
     assert(ws_ != nullptr);
-    args_["np"] = (RooArgSet *) ws_->GetNp();
+    args_["np_all"] = (RooArgSet *) ws_->GetNp();
+    auto* real_np = new RooArgSet();
+    std::cout << fmt::format("[ExtractNp] check for real np") << std::endl;
+    for (const auto& np : *args_["np_all"]) {
+        const std::string name = {np->GetTitle()};
+        std::cout << fmt::format("[ExtractNp]dealing with: {:40} ...", name) << std::endl;
+        if (name.substr(0, 5) == "ATLAS") {
+            std::cout << fmt::format("[ExtractNp] dealing with: {:40} OK Add it", name) << std::endl;
+            real_np->add(*np);
+            //dynamic_cast<RooRealVar *>(np)->setConstant(false);
+        }
+        else {
+            std::cout << fmt::format("dealing with: {:40} DO NOT add it", name) << std::endl;
+        }
+    }
+    std::cout << fmt::format("[ExtractNp] real np list:") << std::endl;
+    real_np->Print("v");
+    args_["np"] = real_np;
 }
 inline void FitManager::ExtractObs() noexcept
 {

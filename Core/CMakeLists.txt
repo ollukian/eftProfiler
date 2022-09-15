@@ -1,7 +1,7 @@
 set(core_source_files
         IWorkspaceWrapper.h
         WorkspaceWrapper.cpp WorkspaceWrapper.h
-)
+        CmdLineArgs.cpp CmdLineArgs.h)
 
 add_library(core ${core_source_files})
 #target_link_libraries(core modules)
