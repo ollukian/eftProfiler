@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
     cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    manager->GetDataClosure().at("data_total")->Print("V");
+    manager->GetDataClosure().at("ds_total")->Print("V");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
