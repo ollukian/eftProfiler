@@ -37,7 +37,7 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
         size_t idx_first_arg_begin = args.find_first_of('-');
         size_t idx_last_arg_begin  = args.find_first_not_of('-');
         string arg_line = args.substr(idx_first_arg_begin, idx_last_arg_begin - idx_first_arg_begin);
-        args = args.substr(idx_last_arg_begin, args.size());
+        args = args.substr(idx_last_arg_begin + 1, args.size());
         //args = args.substr(args.find_first_not_of(' '))
         cout << "to parse: {" << arg_line << "}" << endl;
         auto [key, vals] = ExtractVals(std::move(arg_line));
