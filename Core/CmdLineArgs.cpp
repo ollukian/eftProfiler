@@ -58,6 +58,8 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
         }
     }
 
+    ops[std::move(key)] = std::move(vals);
+
     cout << "* res" << endl;
     for (const auto& [key_, vals_] : ops) {
         for (const auto& val_ : vals_) {
