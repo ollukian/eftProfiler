@@ -37,8 +37,8 @@ public:
     inline void ExtractPdfTotal(std::string name)  override;
 
     // TODO: to implement from the prev code
-    void SetAllNuisanceParamsConst() noexcept override{};
-    void SetAllNuisanceParamsFloat() noexcept override{};
+    void SetAllNuisanceParamsConst() noexcept override;
+    void SetAllNuisanceParamsFloat() noexcept override;
     void SetAllNuisanceParamsToValue(float val) noexcept override{};
     void SetGlobalObservablesToValueFoundInFit() noexcept override{};
 

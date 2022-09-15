@@ -133,7 +133,12 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
+    std::cout << fmt::format("Fix {} const", poi) << std::endl;
+    std::cout << "status before: " << std::endl;
+    ws_->var(poi.c_str())->Print("V");
     ws_->var( poi.c_str() )->setConstant(true);
+    std::cout << "status after: " << std::endl;
+    ws_->var(poi.c_str())->Print("V");
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)

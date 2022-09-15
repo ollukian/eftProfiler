@@ -74,6 +74,57 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
 }
 
+void FitManager::SetAllNuisanceParamsConst() noexcept
+{
+
+    if (args_["np"]->empty())
+        ExtractNP();
+
+    cout << "[SetAllNuissConst]" << endl;
+    cout << "status before:" << endl;
+
+    args_["np"]->Print("v");
+    for (const auto& np : *args_["np"]) {
+        const string name = {np->GetTitle()};
+        cout << fmt::format("dealing with: {} ...", name) << endl;
+        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
+        if (name.substr(0, 5) == "ATLAS") {
+            cout << fmt::format("dealing with: {} Set to const", name) << endl;
+            dynamic_cast<RooRealVar *>(np)->setConstant(true);
+        }
+        else {
+            cout << fmt::format("dealing with: {} DO NOT set to const", name) << endl;
+        }
+    }
+    cout << "status after:" << endl;
+    args_["np"]->Print("v");
+}
+
+void FitManager::SetAllNuisanceParamsFloat() noexcept {
+
+    if (args_["np"]->empty())
+        ExtractNP();
+
+    cout << "[SetAllNuissFloat]" << endl;
+    cout << "status before:" << endl;
+
+    args_["np"]->Print("v");
+    for (const auto& np : *args_["np"]) {
+        const string name = {np->GetTitle()};
+        cout << fmt::format("dealing with: {} ...", name) << endl;
+        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
+        if (name.substr(0, 5) == "ATLAS") {
+            cout << fmt::format("dealing with: {} Set to float", name) << endl;
+            dynamic_cast<RooRealVar *>(np)->setConstant(false);
+        }
+        else {
+            cout << fmt::format("dealing with: {} DO NOT set to float", name) << endl;
+        }
+    }
+    cout << "status after:" << endl;
+    args_["np"]->Print("v");
+}
+
 //    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {
 //        for (auto& obs : *globalObservables_) {
 //            cout << " # set global obs: |" << obs->GetName() << "|";
