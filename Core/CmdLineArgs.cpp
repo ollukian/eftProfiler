@@ -26,6 +26,17 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
 {
     for (size_t idx {1}; idx != argc; ++idx) {
         string arg = {argv[idx]};
+
+        if (arg.find('-') != string::npos) {
+            if (idx < argc) {
+                string new_args = argv[++idx];
+                while (arg.find('-') != string::npos) {
+                    arg += ' ' + new_args;
+                    new_args = argv[++idx];
+                } // extracted all relevant args
+            }
+        }
+
         cout << fmt::format("\t{}", arg) << endl;
 
         auto [key, vals] = ExtractVals(std::move(arg));
