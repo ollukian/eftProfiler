@@ -115,37 +115,37 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
     return true;
 }
 
-std::pair<CmdLineArgs::Key, CmdLineArgs::Vals>
-CmdLineArgs::ExtractVals(std::string_view raw) noexcept
-{
-    cout << "extact vals from: " << raw << endl;
-
-    //if (raw.find('-') == string::npos)
-    //    return {}
-
-    size_t pos_key_begin = raw.find_first_not_of('-');
-    size_t pos_key_end   = raw.find_first_of(' ', pos_key_begin);
-    auto key = raw.substr(pos_key_begin, pos_key_end - pos_key_begin);
-    cout << fmt::format("raw key: [{}]", key)<< endl;
-    //keys.push_back(key);
-
-    raw = raw.substr(pos_key_end, raw.size());
-
-    size_t pos_vals_first_not_empty = raw.find_first_not_of(' ');
-    raw = raw.substr(pos_vals_first_not_empty, raw.size());
-
-    cout << fmt::format("vals: [{}]", raw) << endl;
-
-    Vals vals;
-    while (!raw.empty()) {
-        size_t pos {raw.find_first_of(' ')};
-        vals.push_back(raw.substr(raw.find_first_not_of(' '), pos));
-        raw.remove_prefix(pos != string::npos ? pos + 1 : raw.size());
-        cout << fmt::format("\t add: [{}]", vals.back()) << endl;
-    }
-    return {key, std::move(vals)};
-    //return make_pair(key, std::move(vals));
-}
+//std::pair<CmdLineArgs::Key, CmdLineArgs::Vals>
+//CmdLineArgs::ExtractVals(std::string_view raw) noexcept
+//{
+//    cout << "extact vals from: " << raw << endl;
+//
+//    //if (raw.find('-') == string::npos)
+//    //    return {}
+//
+//    size_t pos_key_begin = raw.find_first_not_of('-');
+//    size_t pos_key_end   = raw.find_first_of(' ', pos_key_begin);
+//    auto key = raw.substr(pos_key_begin, pos_key_end - pos_key_begin);
+//    cout << fmt::format("raw key: [{}]", key)<< endl;
+//    //keys.push_back(key);
+//
+//    raw = raw.substr(pos_key_end, raw.size());
+//
+//    size_t pos_vals_first_not_empty = raw.find_first_not_of(' ');
+//    raw = raw.substr(pos_vals_first_not_empty, raw.size());
+//
+//    cout << fmt::format("vals: [{}]", raw) << endl;
+//
+//    Vals vals;
+//    while (!raw.empty()) {
+//        size_t pos {raw.find_first_of(' ')};
+//        vals.push_back(raw.substr(raw.find_first_not_of(' '), pos));
+//        raw.remove_prefix(pos != string::npos ? pos + 1 : raw.size());
+//        cout << fmt::format("\t add: [{}]", vals.back()) << endl;
+//    }
+//    return {key, std::move(vals)};
+//    //return make_pair(key, std::move(vals));
+//}
 
 optional<CmdLineArgs::Vals> CmdLineArgs::GetVals(CmdLineArgs::Key&& option) const
 {

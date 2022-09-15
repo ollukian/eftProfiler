@@ -46,7 +46,7 @@ private:
    Keys keys;
 private:
     bool ParseInput(int argc, char* argv[]);
-    static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
+    //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
 
