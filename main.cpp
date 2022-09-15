@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     // TODO: move to manager builder, where to set up ws wrapper and ws
     auto* manager = new eft::stats::FitManager();
     manager->SetWsWrapper();
-    manager->SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
+    manager->SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root)",
                           "combWS");
     manager->SetModelConfig("ModelConfig");
 
@@ -63,6 +63,45 @@ int main(int argc, char* argv[]) {
     manager->ExtractPdfTotal("combPdf");
     cout << "[INFO] extract data total" << endl;
     manager->ExtractDataTotal("combData");
+
+    cout << setfill('*') << setw(45) << "" << endl;
+    cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    manager->GetArgsClosure().at("globObs")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " obs: " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    manager->GetArgsClosure().at("obs")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " All Np " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    manager->GetArgsClosure().at("np_all")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " real Np " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    manager->GetArgsClosure().at("np")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    manager->GetDataClosure().at("data_total")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    manager->GetFuncClosure().at("pdf_total")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setfill(' ');
 
     //cout << "[INFO] try to fit..." << endl;
     //manager->DoGlobalFit();
