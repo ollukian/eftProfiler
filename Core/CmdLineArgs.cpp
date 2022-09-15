@@ -44,7 +44,7 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
         cout << fmt::format("token: [{}]", token) << endl;
         if (token.find('-') != string::npos) {
             cout << fmt::format("\t[{}] is a new key, clean it", token) << endl;
-            if ( ! token.empty() ) { // get rid of the prev key
+            if ( ! key.empty() ) { // get rid of the prev key
                 ops[key] = vals;
                 vals.clear();
             }
