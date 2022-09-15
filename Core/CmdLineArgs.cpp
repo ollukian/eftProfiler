@@ -87,10 +87,10 @@ CmdLineArgs::ExtractVals(std::string_view raw) noexcept
     size_t pos_key_begin = raw.find_first_not_of('-');
     size_t pos_key_end   = raw.find_first_of(' ', pos_key_begin);
     auto key = raw.substr(pos_key_begin, pos_key_end - pos_key_begin);
-    cout << fmt::format("raw key: {}", raw)<< endl;
+    cout << fmt::format("raw key: {}", key)<< endl;
     //keys.push_back(key);
 
-    raw = raw.substr(pos_key_end);
+    raw = raw.substr(pos_key_end, raw.size());
     cout << fmt::format("vals: {}", raw) << endl;
 
     Vals vals;
