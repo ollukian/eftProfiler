@@ -25,15 +25,16 @@ CmdLineArgs::CmdLineArgs(int argc, char **argv) {
 bool CmdLineArgs::ParseInput(int argc, char* argv[])
 {
     cout << "create big line:" << endl;
-    string args;
+    //string args;
 
     vector<string_view> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
-        args += " " + string(argv[idx]);
+        //args += " " + string(argv[idx]);
         tokens.push_back(string(argv[idx]));
+        cout << fmt::format("add: [{}] token", tokens.back()) << endl;
     }
 
-    cout << "total line: {" << args << "}" << endl;
+    //cout << "total line: {" << args << "}" << endl;
 
     string_view key;
     Vals vals;
