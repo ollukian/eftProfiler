@@ -14,12 +14,9 @@ int main() {
 
     // TODO: move to manager builder, where to set up ws wrapper and ws
     auto* manager = new eft::stats::FitManager();
-    cout << "set ws wrapper" << endl;
     manager->SetWsWrapper();
-    cout << "set" << endl;
     manager->SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
                           "combWS");
-    cout << "set model config" << endl;
     manager->SetModelConfig("ModelConfig");
 
     //manager->ws()

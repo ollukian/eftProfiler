@@ -123,15 +123,19 @@ inline void FitManager::SetWsWrapper() noexcept
 
 inline void FitManager::SetWS(std::string path, std::string name)
 {
-    std::cout << "set ws" << std::endl;
-    ws_->SetWS(std::move(path), std::move(name));
-    std::cout << "set ws DONE" << std::endl;
+    std::cout << fmt::format("[FitManager] set ws: {} from {}", name, path) << std::endl;
+    if (ws_->SetWS(std::move(path), std::move(name)))
+        std::cout << fmt::format("[FitManager] successfully set ws: {} from {}", name, path) << std::endl;
+    else
+        std::cout << fmt::format("[FitManager] ERROR setting ws: {} from {}", name, path) << std::endl;
 }
 inline void FitManager::SetModelConfig(std::string name)
 {
     std::cout << "set model config" << std::endl;
-    ws_->SetModelConfig(std::move(name));
-    std::cout << "set model config DONE" << std::endl;
+    if (ws_->SetModelConfig(std::move(name)))
+        std::cout << "set model config DONE" << std::endl;
+    else
+        std::cout << fmt::format("[FitManager] error setting model config") << std::endl;
 }
 
 inline void FitManager::ExtractDataTotal(std::string name)
