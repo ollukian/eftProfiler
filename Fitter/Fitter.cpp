@@ -39,7 +39,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     cout << "[Minimizer] a RooMinimizerWrapper is created" << endl;
     //if(_errorLevel>0) minim.setErrorLevel(_errorLevel);
     minim.setStrategy( 1 );
-    cout << "[Minimizer] set stratego to 1" << endl;
+    cout << "[Minimizer] set strategy to 1" << endl;
     //minim.setPrintLevel( _printLevel-1 );
     minim.setPrintLevel( 1 );
     //if (_printLevel < 0)

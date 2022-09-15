@@ -71,25 +71,27 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float DONE", workerId) << endl;
     cout << fmt::format("[ComputeNpRanging] worker: {}, Fix np: {} const", workerId, res.np_name) << endl;
     ws_->FixValConst(res.np_name);
-    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, settings.poi) << endl;
+    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, res.np_name) << endl;
 
     cout << fmt::format("[ComputeNpRanging] create nll...") << endl;
 
     fit::Fitter fitter;
-    cout << fmt::format("[ComputeNpRanging] reduce data...");
-    auto data_reduced = data->reduce(RooFit::EventRange(0, 100000),
-                                     RooFit::Name("reduced_data_"));
+    //cout << fmt::format("[ComputeNpRanging] reduce data...");
+    //auto data_reduced = data->reduce(RooFit::EventRange(0, 100000),
+                                     //RooFit::Name("reduced_data_"));
 
-    cout << fmt::format("[ComputeNpRanging] reduced data:") << endl;
-    data_reduced->Print("");
+    //cout << fmt::format("[ComputeNpRanging] reduced data:") << endl;
+    //data_reduced->Print("");
     //auto nll = fitter.CreatNll(data, pdf, globObs);
-    auto nll = fitter.CreatNll(data_reduced, pdf, globObs);
+    auto nll = fitter.CreatNll(data, pdf, globObs);
     cout << "[minimize it]" << endl;
     auto fitRes = fitter.Minimize(nll, pdf);
     cout << "save res..." << endl;
     res.poi_err = ws_->GetParErr(res.poi_name);
     res.poi_val = ws_->GetParVal(res.poi_name);
     res.nll     = nll->getVal();
+    res.np_err  = ws_->GetParErr(res.np_name);
+    res.np_val  = ws_->GetParVal(res.np_name);
 
 //#ifndef EFT_STRUCT_TO_JSON
 //#define EFT_STRUCT_TO_JSON(j, res, field) j[#field] = res.field;
@@ -106,6 +108,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     try {
         f_res.open(name);
         f_res << setw(4) << j << endl;
+        cout << "duplicate to the console:" << endl;
+        cout << setw(4) << j << endl;
     }
     catch (...) {
         cout << "impossible to open: " << name << endl;

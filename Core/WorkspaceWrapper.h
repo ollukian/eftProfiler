@@ -141,10 +141,10 @@ inline void WorkspaceWrapper::FixValConst(const std::string& poi)
         return;
     }
 
-    ws_->var(poi.c_str())->Print("V");
+    ws_->var(poi.c_str())->Print("");
     ws_->var( poi.c_str() )->setConstant(true);
     std::cout << "status after: " << std::endl;
-    ws_->var(poi.c_str())->Print("V");
+    ws_->var(poi.c_str())->Print("");
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)

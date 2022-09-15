@@ -44,6 +44,13 @@ enum class PrePostFit : uint8_t
    POSTFIT = 1
 };
 
+void to_json(nlohmann::json& j, const StudyType& s);
+void from_json(const nlohmann::json& j, StudyType& s);
+void to_json(nlohmann::json& j, const StatType& s);
+void from_json(const nlohmann::json& j, StatType& s);
+void to_json(nlohmann::json& j, const PrePostFit& s);
+void from_json(const nlohmann::json& j, PrePostFit& s);
+
 
 struct
 NpRankingStudyRes {
@@ -59,6 +66,9 @@ NpRankingStudyRes {
     double poi_val;
     double poi_err;
 
+    double np_val;
+    double np_err;
+
     double nll;
 
 }; // NpRankingStudyRes
@@ -66,6 +76,7 @@ NpRankingStudyRes {
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
                                    poi_name, np_name,
                                    poi_val, poi_err,
+                                   np_val, np_err,
                                    nll,
                                    studyType,
                                    statType,

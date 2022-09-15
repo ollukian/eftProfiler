@@ -11,34 +11,25 @@
 using namespace std;
 
 CmdLineArgs::CmdLineArgs(int argc, char **argv) {
-    //keys.reserve(argc - 1);
 
-    cout << fmt::format("[CmdLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
-
-    for (size_t idx {0}; idx != argc; ++idx) {
-        cout << fmt::format("\t{}", argv[idx]) << endl;
+    if (argc < 2) {
+        cout << fmt::format("[CmdLineArgs] no input args") << endl;
+        return;
     }
 
+    cout << fmt::format("[CmdLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
     ParseInput(argc, argv);
 }
 
 bool CmdLineArgs::ParseInput(int argc, char* argv[])
 {
-    cout << "create big line:" << endl;
-    //string args;
-
     vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
-        //args += " " + string(argv[idx]);
         tokens.emplace_back(argv[idx]);
         cout << fmt::format("add: [{}] token", tokens.back()) << endl;
     }
-
-    //cout << "total line: {" << args << "}" << endl;
-
-    string key;
+    string key = tokens.front();
     vector<string> vals;
-    //Vals vals;
 
     for (auto& token : tokens) {
         cout << fmt::format("token: [{}]", token) << endl;
