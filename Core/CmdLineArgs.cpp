@@ -24,7 +24,7 @@ CmdLineArgs::CmdLineArgs(int argc, char **argv) {
 
 bool CmdLineArgs::ParseInput(int argc, char* argv[])
 {
-    for (size_t idx {0}; idx != argc; ++idx) {
+    for (size_t idx {1}; idx != argc; ++idx) {
         string arg = {argv[idx]};
         cout << fmt::format("\t{}", arg) << endl;
 
@@ -40,6 +40,10 @@ std::pair<CmdLineArgs::Key, CmdLineArgs::Vals>
 CmdLineArgs::ExtractVals(std::string_view raw) noexcept
 {
     cout << "extact vals from: " << raw << endl;
+
+    //if (raw.find('-') == string::npos)
+    //    return {}
+
     size_t pos_key_begin = raw.find_first_not_of('-');
     size_t pos_key_end   = raw.find_first_of(' ', pos_key_begin);
     auto key = raw.substr(pos_key_begin, pos_key_end - pos_key_begin);
