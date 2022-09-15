@@ -27,30 +27,61 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
     cout << "create big line:" << endl;
     string args;
 
+    vector<string_view> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
         args += " " + string(argv[idx]);
+        tokens.push_back(string(argv[idx]));
     }
 
     cout << "total line: {" << args << "}" << endl;
 
-    while ( ! args.empty() ) {
-        size_t idx_first_arg_begin = args.find_first_of('-');
-        size_t idx_last_arg_begin  = args.find_first_not_of('-');
-        string arg_line = args.substr(idx_first_arg_begin, idx_last_arg_begin - idx_first_arg_begin);
-        //args = args.substr(idx_last_arg_begin + 1, args.size());
-        //args = args.substr(args.find_first_not_of(' '))
-        cout << "to parse: {" << arg_line << "}" << endl;
-        auto [key, vals] = ExtractVals(std::move(arg_line));
-        size_t pos_last_val = args.find(vals.back());
+    string_view key;
+    Vals vals;
 
-        args = args.substr(pos_last_val + vals.back().size() + 1, args.size());
-        cout << "left for the next: {" << args << "}" << endl;
-        keys.insert(key);
-        ops[key] = std::move(vals);
+    for (auto& token : tokens) {
+        cout << fmt::format("token: [{}]", token) << endl;
+        if (token.find('-') != string::npos) {
+            cout << fmt::format("\t[{}] is a new key, clean it", token) << endl;
+            if ( ! token.empty() ) { // get rid of the prev key
+                ops[key] = vals;
+                vals.clear();
+            }
 
-
-
+            key = token.substr(token.find_first_not_of('-'), token.size());
+            keys.insert(token);
+        }
+        else {
+            cout << fmt::format("\t[{}] is a val", token) << endl;
+            vals.push_back(token);
+        }
     }
+
+    cout << "* res" << endl;
+    for (const auto& [key_, vals_] : ops) {
+        for (const auto& val_ : vals_) {
+            cout << "* " << key_ << " \t " << val_ << endl;
+        }
+    }
+
+
+//    while ( ! args.empty() ) {
+//        size_t idx_first_arg_begin = args.find_first_of('-');
+//        size_t idx_last_arg_begin  = args.find_first_not_of('-');
+//        string arg_line = args.substr(idx_first_arg_begin, idx_last_arg_begin - idx_first_arg_begin);
+//        //args = args.substr(idx_last_arg_begin + 1, args.size());
+//        //args = args.substr(args.find_first_not_of(' '))
+//        cout << "to parse: {" << arg_line << "}" << endl;
+//        auto [key, vals] = ExtractVals(std::move(arg_line));
+//        size_t pos_last_val = args.find(vals.back());
+//
+//        args = args.substr(pos_last_val + vals.back().size() + 1, args.size());
+//        cout << "left for the next: {" << args << "}" << endl;
+//        keys.insert(key);
+//        ops[key] = std::move(vals);
+//
+//
+//
+//    }
 
     //for (size_t idx {1}; idx != argc; ++idx) {
         //cout << "parse input. Idx: " << idx << endl;
