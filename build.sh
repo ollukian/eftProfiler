@@ -5,5 +5,5 @@ echo " * cmake $PWD.."
 cmake .. || echo "[ERROR] in cmake " exit
 echo " * make -j"
 make -j ||  echo "[ERROR] in make " exit
-echo " * binary has been successfully built, execute it.."
-./eftProfiler
+echo " * binary has been successfully built, execute it with arguments: $@"
+./eftProfiler $@
