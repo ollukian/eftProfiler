@@ -27,17 +27,18 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
     cout << "create big line:" << endl;
     //string args;
 
-    vector<string_view> tokens;
+    vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
         //args += " " + string(argv[idx]);
-        tokens.push_back(string(argv[idx]));
+        tokens.emplace_back(argv[idx]);
         cout << fmt::format("add: [{}] token", tokens.back()) << endl;
     }
 
     //cout << "total line: {" << args << "}" << endl;
 
-    string_view key;
-    Vals vals;
+    string key;
+    vector<string> vals;
+    //Vals vals;
 
     for (auto& token : tokens) {
         cout << fmt::format("token: [{}]", token) << endl;

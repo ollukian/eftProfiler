@@ -15,8 +15,8 @@
 
 class CmdLineArgs {
 public:
-    using Key = std::string_view;   // -k filename.root
-    using Val = std::string_view;   // ^     ^----- val
+    using Key = std::string;   // -k filename.root
+    using Val = std::string;   // ^     ^----- val
     using Vals = std::vector<Val>;  // |----------- key
 
 
