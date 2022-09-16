@@ -11,13 +11,13 @@ void to_json(nlohmann::json& j, const StudyType& s)
 {
     switch (s) {
         case StudyType::NOTDEF:
-            j["StudyType"] = "NOTDEF";
+            j["studyType"] = "NOTDEF";
             break;
         case StudyType::EXPECTED:
-            j["StudyType"] = "EXPECTED";
+            j["studyType"] = "EXPECTED";
             break;
         case StudyType::OBSERVED:
-            j["StudyType"] = "OBSERVED";
+            j["studyType"] = "OBSERVED";
             break;
     }
 }
@@ -26,16 +26,16 @@ void to_json(nlohmann::json& j, const StatType& s)
 {
     switch (s) {
         case StatType::NOTDEF:
-            j["StatType"] = "NOTDEF";
+            j["statType"] = "NOTDEF";
             break;
         case StatType::STAT:
-            j["StatType"] = "STAT";
+            j["statType"] = "STAT";
             break;
         case StatType::FULL:
-            j["StatType"] = "FULL";
+            j["statType"] = "FULL";
             break;
         case StatType::NP_RANKING:
-            j["StatType"] = "NP_RANKING";
+            j["statType"] = "NP_RANKING";
             break;
     }
 }
@@ -44,10 +44,10 @@ void to_json(nlohmann::json& j, const PrePostFit& s)
 {
     switch (s) {
         case PrePostFit::PREFIT:
-            j["PrePostFit"] = "PREFIT";
+            j["prePostFit"] = "PREFIT";
             break;
         case PrePostFit::POSTFIT:
-            j["PrePostFit"] = "POSTFIT";
+            j["prePostFit"] = "POSTFIT";
             break;
     }
 }
