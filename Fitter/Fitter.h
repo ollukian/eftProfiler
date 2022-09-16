@@ -20,7 +20,7 @@ public:
     Fitter() = default;
     ~Fitter() noexcept override = default;
 
-     RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs) override;
+     RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs, RooArgSet* np) override;
      RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{ return nullptr; }
      FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       override;
      FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           override{return {};}

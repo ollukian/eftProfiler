@@ -16,13 +16,14 @@ using namespace std;
 
 namespace eft::stats::fit {
 
-RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* globalObs) {
+RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* globalObs, RooArgSet* np) {
     TStopwatch timer;
     RooAbsReal* nll = pdf->createNLL(*data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
             //IntegrateBins(_samplingRelTol),
-                                    RooFit::GlobalObservables(*globalObs)
+                                    RooFit::GlobalObservables(*globalObs),
+                                    RooFit::Constrain(*np) // try with this line
             //ConditionalObservables(),
             //ExternalConstraints(*_externalConstraint)
     );
