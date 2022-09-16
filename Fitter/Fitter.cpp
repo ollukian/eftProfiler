@@ -42,7 +42,8 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     minim.setStrategy( 1 );
     cout << "[Minimizer] set strategy to 1" << endl;
     //minim.setPrintLevel( _printLevel-1 );
-    minim.setPrintLevel( 1 );
+    //minim.setPrintLevel( 1 );
+    minim.setPrintLevel( 0 );
     //if (_printLevel < 0)
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
