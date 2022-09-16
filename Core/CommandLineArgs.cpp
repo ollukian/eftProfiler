@@ -34,14 +34,16 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     for (auto& token : tokens) {
         cout << fmt::format("token: [{}]", token) << endl;
         if (token.find('-') != string::npos) {
-            cout << fmt::format("\t[{}] is a new key, clean it", token) << endl;
+            cout << fmt::format("\t[{}] is a new key", token) << endl;
             if ( ! key.empty() ) { // get rid of the prev key
                 ops[key] = vals;
+                cout << fmt::format("register: {} => {} vals", key, vals.size()) << endl;
                 vals.clear();
             }
 
             key = token.substr(token.find_first_not_of('-'), token.size());
-            keys.insert(token);
+            //keys.insert(token);
+            keys.insert(key);
         }
         else {
             cout << fmt::format("\t[{}] is a val", token) << endl;
@@ -144,7 +146,7 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(CommandLineArgs::Key&& 
 {
     cout << fmt::format("[CmdLine] GetVals for {} key", option);
 
-    if (keys.find(option) != keys.end()) {
+    if (keys.find(option) == keys.end()) {
     //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
     }
