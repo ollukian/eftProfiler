@@ -6,6 +6,8 @@
 #include "../Fitter/IFitter.h"
 #include "../Fitter/Fitter.h"
 
+#include "../Core/Logger.h"
+
 #include "NpRankingStudyRes.h"
 
 #include <fstream>
@@ -198,6 +200,71 @@ void FitManager::ExtractPOIs() noexcept
     }
     cout << fmt::format("[FitManager] list of POIs in string format:");
     for (const auto& poi : pois_) { cout << "\t" << poi << endl; }
+}
+
+void FitManager::Init(FitManagerConfig&& config)
+{
+    EFT_PROF_INFO("[FitManager] init from config: path to ws: {}, name: {},modelConfig: {}",
+                  config.ws_path, config.ws_name, config.model_configi_name);
+    SetWsWrapper();
+    SetWS(std::move(config.ws_path),
+          std::move(config.ws_name)
+          );
+    SetModelConfig(std::move(config.model_configi_name));
+
+    ExtractNP();
+    cout << "[INFO] extract obs" << endl;
+    ExtractObs();
+    cout << "[INFO] extract global obs" << endl;
+    ExtractGlobObs();
+    cout << "[INFO] extract cats" << endl;
+    ExtractCats();
+    cout << "[INFO] extract pois" << endl;
+    ExtractPOIs();
+
+    cout << "[INFO] extract pdf total" << endl;
+    ExtractPdfTotal("combPdf");
+    cout << "[INFO] extract data total" << endl;
+    ExtractDataTotal("combData");
+
+    cout << setfill('*') << setw(45) << "" << endl;
+    cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    GetArgsClosure().at("globObs")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " obs: " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    GetArgsClosure().at("obs")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " All Np " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    GetArgsClosure().at("np_all")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " real Np " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    GetArgsClosure().at("np")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    GetDataClosure().at("ds_total")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
+    cout << setw(45) << "" << endl;
+    cout << setfill(' ');
+    GetFuncClosure().at("pdf_total")->Print("V");
+    cout << setfill('*') << setw(45) << "" << endl;
+
+    cout << setfill(' ');
 }
 
 //    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {

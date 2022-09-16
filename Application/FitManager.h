@@ -6,6 +6,7 @@
 #define EFTPROFILER_FITMANAGER_H
 
 #include "IFitManager.h"
+#include "FitManagerConfig.h"
 #include "WorkspaceWrapper.h"
 
 
@@ -14,7 +15,10 @@ namespace eft::stats {
 class FitManager : public IFitManager {
 public:
     FitManager() = default;
+    //FitManager(FitManagerConfig&& config) noexcept;
     ~FitManager() noexcept override = default;
+
+    void Init(FitManagerConfig&& config);
 
     void DoGlobalFit() override;
     void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) override;

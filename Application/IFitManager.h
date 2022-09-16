@@ -16,6 +16,7 @@
 #include "RooAbsReal.h"
 
 #include "IWorkspaceWrapper.h"
+//#include "FitManagerConfig.h"
 //#include "NpRankingStudyRes.h"
 
 namespace eft::stats {

@@ -48,94 +48,17 @@ int main(int argc, char* argv[]) {
     cout << "[INFO] res_path: " << res_path << endl;
     EFT_PROF_INFO("res_path: {}", res_path);
 
-
-    //eft::stats::WorkspaceWrapper ws;
-    //ws.SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-STXSxBR_asimov.root)",
-    //         "combWS");
-
-    // TODO: move to manager builder, where to set up ws wrapper and ws
     auto* manager = new eft::stats::FitManager();
-    manager->SetWsWrapper();
-    manager->SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root)",
-                          "combWS");
-    manager->SetModelConfig("ModelConfig");
+    eft::stats::FitManagerConfig config;
+    config.ws_name = "combWS";
+    config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
+    config.model_configi_name = "ModelConfig";
+    manager->Init(std::move(config));
 
-    //manager->ws()
-    //ws.raw()->Print("v");
-
-    //cout << "cats:" << endl;
-    //for(const auto & cat : manager->ws()->GetCats()) {
-    //    cout << cat << endl;
-    //}
-
-
-    /*cout << "[NP]:" << endl;
-    manager->ws()->GetNp()->Print("v");
-    cout << "[GlobalObs]:" << endl;
-    manager->ws()->GetGlobObs()->Print("v");
-    cout << "[Obs]:" << endl;
-    manager->ws()->GetObs()->Print("v");
-    cout << "[POIs]:" << endl;
-    manager->ws()->GetPOIs()->Print("v");
-
-    cout << "[INFO] extract everything" << endl;
-    cout << "[INFO] extract np" << endl;*/
-    manager->ExtractNP();
-    cout << "[INFO] extract obs" << endl;
-    manager->ExtractObs();
-    cout << "[INFO] extract global obs" << endl;
-    manager->ExtractGlobObs();
-    cout << "[INFO] extract cats" << endl;
-    manager->ExtractCats();
-    cout << "[INFO] extract pois" << endl;
-    manager->ExtractPOIs();
-
-    cout << "[INFO] extract pdf total" << endl;
-    manager->ExtractPdfTotal("combPdf");
-    cout << "[INFO] extract data total" << endl;
-    manager->ExtractDataTotal("combData");
-
-    cout << setfill('*') << setw(45) << "" << endl;
-    cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    manager->GetArgsClosure().at("globObs")->Print("V");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " obs: " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    manager->GetArgsClosure().at("obs")->Print("V");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " All Np " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    manager->GetArgsClosure().at("np_all")->Print("V");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " real Np " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    manager->GetArgsClosure().at("np")->Print("V");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    manager->GetDataClosure().at("ds_total")->Print("V");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    manager->GetFuncClosure().at("pdf_total")->Print("V");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setfill(' ');
-
-    //cout << "[INFO] try to fit..." << endl;
-    //manager->DoGlobalFit();
+    //manager->SetWsWrapper();
+    //manager->SetWS(R"(/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root)",
+    //                      "combWS");
+    //manager->SetModelConfig("ModelConfig");
 
     if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
