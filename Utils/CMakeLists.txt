@@ -3,4 +3,5 @@ set(utils_source_files
         NpRankingPlotter.cpp NpRankingPlotter.h)
 
 add_library(utils ${utils_source_files})
+target_link_libraries(utils PRIVATE nlohmann_json::nlohmann_json)
 #target_link_libraries(core modules)
