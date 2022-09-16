@@ -11,7 +11,7 @@
 #include "WorkspaceWrapper.h"
 
 #include "../Core/Logger.h"
-#include "Core/CommandLineArgs.h"
+#include "../Core/CommandLineArgs.h"
 
 
 namespace eft::stats {
