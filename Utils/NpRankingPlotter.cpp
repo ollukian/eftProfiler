@@ -41,12 +41,13 @@ void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
     const string filename = path.string();
     cout << fmt::format("[ReadValuesOneFile] read from {}", filename) << endl;
     const string extension = path.extension().string();
-    cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension)<< endl;
-    if (extension != "json") {
-        cout << fmt::format("[ReadValuesOneFile] extension of {} is [{}] => .json is required", filename, extension) << endl;
+    cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension);
+    if (extension != ".json") {
+        cout << fmt::format(" NOT [.json]") << endl;
         return;
     }
 
+    cout << " => is [.json]" << endl;
     cout << "[ReadValuesOneFile] try to open: " << filename << endl;
     ifstream ifs(filename);
     if ( ! ifs.is_open() ) {
