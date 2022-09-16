@@ -24,10 +24,12 @@ void NpRankingPlotter::ReadValues(const std::filesystem::path& path)
 
     for (const auto& entry : fs::directory_iterator{path}) {
         const auto filenameStr = entry.path().filename().string();
+        cout << filenameStr;
         if (entry.is_directory()) {
-            cout << setw(15) << filenameStr << " is a directory" << endl;
+            cout << " ==> is a directory" << endl;
         }
         else if (entry.is_regular_file()) {
+            cout << " ==> is a regular file, try to parse it" << endl;
             ReadValuesOneFile(entry);
         }
     }
@@ -37,18 +39,18 @@ void NpRankingPlotter::ReadValues(const std::filesystem::path& path)
 void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
 {
     const string filename = path.string();
-    cout << fmt::format("[ReavValueOneFile] read from {}", filename);
+    cout << fmt::format("[ReadValuesOneFile] read from {}", filename) << endl;
     const string extension = path.extension().string();
-    cout << fmt::format("[ReavValueOneFile] extension: {}", extension);
+    cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension)<< endl;
     if (extension != "json") {
-        cout << fmt::format("[ReavValueOneFile] extension: {} of {} is not .json", filename, extension);
+        cout << fmt::format("[ReadValuesOneFile] extension of {} is [{}] => .json is required", filename, extension) << endl;
         return;
     }
 
-    cout << "[ReavValueOneFile] try to open: " << filename << endl;
+    cout << "[ReadValuesOneFile] try to open: " << filename << endl;
     ifstream ifs(filename);
     if ( ! ifs.is_open() ) {
-        cout << "[ReavValueOneFile] cannot open: " << filename << endl;
+        cout << "[ReadValuesOneFile] cannot open: " << filename << endl;
         throw std::runtime_error("error opening: " + filename);
     }
 

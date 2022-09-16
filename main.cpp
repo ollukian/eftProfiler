@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
         if (res_path_opt.has_value())
             res_path = res_path_opt.value();
     }
-    cout << "[INFO] res_path: " << task << endl;
+    cout << "[INFO] res_path: " << res_path << endl;
 
 
 
