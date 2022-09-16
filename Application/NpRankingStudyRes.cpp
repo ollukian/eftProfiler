@@ -54,7 +54,7 @@ void to_json(nlohmann::json& j, const PrePostFit& s)
 
 void from_json(const nlohmann::json& j, StudyType& s)
 {
-    const std::string& s_type = j.at("StudyType");
+    const std::string& s_type = j.at("studyType");
     if      (s_type == "NOTDEF")   s = StudyType::NOTDEF;
     else if (s_type == "OBSERVED") s = StudyType::OBSERVED;
     else if (s_type == "EXPECTED") s = StudyType::EXPECTED;
@@ -65,7 +65,7 @@ void from_json(const nlohmann::json& j, StudyType& s)
 
 void from_json(const nlohmann::json& j, StatType& s)
 {
-    const std::string& s_type = j.at("StudyType");
+    const std::string& s_type = j.at("statType");
     if      (s_type == "NOTDEF")     s = StatType::NOTDEF;
     else if (s_type == "STAT")       s = StatType::STAT;
     else if (s_type == "NP_RANKING") s = StatType::NP_RANKING;
@@ -77,7 +77,7 @@ void from_json(const nlohmann::json& j, StatType& s)
 
 void from_json(const nlohmann::json& j, PrePostFit& s)
 {
-    const std::string& s_type = j.at("PrePostFit");
+    const std::string& s_type = j.at("prePostFit");
     if      (s_type == "PREFIT")     s = PrePostFit::PREFIT;
     else if (s_type == "POSTFIT")       s = PrePostFit::POSTFIT;
     else {

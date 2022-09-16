@@ -5,11 +5,14 @@
 #include "Application/FitManager.h"
 #include "Utils/NpRankingPlotter.h"
 #include "Core/CmdLineArgs.h"
+#include "Core/Logger.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
     std::cout << "Hello, World!" << std::endl;
+
+    eft::stats::Logger::Init();
 
     CmdLineArgs cmdLineArgs(argc, argv);
 
@@ -19,6 +22,7 @@ int main(int argc, char* argv[]) {
             worker_id_nb = stoi(string(workerId.value()));
     }
     cout << "[INFO] worker id: " << worker_id_nb << endl;
+    EFT_PROF_INFO("worker id: {}", worker_id_nb);
 
     string poi;
     if (auto poi_opt = cmdLineArgs.GetVal("poi"); poi_opt) {
@@ -26,6 +30,7 @@ int main(int argc, char* argv[]) {
             poi = poi_opt.value();
     }
     cout << "[INFO] poi: " << poi << endl;
+    EFT_PROF_INFO("poi: {}", poi);
 
     string task;
     if (auto task_opt = cmdLineArgs.GetVal("task"); task_opt) {
@@ -33,6 +38,7 @@ int main(int argc, char* argv[]) {
             task = task_opt.value();
     }
     cout << "[INFO] task: " << task << endl;
+    EFT_PROF_INFO("task: {}", task);
 
     string res_path;
     if (auto res_path_opt = cmdLineArgs.GetVal("res_path"); res_path_opt) {
@@ -40,7 +46,7 @@ int main(int argc, char* argv[]) {
             res_path = res_path_opt.value();
     }
     cout << "[INFO] res_path: " << res_path << endl;
-
+    EFT_PROF_INFO("res_path: {}", res_path);
 
 
     //eft::stats::WorkspaceWrapper ws;
@@ -132,6 +138,7 @@ int main(int argc, char* argv[]) {
     //manager->DoGlobalFit();
 
     if (task == "compute_ranking") {
+        EFT_PROF_INFO("Compute ranking");
         cout << "[INFO] compute ranking " << endl;
         eft::stats::NpRankingStudySettings settings;
         settings.prePostFit = eft::stats::PrePostFit::PREFIT;
@@ -141,6 +148,7 @@ int main(int argc, char* argv[]) {
         manager->ComputeNpRankingOneWorker(settings, worker_id_nb);
     }
     else if (task == "plot_ranking") {
+        EFT_PROF_INFO("plot ranking");
         cout << "[INFO] plot ranking " << endl;
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadValues(res_path);
