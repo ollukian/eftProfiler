@@ -184,6 +184,22 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
     args_["np"]->Print("v");
 }
 
+void FitManager::ExtractPOIs() noexcept
+{
+    assert(ws_ != nullptr);
+    args_["pois"] = (RooArgSet *) ws_->GetPOIs();
+    // create list of pois in string format
+    pois_.reserve(args_["pois"]->size());
+    cout << fmt::format("[FitManager] Extracted {} POIs to args[pois]", args_["pois"]->size());
+    cout << fmt::format("[FitManager] create a list of POIs in string format...");
+    for (const auto& poi : *args_["pois"]) {
+        string name = {poi->GetTitle()};
+        pois_.push_back(std::move(name));
+    }
+    cout << fmt::format("[FitManager] list of POIs in string format:");
+    for (const auto& poi : pois_) { cout << "\t" << poi << endl; }
+}
+
 //    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {
 //        for (auto& obs : *globalObservables_) {
 //            cout << " # set global obs: |" << obs->GetName() << "|";

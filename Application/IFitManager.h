@@ -52,6 +52,7 @@ public:
     virtual void ExtractNP()      noexcept = 0;
     virtual void ExtractObs()     noexcept = 0;
     virtual void ExtractGlobObs() noexcept = 0;
+    virtual void ExtractPOIs()    noexcept = 0;
     virtual void ExtractCats()    noexcept = 0;
 
     virtual void ExtractDataTotal(std::string name) = 0;
@@ -65,6 +66,8 @@ public:
 
     virtual const RooAbsData* GetData(std::string&& name) const = 0;
     virtual const RooAbsPdf*  GetPdf (std::string&& name) const = 0;
+
+    virtual const std::vector<std::string>& GetListPOIs() const noexcept= 0;
 
     virtual IWorkspaceWrapper* ws() = 0;
 

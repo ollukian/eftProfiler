@@ -3,6 +3,7 @@
 
 #include "Core/WorkspaceWrapper.h"
 #include "Application/FitManager.h"
+#include "Utils/NpRankingPlotter.h"
 #include "Core/CmdLineArgs.h"
 
 using namespace std;
@@ -14,9 +15,31 @@ int main(int argc, char* argv[]) {
 
     size_t worker_id_nb = 0;
     if (auto workerId = cmdLineArgs.GetVal("worker_id"); workerId) {
-        worker_id_nb = stoi(string(workerId.value()));
+        if (workerId.has_value())
+            worker_id_nb = stoi(string(workerId.value()));
     }
-    cout << "worker id: " << worker_id_nb << endl;
+    cout << "[INFO] worker id: " << worker_id_nb << endl;
+
+    string poi;
+    if (auto poi_opt = cmdLineArgs.GetVal("poi"); poi_opt) {
+        if (poi_opt.has_value())
+            poi = poi_opt.value();
+    }
+    cout << "[INFO] poi: " << poi << endl;
+
+    string task;
+    if (auto task_opt = cmdLineArgs.GetVal("task"); task_opt) {
+        if (task_opt.has_value())
+            task = task_opt.value();
+    }
+    cout << "[INFO] task: " << task << endl;
+
+    string res_path;
+    if (auto res_path_opt = cmdLineArgs.GetVal("res_path"); res_path_opt) {
+        if (res_path_opt.has_value())
+            res_path = res_path_opt.value();
+    }
+    cout << "[INFO] res_path: " << task << endl;
 
 
 
@@ -58,6 +81,8 @@ int main(int argc, char* argv[]) {
     manager->ExtractGlobObs();
     cout << "[INFO] extract cats" << endl;
     manager->ExtractCats();
+    cout << "[INFO] extract pois" << endl;
+    manager->ExtractPOIs();
 
     cout << "[INFO] extract pdf total" << endl;
     manager->ExtractPdfTotal("combPdf");
@@ -106,12 +131,20 @@ int main(int argc, char* argv[]) {
     //cout << "[INFO] try to fit..." << endl;
     //manager->DoGlobalFit();
 
-    eft::stats::NpRankingStudySettings settings;
-    settings.prePostFit = eft::stats::PrePostFit::PREFIT;
-    settings.studyType = eft::stats::StudyType::OBSERVED;
-    settings.poi = "mu_GG2H_0J_PTH_0_10_ZZ";
-    settings.path_to_save_res = "res.json";
-    manager->ComputeNpRankingOneWorker(settings, worker_id_nb);
+    if (task == "compute_ranking") {
+        cout << "[INFO] compute ranking " << endl;
+        eft::stats::NpRankingStudySettings settings;
+        settings.prePostFit = eft::stats::PrePostFit::PREFIT;
+        settings.studyType = eft::stats::StudyType::OBSERVED;
+        settings.poi = "mu_GG2H_0J_PTH_0_10_ZZ";
+        settings.path_to_save_res = "res.json";
+        manager->ComputeNpRankingOneWorker(settings, worker_id_nb);
+    }
+    else if (task == "plot_ranking") {
+        cout << "[INFO] plot ranking " << endl;
+        eft::plot::NpRankingPlotter plotter;
+        plotter.ReadValues(res_path);
+    }
 
     return 0;
 }

@@ -31,6 +31,7 @@ public:
     inline void ExtractNP()      noexcept override;
     inline void ExtractObs()     noexcept override;
     inline void ExtractGlobObs() noexcept override;
+           void ExtractPOIs()    noexcept override;
     inline void ExtractCats()    noexcept override;
 
     inline void ExtractDataTotal(std::string name) override;
@@ -62,11 +63,15 @@ public:
     [[nodiscard]]
     inline const RooAbsPdf*  GetPdf (std::string&& name) const override {return funcs_.at(name);}
 
+    inline const std::vector<std::string>& GetListPOIs() const noexcept override;
+
     inline IWorkspaceWrapper* ws() override { return ws_; }
 private:
     DataClosure data_{};
     FuncClosure funcs_{};
     ArgsClosure args_{};
+
+    std::vector<std::string> pois_;
 
     IWorkspaceWrapper* ws_ = nullptr;
 
@@ -113,16 +118,21 @@ inline void FitManager::ExtractNP()      noexcept
     std::cout << fmt::format("[ExtractNp] real np list:") << std::endl;
     real_np->Print("v");
     args_["np"] = real_np;
+
+    std::cout << fmt::format("[FitManager] Extracted {} np      to args[np_all]", args_["np_all"]->size());
+    std::cout << fmt::format("[FitManager] Extracted {} real np to args[np]",     args_["np"]->size());
 }
 inline void FitManager::ExtractObs() noexcept
 {
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
+    std::cout << fmt::format("[FitManager] Extracted {} obs to args[obs]", args_["obs"]->size());
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
     assert(ws_ != nullptr);
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
+    std::cout << fmt::format("[FitManager] Extracted {} globObs to args[globObs]", args_["globObs"]->size());
 }
 inline void FitManager::ExtractCats() noexcept
 {
@@ -164,6 +174,12 @@ inline void FitManager::ExtractDataTotal(std::string name)
 inline void FitManager::ExtractPdfTotal(std::string name) {
     assert(ws_ != nullptr);
     funcs_["pdf_total"] = ws_->GetCombinedPdf(name);
+}
+
+inline const std::vector<std::string>& FitManager::GetListPOIs() const noexcept
+{
+    assert(ws_ != nullptr);
+    return pois_;
 }
 
 } // eft::stats
