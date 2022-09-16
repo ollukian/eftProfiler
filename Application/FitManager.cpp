@@ -87,7 +87,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //cout << fmt::format("[ComputeNpRanging] reduced data:") << endl;
     //data_reduced->Print("");
     //auto nll = fitter.CreatNll(data, pdf, globObs);
-    auto nll = fitter.CreatNll(data, pdf, globObs, *args_["np"]);
+    auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
     cout << "[minimize it]" << endl;
     auto fitRes = fitter.Minimize(nll, pdf);
     cout << "save res..." << endl;
