@@ -155,7 +155,7 @@ optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Ke
 {
     cout << fmt::format("[CmdLine] GetVals for {} key", option);
 
-    if (keys.find(option) != keys.end()) {
+    if (keys.find(option) == keys.end()) {
         return nullopt;
     }
     return ops.at(option)[0];
