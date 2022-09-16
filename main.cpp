@@ -17,8 +17,8 @@ int main(int argc, char* argv[]) {
     CommandLineArgs commandLineArgs(argc, argv);
 
     string task;
-    if (commandLineArgs.SetValIfArgExists("res_path", task)) {
-        EFT_PROF_INFO("Set res_path: {}", task);
+    if (commandLineArgs.SetValIfArgExists("task", task)) {
+        EFT_PROF_INFO("Set task: {}", task);
     }
 
     //if (auto task_opt = commandLineArgs.GetVal("task"); task_opt) {
@@ -90,6 +90,9 @@ int main(int argc, char* argv[]) {
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadValues(res_path);
+    }
+    else {
+        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking] or [compute_ranking]", task);
     }
 
     return 0;
