@@ -11,8 +11,13 @@ namespace eft::stats {
 
 struct FitManagerConfig {
     std::string ws_path;
-    std::string ws_name;
-    std::string model_configi_name;
+    std::string ws_name {"CombWS"};
+    std::string model_config {"ModelConfig"};
+    std::string comb_pdf {"combPdf"};
+    std::string comb_data {"combData"};
+    std::string res_path {"."};
+    std::string poi {"cG"};
+    size_t worker_id {0};
 };
 
 } // stats

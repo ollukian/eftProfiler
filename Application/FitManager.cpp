@@ -12,6 +12,8 @@
 
 #include <fstream>
 #include <iomanip>
+#include "CommandLineArgs.h"
+#include "FitManagerConfig.h"
 
 using namespace std;
 
@@ -147,21 +149,29 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
     cout << "[SetAllNuissConst]" << endl;
     cout << "status before:" << endl;
 
-    args_["np"]->Print("");
+//    args_["np"]->Print("v");
+//    for (const auto& np : *args_["np"]) {
+//        const string name = {np->GetTitle()};
+//        cout << fmt::format("dealing with: {} ...", name) << endl;
+//        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
+//        if (name.substr(0, 5) == "ATLAS") {
+//            cout << fmt::format("dealing with: {} Set to const", name) << endl;
+//            dynamic_cast<RooRealVar *>(np)->setConstant(true);
+//        }
+//        else {
+//            cout << fmt::format("dealing with: {} DO NOT set to const", name) << endl;
+//        }
+//    }
+
+    args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        cout << fmt::format("dealing with: {} ...", name) << endl;
-        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
-        if (name.substr(0, 5) == "ATLAS") {
-            cout << fmt::format("dealing with: {} Set to const", name) << endl;
-            dynamic_cast<RooRealVar *>(np)->setConstant(true);
-        }
-        else {
-            cout << fmt::format("dealing with: {} DO NOT set to const", name) << endl;
-        }
+        cout << fmt::format("Set {} to const", name) << endl;
+        dynamic_cast<RooRealVar *>(np)->setConstant(true);
     }
+
     cout << "status after:" << endl;
-    args_["np"]->Print("");
+    args_["np"]->Print("v");
 }
 
 void FitManager::SetAllNuisanceParamsFloat() noexcept {
@@ -172,19 +182,27 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
     cout << "[SetAllNuissFloat]" << endl;
     cout << "status before:" << endl;
 
-    args_["np"]->Print("");
+//    args_["np"]->Print("");
+//    for (const auto& np : *args_["np"]) {
+//        const string name = {np->GetTitle()};
+//        cout << fmt::format("dealing with: {} ...", name) << endl;
+//        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
+//        if (name.substr(0, 5) == "ATLAS") {
+//            cout << fmt::format("dealing with: {:40} OK", name) << endl;
+//            dynamic_cast<RooRealVar *>(np)->setConstant(false);
+//        }
+//        else {
+//            cout << fmt::format("dealing with: {:40} DO NOT set to float", name) << endl;
+//        }
+//    }
+
+    args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        cout << fmt::format("dealing with: {} ...", name) << endl;
-        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
-        if (name.substr(0, 5) == "ATLAS") {
-            cout << fmt::format("dealing with: {:40} OK", name) << endl;
-            dynamic_cast<RooRealVar *>(np)->setConstant(false);
-        }
-        else {
-            cout << fmt::format("dealing with: {:40} DO NOT set to float", name) << endl;
-        }
+        cout << fmt::format("Set {} to const", name) << endl;
+        dynamic_cast<RooRealVar *>(np)->setConstant(false);
     }
+
     cout << "status after:" << endl;
     args_["np"]->Print("");
 }
@@ -207,13 +225,13 @@ void FitManager::ExtractPOIs() noexcept
 
 void FitManager::Init(FitManagerConfig&& config)
 {
-    EFT_PROF_INFO("[FitManager] init from config: path to ws: {}, name: {},modelConfig: {}",
-                  config.ws_path, config.ws_name, config.model_configi_name);
+    EFT_PROF_INFO("[FitManager] init from config: path to ws: {}, name: {},model_config: {}",
+                  config.ws_path, config.ws_name, config.model_config);
     SetWsWrapper();
     SetWS(std::move(config.ws_path),
           std::move(config.ws_name)
           );
-    SetModelConfig(std::move(config.model_configi_name));
+    SetModelConfig(std::move(config.model_config));
 
     ExtractNP();
     cout << "[INFO] extract obs" << endl;
@@ -268,6 +286,51 @@ void FitManager::Init(FitManagerConfig&& config)
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setfill(' ');
+}
+
+void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept
+{
+    EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
+
+#ifndef EFT_SET_VAL_IF_EXISTS
+#define EFT_SET_VAL_IF_EXISTS(args, config, param)        \
+    if (args.SetValIfArgExists(#param, config.param)) { \
+        EFT_PROF_INFO("Set param: {}", config.param);     \
+     }
+
+#endif
+
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, res_path);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, worker_id);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ws_path);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ws_name);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, model_config);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_pdf);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
+
+
+#undef EFT_SET_VAL_IF_EXISTS
+
+//    if (commandLineArgs.SetValIfArgExists("res_path", config.res_path)) {
+//        EFT_PROF_INFO("Set res_path: {}", config.res_path);
+//    }
+//
+//    if (commandLineArgs.SetValIfArgExists("worker_id", config.worker_id)) {
+//        EFT_PROF_INFO("Set worker_id: {}", config.res_path);
+//    }
+//
+//    if (commandLineArgs.SetValIfArgExists("poi", config.poi)) {
+//        EFT_PROF_INFO("Set poi: {}", config.poi);
+//    }
+//
+//    if (commandLineArgs.SetValIfArgExists("ws_path", config.ws_path)) {
+//        EFT_PROF_INFO("Set ws_path: {}", config.ws_path);
+//    }
+//
+//    if (commandLineArgs.SetValIfArgExists("ws_name", config.ws_name)) {
+//        EFT_PROF_INFO("Set ws_name: {}", config.ws_name);
+//    }
 }
 
 //    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {

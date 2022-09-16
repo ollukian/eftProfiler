@@ -5,11 +5,13 @@
 #ifndef EFTPROFILER_FITMANAGER_H
 #define EFTPROFILER_FITMANAGER_H
 
+#include <CommandLineArgs.h>
 #include "IFitManager.h"
 #include "FitManagerConfig.h"
 #include "WorkspaceWrapper.h"
 
 #include "../Core/Logger.h"
+#include "Core/CommandLineArgs.h"
 
 
 namespace eft::stats {
@@ -21,6 +23,7 @@ public:
     ~FitManager() noexcept override = default;
 
     void Init(FitManagerConfig&& config);
+    static void ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept;
 
     void DoGlobalFit() override;
     void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) override;
@@ -105,25 +108,33 @@ inline void FitManager::SetCatsNames(std::string name) const noexcept
 };
 inline void FitManager::ExtractNP()      noexcept
 {
+
     assert(ws_ != nullptr);
     args_["np_all"] = (RooArgSet *) ws_->GetNp();
-    auto* real_np = new RooArgSet();
-    //std::cout << fmt::format("[ExtractNp] check for real np") << std::endl;
-    for (const auto& np : *args_["np_all"]) {
-        const std::string name = {np->GetTitle()};
-        //std::cout << fmt::format("[ExtractNp]dealing with: {:40} ...", name) << std::endl;
-        if (name.substr(0, 5) == "ATLAS") {
-            //std::cout << fmt::format("[ExtractNp] dealing with: {:40} OK Add it", name) << std::endl;
-            real_np->add(*np);
-            //dynamic_cast<RooRealVar *>(np)->setConstant(false);
-        }
-        else {
-            //std::cout << fmt::format("dealing with: {:40} DO NOT add it", name) << std::endl;
-        }
+    args_["np"]     = (RooArgSet *) ws_->GetNp();
+    EFT_PROF_DEBUG("Extracted NP:");
+    for (const auto& np : *args_["np"]) {
+        np->Print();
     }
+//    assert(ws_ != nullptr);
+//    args_["np_all"] = (RooArgSet *) ws_->GetNp();
+//    auto* real_np = new RooArgSet();
+//    //std::cout << fmt::format("[ExtractNp] check for real np") << std::endl;
+//    for (const auto& np : *args_["np_all"]) {
+//        const std::string name = {np->GetTitle()};
+//        //std::cout << fmt::format("[ExtractNp]dealing with: {:40} ...", name) << std::endl;
+//        if (name.substr(0, 5) == "ATLAS") {
+//            //std::cout << fmt::format("[ExtractNp] dealing with: {:40} OK Add it", name) << std::endl;
+//            real_np->add(*np);
+//            //dynamic_cast<RooRealVar *>(np)->setConstant(false);
+//        }
+//        else {
+//            //std::cout << fmt::format("dealing with: {:40} DO NOT add it", name) << std::endl;
+//        }
+//    }
     //std::cout << fmt::format("[ExtractNp] real np list:") << std::endl;
     //real_np->Print("v");
-    args_["np"] = real_np;
+    //args_["np"] = real_np;
 
     EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]", args_["np_all"]->size());
     EFT_PROF_INFO("[FitManager] Extracted {} real_np to args[np]",     args_["np"]->size());
