@@ -102,7 +102,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     nlohmann::json j;
     j = res;
 
-    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_{}_worker_{}.json", res.np_name, workerId);
+    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_{}_{}_worker_{}.json",
+                                    res.poi_name,
+                                    res.np_name,
+                                    workerId);
 
     ofstream f_res;
     f_res.exceptions(ofstream::failbit | ofstream::badbit);
@@ -231,37 +234,37 @@ void FitManager::Init(FitManagerConfig&& config)
     cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("globObs")->Print("V");
+    GetArgsClosure().at("globObs")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " obs: " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("obs")->Print("V");
+    GetArgsClosure().at("obs")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " All Np " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("np_all")->Print("V");
+    GetArgsClosure().at("np_all")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " real Np " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("np")->Print("V");
+    GetArgsClosure().at("np")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetDataClosure().at("ds_total")->Print("V");
+    GetDataClosure().at("ds_total")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetFuncClosure().at("pdf_total")->Print("V");
+    GetFuncClosure().at("pdf_total")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setfill(' ');
