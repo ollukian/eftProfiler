@@ -147,7 +147,7 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
     cout << "[SetAllNuissConst]" << endl;
     cout << "status before:" << endl;
 
-    args_["np"]->Print("v");
+    args_["np"]->Print("");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
         cout << fmt::format("dealing with: {} ...", name) << endl;
@@ -161,7 +161,7 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
         }
     }
     cout << "status after:" << endl;
-    args_["np"]->Print("v");
+    args_["np"]->Print("");
 }
 
 void FitManager::SetAllNuisanceParamsFloat() noexcept {
@@ -172,7 +172,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
     cout << "[SetAllNuissFloat]" << endl;
     cout << "status before:" << endl;
 
-    args_["np"]->Print("v");
+    args_["np"]->Print("");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
         cout << fmt::format("dealing with: {} ...", name) << endl;
@@ -186,7 +186,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
         }
     }
     cout << "status after:" << endl;
-    args_["np"]->Print("v");
+    args_["np"]->Print("");
 }
 
 void FitManager::ExtractPOIs() noexcept
@@ -234,31 +234,31 @@ void FitManager::Init(FitManagerConfig&& config)
     cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("globObs")->Print("v");
+    GetArgsClosure().at("globObs")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " obs: " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("obs")->Print("v");
+    GetArgsClosure().at("obs")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " All Np " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("np_all")->Print("v");
+    GetArgsClosure().at("np_all")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " real Np " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetArgsClosure().at("np")->Print("v");
+    GetArgsClosure().at("np")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetDataClosure().at("ds_total")->Print("v");
+    GetDataClosure().at("ds_total")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
