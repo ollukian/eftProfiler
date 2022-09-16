@@ -25,6 +25,7 @@ void FitManager::DoGlobalFit()
     auto* pdf = funcs_["pdf_total"];
     auto* ds = data_["ds_total"];
     auto* globObs = (args_["globObs"]);
+    auto* np = (args_["np"]);
 
     cout << "print pdf:" << endl;
     pdf->Print("V");
@@ -38,7 +39,7 @@ void FitManager::DoGlobalFit()
     cout << "[create nll]" << endl;
 
     fit::Fitter fitter;
-    auto nll = fitter.CreatNll(ds, pdf, globObs);
+    auto nll = fitter.CreatNll(ds, pdf, globObs, np);
     cout << "[minimize it]" << endl;
     auto res = fitter.Minimize(nll, pdf);
     cout << "[minimisation done]" << endl;
