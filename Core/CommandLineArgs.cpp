@@ -2,7 +2,7 @@
 // Created by Aleksei Lukianchuk on 15-Sep-22.
 //
 
-#include "CmdLineArgs.h"
+#include "CommandLineArgs.h"
 #include <iostream>
 #include <iomanip>
 #include <spdlog/fmt/bundled/format.h>
@@ -10,18 +10,18 @@
 
 using namespace std;
 
-CmdLineArgs::CmdLineArgs(int argc, char **argv) {
+CommandLineArgs::CommandLineArgs(int argc, char **argv) {
 
     if (argc < 2) {
-        cout << fmt::format("[CmdLineArgs] no input args") << endl;
+        cout << fmt::format("[CommandLineArgs] no input args") << endl;
         return;
     }
 
-    cout << fmt::format("[CmdLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
+    cout << fmt::format("[CommandLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
     ParseInput(argc, argv);
 }
 
-bool CmdLineArgs::ParseInput(int argc, char* argv[])
+bool CommandLineArgs::ParseInput(int argc, char* argv[])
 {
     vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
@@ -108,8 +108,8 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
     return true;
 }
 
-//std::pair<CmdLineArgs::Key, CmdLineArgs::Vals>
-//CmdLineArgs::ExtractVals(std::string_view raw) noexcept
+//std::pair<CommandLineArgs::Key, CommandLineArgs::Vals>
+//CommandLineArgs::ExtractVals(std::string_view raw) noexcept
 //{
 //    cout << "extact vals from: " << raw << endl;
 //
@@ -140,7 +140,7 @@ bool CmdLineArgs::ParseInput(int argc, char* argv[])
 //    //return make_pair(key, std::move(vals));
 //}
 
-optional<CmdLineArgs::Vals> CmdLineArgs::GetVals(CmdLineArgs::Key&& option) const
+optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(CommandLineArgs::Key&& option) const
 {
     cout << fmt::format("[CmdLine] GetVals for {} key", option);
 
@@ -151,12 +151,11 @@ optional<CmdLineArgs::Vals> CmdLineArgs::GetVals(CmdLineArgs::Key&& option) cons
     return ops.at(option);
 }
 
-optional<CmdLineArgs::Val> CmdLineArgs::GetVal(CmdLineArgs::Key&& option) const
+optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
     cout << fmt::format("[CmdLine] GetVals for {} key", option);
 
     if (keys.find(option) != keys.end()) {
-    //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
     }
     return ops.at(option)[0];
