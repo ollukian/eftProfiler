@@ -11,6 +11,7 @@
 #include "RooMinimizer.h"
 #include "TStopwatch.h"
 #include "Math/CholeskyDecomp.h"
+#include "../Core/Logger.h"
 
 using namespace std;
 
@@ -23,7 +24,8 @@ RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* global
                                     RooFit::CloneData(false),
             //IntegrateBins(_samplingRelTol),
                                     RooFit::GlobalObservables(*globalObs),
-                                    RooFit::Constrain(*np) // try with this line
+                                    RooFit::Constrain(*np)  , // try with this line
+                                    RooFit::Timer(true) // try this line
             //ConditionalObservables(),
             //ExternalConstraints(*_externalConstraint)
     );
@@ -47,10 +49,12 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     //if (_printLevel < 0)
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
-    minim.setEps( 1E-03 / 0.001 );
-    cout << "[Minimizer] set EPS to 1E-6" << endl;
+    EFT_PROF_WARN("[minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
+    minim.setEps(1E-5);
+    ///minim.setEps( 1E-03 / 0.001 );
+    //cout << "[Minimizer] set EPS to 1E-6" << endl;
     minim.setOffsetting( true );
-    cout << "[Minimizer] set offsetting true" << endl;
+    EFT_PROF_DEBUG("[Minimizer] allow offseting");
     //if (_optConst > 0) minim.optimizeConst( _optConst );
     minim.optimizeConst( 2 );
     cout << "[Minimizer] set optimize constant 2" << endl;
@@ -154,6 +158,14 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     auto result = make_unique<RooFitResult>(
             *minim.save("fitResult","Fit Results")
             );
+
+    EFT_PROF_INFO("[Minimizer] fit is finished. Fit results:");
+    result->Print("v");
+    EFT_PROF_INFO("[Minimizer] covariance:");
+    result->covarianceMatrix().Print("v");
+    EFT_PROF_INFO("[Minimizer] correlation:");
+    result->correlationMatrix().Print("v");
+
     //result.reset(minim.save("fitResult","Fit Results"));
 
     return result;
