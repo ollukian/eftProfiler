@@ -63,40 +63,49 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         data = data_["ds_total"];
     }
 
+    EFT_PROF_INFO("[ComputeNpRanging] compute free fit values and errors on all nps");
+    fit::Fitter fitter;
+    {
+        EFT_PROF_INFO("[ComputeNpRanging] create Nll for free fit");
+        auto nll = fitter.CreatNll(data, pdf, globObs, args_[ "np" ]);
+        EFT_PROF_INFO("[ComputeNpRanging] create Nll for free fit DONE");
+        EFT_PROF_INFO("[ComputeNpRanging] print nps before fit:");
+        args_["np"]->Print("v");
+        EFT_PROF_INFO("[ComputeNpRanging] minimize nll");
+        auto fitRes = fitter.Minimize(nll, pdf);
+        EFT_PROF_INFO("[ComputeNpRanging] print nps after fit:");
+        args_["np"]->Print("v");
+    }
+
     NpRankingStudyRes res;
     res.poi_name = settings.poi;
     res.statType = settings.statType;
     res.studyType = settings.studyType;
     res.np_name = args_["np"]->operator[](workerId)->GetName();
-    cout << fmt::format("[ComputeNpRanging] worker: {}, identified name of np: {}",
-                        workerId, res.np_name) << endl;
+    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, identified name of np: {}",
+                        workerId, res.np_name);
 
-    cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float...", workerId) << endl;
+    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, set all np float...", workerId);
     SetAllNuisanceParamsFloat();
-    cout << fmt::format("[ComputeNpRanging] worker: {}, set all np float DONE", workerId) << endl;
-    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix np: {} const", workerId, res.np_name) << endl;
+    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, set all np float DONE", workerId);
+    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, Fix np: {} const", workerId, res.np_name);
     ws_->FixValConst(res.np_name);
-    cout << fmt::format("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, res.np_name) << endl;
+    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanging] create nll with {} fixed...", res.np_name);
 
-    cout << fmt::format("[ComputeNpRanging] create nll...") << endl;
-
-    fit::Fitter fitter;
-    //cout << fmt::format("[ComputeNpRanging] reduce data...");
-    //auto data_reduced = data->reduce(RooFit::EventRange(0, 100000),
-                                     //RooFit::Name("reduced_data_"));
-
-    //cout << fmt::format("[ComputeNpRanging] reduced data:") << endl;
-    //data_reduced->Print("");
-    //auto nll = fitter.CreatNll(data, pdf, globObs);
     auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
-    cout << "[minimize it]" << endl;
+    EFT_PROF_INFO("[ComputeNpRanging] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
-    cout << "save res..." << endl;
+    EFT_PROF_INFO("[ComputeNpRanging] minimization nll with {} fixed is DONE", res.np_name);
     res.poi_err = ws_->GetParErr(res.poi_name);
     res.poi_val = ws_->GetParVal(res.poi_name);
     res.nll     = nll->getVal();
     res.np_err  = ws_->GetParErr(res.np_name);
     res.np_val  = ws_->GetParVal(res.np_name);
+
+    res.statType = StatType::NP_RANKING;
+    res.prePostFit = PrePostFit::POSTFIT;
+    res.studyType = StudyType::OBSERVED;
 
 //#ifndef EFT_STRUCT_TO_JSON
 //#define EFT_STRUCT_TO_JSON(j, res, field) j[#field] = res.field;
@@ -200,7 +209,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
     args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        cout << fmt::format("Set {} to const", name) << endl;
+        cout << fmt::format("Set {} to float", name) << endl;
         dynamic_cast<RooRealVar *>(np)->setConstant(false);
     }
 
