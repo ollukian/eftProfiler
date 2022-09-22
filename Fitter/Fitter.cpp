@@ -51,7 +51,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
     EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
-    minim.setEps(1E-5);
+    minim.setEps(1E-5 / 0.0001);
     ///minim.setEps( 1E-03 / 0.001 );
     //cout << "[Minimizer] set EPS to 1E-6" << endl;
     minim.setOffsetting( true );
@@ -162,11 +162,11 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
             );
 
     EFT_PROF_INFO("[Minimizer] fit is finished. Fit results:");
-    result->Print("v");
-    EFT_PROF_INFO("[Minimizer] covariance:");
-    result->covarianceMatrix().Print("v");
-    EFT_PROF_INFO("[Minimizer] correlation:");
-    result->correlationMatrix().Print("v");
+    //result->Print("v");
+    //EFT_PROF_INFO("[Minimizer] covariance:");
+    //result->covarianceMatrix().Print("v");
+    //EFT_PROF_INFO("[Minimizer] correlation:");
+    //result->correlationMatrix().Print("v");
 
     //result.reset(minim.save("fitResult","Fit Results"));
 
