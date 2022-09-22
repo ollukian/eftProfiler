@@ -29,12 +29,12 @@ namespace eft::stats {
         logSinks[0]->set_pattern("%^[%T] %n: %v%$"); // in console
         logSinks[1]->set_pattern("[%T] [%l] %n: %v"); // out
 
-        logSinks[0]->set_level(spdlog::level::debug);
-        logSinks[1]->set_level(spdlog::level::trace);
+        //logSinks[0]->set_level(spdlog::level::debug);
+        //logSinks[1]->set_level(spdlog::level::trace);
 
         logger_ = std::make_shared<spdlog::logger>("eft_profiler", begin(logSinks), end(logSinks));
         spdlog::register_logger(logger_);
-        //logger_->set_level(spdlog::level::trace);
+        logger_->set_level(spdlog::level::trace);
         logger_->flush_on(spdlog::level::trace);
     }
 
