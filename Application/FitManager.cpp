@@ -156,8 +156,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     res.studyType = StudyType::NOTDEF;
     res.prePostFit = PrePostFit::PREFIT;
 
-    //EFT_PROF_INFO("[DoFitAllNpFloat], set all POIs const");
-    //SetAllPOIsConst();
+    EFT_PROF_INFO("[DoFitAllNpFloat], set all POIs const");
+    SetAllPOIsConst();
     EFT_PROF_INFO("[DoFitAllNpFloat], float single POI: {}", res.poi_name);
     ws_->FloatVal(res.poi_name);
 
