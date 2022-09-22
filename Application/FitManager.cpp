@@ -78,7 +78,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
 
-    EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
+    fit::Fitter fitter;
+
+    /*EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
     fit::Fitter fitter;
     {
         EFT_PROF_INFO("[ComputeNpRanking] create Nll for free fit");
@@ -89,7 +91,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         auto fitRes = fitter.Minimize(nll, pdf);
         EFT_PROF_INFO("[ComputeNpRanking] print nps after free fit:");
         args_["np"]->Print("v");
-    }
+    }*/
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} const", workerId, res.np_name);
     ws_->FixValConst(res.np_name);
