@@ -51,18 +51,18 @@ void FitManager::DoGlobalFit()
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
-    //SetUpGlobObs(settings.prePostFit);
-    //RooAbsData& data =  *data_["ds_total"];
+    SetUpGlobObs(settings.prePostFit);
+    RooAbsData& data =  *data_["ds_total"];
     assert(data_["ds_total"]);
-    RooAbsData* data =  data_["ds_total"];
+    //RooAbsData* data =  data_["ds_total"];
     //RooAbsData& data = GetData(settings.prePostFit);
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
 
-    EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] glob obs before fit:");
-    data_["globObs"]->Print("v");
-    EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] data    before fit:");
-    data->Print("v");
+    //EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] glob obs before fit:");
+    //data_["globObs"]->Print("v");
+    //EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] data    before fit:");
+    data.Print("v");
 
    // data = &GetData(settings.prePostFit);
 
@@ -110,7 +110,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws_->FixValConst(res.np_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
-    auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
+    auto nll = fitter.CreatNll(&data, pdf, globObs, args_["np"]);
     EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);

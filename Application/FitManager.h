@@ -225,6 +225,7 @@ inline void FitManager::SetAllGlobObsConst() noexcept
     EFT_PROF_TRACE("[FitManager]{SetAllGlobObsConst}");
     for (const auto& globObs : *args_["globObs"]) {
         const std::string name = {globObs->GetTitle()};
+        EFT_PROF_DEBUG("[FitManager] set {} const", name);
         dynamic_cast<RooRealVar *>(globObs)->setConstant(true);
     }
 }
@@ -233,6 +234,7 @@ inline void FitManager::SetAllGlobObsFloat() noexcept
     EFT_PROF_TRACE("[FitManager]{SetAllGlobObsFloat}");
     for (const auto& globObs : *args_["globObs"]) {
         const std::string name = {globObs->GetTitle()};
+        EFT_PROF_DEBUG("[FitManager] set {} float", name);
         dynamic_cast<RooRealVar *>(globObs)->setConstant(false);
     }
 }
@@ -267,11 +269,11 @@ inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
 {
     EFT_PROF_TRACE("[FitManager]{SetUpGlobObs}");
     if (studyType == PrePostFit::POSTFIT) {
-        EFT_PROF_DEBUG("[FitManager]{SetUpGlobObs} for POSTFIT");
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} for POSTFIT ==> fix glob obs to const, not modify the value");
         SetAllGlobObsConst();
     }
     else {
-        EFT_PROF_DEBUG("[FitManager]{SetUpGlobObs} for OBSERVED or PREFIT");
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} for OBSERVED or PREFIT ==> fix glob obs to 0 (const)");
         SetAllGlobObsTo(0);
     }
     SetAllGlobObsConst();
