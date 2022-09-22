@@ -10,11 +10,13 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+
+    eft::stats::Logger::Init();
     CommandLineArgs commandLineArgs(argc, argv);
 
-    size_t worker_id {0};
-    commandLineArgs.SetValIfArgExists("worker_id", worker_id);
-    eft::stats::Logger::Init(worker_id);
+    //size_t worker_id {0};
+    //commandLineArgs.SetValIfArgExists("worker_id", worker_id);
+    //eft::stats::Logger::Init(worker_id);
 
     string task;
     if (commandLineArgs.SetValIfArgExists("task", task)) {
@@ -39,7 +41,7 @@ int main(int argc, char* argv[]) {
         settings.poi = config.poi;
         settings.path_to_save_res = "res.json";
 
-        //auto worker_id = config.worker_id;
+        auto worker_id = config.worker_id;
 
         manager->Init(std::move(config));
         manager->ComputeNpRankingOneWorker(settings, worker_id);

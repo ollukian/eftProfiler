@@ -307,9 +307,9 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
 
 #ifndef EFT_SET_VAL_IF_EXISTS
-#define EFT_SET_VAL_IF_EXISTS(args, config, param)        \
-    if (args.SetValIfArgExists(#param, config.param)) { \
-        EFT_PROF_INFO("[FitManager] Set param: {}", config.param);     \
+#define EFT_SET_VAL_IF_EXISTS(args, config, param)                                  \
+    if (args.SetValIfArgExists(#param, config.param)) {                             \
+        EFT_PROF_INFO("[FitManager] Set param: {:15} to {}", #param, config.param); \
      }
 
 #endif
