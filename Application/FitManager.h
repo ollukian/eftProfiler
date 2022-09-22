@@ -247,13 +247,13 @@ inline void FitManager::SetAllGlobObsFloat() noexcept
 }
 inline void FitManager::SetAllGlobObsTo(float val) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]{SetAllGlobObsTo} {}", val);
+    EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {}", val);
     for (const auto& globObs : *args_["globObs"]) {
         const std::string name = {globObs->GetTitle()};
-        EFT_PROF_DEBUG("[FitManager]{SetAllGlobObsTo} val before: {}",
+        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] val before: {}",
                        dynamic_cast<RooRealVar *>(globObs)->getVal());
         dynamic_cast<RooRealVar *>(globObs)->setVal(val);
-        EFT_PROF_DEBUG("[FitManager] {SetAllGlobObsTo}, status after: {} +- {}  (const? ==> {})", name,
+        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo], status after: {} +- {}  (const? ==> {})", name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
                        dynamic_cast<RooRealVar *>(globObs)->getError(),
                        dynamic_cast<RooRealVar *>(globObs)->isConstant());
