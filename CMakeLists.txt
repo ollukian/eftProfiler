@@ -17,7 +17,7 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     else()
         add_compile_options(-Wall -Wextra -pedantic -Werror -Wformat=2 -Wformat-truncation
                 -fstack-usage
-                -ffunction-sections -fdata-sections --gc-sections --print-gc-sections
+                -ffunction-sections -fdata-sections --print-gc-sections
                 )
     endif()
 endif()
