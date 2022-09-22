@@ -273,6 +273,7 @@ inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
         SetAllGlobObsConst();
     }
     else {
+        EFT_PROF_DEBUG("[FitManager]{SetUpGlobObs} for OBSERVED or PREFIT");
         SetAllGlobObsTo(0);
     }
     SetAllGlobObsConst();

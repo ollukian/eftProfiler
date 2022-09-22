@@ -242,21 +242,21 @@ void FitManager::Init(FitManagerConfig&& config)
     SetModelConfig(std::move(config.model_config));
 
     ExtractNP();
-    cout << "[INFO] extract obs" << endl;
+    //cout << "[INFO] extract obs" << endl;
     ExtractObs();
-    cout << "[INFO] extract global obs" << endl;
+    //cout << "[INFO] extract global obs" << endl;
     ExtractGlobObs();
-    cout << "[INFO] extract cats" << endl;
+    //cout << "[INFO] extract cats" << endl;
     ExtractCats();
-    cout << "[INFO] extract pois" << endl;
+    //cout << "[INFO] extract pois" << endl;
     ExtractPOIs();
 
-    cout << "[INFO] extract pdf total" << endl;
+    //cout << "[INFO] extract pdf total" << endl;
     ExtractPdfTotal("combPdf");
-    cout << "[INFO] extract data total" << endl;
+    //cout << "[INFO] extract data total" << endl;
     ExtractDataTotal("combData");
 
-    cout << setfill('*') << setw(45) << "" << endl;
+    /*cout << setfill('*') << setw(45) << "" << endl;
     cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
@@ -293,7 +293,7 @@ void FitManager::Init(FitManagerConfig&& config)
     GetFuncClosure().at("pdf_total")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
-    cout << setfill(' ');
+    cout << setfill(' ');*/
 }
 
 void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept
