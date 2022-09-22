@@ -241,19 +241,20 @@ void FitManager::Init(FitManagerConfig&& config)
           );
     SetModelConfig(std::move(config.model_config));
 
+    EFT_PROF_INFO("[FitManager] extract NPs");
     ExtractNP();
-    //cout << "[INFO] extract obs" << endl;
+    EFT_PROF_INFO("[FitManager] extract obs");
     ExtractObs();
-    //cout << "[INFO] extract global obs" << endl;
+    EFT_PROF_INFO("[FitManager] extract global obs");
     ExtractGlobObs();
-    //cout << "[INFO] extract cats" << endl;
+    EFT_PROF_INFO("[FitManager] extract cats");
     ExtractCats();
-    //cout << "[INFO] extract pois" << endl;
+    EFT_PROF_INFO("[FitManager] extract POIs");
     ExtractPOIs();
 
-    //cout << "[INFO] extract pdf total" << endl;
+    EFT_PROF_INFO("[FitManager] extract pdf total: {}", config.comb_pdf);
     ExtractPdfTotal("combPdf");
-    //cout << "[INFO] extract data total" << endl;
+    EFT_PROF_INFO("[FitManager] extract data total: {}", config.comb_data);
     ExtractDataTotal("combData");
 
     /*cout << setfill('*') << setw(45) << "" << endl;
