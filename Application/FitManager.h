@@ -27,6 +27,7 @@ public:
 
     void DoGlobalFit() override;
     void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) override;
+    void DoFitAllNpFloat(NpRankingStudySettings settings) override;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;

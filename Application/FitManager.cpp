@@ -52,20 +52,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 {
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     SetUpGlobObs(settings.prePostFit);
-    //RooAbsData& data =  *data_["ds_total"];
-    //assert(data_["ds_total"]);
-    //RooAbsData* data =  data_["ds_total"];
     RooAbsData& data = GetData(settings.prePostFit);
     //auto pdf = GetPdf("pdf_total");
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
-
-    //EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] glob obs before fit:");
-    //data_["globObs"]->Print("v");
-    //EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] data    before fit:");
-    data.Print("v");
-
-   // data = &GetData(settings.prePostFit);
 
     /*if (settings.studyType == StudyType::EXPECTED) {
         assert(data_["asimov_full"]);
@@ -125,11 +115,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
 
-
-//#ifndef EFT_STRUCT_TO_JSON
-//#define EFT_STRUCT_TO_JSON(j, res, field) j[#field] = res.field;
-//#endif
-
     nlohmann::json j;
     j = res;
 
@@ -137,6 +122,68 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                                     res.poi_name,
                                     res.np_name,
                                     workerId);
+
+    ofstream f_res;
+    f_res.exceptions(ofstream::failbit | ofstream::badbit);
+
+    try {
+        f_res.open(name);
+        f_res << setw(4) << j << endl;
+        cout << "duplicate to the console:" << endl;
+        cout << setw(4) << j << endl;
+    }
+    catch (...) {
+        cout << "impossible to open: " << name << endl;
+        cout << "print to console:" << endl;
+        cout << setw(4) << j << endl;
+    }
+}
+
+void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
+{
+    EFT_PROF_TRACE("[DoFitAllNpFloat]");
+    SetAllGlobObsTo(0); // to find values for np preferred by data
+    SetAllNuisanceParamsFloat();
+    RooAbsData* data = data_["ds_total"];
+    RooAbsPdf*  pdf = funcs_["pdf_total"];
+    auto* globObs = (args_["globObs"]);
+
+    NpRankingStudyRes res;
+    res.poi_name = settings.poi;
+    res.statType = StatType::FULL;
+    res.studyType = StudyType::NOTDEF;
+    res.prePostFit = PrePostFit::PREFIT;
+
+    EFT_PROF_INFO("[DoFitAllNpFloat], set all POIs const");
+    SetAllPOIsConst();
+    EFT_PROF_INFO("[DoFitAllNpFloat], float single POI: {}", res.poi_name);
+    ws_->FloatVal(res.poi_name);
+
+    fit::Fitter fitter;
+
+    EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
+    EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
+    auto nll = fitter.CreatNll(data, pdf, globObs, args_[ "np" ]);
+    EFT_PROF_INFO("[DoFitAllNpFloat] print nps before free fit:");
+    args_["np"]->Print("v");
+    EFT_PROF_INFO("[DoFitAllNpFloat] minimize nll for free fit");
+    auto fitRes = fitter.Minimize(nll, pdf);
+    EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
+    args_["np"]->Print("v");
+
+    res.poi_err = ws_->GetParErr(res.poi_name);
+    res.poi_val = ws_->GetParVal(res.poi_name);
+    res.nll     = nll->getVal();
+
+    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
+    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
+
+    nlohmann::json j;
+    j = res;
+
+    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_no_constrains__{}_{}.json",
+                                    res.poi_name,
+                                    res.np_name);
 
     ofstream f_res;
     f_res.exceptions(ofstream::failbit | ofstream::badbit);

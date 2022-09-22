@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 
         manager->Init(std::move(config));
         EFT_PROF_WARN("try start compute one worker");
-        manager->ComputeNpRankingOneWorker(settings, worker_id);
+        manager->ComputeNpRankingOneWorker(std::move(settings), worker_id);
     }
     else if (task == "plot_ranking") {
         string res_path;
@@ -68,6 +68,25 @@ int main(int argc, char* argv[]) {
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadValues(res_path);
+    }
+    else if (task == "compute_unconstrained") {
+        EFT_PROF_INFO("Compute Unconstrained fit");
+
+        auto* manager = new eft::stats::FitManager();
+        eft::stats::FitManagerConfig config;
+
+        config.ws_name = "combWS";
+        config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
+        config.model_config = "ModelConfig";
+
+        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+
+        eft::stats::NpRankingStudySettings settings;
+
+        settings.poi = config.poi;
+        manager->Init(std::move(config));
+        EFT_PROF_WARN("try start compute one worker");
+        manager->DoFitAllNpFloat(std::move(settings));
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking] or [compute_ranking]", task);
