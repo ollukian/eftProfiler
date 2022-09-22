@@ -143,7 +143,9 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetAllGlobObsTo(0); // to find values for np preferred by data
+    EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     SetAllNuisanceParamsFloat();
+    EFT_PROF_INFO("[DoFitAllNpFloat] all nuisance parameters let to float");
     RooAbsData* data = data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
