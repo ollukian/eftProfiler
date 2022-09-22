@@ -16,6 +16,7 @@
 #include "RooAbsReal.h"
 
 #include "IWorkspaceWrapper.h"
+#include "NpRankingStudyRes.h"
 //#include "FitManagerConfig.h"
 //#include "NpRankingStudyRes.h"
 
@@ -59,7 +60,10 @@ public:
     virtual void ExtractDataTotal(std::string name) = 0;
     virtual void ExtractPdfTotal(std::string name)  = 0;
 
-    virtual void CreateAsimovData() noexcept = 0;
+    virtual RooAbsData& GetData(PrePostFit studyType) = 0;
+    virtual void        SetUpGlobObs(PrePostFit studyType) = 0;
+
+    virtual void CreateAsimovData(PrePostFit studyType) noexcept = 0;
 
     virtual const DataClosure& GetDataClosure() const noexcept = 0;
     virtual const ArgsClosure& GetArgsClosure() const noexcept = 0;
@@ -79,6 +83,10 @@ public:
 
     virtual void SetAllPOIsConst() noexcept = 0;
     virtual void SetAllPOIsFloat() noexcept = 0;
+
+    virtual void SetAllGlobObsConst() noexcept = 0;
+    virtual void SetAllGlobObsFloat() noexcept = 0;
+    virtual void SetAllGlobObsTo(float val) noexcept = 0;
 
 
 //private:

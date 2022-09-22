@@ -55,12 +55,14 @@ public:
     void SetAllPOIsConst() noexcept override;
     void SetAllPOIsFloat() noexcept override;
 
+    inline void SetAllGlobObsConst() noexcept override;
+    inline void SetAllGlobObsFloat() noexcept override;
+    inline void SetAllGlobObsTo(float val) noexcept override;
 
+    void CreateAsimovData(PrePostFit studyType) noexcept override;
 
-    //TODO: imlement: create asimov data
-    inline void CreateAsimovData() noexcept override {
-        std::cerr << "TO IMPLEMENT~" << std::endl;
-    };
+    inline RooAbsData& GetData(PrePostFit studyType) noexcept override;
+    inline void        SetUpGlobObs(PrePostFit studyType) noexcept override;
 
     [[nodiscard]]
     inline const DataClosure& GetDataClosure() const noexcept override {return data_;}
@@ -141,47 +143,37 @@ inline void FitManager::ExtractNP()      noexcept
 
     EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]", args_["np_all"]->size());
     EFT_PROF_INFO("[FitManager] Extracted {} real_np to args[np]",     args_["np"]->size());
-    //std::cout << fmt::format("[FitManager] Extracted {} np      to args[np_all]", args_["np_all"]->size()) << std::endl;
-    //std::cout << fmt::format("[FitManager] Extracted {} real np to args[np]",     args_["np"]->size()) << std::endl;
 }
 inline void FitManager::ExtractObs() noexcept
 {
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
     EFT_PROF_INFO("[FitManager] Extracted {} obs to args[obs]", args_["obs"]->size());
-    //std::cout << fmt::format("[FitManager] Extracted {} obs to args[obs]", args_["obs"]->size()) << std::endl;
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
     assert(ws_ != nullptr);
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
     EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]", args_["globObs"]->size());
-    //std::cout << fmt::format("[FitManager] Extracted {} globObs to args[globObs]", args_["globObs"]->size()) << std::endl;
 }
 inline void FitManager::ExtractCats() noexcept
 {
     assert(ws_ != nullptr);
     std::cout << "ERROR NOT IMPLEMENTED" << std::endl;
-    //data_["np"] = (RooAbsData *) ws_->GetNp();
 }
 
 inline void FitManager::SetWsWrapper() noexcept
 {
-    //std::cout << "set ws wrapper" << std::endl;
     ws_ = new WorkspaceWrapper();
-    //std::cout << "set ws wrapper DONE" << std::endl;
 }
 
 inline void FitManager::SetWS(std::string path, std::string name)
 {
     EFT_PROF_INFO("[FitManager] set ws: {} from {}", name, path);
-    //std::cout << fmt::format("[FitManager] set ws: {} from {}", name, path) << std::endl;
     if (ws_->SetWS(std::move(path), std::move(name)))
         EFT_PROF_INFO("[FitManager] successfully set ws: {} from {}", name, path);
-        //std::cout << fmt::format("[FitManager] successfully set ws: {} from {}", name, path) << std::endl;
     else
         EFT_PROF_INFO("[FitManager] ERROR setting ws: {} from {}", name, path);
-        //std::cout << fmt::format("[FitManager] ERROR setting ws: {} from {}", name, path) << std::endl;
 }
 inline void FitManager::SetModelConfig(std::string name)
 {
@@ -227,6 +219,65 @@ inline void FitManager::SetAllPOIsFloat() noexcept
         ws_->FloatVal(poi);
     }
 }
+
+inline void FitManager::SetAllGlobObsConst() noexcept
+{
+    EFT_PROF_TRACE("[FitManager]{SetAllGlobObsConst}");
+    for (const auto& globObs : *args_["globObs"]) {
+        const std::string name = {globObs->GetTitle()};
+        dynamic_cast<RooRealVar *>(globObs)->setConstant(true);
+    }
+}
+inline void FitManager::SetAllGlobObsFloat() noexcept
+{
+    EFT_PROF_TRACE("[FitManager]{SetAllGlobObsFloat}");
+    for (const auto& globObs : *args_["globObs"]) {
+        const std::string name = {globObs->GetTitle()};
+        dynamic_cast<RooRealVar *>(globObs)->setConstant(false);
+    }
+}
+inline void FitManager::SetAllGlobObsTo(float val) noexcept
+{
+    EFT_PROF_TRACE("[FitManager]{SetAllGlobObsTo} {}", val);
+    for (const auto& globObs : *args_["globObs"]) {
+        const std::string name = {globObs->GetTitle()};
+        EFT_PROF_DEBUG("[FitManager]{SetAllGlobObsTo} val before: {}",
+                       dynamic_cast<RooRealVar *>(globObs)->getVal());
+        dynamic_cast<RooRealVar *>(globObs)->setVal(val);
+        EFT_PROF_DEBUG("[FitManager]{SetAllGlobObsTo} val after: {}",
+                       dynamic_cast<RooRealVar *>(globObs)->getVal());
+    }
+}
+
+inline RooAbsData& FitManager::GetData(PrePostFit studyType) noexcept
+{
+    if (studyType == PrePostFit::OBSERVED) {
+        EFT_PROF_TRACE("[FitManager]{GetData} Observed, return data_[ \"ds_total\" ]");
+        return *data_[ "ds_total" ];
+    }
+    CreateAsimovData(studyType);
+    if (studyType == PrePostFit::PREFIT) {
+        EFT_PROF_TRACE("[FitManager]{GetData} PREFIT, return data_[ \"asimov_prefit\" ]");
+        return *data_[ "asimov_prefit" ];
+    }
+    else if (studyType == PrePostFit::POSTFIT) {
+        EFT_PROF_TRACE("[FitManager]{GetData} POSTFIT, return data_[ \"asimov_postfit\" ]");
+        return *data_[ "asimov_postfit" ];
+    }
+}
+inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
+{
+    EFT_PROF_TRACE("[FitManager]{SetUpGlobObs}");
+    if (studyType == PrePostFit::POSTFIT) {
+        EFT_PROF_DEBUG("[FitManager]{SetUpGlobObs} for POSTFIT");
+        SetAllGlobObsConst();
+    }
+    else {
+        SetAllGlobObsTo(0);
+    }
+    SetAllGlobObsConst();
+}
+
 
 } // eft::stats
 
