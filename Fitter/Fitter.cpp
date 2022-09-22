@@ -51,7 +51,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
     EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
-    minim.setEps(1E-03);
+    minim.setEps(1E-02); // used to be 1E-3 ==> minimise until 1E-6
     ///minim.setEps( 1E-03 / 0.001 );
     //EFT_PROF_TRACE("[Minimizer] set EPS to 1E-6");
     minim.setOffsetting( true );
@@ -157,7 +157,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
       }*/
 
     //if(_saveFitResult) _result.reset(minim.save("fitResult","Fit Results"));
-    EFT_PROF_DEBUG("[Minimizer] save results");
+    //EFT_PROF_DEBUG("[Minimizer] save results");
     auto result = make_unique<RooFitResult>(
             *minim.save("fitResult","Fit Results")
             );
@@ -171,7 +171,8 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
 
     //result.reset(minim.save("fitResult","Fit Results"));
 
-    return result;
+    return {};
+    //return result;
 }
 
 } // eft::stats::fit
