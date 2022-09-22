@@ -17,9 +17,9 @@
 
 class CommandLineArgs {
 public:
-    using Key = std::string;   // -k filename.root
-    using Val = std::string;   // ^     ^----- val
-    using Vals = std::vector<Val>;  // |----------- key
+    using Key = std::string;        // -k filename.root
+    using Val = std::string;        //  ^     ^----- val
+    using Vals = std::vector<Val>;  //  |----------- key
 
 
     using Keys = std::set<Key>;

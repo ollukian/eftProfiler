@@ -53,7 +53,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 
     ops[std::move(key)] = std::move(vals);
 
-    EFT_PROF_INFO("| {:=^20} | ==> | :=^20} |", "=", "=");
+    EFT_PROF_INFO("| {:=^20} | ==> | {:=^20} |", "=", "=");
     for (const auto& [key_, vals_] : ops) {
         for (const auto& val_ : vals_) {
             EFT_PROF_INFO("| {:20} | ==> | {:20} |", key_, val_);

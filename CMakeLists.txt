@@ -8,6 +8,20 @@ if(CMAKE_CXX_STANDARD LESS 17)
     message(WARNING "Incompatible C++ standard ${CMAKE_CXX_STANDARD}. EFT requires C++17")
 endif()
 
+message(STATUS "Compile in the ${CMAKE_BUILD_TYPE} mode")
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    message(STATUS "Adding compiler flags for debugging")
+    if (MSVC)
+        add_compile_options(/W3)
+    else()
+        add_compile_options(-Wall -Wextra -pedantic -Werror -Wformat=2 -Wformat-truncation
+                -fstack-usage
+                -ffunction-sections -fdata-sections --gc-sections --print-gc-sections
+                )
+    endif()
+endif()
+
 #########################################################
 # 3rd-party libraries                                   #
 #########################################################
