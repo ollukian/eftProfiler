@@ -209,6 +209,12 @@ inline void FitManager::SetAllPOIsConst() noexcept
         ExtractPOIs();
     for (const auto& poi : pois_) {
         ws_->FixValConst(poi);
+        EFT_PROF_DEBUG("Set poi: {} to const ==> {} +- {} (const? ==> {})",
+                       poi,
+                       ws_->GetParVal(poi),
+                       ws_->GetParErr(poi),
+                       ws_->raw()->var(poi.c_str())->isConstant()
+                       );
     }
 }
 inline void FitManager::SetAllPOIsFloat() noexcept
@@ -218,6 +224,12 @@ inline void FitManager::SetAllPOIsFloat() noexcept
         ExtractPOIs();
     for (const auto& poi : pois_) {
         ws_->FloatVal(poi);
+        EFT_PROF_DEBUG("Set poi: {} to float ==> {} +- {} (const? ==> {})",
+                       poi,
+                       ws_->GetParVal(poi),
+                       ws_->GetParErr(poi),
+                       ws_->raw()->var(poi.c_str())->isConstant()
+        );
     }
 }
 
