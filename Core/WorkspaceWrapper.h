@@ -158,7 +158,11 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
+    EFT_PROF_TRACE("[WorkspaceWrapper] {FloatVal} {}", poi);
+    EFT_PROF_DEBUG("[WorkspaceWrapper] status of: {} before", poi);
     ws_->var( poi.c_str() )->setConstant(false);
+    EFT_PROF_DEBUG("[WorkspaceWrapper] status of: {} after", poi);
+    ws_->var( poi.c_str() )->Print();
 }
 
 inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
@@ -170,10 +174,12 @@ inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
 {
+    EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:20} to {}", name, val);
     ws_->var( name.c_str() )->setVal(val);
 }
 inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 {
+    EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:20} to {}", name, err);
     ws_->var( name.c_str() )->setError(err);
 }
 

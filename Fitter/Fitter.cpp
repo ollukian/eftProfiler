@@ -51,7 +51,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
     EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
-    minim.setEps(1E-2);
+    minim.setEps(1E-03);
     ///minim.setEps( 1E-03 / 0.001 );
     //cout << "[Minimizer] set EPS to 1E-6" << endl;
     minim.setOffsetting( true );
@@ -72,7 +72,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     cout << "[Minimizer] minimizerType = Minuit2" << endl;
     minim.setMinimizerType( "Minuit2" );
     // Perform fit with MIGRAD
-    _status += minim.minimize( "Minuit2" );
+    _status += minim.minimize( "Minuit2", "Migrad" );
 
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;
