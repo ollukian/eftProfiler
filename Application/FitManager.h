@@ -260,10 +260,8 @@ inline RooAbsData& FitManager::GetData(PrePostFit studyType) noexcept
         EFT_PROF_TRACE("[FitManager]{GetData} PREFIT, return data_[ \"asimov_prefit\" ]");
         return *data_[ "asimov_prefit" ];
     }
-    else if (studyType == PrePostFit::POSTFIT) {
-        EFT_PROF_TRACE("[FitManager]{GetData} POSTFIT, return data_[ \"asimov_postfit\" ]");
-        return *data_[ "asimov_postfit" ];
-    }
+    EFT_PROF_TRACE("[FitManager]{GetData} POSTFIT, return data_[ \"asimov_postfit\" ]");
+    return *data_[ "asimov_postfit" ];
 }
 inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
 {

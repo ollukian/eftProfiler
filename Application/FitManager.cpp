@@ -257,7 +257,7 @@ void FitManager::Init(FitManagerConfig&& config)
     EFT_PROF_INFO("[FitManager] extract data total: {}", config.comb_data);
     ExtractDataTotal("combData");
 
-    cout << setfill('*') << setw(45) << "" << endl;
+   /* cout << setfill('*') << setw(45) << "" << endl;
     cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
@@ -294,7 +294,8 @@ void FitManager::Init(FitManagerConfig&& config)
     GetFuncClosure().at("pdf_total")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
-    cout << setfill(' ');
+    cout << setfill(' ');*/
+    EFT_PROF_INFO("[FitManager] INIT DONE");
 }
 
 void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept
