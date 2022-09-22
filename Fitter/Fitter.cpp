@@ -38,12 +38,12 @@ return nll;
 
 IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     EFT_PROF_TRACE("[Minimize]");
-    cout << "[Minimizer] create a RooMinimizerWrapper" << endl;
+    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper");
     RooMinimizerWrapper minim(*nll);
-    cout << "[Minimizer] a RooMinimizerWrapper is created" << endl;
+    EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     //if(_errorLevel>0) minim.setErrorLevel(_errorLevel);
     minim.setStrategy( 1 );
-    cout << "[Minimizer] set strategy to 1" << endl;
+    EFT_PROF_INFO("[Minimizer] set strategy to 1");
     //minim.setPrintLevel( _printLevel-1 );
     //minim.setPrintLevel( 1 );
     minim.setPrintLevel( 1 );
@@ -53,27 +53,28 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
     minim.setEps(1E-03);
     ///minim.setEps( 1E-03 / 0.001 );
-    //cout << "[Minimizer] set EPS to 1E-6" << endl;
+    //EFT_PROF_TRACE("[Minimizer] set EPS to 1E-6");
     minim.setOffsetting( true );
-    EFT_PROF_DEBUG("[Minimizer] allow offseting");
+    EFT_PROF_INFO("[Minimizer] allow offseting");
     //if (_optConst > 0) minim.optimizeConst( _optConst );
     minim.optimizeConst( 2 );
-    cout << "[Minimizer] set optimize constant 2" << endl;
+    EFT_PROF_INFO("[Minimizer] set optimize constant 2");
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
     minim.setMaxFunctionCalls(5000 * pdf->getVariables()->getSize());
 
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
-      cout << endl << "Starting fit with SIMPLEX..." << endl;
+      cout << endl << "Starting fit with SIMPLEX...");
       _status += minim.simplex();
       }*/
 
-    cout << "[Minimizer] minimizerType = Minuit2" << endl;
+    EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2");
     minim.setMinimizerType( "Minuit2" );
     // Perform fit with MIGRAD
-    _status += minim.minimize( "Minuit2", "Migrad" );
-
+    //_status += minim.minimize( "Minuit2", "Migrad" );
+    _status += minim.minimize( "Minuit2");
+    EFT_PROF_INFO("[Minimizer] fit status: {}", _status);
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;
       _status += minim.hesse();
@@ -82,7 +83,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
 
     // Copied from RooAbsPdf::fitTo()
     //if (_doSumW2==1 && minim.getNPar()>0) {
-    if (true) {
+    if (false) {
         cout << endl << "Evaluating SumW2 error..." << endl <<endl;
         // Make list of RooNLLVar components of FCN
         RooArgSet* comps = nll->getComponents();
@@ -161,7 +162,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
             *minim.save("fitResult","Fit Results")
             );
 
-    EFT_PROF_INFO("[Minimizer] fit is finished. Fit results:");
+    EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
     //result->Print("v");
     //EFT_PROF_INFO("[Minimizer] covariance:");
     //result->covarianceMatrix().Print("v");

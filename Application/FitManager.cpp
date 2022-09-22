@@ -73,9 +73,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float", workerId);
     SetAllNuisanceParamsFloat();
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs float", workerId);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
     SetAllPOIsConst();
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float POI: {}", workerId, res.poi_name);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
@@ -83,16 +83,15 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     {
         EFT_PROF_INFO("[ComputeNpRanking] create Nll for free fit");
         auto nll = fitter.CreatNll(data, pdf, globObs, args_[ "np" ]);
-        EFT_PROF_INFO("[ComputeNpRanking] create Nll for free fit DONE");
-        EFT_PROF_INFO("[ComputeNpRanking] print nps before fit:");
+        EFT_PROF_INFO("[ComputeNpRanking] print nps before free fit:");
         args_["np"]->Print("v");
-        EFT_PROF_INFO("[ComputeNpRanking] minimize nll");
+        EFT_PROF_INFO("[ComputeNpRanking] minimize nll for free fit");
         auto fitRes = fitter.Minimize(nll, pdf);
-        EFT_PROF_INFO("[ComputeNpRanking] print nps after fit:");
+        EFT_PROF_INFO("[ComputeNpRanking] print nps after free fit:");
         args_["np"]->Print("v");
     }
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix np: {} const", workerId, res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} const", workerId, res.np_name);
     ws_->FixValConst(res.np_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
@@ -100,11 +99,15 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
+
     res.poi_err = ws_->GetParErr(res.poi_name);
     res.poi_val = ws_->GetParVal(res.poi_name);
     res.nll     = nll->getVal();
     res.np_err  = ws_->GetParErr(res.np_name);
     res.np_val  = ws_->GetParVal(res.np_name);
+
+    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
+    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
 
     res.statType = StatType::NP_RANKING;
     res.prePostFit = PrePostFit::POSTFIT;
@@ -159,8 +162,7 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
     if (args_["np"]->empty())
         ExtractNP();
 
-    cout << "[SetAllNuissConst]" << endl;
-    cout << "status before:" << endl;
+    EFT_PROF_TRACE("[SetAllNuissConst]");
 
 //    args_["np"]->Print("v");
 //    for (const auto& np : *args_["np"]) {
@@ -176,15 +178,15 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
 //        }
 //    }
 
-    args_["np"]->Print("v");
+    //args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        cout << fmt::format("Set {} to const", name) << endl;
+        EFT_PROF_DEBUG("Set {} to const", name);
         dynamic_cast<RooRealVar *>(np)->setConstant(true);
     }
 
-    cout << "status after:" << endl;
-    args_["np"]->Print("v");
+    //cout << "status after:" << endl;
+    //args_["np"]->Print("v");
 }
 
 void FitManager::SetAllNuisanceParamsFloat() noexcept {
@@ -193,7 +195,6 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissFloat]");
-    cout << "status before:" << endl;
 
 //    args_["np"]->Print("");
 //    for (const auto& np : *args_["np"]) {
@@ -209,15 +210,15 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
 //        }
 //    }
 
-    args_["np"]->Print("v");
+    //args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        cout << fmt::format("Set {} to float", name) << endl;
+        EFT_PROF_DEBUG("Set {} to float", name);
         dynamic_cast<RooRealVar *>(np)->setConstant(false);
     }
 
-    cout << "status after:" << endl;
-    args_["np"]->Print("v");
+    //cout << "status after:" << endl;
+    //args_["np"]->Print("v");
 }
 
 void FitManager::ExtractPOIs() noexcept
