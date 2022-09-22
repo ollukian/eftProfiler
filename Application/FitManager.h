@@ -225,8 +225,11 @@ inline void FitManager::SetAllGlobObsConst() noexcept
     EFT_PROF_TRACE("[FitManager]{SetAllGlobObsConst}");
     for (const auto& globObs : *args_["globObs"]) {
         const std::string name = {globObs->GetTitle()};
-        EFT_PROF_DEBUG("[FitManager] set {} const", name);
         dynamic_cast<RooRealVar *>(globObs)->setConstant(true);
+        EFT_PROF_DEBUG("[FitManager] set {} const, status after: {} +- {}  (const? ==> {})", name,
+                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
     }
 }
 inline void FitManager::SetAllGlobObsFloat() noexcept
@@ -234,8 +237,11 @@ inline void FitManager::SetAllGlobObsFloat() noexcept
     EFT_PROF_TRACE("[FitManager]{SetAllGlobObsFloat}");
     for (const auto& globObs : *args_["globObs"]) {
         const std::string name = {globObs->GetTitle()};
-        EFT_PROF_DEBUG("[FitManager] set {} float", name);
         dynamic_cast<RooRealVar *>(globObs)->setConstant(false);
+        EFT_PROF_DEBUG("[FitManager] set {} float, status after: {} +- {}  (const? ==> {})", name,
+                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
     }
 }
 inline void FitManager::SetAllGlobObsTo(float val) noexcept
@@ -246,8 +252,10 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
         EFT_PROF_DEBUG("[FitManager]{SetAllGlobObsTo} val before: {}",
                        dynamic_cast<RooRealVar *>(globObs)->getVal());
         dynamic_cast<RooRealVar *>(globObs)->setVal(val);
-        EFT_PROF_DEBUG("[FitManager]{SetAllGlobObsTo} val after: {}",
-                       dynamic_cast<RooRealVar *>(globObs)->getVal());
+        EFT_PROF_DEBUG("[FitManager] {SetAllGlobObsTo}, status after: {} +- {}  (const? ==> {})", name,
+                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
     }
 }
 
