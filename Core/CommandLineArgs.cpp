@@ -17,7 +17,7 @@ CommandLineArgs::CommandLineArgs(int argc, char **argv) {
         return;
     }
 
-    cout << fmt::format("[CommandLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
+    EFT_PROF_TRACE("[CommandLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
     ParseInput(argc, argv);
 }
 
@@ -37,7 +37,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
             cout << fmt::format("\t[{}] is a new key", token) << endl;
             if ( ! key.empty() ) { // get rid of the prev key
                 ops[key] = vals;
-                cout << fmt::format("register: {} => {} vals", key, vals.size()) << endl;
+                EFT_PROF_DEBUG("register: {:20} => {:20} vals", key, vals.size());
                 vals.clear();
             }
 
@@ -53,10 +53,11 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 
     ops[std::move(key)] = std::move(vals);
 
-    cout << "* res" << endl;
+    EFT_PROF_INFO("| {=:20} | ==> | {=:20} |", "=", "=");
     for (const auto& [key_, vals_] : ops) {
         for (const auto& val_ : vals_) {
-            cout << "* " << key_ << " \t " << val_ << endl;
+            EFT_PROF_INFO("| {:20} | ==> | {:20} |", key_, val_);
+            //cout << "* " < << key_ << " \t " << val_ << endl;
         }
     }
 

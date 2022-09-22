@@ -192,7 +192,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
     if (args_["np"]->empty())
         ExtractNP();
 
-    cout << "[SetAllNuissFloat]" << endl;
+    EFT_PROF_TRACE("[SetAllNuissFloat]");
     cout << "status before:" << endl;
 
 //    args_["np"]->Print("");
@@ -295,7 +295,7 @@ void FitManager::Init(FitManagerConfig&& config)
     cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetFuncClosure().at("pdf_total")->Print("");
+    GetFuncClosure().at("pdf_total")->Print("v");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setfill(' ');
