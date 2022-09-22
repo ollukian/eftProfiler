@@ -17,7 +17,7 @@ CommandLineArgs::CommandLineArgs(int argc, char **argv) {
         return;
     }
 
-    EFT_PROF_TRACE("[CommandLineArgs] parse {} command line arguments:", (argc - 1)) << endl;
+    EFT_PROF_TRACE("[CommandLineArgs] parse {} command line arguments:", (argc - 1));
     ParseInput(argc, argv);
 }
 
