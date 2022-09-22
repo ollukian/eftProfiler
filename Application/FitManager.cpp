@@ -51,8 +51,9 @@ void FitManager::DoGlobalFit()
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
-    SetUpGlobObs(settings.prePostFit);
-    RooAbsData& data = GetData(settings.prePostFit);
+    //SetUpGlobObs(settings.prePostFit);
+    RooAbsData& data =  *data_["ds_total"];
+    //RooAbsData& data = GetData(settings.prePostFit);
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
 
