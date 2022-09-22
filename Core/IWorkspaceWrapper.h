@@ -34,7 +34,8 @@ public:
 
     // name & path to be moved
     virtual bool SetWS(std::string path, std::string name) = 0;
-    virtual RooStats::ModelConfig* SetModelConfig(std::string name)          = 0;
+    virtual RooStats::ModelConfig* SetModelConfig(std::string name) = 0;
+    virtual RooStats::ModelConfig& GetModelConfig() = 0;
 
     virtual void FixValConst(const std::string& poi)  = 0;
     virtual void FixValConst(const std::vector<std::string>& pois) = 0;

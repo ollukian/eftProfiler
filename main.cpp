@@ -36,8 +36,21 @@ int main(int argc, char* argv[]) {
         eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
-        settings.prePostFit = eft::stats::PrePostFit::PREFIT;
-        settings.studyType = eft::stats::StudyType::OBSERVED;
+
+        const string postFit = config.study_type;
+        if (postFit == "prefit")
+            settings.prePostFit = eft::stats::PrePostFit::PREFIT;
+        else if (postFit == "postfit")
+            settings.prePostFit = eft::stats::PrePostFit::POSTFIT;
+        else if (postFit == "observed")
+            settings.prePostFit = eft::stats::PrePostFit::OBSERVED;
+        else {
+            EFT_PROF_CRITICAL("Prepostfit: {} is not known. Use: prefit, postfit, observed", postFit);
+            throw std::runtime_error("wrong --strudy_type flag option");
+        }
+
+        //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
+        //settings.studyType = eft::stats::StudyType::OBSERVED;
         settings.poi = config.poi;
         settings.path_to_save_res = "res.json";
 

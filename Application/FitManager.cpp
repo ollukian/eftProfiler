@@ -14,6 +14,7 @@
 #include <iomanip>
 #include "CommandLineArgs.h"
 #include "FitManagerConfig.h"
+#include "RooStats/AsymptoticCalculator.h"
 
 using namespace std;
 
@@ -50,23 +51,32 @@ void FitManager::DoGlobalFit()
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
-    RooAbsData* data;
+    SetUpGlobObs(settings.prePostFit);
+    RooAbsData& data = GetData(settings.prePostFit);
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
 
-    if (settings.studyType == StudyType::EXPECTED) {
+    EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] glob obs before fit:");
+    data_["globObs"]->Print("v");
+    EFT_PROF_DEBUG("[ComputeNpRankingOneWorker] data    before fit:");
+    data.Print("v");
+
+   // data = &GetData(settings.prePostFit);
+
+    /*if (settings.studyType == StudyType::EXPECTED) {
         assert(data_["asimov_full"]);
         data = data_["asimov_full"];
     }
     else {
         assert(data_["ds_total"]);
         data = data_["ds_total"];
-    }
+    }*/
 
     NpRankingStudyRes res;
     res.poi_name = settings.poi;
     res.statType = settings.statType;
     res.studyType = settings.studyType;
+    res.prePostFit = settings.prePostFit;
     res.np_name = args_["np"]->operator[](workerId)->GetName();
 
 
@@ -97,7 +107,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws_->FixValConst(res.np_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
-    auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
+    auto nll = fitter.CreatNll(&data, pdf, globObs, args_["np"]);
     EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
@@ -111,9 +121,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
 
-    res.statType = StatType::NP_RANKING;
-    res.prePostFit = PrePostFit::POSTFIT;
-    res.studyType = StudyType::OBSERVED;
 
 //#ifndef EFT_STRUCT_TO_JSON
 //#define EFT_STRUCT_TO_JSON(j, res, field) j[#field] = res.field;
@@ -141,21 +148,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         cout << "print to console:" << endl;
         cout << setw(4) << j << endl;
     }
-
-    //EFT_STRUCT_TO_JSON(j, res, nll);
-
-    if (settings.prePostFit == PrePostFit::POSTFIT) {
-        // TODO: set np to the values found in fit;
-    }
-
-    // * take np # worker_id
-    // * create nll
-    // * minimise it
-    // * fill in results
-    // * write them down
-
-    //settings.poi
-
 }
 
 void FitManager::SetAllNuisanceParamsConst() noexcept
@@ -326,6 +318,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, nb_pois_to_plot);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
 
 #undef EFT_SET_VAL_IF_EXISTS
 
@@ -350,18 +343,38 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 //    }
 }
 
-//    inline void FitManager::SetGlobalObservablesToValueFoundInFit() {
-//        for (auto& obs : *globalObservables_) {
-//            cout << " # set global obs: |" << obs->GetName() << "|";
-//
-//            string name = string(obs->GetName());
-//            name = name.substr(string("RNDM__").size(), name.size() );
-//
-//            double foundValue = ws_->var( name.c_str() )->getVal();
-//            static_cast<RooRealVar*>( obs )->setVal( foundValue  );
-//
-//            cout << " to " << foundValue << endl;
-//        }
-//    }
+void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
+{
+    EFT_PROF_TRACE("[FitManager]{AsimovData}");
+    assert(studyType != PrePostFit::OBSERVED);
+
+    if (studyType == PrePostFit::PREFIT && data_.at("asimov_prefit")   != nullptr) {
+        EFT_PROF_INFO("[FitManager]{AsimovData} return cached asimov_prefit");
+        return;
+    }
+    if (studyType == PrePostFit::POSTFIT && data_.at("asimov_postfit") != nullptr) {
+        EFT_PROF_INFO("[FitManager]{AsimovData} return cached asimov_postfit");
+        return;
+    }
+
+    SetUpGlobObs(studyType);
+
+    string ds_name;
+    if (studyType == PrePostFit::POSTFIT)
+        ds_name = "asimov_postfit";
+    else
+        ds_name = "asimov_prefit";
+
+    EFT_PROF_INFO("[FitManager]{AsimovData} compute asimov ds: {}", ds_name);
+    data_[std::move(ds_name)] =
+            (RooDataSet*)
+            RooStats::AsymptoticCalculator::MakeAsimovData(*data_["ds_total"],
+                                                           ws_->GetModelConfig(),
+                                                           *args_["pois"],
+                                                           *args_["globObs"]
+    );
+};
+
+
 
 } // stats

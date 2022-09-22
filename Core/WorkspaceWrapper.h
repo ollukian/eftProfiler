@@ -36,6 +36,7 @@ public:
 
     inline bool SetWS(std::string path, std::string name) override;
     inline RooStats::ModelConfig* SetModelConfig(std::string name) override;
+    inline RooStats::ModelConfig& GetModelConfig() override { return *modelConfig_;}
 
     inline RooWorkspace* raw() const noexcept override { return ws_.get();}
 

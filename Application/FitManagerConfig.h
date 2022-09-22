@@ -20,6 +20,7 @@ struct FitManagerConfig {
     size_t worker_id {0};
     size_t nb_pois_to_plot {20};
     double fit_precision {1E-3};
+    std::string study_type;
 };
 
 } // stats
