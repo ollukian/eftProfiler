@@ -41,8 +41,9 @@ enum class StatType : uint8_t
 
 enum class PrePostFit : uint8_t
 {
-   PREFIT  = 0,
-   POSTFIT = 1
+   OBSERVED = 0,
+   PREFIT  = 1,
+   POSTFIT = 2
 };
 
 void to_json(nlohmann::json& j, const StudyType& s);

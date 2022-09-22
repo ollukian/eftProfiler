@@ -51,7 +51,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
     EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
-    minim.setEps(1E-02); // used to be 1E-3 ==> minimise until 1E-6
+    minim.setEps(1E-03 / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     ///minim.setEps( 1E-03 / 0.001 );
     //EFT_PROF_TRACE("[Minimizer] set EPS to 1E-6");
     minim.setOffsetting( true );

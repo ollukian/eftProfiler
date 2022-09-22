@@ -49,6 +49,9 @@ void to_json(nlohmann::json& j, const PrePostFit& s)
         case PrePostFit::POSTFIT:
             j["prePostFit"] = "POSTFIT";
             break;
+        case PrePostFit::OBSERVED:
+            j["prePostFit"] = "OBSERVED";
+            break;
     }
 }
 
@@ -80,6 +83,7 @@ void from_json(const nlohmann::json& j, PrePostFit& s)
     const std::string& s_type = j.at("prePostFit");
     if      (s_type == "PREFIT")     s = PrePostFit::PREFIT;
     else if (s_type == "POSTFIT")    s = PrePostFit::POSTFIT;
+    else if (s_type == "OBSERVED")    s = PrePostFit::OBSERVED;
     else {
         throw std::runtime_error("Impossible to parse PrePostFit: {" + s_type + "}");
     }
