@@ -49,7 +49,7 @@ void FitManager::DoGlobalFit()
 
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
-    cout << fmt::format("[ComputeNpRanging] worker: {}", workerId) << endl;
+    EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     RooAbsData* data;
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
@@ -63,17 +63,17 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         data = data_["ds_total"];
     }
 
-    EFT_PROF_INFO("[ComputeNpRanging] compute free fit values and errors on all nps");
+    EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
     fit::Fitter fitter;
     {
-        EFT_PROF_INFO("[ComputeNpRanging] create Nll for free fit");
+        EFT_PROF_INFO("[ComputeNpRanking] create Nll for free fit");
         auto nll = fitter.CreatNll(data, pdf, globObs, args_[ "np" ]);
-        EFT_PROF_INFO("[ComputeNpRanging] create Nll for free fit DONE");
-        EFT_PROF_INFO("[ComputeNpRanging] print nps before fit:");
+        EFT_PROF_INFO("[ComputeNpRanking] create Nll for free fit DONE");
+        EFT_PROF_INFO("[ComputeNpRanking] print nps before fit:");
         args_["np"]->Print("v");
-        EFT_PROF_INFO("[ComputeNpRanging] minimize nll");
+        EFT_PROF_INFO("[ComputeNpRanking] minimize nll");
         auto fitRes = fitter.Minimize(nll, pdf);
-        EFT_PROF_INFO("[ComputeNpRanging] print nps after fit:");
+        EFT_PROF_INFO("[ComputeNpRanking] print nps after fit:");
         args_["np"]->Print("v");
     }
 
@@ -82,21 +82,22 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.statType = settings.statType;
     res.studyType = settings.studyType;
     res.np_name = args_["np"]->operator[](workerId)->GetName();
-    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, identified name of np: {}",
-                        workerId, res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanging] free fit is done, fix given NP: {}", res.np_name);
+    //EFT_PROF_INFO("[ComputeNpRanging] worker: {}, identified name of np: {}",
+    //                    workerId, res.np_name);
 
-    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, set all np float...", workerId);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float...", workerId);
     SetAllNuisanceParamsFloat();
-    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, set all np float DONE", workerId);
-    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, Fix np: {} const", workerId, res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float DONE", workerId);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix np: {} const", workerId, res.np_name);
     ws_->FixValConst(res.np_name);
-    EFT_PROF_INFO("[ComputeNpRanging] worker: {}, Fix {} const DONE", workerId, res.np_name);
-    EFT_PROF_INFO("[ComputeNpRanging] create nll with {} fixed...", res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix {} const DONE", workerId, res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] create nll with {} fixed...", res.np_name);
 
     auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
-    EFT_PROF_INFO("[ComputeNpRanging] minimize nll with {} fixed", res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
-    EFT_PROF_INFO("[ComputeNpRanging] minimization nll with {} fixed is DONE", res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
     res.poi_err = ws_->GetParErr(res.poi_name);
     res.poi_val = ws_->GetParVal(res.poi_name);
     res.nll     = nll->getVal();
@@ -214,7 +215,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
     }
 
     cout << "status after:" << endl;
-    args_["np"]->Print("");
+    args_["np"]->Print("v");
 }
 
 void FitManager::ExtractPOIs() noexcept

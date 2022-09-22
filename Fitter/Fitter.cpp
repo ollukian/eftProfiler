@@ -18,14 +18,14 @@ using namespace std;
 namespace eft::stats::fit {
 
 RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* globalObs, RooArgSet* np) {
+    EFT_PROF_TRACE("[CreateNll]");
     TStopwatch timer;
     RooAbsReal* nll = pdf->createNLL(*data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
             //IntegrateBins(_samplingRelTol),
                                     RooFit::GlobalObservables(*globalObs),
-                                    RooFit::Constrain(*np)  , // try with this line
-                                    RooFit::Timer(true) // try this line
+                                    RooFit::Constrain(*np) // try with this line
             //ConditionalObservables(),
             //ExternalConstraints(*_externalConstraint)
     );
@@ -37,6 +37,7 @@ return nll;
 }
 
 IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
+    EFT_PROF_TRACE("[Minimize]");
     cout << "[Minimizer] create a RooMinimizerWrapper" << endl;
     RooMinimizerWrapper minim(*nll);
     cout << "[Minimizer] a RooMinimizerWrapper is created" << endl;
@@ -49,7 +50,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     //if (_printLevel < 0)
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
-    EFT_PROF_WARN("[minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
+    EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-5, not to 1E-6 as originally");
     minim.setEps(1E-5);
     ///minim.setEps( 1E-03 / 0.001 );
     //cout << "[Minimizer] set EPS to 1E-6" << endl;
@@ -81,7 +82,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
 
     // Copied from RooAbsPdf::fitTo()
     //if (_doSumW2==1 && minim.getNPar()>0) {
-    if (false) {
+    if (true) {
         cout << endl << "Evaluating SumW2 error..." << endl <<endl;
         // Make list of RooNLLVar components of FCN
         RooArgSet* comps = nll->getComponents();
@@ -90,7 +91,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
         TIterator* citer = comps->createIterator();
         RooAbsArg* arg;
         while ((arg=(RooAbsArg*)citer->Next())) {
-            RooNLLVar* nllComp = dynamic_cast<RooNLLVar*>(arg);
+            auto* nllComp = dynamic_cast<RooNLLVar*>(arg);
             if (!nllComp) continue;
             nllComponents.push_back(nllComp);
         }
@@ -99,14 +100,14 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
 
         // Calculated corrected errors for weighted likelihood fits
         RooFitResult* rw = minim.save();
-        for (vector<RooNLLVar*>::iterator it = nllComponents.begin(); nllComponents.end() != it; ++it) {
-            (*it)->applyWeightSquared(kTRUE);
+        for (auto& nllComponent : nllComponents) {
+            nllComponent->applyWeightSquared(kTRUE);
         }
         cout << "Calculating sum-of-weights-squared correction matrix for covariance matrix" << endl;
         minim.hesse();
         RooFitResult* rw2 = minim.save();
-        for (vector<RooNLLVar*>::iterator it = nllComponents.begin(); nllComponents.end() != it; ++it) {
-            (*it)->applyWeightSquared(kFALSE);
+        for (auto & nllComponent : nllComponents) {
+            nllComponent->applyWeightSquared(kFALSE);
         }
 
         // Apply correction matrix
@@ -155,6 +156,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
       }*/
 
     //if(_saveFitResult) _result.reset(minim.save("fitResult","Fit Results"));
+    EFT_PROF_DEBUG("[Minimizer] save results");
     auto result = make_unique<RooFitResult>(
             *minim.save("fitResult","Fit Results")
             );
