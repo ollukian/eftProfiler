@@ -50,7 +50,7 @@ public:
     // TODO: to implement from the prev code
     void SetAllNuisanceParamsConst() noexcept override;
     void SetAllNuisanceParamsFloat() noexcept override;
-    void SetAllNuisanceParamsToValue(float val) noexcept override{};
+    void SetAllNuisanceParamsToValue(float val) noexcept override;
     void SetGlobalObservablesToValueFoundInFit() noexcept override{};
 
     void SetAllPOIsConst() noexcept override;
@@ -266,6 +266,22 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
                        dynamic_cast<RooRealVar *>(globObs)->getVal());
         dynamic_cast<RooRealVar *>(globObs)->setVal(val);
         EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} after: {} +- {}  (const? ==> {})",
+                       name,
+                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+    }
+}
+
+void FitManager::SetAllNuisanceParamsToValue(float val) noexcept
+{
+    EFT_PROF_TRACE("[FitManager] SetAllNPto {}", val);
+    for (const auto& globObs : *args_["np"]) {
+        const std::string name = {globObs->GetTitle()};
+        EFT_PROF_DEBUG("[FitManager][SetAllNPto] val before: {}",
+                       dynamic_cast<RooRealVar *>(globObs)->getVal());
+        dynamic_cast<RooRealVar *>(globObs)->setVal(val);
+        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} after: {} +- {}  (const? ==> {})",
                        name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
                        dynamic_cast<RooRealVar *>(globObs)->getError(),
