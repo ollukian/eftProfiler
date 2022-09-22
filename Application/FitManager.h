@@ -277,12 +277,15 @@ inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
 {
     EFT_PROF_TRACE("[FitManager]{SetUpGlobObs}");
     if (studyType == PrePostFit::POSTFIT) {
-        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} for POSTFIT ==> fix glob obs to const, not modify the value");
-        SetAllGlobObsConst();
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} POSTFIT ==> fix glob obs to const, not change their values");
+    }
+    else if (studyType == PrePostFit::PREFIT) {
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} PREFIT ==> fix glob obs to 0 (const)");
+        SetAllGlobObsTo(0);
     }
     else {
-        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} for OBSERVED or PREFIT ==> fix glob obs to 0 (const)");
-        SetAllGlobObsTo(0);
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} OBSERVED ==> fix glob obs to (const), not change their values");
+        //SetAllGlobObsTo(0);
     }
     SetAllGlobObsConst();
 }

@@ -354,11 +354,11 @@ void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
     EFT_PROF_TRACE("[FitManager]{AsimovData}");
     assert(studyType != PrePostFit::OBSERVED);
 
-    if (studyType == PrePostFit::PREFIT && data_.at("asimov_prefit")   != nullptr) {
+    if (studyType == PrePostFit::PREFIT && data_.find("asimov_prefit") == data_.end()) {
         EFT_PROF_INFO("[FitManager]{AsimovData} return cached asimov_prefit");
         return;
     }
-    if (studyType == PrePostFit::POSTFIT && data_.at("asimov_postfit") != nullptr) {
+    if (studyType == PrePostFit::POSTFIT && data_.find("asimov_postfit") == data_.end()) {
         EFT_PROF_INFO("[FitManager]{AsimovData} return cached asimov_postfit");
         return;
     }
