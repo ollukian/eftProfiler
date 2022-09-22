@@ -144,8 +144,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 
 optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(CommandLineArgs::Key&& option) const
 {
-    cout << fmt::format("[CmdLine] GetVals for {} key", option);
-
+    //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     if (keys.find(option) == keys.end()) {
     //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
@@ -155,8 +154,7 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(CommandLineArgs::Key&& 
 
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
-    cout << fmt::format("[CmdLine] GetVals for {} key", option);
-
+    //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     if (keys.find(option) == keys.end()) {
         return nullopt;
     }

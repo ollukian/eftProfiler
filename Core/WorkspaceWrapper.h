@@ -7,6 +7,7 @@
 #define EFTPROFILER_WORKSPACEWRAPPER_H
 
 #include "IWorkspaceWrapper.h"
+#include "../Core/Logger.h"
 
 #include <string>
 #include <vector>
@@ -134,7 +135,8 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
     std::cout << fmt::format("Fix {} const", poi) << std::endl;
-    std::cout << "status before: " << std::endl;
+    EFT_PROF_DEBUG("[WorkspaceWrapper]{FixValConst} status of {} before fixing to const", poi);
+    std::cout << " * status of " << poi << " before: " << std::endl;
 
     if (ws_->var(poi.c_str()) == nullptr) {
         std::cout << fmt::format("FixValConst[{}] ERROR, var is not present", poi);
@@ -143,7 +145,7 @@ inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 
     ws_->var(poi.c_str())->Print("");
     ws_->var( poi.c_str() )->setConstant(true);
-    std::cout << "status after: " << std::endl;
+    EFT_PROF_DEBUG("[WorkspaceWrapper]{FixValConst} status of {} after fixing to const", poi);
     ws_->var(poi.c_str())->Print("");
 }
 

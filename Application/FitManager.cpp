@@ -63,6 +63,21 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         data = data_["ds_total"];
     }
 
+    NpRankingStudyRes res;
+    res.poi_name = settings.poi;
+    res.statType = settings.statType;
+    res.studyType = settings.studyType;
+    res.np_name = args_["np"]->operator[](workerId)->GetName();
+
+
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float", workerId);
+    SetAllNuisanceParamsFloat();
+
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs float", workerId);
+    SetAllPOIsConst();
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float POI: {}", workerId, res.poi_name);
+    ws_->FloatVal(res.poi_name);
+
     EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
     fit::Fitter fitter;
     {
@@ -77,27 +92,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         args_["np"]->Print("v");
     }
 
-    NpRankingStudyRes res;
-    res.poi_name = settings.poi;
-    res.statType = settings.statType;
-    res.studyType = settings.studyType;
-    res.np_name = args_["np"]->operator[](workerId)->GetName();
-    EFT_PROF_INFO("[ComputeNpRanging] free fit is done, fix given NP: {}", res.np_name);
-    //EFT_PROF_INFO("[ComputeNpRanging] worker: {}, identified name of np: {}",
-    //                    workerId, res.np_name);
-
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float...", workerId);
-    SetAllNuisanceParamsFloat();
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float DONE", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix np: {} const", workerId, res.np_name);
     ws_->FixValConst(res.np_name);
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs float", workerId);
-    SetAllPOIsConst();
-    EFT_PROF_INFO("[ComputeNpRanking] Fix POI: {} const", res.poi_name);
-    ws_->FixValConst(res.poi_name);
-
-    EFT_PROF_INFO("[ComputeNpRanking] create nll with {} fixed...", res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
     auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
     EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
@@ -297,7 +295,7 @@ void FitManager::Init(FitManagerConfig&& config)
     cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
     cout << setw(45) << "" << endl;
     cout << setfill(' ');
-    GetFuncClosure().at("pdf_total")->Print("v");
+    GetFuncClosure().at("pdf_total")->Print("");
     cout << setfill('*') << setw(45) << "" << endl;
 
     cout << setfill(' ');
@@ -310,7 +308,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 #ifndef EFT_SET_VAL_IF_EXISTS
 #define EFT_SET_VAL_IF_EXISTS(args, config, param)        \
     if (args.SetValIfArgExists(#param, config.param)) { \
-        EFT_PROF_INFO("Set param: {}", config.param);     \
+        EFT_PROF_INFO("[FitManager] Set param: {}", config.param);     \
      }
 
 #endif
@@ -323,7 +321,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, model_config);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_pdf);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
-
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, nb_pois_to_plot);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
 
 #undef EFT_SET_VAL_IF_EXISTS
 

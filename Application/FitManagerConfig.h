@@ -18,6 +18,8 @@ struct FitManagerConfig {
     std::string res_path {"."};
     std::string poi {"cG"};
     size_t worker_id {0};
+    size_t nb_pois_to_plot {20};
+    double fit_precision {1E-3};
 };
 
 } // stats
