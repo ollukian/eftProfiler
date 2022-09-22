@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
             settings.prePostFit = eft::stats::PrePostFit::OBSERVED;
         else {
             EFT_PROF_CRITICAL("Prepostfit: {} is not known. Use: prefit, postfit, observed", postFit);
-            throw std::runtime_error("wrong --strudy_type flag option");
+            throw std::runtime_error("wrong --study_type flag option");
         }
 
         //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
         auto worker_id = config.worker_id;
 
         manager->Init(std::move(config));
+        EFT_PROF_WARN("try start compute one worker");
         manager->ComputeNpRankingOneWorker(settings, worker_id);
     }
     else if (task == "plot_ranking") {
