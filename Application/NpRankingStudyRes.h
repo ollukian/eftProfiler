@@ -80,7 +80,7 @@ struct NpRankingStudySettings
     std::string path_to_save_res;
     StatType  statType  {StatType::NP_RANKING};
     StudyType studyType {StudyType::NOTDEF};
-    PrePostFit prePostFit {PrePostFit::PREFIT};
+    PrePostFit prePostFit {PrePostFit::OBSERVED};
 };
 
 // Only information relevant for plotting

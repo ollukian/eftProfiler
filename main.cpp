@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
         }
 
         //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
-        //settings.studyType = eft::stats::StudyType::OBSERVED;
+        settings.studyType = eft::stats::StudyType::OBSERVED;
         settings.poi = config.poi;
         settings.path_to_save_res = "res.json";
 
@@ -73,5 +73,6 @@ int main(int argc, char* argv[]) {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking] or [compute_ranking]", task);
     }
 
+    EFT_PROF_INFO("[Application] execution successfully finished");
     return 0;
 }
