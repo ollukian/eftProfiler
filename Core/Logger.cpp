@@ -17,11 +17,14 @@ namespace eft::stats {
 
     // TODO: add a logger for traces and durations - only for debugging;
 
-    void Logger::Init()
+    void Logger::Init(size_t worker_id)
     {
+
+        const std::string log_filename = "eft_log_worker_" + to_string(worker_id) + ".log";
+
         vector<spdlog::sink_ptr> logSinks;
         logSinks.emplace_back(make_shared<spdlog::sinks::stdout_color_sink_mt>());
-        logSinks.emplace_back(make_shared<spdlog::sinks::basic_file_sink_mt>("eft_log.log", true));
+        logSinks.emplace_back(make_shared<spdlog::sinks::basic_file_sink_mt>(log_filename, true));
 
         logSinks[0]->set_pattern("%^[%T] %n: %v%$"); // in console
         logSinks[1]->set_pattern("[%T] [%l] %n: %v"); // out

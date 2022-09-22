@@ -22,7 +22,7 @@ namespace eft::stats {
 
     class Logger {
     public:
-        static void Init();
+        static void Init(size_t worker_id = 0);
 
         static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept { return logger_; }
 
