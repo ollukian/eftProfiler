@@ -52,6 +52,9 @@ public:
     void SetAllNuisanceParamsToValue(float val) noexcept override{};
     void SetGlobalObservablesToValueFoundInFit() noexcept override{};
 
+    void SetAllPOIsConst() noexcept override;
+    void SetAllPOIsFloat() noexcept override;
+
 
 
     //TODO: imlement: create asimov data
@@ -204,6 +207,25 @@ inline const std::vector<std::string>& FitManager::GetListPOIs() const noexcept
 {
     assert(ws_ != nullptr);
     return pois_;
+}
+
+inline void FitManager::SetAllPOIsConst() noexcept
+{
+    EFT_PROF_INFO("[FitManager] Set All POIs const");
+    if (pois_.empty())
+        ExtractPOIs();
+    for (const auto& poi : pois_) {
+        ws_->FixValConst(poi);
+    }
+}
+inline void FitManager::SetAllPOIsFloat() noexcept
+{
+    EFT_PROF_INFO("[FitManager] Set All POIs float");
+    if (pois_.empty())
+        ExtractPOIs();
+    for (const auto& poi : pois_) {
+        ws_->FloatVal(poi);
+    }
 }
 
 } // eft::stats

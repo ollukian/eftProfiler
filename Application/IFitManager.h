@@ -77,6 +77,10 @@ public:
     virtual void SetAllNuisanceParamsToValue(float val) noexcept = 0;
     virtual void SetGlobalObservablesToValueFoundInFit() noexcept = 0;
 
+    virtual void SetAllPOIsConst() noexcept = 0;
+    virtual void SetAllPOIsFloat() noexcept = 0;
+
+
 //private:
     //std::unique_ptr<IWorkspaceWrapper> ws_;
 };

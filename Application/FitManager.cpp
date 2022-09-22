@@ -91,9 +91,13 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float DONE", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix np: {} const", workerId, res.np_name);
     ws_->FixValConst(res.np_name);
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix {} const DONE", workerId, res.np_name);
-    EFT_PROF_INFO("[ComputeNpRanking] create nll with {} fixed...", res.np_name);
 
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs float", workerId);
+    SetAllPOIsConst();
+    EFT_PROF_INFO("[ComputeNpRanking] Fix POI: {} const", res.poi_name);
+    ws_->FixValConst(res.poi_name);
+
+    EFT_PROF_INFO("[ComputeNpRanking] create nll with {} fixed...", res.np_name);
     auto nll = fitter.CreatNll(data, pdf, globObs, args_["np"]);
     EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
