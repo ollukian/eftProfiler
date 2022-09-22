@@ -273,7 +273,7 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
     }
 }
 
-void FitManager::SetAllNuisanceParamsToValue(float val) noexcept
+inline void FitManager::SetAllNuisanceParamsToValue(float val) noexcept
 {
     EFT_PROF_TRACE("[FitManager] SetAllNPto {}", val);
     for (const auto& globObs : *args_["np"]) {
