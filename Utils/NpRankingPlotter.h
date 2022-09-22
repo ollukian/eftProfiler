@@ -10,6 +10,7 @@
 #define EFTPROFILER_NPRANKINGPLOTTER_H
 
 #include "../Application/NpRankingStudyRes.h"
+#include "../Application/RankingPlotterSettins.h"
 
 #include <vector>
 #include <unordered_set>
@@ -36,9 +37,11 @@ public:
     void ReadValues(const std::filesystem::path& path);
 private:
     void ReadValuesOneFile(const std::filesystem::path& path);
+    void Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept;
+    void RegisterRes(const NpRankingStudyRes& res) noexcept;
 private:
     std::unordered_map<std::string, NpRankingStudyRes> np_study_res_;
-    std::vector<NpRankingStudyRes> sorted_study_res_;
+    std::vector<NpInfoForPlot>                         res_for_plot_;
 };
 
 }

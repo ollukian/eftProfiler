@@ -1,7 +1,7 @@
 set(app_source_files
         IFitManager.cpp IFitManager.h
         FitManager.cpp FitManager.h
-        NpRankingStudyRes.cpp NpRankingStudyRes.h FitManagerConfig.h)
+        NpRankingStudyRes.cpp NpRankingStudyRes.h FitManagerConfig.h RankingPlotterSettins.h)
 
 include_directories(../Vendors)
 

@@ -15,8 +15,9 @@ enum class StudyType  : uint8_t;
 enum class StatType   : uint8_t;
 enum class PrePostFit : uint8_t;
 
-struct NpRankingStudyRes;
-struct NpRankingStudySettings;
+struct NpRankingStudyRes;  // result of running fit
+struct NpRankingStudySettings; // settings for plotting
+struct NpInfoForPlot;
 
 //void to_json(nlohmann::json& j, const NpRankingStudyRes& np_res);
 //void from_json(const nlohmann::json& j, NpRankingStudyRes& np_res);
@@ -52,9 +53,8 @@ void to_json(nlohmann::json& j, const PrePostFit& s);
 void from_json(const nlohmann::json& j, PrePostFit& s);
 
 
-struct
-NpRankingStudyRes {
-    using json = nlohmann::json;
+struct NpRankingStudyRes {
+    //using json = nlohmann::json;
 
     StudyType studyType { StudyType::NOTDEF };
     StatType  statType  { StatType::NOTDEF };
@@ -73,15 +73,6 @@ NpRankingStudyRes {
 
 }; // NpRankingStudyRes
 
-NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
-                                   poi_name, np_name,
-                                   poi_val, poi_err,
-                                   np_val, np_err,
-                                   nll,
-                                   studyType,
-                                   statType,
-                                   prePostFit);
-
 struct NpRankingStudySettings
 {
     std::string poi;
@@ -90,6 +81,27 @@ struct NpRankingStudySettings
     StudyType studyType {StudyType::NOTDEF};
     PrePostFit prePostFit {PrePostFit::PREFIT};
 };
+
+// Only information relevant for plotting
+struct NpInfoForPlot
+{
+    std::string name;
+    float post_fit_value;
+    float post_fit_error;
+    float pre_fit_value;
+    float pre_fit_error;
+    float impact;
+
+};
+
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
+                                   poi_name, np_name,
+                                   poi_val, poi_err,
+                                   np_val, np_err,
+                                   nll,
+                                   studyType,
+                                   statType,
+                                   prePostFit);
 
 
 
