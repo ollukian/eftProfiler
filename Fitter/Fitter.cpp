@@ -72,8 +72,8 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2");
     minim.setMinimizerType( "Minuit2" );
     // Perform fit with MIGRAD
-    //_status += minim.minimize( "Minuit2", "Migrad" );
-    _status += minim.minimize( "Minuit2");
+    _status += minim.minimize( "Minuit2", "Migrad" );
+    //_status += minim.minimize( "Minuit2");
     EFT_PROF_INFO("[Minimizer] fit status: {}", _status);
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;
