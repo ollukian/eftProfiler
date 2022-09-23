@@ -81,6 +81,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     SetAllPOIsConst();
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
+    //ws_->SetVarVal(res.poi_name, -1.14955385407254);
+    //ws_->SetVarErr(res.poi_name, 0.669981);
+    //ws_->FloatVal(res.poi_name);
 
     fit::Fitter fitter;
 
@@ -150,6 +153,19 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     RooAbsData* data = data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     auto* globObs = (args_["globObs"]);
+
+//    EFT_PROF_WARN("[DoFitAllNpFloat] fit to");
+//    pdf->fitTo(*data,
+//               RooFit::Constrain(*args_["np"]),
+//               RooFit::CloneData(false),
+//               RooFit::GlobalObservables(*globObs),
+//               RooFit::PrintLevel(1),
+//               RooFit::Offset(true),
+//               RooFit::BatchMode(true),
+//               RooFit::Timer(true));
+//    //pdf->fitTo(*data, *globObs, );
+//    EFT_PROF_WARN("[DoFitAllNpFloat] after fit to");
+//    return;
 
     NpRankingStudyRes res;
     res.poi_name = settings.poi;

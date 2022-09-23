@@ -8,10 +8,27 @@ if(CMAKE_CXX_STANDARD LESS 17)
     message(WARNING "Incompatible C++ standard ${CMAKE_CXX_STANDARD}. EFT requires C++17")
 endif()
 
+
+message(STATUS C++ standard:    [${CMAKE_CXX_STANDARD}])
+message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
+
+# Enable address sanitizer (gcc/clang only)
+function(eft_check_warnings target_name)
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        message(STATUS "Address sanitizer enabled")
+        target_compile_options(eftProfiler PRIVATE -fsanitize=address,undefined)
+        target_compile_options(eftProfiler PRIVATE -fno-sanitize=signed-integer-overflow)
+        target_compile_options(eftProfiler PRIVATE -fno-sanitize-recover=all)
+        target_compile_options(eftProfiler PRIVATE -fno-omit-frame-pointer)
+        target_link_libraries(eftProfiler PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
+    endif()
+endfunction()
+
 message(STATUS "Compile in the ${CMAKE_BUILD_TYPE} mode")
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     message(STATUS "Adding compiler flags for debugging")
+    eft_check_warnings(eftProfiler)
     if (MSVC)
         add_compile_options(/W3)
     else()
