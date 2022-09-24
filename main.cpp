@@ -61,6 +61,7 @@ int main(int argc, char* argv[]) {
         manager->ComputeNpRankingOneWorker(std::move(settings), worker_id);
     }
     else if (task == "plot_ranking") {
+        using namespace eft::plot;
         string res_path;
         if (commandLineArgs.SetValIfArgExists("res_path", res_path)) {
             EFT_PROF_INFO("Set res_path: {}", res_path);
@@ -68,6 +69,9 @@ int main(int argc, char* argv[]) {
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadValues(res_path);
+        auto settings = std::make_shared<RankingPlotterSettins>();
+        settings->nb_nps_to_plot = 20;
+        plotter.Plot(settings);
     }
     else if (task == "compute_unconstrained") {
         EFT_PROF_INFO("Compute Unconstrained fit");
@@ -89,7 +93,7 @@ int main(int argc, char* argv[]) {
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else {
-        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking] or [compute_ranking]", task);
+        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking] or [compute_unconstrained]", task);
     }
 
     EFT_PROF_INFO("[Application] execution successfully finished");

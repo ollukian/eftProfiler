@@ -35,9 +35,9 @@ class NpRankingPlotter
 {
 public:
     void ReadValues(const std::filesystem::path& path);
+    void Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept;
 private:
     void ReadValuesOneFile(const std::filesystem::path& path);
-    void Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept;
     void RegisterRes(const NpRankingStudyRes& res) noexcept;
 private:
     std::unordered_map<std::string, NpRankingStudyRes> np_study_res_;
