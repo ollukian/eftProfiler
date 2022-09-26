@@ -86,6 +86,8 @@ private:
     FuncClosure funcs_{};
     ArgsClosure args_{};
 
+    std::unordered_map<std::string, RooArgList*> lists_;
+
     std::vector<std::string> pois_;
 
     IWorkspaceWrapper* ws_ = nullptr;
@@ -239,7 +241,8 @@ inline void FitManager::SetAllPOIsFloat() noexcept
 inline void FitManager::SetAllGlobObsConst() noexcept
 {
     EFT_PROF_TRACE("[FitManager]{SetAllGlobObsConst}");
-    for (const auto& globObs : *args_["globObs"]) {
+    //for (const auto& globObs : *args_["globObs"]) {
+    for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
         dynamic_cast<RooRealVar *>(globObs)->setConstant(true);
         EFT_PROF_DEBUG("[FitManager] set {} const, status after: {} +- {}  (const? ==> {})", name,
@@ -251,7 +254,8 @@ inline void FitManager::SetAllGlobObsConst() noexcept
 inline void FitManager::SetAllGlobObsFloat() noexcept
 {
     EFT_PROF_TRACE("[FitManager]{SetAllGlobObsFloat}");
-    for (const auto& globObs : *args_["globObs"]) {
+    //for (const auto& globObs : *args_["globObs"]) {
+    for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
         dynamic_cast<RooRealVar *>(globObs)->setConstant(false);
         EFT_PROF_DEBUG("[FitManager] set {:30} float, status after: {} +- {}  (const? ==> {})", name,
@@ -263,7 +267,8 @@ inline void FitManager::SetAllGlobObsFloat() noexcept
 inline void FitManager::SetAllGlobObsTo(float val) noexcept
 {
     EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {}", val);
-    for (const auto& globObs : *args_["globObs"]) {
+    //for (const auto& globObs : *args_["globObs"]) {
+    for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
         EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
                        name,
@@ -282,7 +287,8 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
 inline void FitManager::SetAllNuisanceParamsToValue(float val) noexcept
 {
     EFT_PROF_TRACE("[FitManager] SetAllNPto {}", val);
-    for (const auto& globObs : *args_["np"]) {
+    //for (const auto& globObs : *args_["np"]) {
+    for (const auto& globObs : *lists_["paired_nps"]) {
         const std::string name = {globObs->GetTitle()};
         EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} after: {} +- {}  (const? ==> {}",
                        name,

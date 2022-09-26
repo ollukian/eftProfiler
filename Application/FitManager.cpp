@@ -153,7 +153,11 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     EFT_PROF_INFO("[DoFitAllNpFloat] all nuisance parameters let to float and set to zero");
     RooAbsData* data = data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
-    auto* globObs = (args_["globObs"]);
+    //auto* globObs = (args_["globObs"]);
+    auto* globObs_list = (lists_["lists_"]);
+
+    auto* globObs = new RooArgSet();
+    for (const auto glob : *globObs_list) { globObs->add(*glob); }
 
 //    EFT_PROF_WARN("[DoFitAllNpFloat] fit to");
 //    pdf->fitTo(*data,
@@ -332,22 +336,31 @@ void FitManager::Init(FitManagerConfig&& config)
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
     EFT_PROF_INFO("[FitManager] print obtained constrains");
     EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_constr_pdf->size());
-    for (const auto& pdf : *pairConstr.paired_constr_pdf)
-    {
-        pdf->Print();
-    }
+    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_globs->size());
+    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_nps->size());
 
-    EFT_PROF_INFO("[FitManager] paired_globs {}:", pairConstr.paired_globs->size());
-    for (const auto& pdf : *pairConstr.paired_globs)
-    {
-        pdf->Print();
-    }
+    //auto paired_globs = new RooArgSet();
+    //auto paired_nps = new RooArgSet();
 
-    EFT_PROF_INFO("[FitManager] paired_nps {}:", pairConstr.paired_nps->size());
-    for (const auto& pdf : *pairConstr.paired_nps)
-    {
-        pdf->Print();
-    }
+    lists_[ "paired_globs" ] = pairConstr.paired_globs;
+    lists_[ "paired_nps"   ] = pairConstr.paired_nps;
+
+//    for (const auto& pdf : *pairConstr.paired_constr_pdf)
+//    {
+//        pdf->Print();
+//    }
+//
+//    EFT_PROF_INFO("[FitManager] paired_globs {}:", pairConstr.paired_globs->size());
+//    for (const auto& pdf : *pairConstr.paired_globs)
+//    {
+//        pdf->Print();
+//    }
+//
+//    EFT_PROF_INFO("[FitManager] paired_nps {}:", pairConstr.paired_nps->size());
+//    for (const auto& pdf : *pairConstr.paired_nps)
+//    {
+//        pdf->Print();
+//    }
 
     //throw std::runtime_error("enough ;)");
 
