@@ -114,6 +114,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                        res_for_plot_[idx_syst].impact);
         histo->SetBinContent(idx_syst + 1, res_for_plot_[idx_syst].impact);
         histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_[idx_syst].name.c_str());
+        EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_[idx_syst].impact);
     }
 
     histo->GetXaxis()->LabelsOption("v");
@@ -142,7 +143,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         l->SetLineStyle(kDashed);
         l->SetLineWidth(2);
         l->SetLineColorAlpha(kGray, 0.7f);
-        l->Draw("same");
+        //l->Draw("same");
     }
 
 
@@ -163,12 +164,16 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
         info.pre_fit_error = res.np_err;
     }
 
-    EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for impact");
+    EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
     EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
 
-    static constexpr float error_full = 0.6720647512674452;
+
+    static constexpr float error_full = 0.677982275;
+    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes np.err: {}, full_err: {}", res.np_err, error_full);
+
     if (res.np_err < error_full)
-        info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
+        info.impact = res.np_err;
+        //info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
     else
         info.impact = 0;
 
