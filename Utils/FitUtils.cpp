@@ -55,7 +55,7 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
         }
         EFT_PROF_DEBUG("FitUtils::GetPairConstraint loop over globs");
         for (const auto& glob : *globs) {
-            EFT_PROF_DEBUG("FitUtils::GetPairConstraint check glob: {}", glob->GetName());
+           // EFT_PROF_DEBUG("FitUtils::GetPairConstraint check glob: {}", glob->GetName());
             if (constraint_pdf->dependsOn(*glob)){
                 EFT_PROF_DEBUG("FitUtils::GetPairConstraint pdf depends on glob: {}", glob->GetName());
                 target_glob = dynamic_cast<RooRealVar*>(glob);
@@ -64,7 +64,8 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
         }
         if ((target_glob == nullptr) || (target_np == nullptr)) {
             EFT_PROF_CRITICAL("FitUtils::GetPairConstraints (target_glob == nullptr) || (target_np == nullptr)");
-            throw std::runtime_error("");
+            continue;
+            //throw std::runtime_error("");
         }
         res.paired_nps->add(*target_np);
         res.paired_globs->add(*target_glob);
