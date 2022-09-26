@@ -46,7 +46,9 @@ int main(int argc, char* argv[]) {
             settings.prePostFit = eft::stats::PrePostFit::OBSERVED;
         else {
             EFT_PROF_CRITICAL("Prepostfit: {} is not known. Use: prefit, postfit, observed", postFit);
-            throw std::runtime_error("wrong --study_type flag option");
+            EFT_PROF_CRITICAL("use OBSERVED");
+            settings.prePostFit = eft::stats::PrePostFit::OBSERVED;
+           // throw std::runtime_error("wrong --study_type flag option");
         }
 
         //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
