@@ -4,13 +4,16 @@
 
 #include <nlohmann/json.hpp>
 #include <spdlog/fmt/fmt.h>
-#include "../Core/Logger.h"
 
+#include "../Core/Logger.h"
 #include "NpRankingPlotter.h"
+
 #include <iostream>
 #include <fstream>
 #include <iomanip>
 #include <filesystem>
+
+#include "TStyle.h"
 
 using namespace std;
 
@@ -75,11 +78,10 @@ void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
 
 void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept
 {
-    //sorted_study_res_ = {np_study_res_.begin(), np_study_res_.end()};
-    //sorted_study_res_.reserve(np_study_res_.size());
-    //for (const auto& [np_name, res] : np_study_res_) {
-    //    sorted_study_res_.push_back(res);
-    //}
+
+    gStyle->SetOptTitle(0);
+    gStyle->SetOptStat(0000000);
+
     EFT_PROF_TRACE("[NpRankingPlotter]{Plot}");
     EFT_PROF_INFO("[NpRankingPlotter] available {} NP, plot {} out of them",
                   res_for_plot_.size(),
@@ -106,14 +108,26 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_[idx_syst].name.c_str());
     }
 
+    histo->GetXaxis()->LabelsOption("v");
+    histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
+
     //histo->SetFillColor(kBlue);
     histo->SetFillColorAlpha(kBlue, 0.6);
     histo->SetLineColor(kBlue);
     histo->SetLineWidth(2);
 
+
     std::filesystem::create_directory("figures");
 
     auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
+
+    canvas->SetRightMargin(0.2f);
+    canvas->SetLeftMargin(0.2f);
+    canvas->SetTopMargin(0.2f);
+    canvas->SetBottomMargin(0.4f);
+
+
+
     histo->Draw("H TEXT same");
     canvas->SaveAs("histo.pdf");
 }
@@ -132,7 +146,13 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
     }
 
     EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for impact");
-    info.impact = res.poi_err / res.poi_val;
+    EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
+
+    static constexpr float error_full = 0.6720647512674452;
+    if (res.np_err < error_full)
+        info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
+    else
+        info.impact = 0;
 
     res_for_plot_.push_back(std::move(info));
 }

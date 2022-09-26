@@ -1,6 +1,6 @@
 set(utils_source_files
         WsPlotter.cpp
-        NpRankingPlotter.cpp NpRankingPlotter.h)
+        NpRankingPlotter.cpp NpRankingPlotter.h FitUtils.cpp FitUtils.h)
 
 add_library(utils ${utils_source_files})
 target_link_libraries(utils PRIVATE nlohmann_json::nlohmann_json)

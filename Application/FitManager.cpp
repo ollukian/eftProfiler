@@ -5,6 +5,7 @@
 #include "FitManager.h"
 #include "../Fitter/IFitter.h"
 #include "../Fitter/Fitter.h"
+#include "../Utils/FitUtils.h"
 
 #include "../Core/Logger.h"
 
@@ -326,6 +327,29 @@ void FitManager::Init(FitManagerConfig&& config)
     ExtractPdfTotal("combPdf");
     EFT_PROF_INFO("[FitManager] extract data total: {}", config.comb_data);
     ExtractDataTotal("combData");
+
+    EFT_PROF_INFO("[FitManager] get constrains");
+    auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
+    EFT_PROF_INFO("[FitManager] print obtained constrains");
+    EFT_PROF_INFO("[FitManager] paired_constr_pdf:");
+    for (const auto& pdf : *pairConstr.paired_constr_pdf)
+    {
+        pdf->Print();
+    }
+
+    EFT_PROF_INFO("[FitManager] paired_globs:");
+    for (const auto& pdf : *pairConstr.paired_globs)
+    {
+        pdf->Print();
+    }
+
+    EFT_PROF_INFO("[FitManager] paired_nps:");
+    for (const auto& pdf : *pairConstr.paired_nps)
+    {
+        pdf->Print();
+    }
+
+    throw std::runtime_error("enough ;)");
 
    /* cout << setfill('*') << setw(45) << "" << endl;
     cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;

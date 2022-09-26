@@ -117,9 +117,9 @@ inline void FitManager::ExtractNP()      noexcept
 
     assert(ws_ != nullptr);
     args_["np_all"] = (RooArgSet *) ws_->GetNp();
-    args_["np"]     = (RooArgSet *) ws_->GetNp();
+    //args_["np"]     = (RooArgSet *) ws_->GetNp();
     EFT_PROF_DEBUG("Extracted NP:");
-    for (const auto& np : *args_["np"]) {
+    for (const auto& np : *args_["np_all"]) {
         np->Print();
     }
 //    assert(ws_ != nullptr);
@@ -143,7 +143,7 @@ inline void FitManager::ExtractNP()      noexcept
     //args_["np"] = real_np;
 
     EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]", args_["np_all"]->size());
-    EFT_PROF_INFO("[FitManager] Extracted {} real_np to args[np]",     args_["np"]->size());
+    //EFT_PROF_INFO("[FitManager] Extracted {} real_np to args[np]",     args_["np"]->size());
 }
 inline void FitManager::ExtractObs() noexcept
 {
