@@ -155,7 +155,10 @@ inline void FitManager::ExtractGlobObs()     noexcept
 {
     assert(ws_ != nullptr);
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
-    EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]", args_["globObs"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]:", args_["globObs"]->size());
+    for (const auto& glob : *args_["globObs"]) {
+        glob->Print();
+    }
 }
 inline void FitManager::ExtractCats() noexcept
 {
