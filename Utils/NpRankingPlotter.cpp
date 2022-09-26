@@ -135,6 +135,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     canvas->SetTopMargin(0.05f);
     canvas->SetBottomMargin(0.4f);
 
+    histo->Draw("H TEXT same");
+
     // lines to show full 1 sigma error
     TLine l1(0, -1, settings->nb_nps_to_plot, -1);
     TLine l2(0, 1, settings->nb_nps_to_plot, 1);
@@ -143,12 +145,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         l->SetLineStyle(kDashed);
         l->SetLineWidth(2);
         l->SetLineColorAlpha(kGray, 0.7f);
-        l->DrawLine(l->GetX1(), l->GetY1(), l->GetX2(), l->GetY2());
-        //l->Draw("same");
+        //l->DrawLine(l->GetX1(), l->GetY1(), l->GetX2(), l->GetY2());
+        l->Draw("same");
     }
 
 
-    histo->Draw("H TEXT same");
+
     canvas->SaveAs("histo.pdf");
 }
 
