@@ -25,14 +25,17 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
     EFT_PROF_TRACE("FitUtils::GetPairConstraints");
 
     PairConstraintsResults res;
-
+    EFT_PROF_DEBUG("FitUtils::GetPairConstraints get contsrain pdfs");
     auto* constraint_pdfs = GetConstraintPdfs(pdf, obs, nps);
+    EFT_PROF_DEBUG("FitUtils::GetPairConstraints get contsrain pdfs => {} elements received",
+                   constraint_pdfs->size());
     for (const auto& constraint_pdf : *constraint_pdfs) {
         RooRealVar* target_np = nullptr;
         RooRealVar* target_glob = nullptr;
         RooArgSet* nuis_components = UnfoldComponents(constraint_pdf, nps);
         if (nuis_components->getSize() == 0){
             for (const auto& np : *nps) {
+                EFT_PROF_DEBUG("FitUtils::GetPairConstraints check if pdf depends on np: {}", np->GetName());
                 if (constraint_pdf->dependsOn(*np)){
                     target_np = dynamic_cast<RooRealVar*>(np);
                     break;
