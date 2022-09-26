@@ -161,7 +161,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     for (const auto glob : *globObs_list) { globObs->add(*glob); }
 
     auto* nps = new RooArgSet();
-    for (const auto np : *nps_list) { globObs->add(*np); }
+    for (const auto np : *nps_list) { nps_list->add(*np); }
 
 //    EFT_PROF_WARN("[DoFitAllNpFloat] fit to");
 //    pdf->fitTo(*data,
