@@ -25,6 +25,7 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
     EFT_PROF_TRACE("FitUtils::GetPairConstraints");
 
     PairConstraintsResults res;
+
     EFT_PROF_DEBUG("FitUtils::GetPairConstraints get contsrain pdfs");
     auto* constraint_pdfs = GetConstraintPdfs(pdf, obs, nps);
     EFT_PROF_DEBUG("FitUtils::GetPairConstraints get contsrain pdfs => {} elements received",
@@ -37,6 +38,7 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
             for (const auto& np : *nps) {
                 EFT_PROF_DEBUG("FitUtils::GetPairConstraints check if pdf depends on np: {}", np->GetName());
                 if (constraint_pdf->dependsOn(*np)){
+                    EFT_PROF_DEBUG("FitUtils::GetPairConstraints pdf depends on np: {}", np->GetName());
                     target_np = dynamic_cast<RooRealVar*>(np);
                     break;
                 }
@@ -46,10 +48,16 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
             EFT_PROF_CRITICAL("FitUtils::GetPairConstraints nuis_components->getSize() > 1");
             throw std::runtime_error("");
         }
-        else
-            target_np = (RooRealVar*) nuis_components->first();
+        else {
+            EFT_PROF_CRITICAL("FitUtils::GetPairConstraints nuis_components->getSize() == 1, pick it up: {}",
+                              nuis_components->first()->GetName());
+            target_np = (RooRealVar *) nuis_components->first();
+        }
+        EFT_PROF_DEBUG("FitUtils::GetPairConstraint loop over globs");
         for (const auto& glob : *globs) {
+            EFT_PROF_DEBUG("FitUtils::GetPairConstraint check glob: {}", glob->GetName());
             if (constraint_pdf->dependsOn(*glob)){
+                EFT_PROF_DEBUG("FitUtils::GetPairConstraint pdf depends on glob: {}", glob->GetName());
                 target_glob = dynamic_cast<RooRealVar*>(glob);
                 break;
             }
@@ -139,6 +147,14 @@ RooArgSet* FitUtils::UnfoldComponents(RooAbsArg* target,
     }
     EFT_PROF_DEBUG("UnfoldComponents leave with {} elems", found_components->size());
     return found_components;
+}
+
+PairConstraintsResults::PairConstraintsResults()
+{
+    EFT_PROF_TRACE("PairConstraintsResults::ctor");
+    paired_globs = new RooArgList();
+    paired_nps   = new RooArgList();
+    paired_constr_pdf = new RooArgList();
 }
 
 

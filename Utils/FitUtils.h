@@ -46,6 +46,8 @@ struct PairConstraintsResults
     RooArgList* paired_nps        = nullptr;
     RooArgList* paired_globs      = nullptr;
     RooArgList* paired_constr_pdf = nullptr;
+
+    PairConstraintsResults();
 };
 
 } // stats
