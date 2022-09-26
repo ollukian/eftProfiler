@@ -155,9 +155,13 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
     auto* globObs_list = (lists_["paired_globs"]);
+    auto* nps_list               = (lists_["paired_nps"]);
 
     auto* globObs = new RooArgSet();
     for (const auto glob : *globObs_list) { globObs->add(*glob); }
+
+    auto* nps = new RooArgSet();
+    for (const auto np : *nps_list) { globObs->add(*np); }
 
 //    EFT_PROF_WARN("[DoFitAllNpFloat] fit to");
 //    pdf->fitTo(*data,
@@ -187,13 +191,13 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
-    auto nll = fitter.CreatNll(data, pdf, globObs, args_[ "np" ]);
-    EFT_PROF_INFO("[DoFitAllNpFloat] print nps before free fit:");
-    args_["np"]->Print("v");
-    EFT_PROF_INFO("[DoFitAllNpFloat] minimize nll for free fit");
+    auto nll = fitter.CreatNll(data, pdf, globObs, nps);
+    //EFT_PROF_INFO("[DoFitAllNpFloat] print nps before free fit:");
+    //args_["np"]->Print("v");
+    //EFT_PROF_INFO("[DoFitAllNpFloat] minimize nll for free fit");
     auto fitRes = fitter.Minimize(nll, pdf);
-    EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
-    args_["np"]->Print("v");
+    //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
+    //args_["np"]->Print("v");
 
     res.poi_err = ws_->GetParErr(res.poi_name);
     res.poi_val = ws_->GetParVal(res.poi_name);
@@ -336,8 +340,8 @@ void FitManager::Init(FitManagerConfig&& config)
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
     EFT_PROF_INFO("[FitManager] print obtained constrains");
     EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_constr_pdf->size());
-    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_globs->size());
-    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_nps->size());
+    EFT_PROF_INFO("[FitManager] paired_globs {}:",      pairConstr.paired_globs->size());
+    EFT_PROF_INFO("[FitManager] paired_nps {}:",        pairConstr.paired_nps->size());
 
     //auto paired_globs = new RooArgSet();
     //auto paired_nps = new RooArgSet();
