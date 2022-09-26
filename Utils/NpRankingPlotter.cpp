@@ -130,9 +130,9 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
 
-    canvas->SetRightMargin(0.2f);
-    canvas->SetLeftMargin(0.2f);
-    canvas->SetTopMargin(0.2f);
+    canvas->SetRightMargin(0.05f);
+    canvas->SetLeftMargin(0.05f);
+    canvas->SetTopMargin(0.05f);
     canvas->SetBottomMargin(0.4f);
 
     // lines to show full 1 sigma error
@@ -143,6 +143,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         l->SetLineStyle(kDashed);
         l->SetLineWidth(2);
         l->SetLineColorAlpha(kGray, 0.7f);
+        l->DrawLine(l->GetX1(), l->GetY1(), l->GetX2(), l->GetY2());
         //l->Draw("same");
     }
 
@@ -171,11 +172,11 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
     static constexpr float error_full = 0.677982275;
     EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes np.err: {}, full_err: {}", res.np_err, error_full);
 
-    if (res.np_err < error_full)
+    //if (res.np_err < error_full)
         info.impact = res.np_err;
         //info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
-    else
-        info.impact = 0;
+    //else
+    //    info.impact = 0;
 
     res_for_plot_.push_back(std::move(info));
 }
