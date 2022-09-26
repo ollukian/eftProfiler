@@ -59,6 +59,7 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
         res.paired_globs->add(*target_glob);
         res.paired_constr_pdf->add(*constraint_pdf);
     }
+    return res;
 }
 
 RooArgSet*
