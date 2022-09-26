@@ -154,7 +154,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     RooAbsData* data = data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
-    auto* globObs_list = (lists_["lists_"]);
+    auto* globObs_list = (lists_["paired_globs"]);
 
     auto* globObs = new RooArgSet();
     for (const auto glob : *globObs_list) { globObs->add(*glob); }
