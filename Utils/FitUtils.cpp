@@ -74,7 +74,7 @@ FitUtils::GetConstraintPdfs(RooAbsPdf* pdf,
     auto constraint_pdfs = new RooArgSet(all_constraints->GetName());
 
     for (const auto constrain : *all_constraints) {
-        EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs deal with {} constrain", constrain->GetName());
+        //EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs deal with {} constrain", constrain->GetName());
         if (constrain->IsA() == RooProdPdf::Class()) {
             EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs {} is composite, add components", constrain->GetName());
             auto components = new RooArgSet();
@@ -86,6 +86,7 @@ FitUtils::GetConstraintPdfs(RooAbsPdf* pdf,
             constraint_pdfs->add(*constrain);
         }
     }
+    EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs leave function with {} size", constraint_pdfs->size());
     return constraint_pdfs;
 }
 
@@ -114,20 +115,26 @@ RooArgSet* FitUtils::UnfoldComponents(RooAbsArg* target,
 {
     EFT_PROF_TRACE("FitUtils::UnfoldComponents");
     auto found_components = new RooArgSet();
-    if (reference_components->contains(*target))
+    if (reference_components->contains(*target)) {
+        EFT_PROF_DEBUG("FitUtils::UnfoldComponents ref_comp contains target, add the target to the found comps");
         found_components->add(*target);
+    }
     auto inner_components = new RooArgSet();
     if (target->IsA() == RooAbsPdf::Class()){
+        EFT_PROF_DEBUG("FitUtils::UnfoldComponents target is RooAbsPdf, add targer->components, substruct target to the inner_comp");
         inner_components = ((RooAbsPdf*) target)->getComponents();
         inner_components->remove(*target);
     }
-    else if (target->IsA() == RooProduct::Class())
-        inner_components->add(((RooProduct*) target)->components());
+    else if (target->IsA() == RooProduct::Class()) {
+        inner_components->add(((RooProduct *) target)->components());
+        EFT_PROF_DEBUG("FitUtils::UnfoldComponents target is RooProduct. add target->components to the inner_components");
+    }
     if (inner_components->getSize() != 0){
         for (const auto& component : *inner_components) {
             found_components->add(*UnfoldComponents(component, reference_components));
         }
     }
+    EFT_PROF_DEBUG("UnfoldComponents leave with {} elems", found_components->size());
     return found_components;
 }
 
