@@ -331,25 +331,25 @@ void FitManager::Init(FitManagerConfig&& config)
     EFT_PROF_INFO("[FitManager] get constrains");
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
     EFT_PROF_INFO("[FitManager] print obtained constrains");
-    EFT_PROF_INFO("[FitManager] paired_constr_pdf:");
+    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_constr_pdf->size());
     for (const auto& pdf : *pairConstr.paired_constr_pdf)
     {
         pdf->Print();
     }
 
-    EFT_PROF_INFO("[FitManager] paired_globs:");
+    EFT_PROF_INFO("[FitManager] paired_globs {}:", pairConstr.paired_globs->size());
     for (const auto& pdf : *pairConstr.paired_globs)
     {
         pdf->Print();
     }
 
-    EFT_PROF_INFO("[FitManager] paired_nps:");
+    EFT_PROF_INFO("[FitManager] paired_nps {}:", pairConstr.paired_nps->size());
     for (const auto& pdf : *pairConstr.paired_nps)
     {
         pdf->Print();
     }
 
-    throw std::runtime_error("enough ;)");
+    //throw std::runtime_error("enough ;)");
 
    /* cout << setfill('*') << setw(45) << "" << endl;
     cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
