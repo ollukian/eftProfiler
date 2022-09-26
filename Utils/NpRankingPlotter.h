@@ -18,13 +18,6 @@
 
 //#include <nlohmann/json.hpp>
 
-#include <TCanvas.h>
-#include <TAxis.h>
-#include "TH1D.h"
-#include "THStack.h"
-#include "TLegend.h"
-#include "TLatex.h"
-
 #include <filesystem>
 
 namespace eft::plot {

@@ -13,7 +13,15 @@
 #include <iomanip>
 #include <filesystem>
 
+#include <TCanvas.h>
+#include <TAxis.h>
+#include "TH1D.h"
+#include "THStack.h"
+#include "TLegend.h"
+#include "TLatex.h"
 #include "TStyle.h"
+#include "TLine.h"
+
 
 using namespace std;
 
@@ -126,6 +134,16 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     canvas->SetTopMargin(0.2f);
     canvas->SetBottomMargin(0.4f);
 
+    // lines to show full 1 sigma error
+    TLine l1(0, -1, settings->nb_nps_to_plot, -1);
+    TLine l2(0, 1, settings->nb_nps_to_plot, 1);
+
+    for (auto l : {&l1, &l2}) {
+        l->SetLineStyle(kDashed);
+        l->SetLineWidth(2);
+        l->SetLineColorAlpha(kGray, 0.7f);
+        l->Draw("same");
+    }
 
 
     histo->Draw("H TEXT same");
