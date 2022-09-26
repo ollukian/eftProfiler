@@ -155,13 +155,13 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
     auto* globObs_list = (lists_["paired_globs"]);
-    auto* nps_list               = (lists_["paired_nps"]);
+    auto* nps_list     = (lists_["paired_nps"]);
 
     auto* globObs = new RooArgSet();
     for (const auto glob : *globObs_list) { globObs->add(*glob); }
 
     auto* nps = new RooArgSet();
-    for (const auto np : *nps_list) { nps_list->add(*np); }
+    for (const auto np : *nps_list) { nps->add(*np); }
 
 //    EFT_PROF_WARN("[DoFitAllNpFloat] fit to");
 //    pdf->fitTo(*data,
