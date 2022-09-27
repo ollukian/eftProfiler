@@ -52,11 +52,33 @@ void FitManager::DoGlobalFit()
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
-    SetUpGlobObs(settings.prePostFit);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {} do unconditional fit", workerId);
+    EFT_PROF_INFO("[ComputeNpRanking] {} before uncond fit: {} +- {}",
+                  settings.poi,
+                  ws()->GetParVal(settings.poi),
+                  ws()->GetParErr(settings.poi)
+    );
+    DoFitAllNpFloat(settings);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
+    EFT_PROF_INFO("[ComputeNpRanking] {} after uncond fit: {} +- {}",
+                  settings.poi,
+                  ws()->GetParVal(settings.poi),
+                  ws()->GetParErr(settings.poi)
+                  );
+    //SetUpGlobObs(settings.prePostFit);
     RooAbsData& data = GetData(settings.prePostFit);
     //auto pdf = GetPdf("pdf_total");
     RooAbsPdf*  pdf = funcs_["pdf_total"];
-    auto* globObs = (args_["globObs"]);
+    //auto* globObs = (args_["globObs"]);
+
+    auto* globObs_list = (lists_["paired_globs"]);
+    auto* nps_list     = (lists_["paired_nps"]);
+
+    auto* globObs = new RooArgSet();
+    for (const auto glob : *globObs_list) { globObs->add(*glob); }
+
+    auto* nps = new RooArgSet();
+    for (const auto np : *nps_list) { nps->add(*np); }
 
     /*if (settings.studyType == StudyType::EXPECTED) {
         assert(data_["asimov_full"]);
@@ -72,11 +94,11 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.statType = settings.statType;
     res.studyType = settings.studyType;
     res.prePostFit = settings.prePostFit;
-    res.np_name = args_["np"]->operator[](workerId)->GetName();
+    res.np_name = nps->operator[](workerId)->GetName();
 
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float", workerId);
-    SetAllNuisanceParamsFloat();
+    //SetAllNuisanceParamsFloat();
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
     SetAllPOIsConst();
@@ -105,7 +127,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws_->FixValConst(res.np_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
-    auto nll = fitter.CreatNll(&data, pdf, globObs, args_["np"]);
+    auto nll = fitter.CreatNll(&data, pdf, globObs, nps);
     EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
@@ -146,7 +168,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
-    SetAllGlobObsTo(0); // to find values for np preferred by data
+    //SetAllGlobObsTo(0); // to find values for np preferred by data
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     //SetAllNuisanceParamsFloat();
     //SetAllNuisanceParamsToValue(0);
