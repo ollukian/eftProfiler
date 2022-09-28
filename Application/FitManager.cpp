@@ -134,11 +134,12 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
 
-    res.poi_err = ws_->GetParErr(res.poi_name);
-    res.poi_val = ws_->GetParVal(res.poi_name);
+    // TODO: create:
+    //  * [] create: print results
+    //  * [] create: prepare nps, globs and so on
+    res.ExtractPoiValErr(ws_, res.poi_name);
+    res.ExtractNPValErr(ws_, res.np_name);
     res.nll     = nll->getVal();
-    res.np_err  = ws_->GetParErr(res.np_name);
-    res.np_val  = ws_->GetParVal(res.np_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);

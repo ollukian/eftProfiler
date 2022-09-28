@@ -6,6 +6,8 @@
 #define EFTPROFILER_NPRANKINGSTUDYRES_H
 
 #include "nlohmann/json.hpp"
+// fwd declaration
+class IWorkspaceWrapper;
 
 #include <string>
 
@@ -71,6 +73,9 @@ struct NpRankingStudyRes {
     double np_err;
 
     double nll;
+
+    void ExtractPoiValErr(IWorkspaceWrapper* ws, const std::string& poi);
+    void ExtractNPValErr(IWorkspaceWrapper* ws, const std::string& np);
 
 }; // NpRankingStudyRes
 

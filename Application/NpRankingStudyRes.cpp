@@ -3,6 +3,7 @@
 //
 
 #include "NpRankingStudyRes.h"
+#include "IWorkspaceWrapper.h"
 
 namespace eft::stats {
 
@@ -87,6 +88,18 @@ void from_json(const nlohmann::json& j, PrePostFit& s)
     else {
         throw std::runtime_error("Impossible to parse PrePostFit: {" + s_type + "}");
     }
+}
+
+void NpRankingStudyRes::ExtractPoiValErr(IWorkspaceWrapper* ws, const std::string& poi)
+{
+    this->poi_err = ws->GetParErr(poi);
+    this->poi_val = ws->GetParVal(poi);
+}
+
+void NpRankingStudyRes::ExtractNPValErr(IWorkspaceWrapper* ws, const std::string& np)
+{
+    this->np_err = ws->GetParErr(np);
+    this->np_val = ws->GetParVal(np);
 }
 
 } // stats
