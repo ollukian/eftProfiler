@@ -174,7 +174,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
-    //SetAllGlobObsTo(0); // to find values for np preferred by data
+    SetAllGlobObsTo(0); // to find values for np preferred by data
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     //SetAllNuisanceParamsFloat();
     //SetAllNuisanceParamsToValue(0);
@@ -225,9 +225,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
-    res.poi_err = ws_->GetParErr(res.poi_name);
-    res.poi_val = ws_->GetParVal(res.poi_name);
-    res.nll     = nll->getVal();
+    res.ExtractPoiValErr(ws_, res.poi_name);
+    res.nll = nll->getVal();
 
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
