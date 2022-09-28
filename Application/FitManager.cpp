@@ -96,8 +96,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.prePostFit = settings.prePostFit;
     res.np_name = nps->operator[](workerId)->GetName();
 
+    EFT_PROF_INFO("[ComputeNpRanking], set all globs to nps");
+    SetGlobsToNPs();
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float", workerId);
+    //EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float", workerId);
     //SetAllNuisanceParamsFloat();
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
@@ -203,6 +205,9 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     res.statType = StatType::FULL;
     res.studyType = StudyType::NOTDEF;
     res.prePostFit = PrePostFit::PREFIT;
+
+    EFT_PROF_INFO("[DoFitAllNpFloat], set all globs to nps");
+    SetGlobsToNPs();
 
     EFT_PROF_INFO("[DoFitAllNpFloat], set all POIs const");
     SetAllPOIsConst();

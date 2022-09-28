@@ -60,6 +60,8 @@ public:
     inline void SetAllGlobObsFloat() noexcept override;
     inline void SetAllGlobObsTo(float val) noexcept override;
 
+    inline void SetGlobsToNPs() noexcept;
+
     void CreateAsimovData(PrePostFit studyType) noexcept override;
 
     inline RooAbsData& GetData(PrePostFit studyType) noexcept override;
@@ -333,6 +335,35 @@ inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
         //SetAllGlobObsTo(0);
     }
     SetAllGlobObsConst();
+}
+
+void FitManager::SetGlobsToNPs() noexcept {
+    EFT_PROF_TRACE("[FitManager] SetGlobsToNPs");
+    auto* nps   = lists_["paired_nps"];
+    auto* globs = lists_["paired_globs"];
+
+    assert(nps->size() == globs->size());
+
+    size_t sz = nps->size();
+    EFT_PROF_INFO("[FitManager] SetGlobsToNPs: available {} nps and globs", sz);
+
+    for (size_t idx {0}; idx < sz; ++idx) {
+        auto* glob = dynamic_cast<RooRealVar*>( globs->at(idx) );
+        auto* np   = dynamic_cast<RooRealVar*>( nps->at(idx) );
+        EFT_PROF_DEBUG("Set glob: {} with val {} +- {} to {}",
+                       glob->GetName(),
+                       glob->getVal(),
+                       glob->getError(),
+                       np->getVal(),
+                       np->getError()
+                       );
+        glob->setVal(np->getVal());
+        EFT_PROF_DEBUG(" * glob: {} after: {} +- {}",
+                       glob->GetName(),
+                       glob->getVal(),
+                       glob->getError()
+        );
+    }
 }
 
 
