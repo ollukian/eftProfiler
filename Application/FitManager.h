@@ -75,6 +75,8 @@ public:
     [[nodiscard]]
     inline const ArgsClosure & GetArgsClosure() const noexcept override {return args_;}
 
+    RooArgSet* GetListAsArgSet(const std::string& name) const;
+
     [[nodiscard]]
     inline const RooAbsData* GetData(std::string&& name) const override {return data_.at(name);}
     [[nodiscard]]

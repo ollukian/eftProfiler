@@ -71,14 +71,17 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
 
-    auto* globObs_list = (lists_["paired_globs"]);
+    auto* globObs = GetListAsArgSet("paired_globs");
+    auto* nps = GetListAsArgSet("paired_nps");
+
+    /*auto* globObs_list = (lists_["paired_globs"]);
     auto* nps_list     = (lists_["paired_nps"]);
 
     auto* globObs = new RooArgSet();
     for (const auto glob : *globObs_list) { globObs->add(*glob); }
 
     auto* nps = new RooArgSet();
-    for (const auto np : *nps_list) { nps->add(*np); }
+    for (const auto np : *nps_list) { nps->add(*np); }*/
 
     /*if (settings.studyType == StudyType::EXPECTED) {
         assert(data_["asimov_full"]);
@@ -179,14 +182,9 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     RooAbsData* data = data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
-    auto* globObs_list = (lists_["paired_globs"]);
-    auto* nps_list     = (lists_["paired_nps"]);
 
-    auto* globObs = new RooArgSet();
-    for (const auto glob : *globObs_list) { globObs->add(*glob); }
-
-    auto* nps = new RooArgSet();
-    for (const auto np : *nps_list) { nps->add(*np); }
+    auto* globObs = GetListAsArgSet("paired_globs");
+    auto* nps = GetListAsArgSet("paired_nps");
 
 //    EFT_PROF_WARN("[DoFitAllNpFloat] fit to");
 //    pdf->fitTo(*data,
@@ -207,8 +205,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     res.studyType = StudyType::NOTDEF;
     res.prePostFit = PrePostFit::PREFIT;
 
-    EFT_PROF_INFO("[DoFitAllNpFloat], set all globs to nps");
-    SetGlobsToNPs();
+    //EFT_PROF_INFO("[DoFitAllNpFloat], set all globs to nps");
+    //SetGlobsToNPs();
 
     EFT_PROF_INFO("[DoFitAllNpFloat], set all POIs const");
     SetAllPOIsConst();
@@ -515,6 +513,29 @@ void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
                                                            *args_["globObs"]
     );
 };
+
+RooArgSet* FitManager::GetListAsArgSet(const std::string& name) const
+{
+    EFT_PROF_TRACE("FitManager::GetListAsArgSet for {}", name);
+    auto* res = new RooArgSet();
+
+    if (lists_.find(name) == lists_.end())
+    {
+        EFT_PROF_WARN("FitManager::GetListAsArgSet no list: {} is available", name);
+        string error_message = fmt::format("FitManager::GetListAsArgSet no list: {name} is available,"
+                                           "Use one of the {} followings:", lists_.size());
+
+        for (const auto& list : lists_) error_message += "[" + list.first + "], ";
+
+        throw std::out_of_range(error_message);
+    }
+    EFT_PROF_DEBUG("FitManager::GetListAsArgSet for {} - found");
+    const auto* list = lists_.at(name);
+    for (const auto elem : *list) {
+        res->add(*elem);
+    }
+    return res;
+}
 
 
 
