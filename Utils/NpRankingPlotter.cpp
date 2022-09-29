@@ -129,7 +129,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                  res_for_plot_.end(),
                  res_for_plot_after_selector.begin(),
                  [&](const NpInfoForPlot& info) {
-                     EFT_PROF_DEBUG("callback for info for poi: {:10}, np: {:20} -> ", info.poi, info.name, callback_(info));
+                     EFT_PROF_DEBUG("callback for info for poi: {:10}, np: {:20} -> {}", info.poi, info.name, callback_(info));
                      return callback_(info);
                  }
     );
