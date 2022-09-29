@@ -75,7 +75,43 @@ void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
     nlohmann::json j;
     ifs >> j;
 
-    auto res = j.get<NpRankingStudyRes>();
+    NpRankingStudyRes res;
+
+    try {
+        res = j.get<NpRankingStudyRes>();
+    }
+    catch (nlohmann::json::type_error& e) {
+        EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}. Replace nll by zero"
+        , path.string()
+        , e.what()
+        );
+
+         /*studyType
+          statType
+         prePostFit
+         poi_name;
+         np_name;
+
+         poi_val;
+         poi_err;
+
+         np_val;
+         np_err;
+
+         nll;*/
+
+        j.at("studyType").get_to(res.studyType);
+        j.at("statType").get_to(res.statType);
+        j.at("prePostFit").get_to(res.prePostFit);
+        j.at("poi_name").get_to(res.poi_name);
+        j.at("np_name").get_to(res.np_name);
+        j.at("poi_val").get_to(res.poi_val);
+        j.at("poi_err").get_to(res.poi_err);
+        j.at("np_val").get_to(res.np_val);
+        j.at("np_err").get_to(res.np_err);
+        if (!j.at("nll").is_null())
+            j.at("nll").get_to(res.nll);
+    }
 
 
     cout << fmt::format("[ReavValueOneFile] read res for poi: {}, np: {}", res.poi_name, res.np_name) << endl;
