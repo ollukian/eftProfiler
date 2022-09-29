@@ -233,8 +233,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     );
     //auto graph_nps_obs = make_shared<TGraphErrors>(settings->nb_nps_to_plot);
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
-        graph_nps_obs->SetBinContent(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_value);
-        graph_nps_obs->SetBinError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_error);
+        graph_nps_obs->SetBinContent(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).obs_value);
+        graph_nps_obs->SetBinError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).obs_error);
     }
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
