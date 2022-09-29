@@ -225,12 +225,16 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
 
     //static constexpr float error_full = 0.677982275;
     static constexpr float error_full = 0.0932585782834731;
-    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {}, full_err: {}", res.poi_err, error_full);
 
-    if (res.np_err < error_full)
+    if (res.poi_err < error_full)
         info.impact = sqrt( error_full * error_full - res.poi_err * res.poi_err);
     else
         info.impact = 0;
+
+    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {:5}, full_err: {:5} ==> impact: {:5}",
+                   res.poi_err,
+                   error_full,
+                   info.impact);
 
     res_for_plot_.push_back(std::move(info));
 }
