@@ -21,6 +21,7 @@
 #include "TLatex.h"
 #include "TStyle.h"
 #include "TLine.h"
+#include "TGraphErrors.h"
 
 
 using namespace std;
@@ -140,12 +141,24 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
 
+    EFT_PROF_DEBUG("impacts before sorting:");
+    for (const auto& res : res_for_plot_after_selector) {
+        EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
+    }
+
     std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
               [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
               {
                 return l.impact > r.impact;
               }
               );
+
+    EFT_PROF_DEBUG("impacts after sorting:");
+    for (const auto& res : res_for_plot_after_selector) {
+        EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
+    }
+
+    //EFT_PROF_DEBUG("[NpRankingPlotter] sorte");
 
 //    std::sort(res_for_plot_.begin(), res_for_plot_.end(),
 //              [&](const NpInfoForPlot& l, const NpInfoForPlot& r) {
@@ -161,11 +174,11 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
         EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                        idx_syst,
-                       res_for_plot_[idx_syst].name,
-                       res_for_plot_[idx_syst].impact);
-        histo->SetBinContent(idx_syst + 1, res_for_plot_[idx_syst].impact);
-        histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_[idx_syst].name.c_str());
-        EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_[idx_syst].impact);
+                       res_for_plot_after_selector[idx_syst].name,
+                       res_for_plot_after_selector[idx_syst].impact);
+        histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
+        histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
+        EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
     }
 
     histo->GetXaxis()->LabelsOption("v");
@@ -199,6 +212,15 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         //l->DrawLine(l->GetX1(), l->GetY1(), l->GetX2(), l->GetY2());
         l->Draw("same");
     }
+
+    auto graph_nps_obs = make_shared<TGraphErrors>(settings->nb_nps_to_plot);
+    for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
+        graph_nps_obs->SetPoint(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_value);
+        graph_nps_obs->SetPointError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_error);
+    }
+
+    //graph_nps_obs->SetLineColorAlpha(kBlue, 0.9);
+    //graph_nps_obs->Draw("same");
 
 
 
