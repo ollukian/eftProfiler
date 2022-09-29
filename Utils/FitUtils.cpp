@@ -90,6 +90,8 @@ FitUtils::GetConstraintPdfs(RooAbsPdf* pdf,
         return nullptr;
     }
 
+    EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs extracted {} components from pdf", all_constraints->size());
+
     auto constraint_pdfs = new RooArgSet(all_constraints->GetName());
 
     for (const auto constrain : *all_constraints) {
