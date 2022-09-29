@@ -243,10 +243,20 @@ inline const WorkspaceWrapper::Categories& WorkspaceWrapper::GetCats() const
 
 inline RooDataSet*      WorkspaceWrapper::GetData(const std::string& name)
 {
+    if (ws_->data(  name.c_str() ) == nullptr)
+    {
+        EFT_PROF_CRITICAL("WorkspaceWrapper::GetData {} no such data is present", name);
+        return nullptr;
+    }
     return dynamic_cast<RooDataSet*> ( ws_->data( name.c_str() ) );
 }
 inline RooSimultaneous* WorkspaceWrapper::GetCombinedPdf(const std::string& name)
 {
+    if (ws_->pdf(  name.c_str() ) == nullptr)
+    {
+        EFT_PROF_CRITICAL("WorkspaceWrapper::GetCombinedPdf {} no such pdf is present", name);
+        return nullptr;
+    }
     return dynamic_cast<RooSimultaneous*> ( ws_->pdf(  name.c_str() ) );
 }
 
