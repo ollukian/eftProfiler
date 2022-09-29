@@ -358,9 +358,9 @@ void FitManager::Init(FitManagerConfig&& config)
     ExtractPOIs();
 
     EFT_PROF_INFO("[FitManager] extract pdf total: {}", config.comb_pdf);
-    ExtractPdfTotal("combPdf");
+    ExtractPdfTotal(config.comb_pdf);
     EFT_PROF_INFO("[FitManager] extract data total: {}", config.comb_data);
-    ExtractDataTotal("combData");
+    ExtractDataTotal( config.comb_data);
 
     EFT_PROF_INFO("[FitManager] get constrains");
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
