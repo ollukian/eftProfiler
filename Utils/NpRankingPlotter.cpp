@@ -129,7 +129,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                  res_for_plot_.end(),
                  res_for_plot_after_selector.begin(),
                  [&](const NpInfoForPlot& info) {
-                     EFT_PROF_DEBUG("callback for info for poi: {}, np: {}", info.poi, info.name);
+                     EFT_PROF_DEBUG("callback for info for poi: {:10}, np: {:20} -> ", info.poi, info.name, callback_(info));
                      return callback_(info);
                  }
     );
@@ -225,10 +225,10 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
 
     //static constexpr float error_full = 0.677982275;
     static constexpr float error_full = 0.0932585782834731;
-    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes np.err: {}, full_err: {}", res.np_err, error_full);
+    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {}, full_err: {}", res.poi_err, error_full);
 
     if (res.np_err < error_full)
-        info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
+        info.impact = sqrt( error_full * error_full - res.poi_err * res.poi_err);
     else
         info.impact = 0;
 
