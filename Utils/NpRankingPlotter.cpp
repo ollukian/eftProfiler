@@ -212,7 +212,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     canvas->SetBottomMargin(0.4f);
 
     histo->Draw("H TEXT same");
-    histo_neg->Draw("H TEXT same");
+    histo_neg->Draw("H same");
 
     // lines to show full 1 sigma error
     TLine l1(0, -1, settings->nb_nps_to_plot, -1);
@@ -232,7 +232,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         graph_nps_obs->SetPointError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_error);
     }
 
-    graph_nps_obs->SetLineColorAlpha(kBlue, 0.9);
+    graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
     graph_nps_obs->Draw("same");
 
 
