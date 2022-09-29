@@ -97,7 +97,6 @@ int main(int argc, char* argv[]) {
 
         settings.poi = config.poi;
         manager->Init(std::move(config));
-        EFT_PROF_WARN("try start compute one worker");
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else {
