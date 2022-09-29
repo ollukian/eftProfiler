@@ -179,10 +179,11 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     //SetAllNuisanceParamsFloat();
     //SetAllNuisanceParamsToValue(0);
     //EFT_PROF_INFO("[DoFitAllNpFloat] all nuisance parameters let to float and set to zero");
-    RooAbsData* data = data_["ds_total"];
-    RooAbsPdf*  pdf = funcs_["pdf_total"];
-    //auto* globObs = (args_["globObs"]);
+   RooAbsData* data = data_["ds_total"];
+   RooAbsPdf*  pdf = funcs_["pdf_total"];
 
+    //auto* data = GetData("ds_total");
+    //auto* pdf  = GetPdf("pdf_total");
     auto* globObs = GetListAsArgSet("paired_globs");
     auto* nps = GetListAsArgSet("paired_nps");
 

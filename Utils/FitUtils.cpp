@@ -83,6 +83,13 @@ FitUtils::GetConstraintPdfs(RooAbsPdf* pdf,
     auto obs_clone  = dynamic_cast<RooArgSet*>( obs->Clone() );
     auto nuis_clone = dynamic_cast<RooArgSet*>( nps->Clone() );
     auto all_constraints = pdf->getAllConstraints(*obs_clone, *nuis_clone, false);
+
+    if (! all_constraints)
+    {
+        EFT_PROF_WARN("FitUtils::GetConstraintPdfs empty all_constrains");
+        return nullptr;
+    }
+
     auto constraint_pdfs = new RooArgSet(all_constraints->GetName());
 
     for (const auto constrain : *all_constraints) {
