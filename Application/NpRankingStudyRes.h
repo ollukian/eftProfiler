@@ -63,8 +63,8 @@ struct NpRankingStudyRes {
     StatType  statType  { StatType::NOTDEF };
     PrePostFit prePostFit {PrePostFit::PREFIT};
 
-    std::string poi_name {"no"};
-    std::string np_name;
+    std::string poi_name {"none"};
+    std::string np_name {"none"};
 
     double poi_val;
     double poi_err;
