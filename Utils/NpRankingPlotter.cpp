@@ -219,8 +219,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         graph_nps_obs->SetPointError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_error);
     }
 
-    //graph_nps_obs->SetLineColorAlpha(kBlue, 0.9);
-    //graph_nps_obs->Draw("same");
+    graph_nps_obs->SetLineColorAlpha(kBlue, 0.9);
+    graph_nps_obs->Draw("same");
 
 
 
@@ -236,9 +236,14 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
         info.post_fit_value = res.np_val;
         info.post_fit_error = res.np_err;
     }
-    else {
+    else if (res.prePostFit == PrePostFit::POSTFIT){
         info.pre_fit_value = res.np_val;
         info.pre_fit_error = res.np_err;
+    }
+    else
+    {
+        info.obs_value = res.np_val;
+        info.obs_error = res.np_err;
     }
 
     EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
