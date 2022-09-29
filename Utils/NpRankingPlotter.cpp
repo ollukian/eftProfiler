@@ -143,7 +143,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
               [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
               {
-                return l.impact < r.impact;
+                return l.impact > r.impact;
               }
               );
 
