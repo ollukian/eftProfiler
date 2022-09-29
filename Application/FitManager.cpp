@@ -51,6 +51,11 @@ void FitManager::DoGlobalFit()
 
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
+    {
+        auto* nps = GetListAsArgSet("paired_nps");
+        EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps", workerId);
+        ws_->raw()->saveSnapshot("tmp_nps", *nps);
+    }
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} do unconditional fit", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} before uncond fit: {} +- {}",
@@ -59,6 +64,16 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   ws()->GetParErr(settings.poi)
     );
     DoFitAllNpFloat(settings);
+
+    {
+        EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
+        EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
+        GetListAsArgSet("paired_nps")->Print("v");
+        ws_->raw()->loadSnapshot("tmp_nps");
+        EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
+        GetListAsArgSet("paired_nps")->Print("v");
+    }
+
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} after uncond fit: {} +- {}",
                   settings.poi,
@@ -111,6 +126,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     SetAllPOIsConst();
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
+    ws_->SetVarVal(res.poi_name, 0.f);
+    ws_->SetVarErr(res.poi_name,  0.f);
     //ws_->SetVarVal(res.poi_name, -1.14955385407254);
     //ws_->SetVarErr(res.poi_name, 0.669981);
     //ws_->FloatVal(res.poi_name);
