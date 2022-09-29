@@ -171,12 +171,19 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                                    settings->nb_nps_to_plot
                                    );
 
+    auto histo_neg = make_shared<TH1D>("h_neg", "",
+                                   settings->nb_nps_to_plot,
+                                   0,
+                                   settings->nb_nps_to_plot
+    );
+
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
         EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                        idx_syst,
                        res_for_plot_after_selector[idx_syst].name,
                        res_for_plot_after_selector[idx_syst].impact);
         histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
+        histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
         histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
         EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
     }
@@ -190,6 +197,10 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->SetLineColor(kBlue);
     histo->SetLineWidth(2);
 
+    histo_neg->SetFillColorAlpha(kBlue, 0.6);
+    histo_neg->SetLineColor(kBlue);
+    histo_neg->SetLineWidth(2);
+
 
     std::filesystem::create_directory("figures");
 
@@ -201,6 +212,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     canvas->SetBottomMargin(0.4f);
 
     histo->Draw("H TEXT same");
+    histo_neg->Draw("H TEXT same");
 
     // lines to show full 1 sigma error
     TLine l1(0, -1, settings->nb_nps_to_plot, -1);
