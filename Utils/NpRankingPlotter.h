@@ -19,6 +19,7 @@
 //#include <nlohmann/json.hpp>
 
 #include <filesystem>
+#include <functional>
 
 namespace eft::plot {
 
@@ -27,12 +28,16 @@ using namespace eft::stats;
 class NpRankingPlotter
 {
 public:
+    using EntriesSelector = std::function<bool(NpInfoForPlot)>;
+
+    void SetCallBack(EntriesSelector selector) noexcept  { callback_ = std::move(selector); }
     void ReadValues(const std::filesystem::path& path);
     void Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept;
 private:
-    void ReadValuesOneFile(const std::filesystem::path& path);
+    NpRankingStudyRes ReadValuesOneFile(const std::filesystem::path& path);
     void RegisterRes(const NpRankingStudyRes& res) noexcept;
 private:
+    EntriesSelector callback_ {[](const NpInfoForPlot&){return true;}};
     std::unordered_map<std::string, NpRankingStudyRes> np_study_res_;
     std::vector<NpInfoForPlot>                         res_for_plot_;
 };

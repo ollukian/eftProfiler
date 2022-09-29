@@ -65,14 +65,20 @@ int main(int argc, char* argv[]) {
     else if (task == "plot_ranking") {
         using namespace eft::plot;
         string res_path;
+        string poi;
         if (commandLineArgs.SetValIfArgExists("res_path", res_path)) {
             EFT_PROF_INFO("Set res_path: {}", res_path);
+        }
+        if (commandLineArgs.SetValIfArgExists("poi", poi)) {
+            EFT_PROF_INFO("Set poi: {}", poi);
         }
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadValues(res_path);
         auto settings = std::make_shared<RankingPlotterSettins>();
         settings->nb_nps_to_plot = 20;
+        // tmp: to select only entries for the given POI
+        plotter.SetCallBack([&poi](const NpInfoForPlot& info) -> bool { return info.poi == poi;  });
         plotter.Plot(settings);
     }
     else if (task == "compute_unconstrained") {

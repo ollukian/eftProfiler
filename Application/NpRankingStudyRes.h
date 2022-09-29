@@ -92,6 +92,7 @@ struct NpRankingStudySettings
 struct NpInfoForPlot
 {
     std::string name;
+    std::string poi;
     float post_fit_value;
     float post_fit_error;
     float pre_fit_value;

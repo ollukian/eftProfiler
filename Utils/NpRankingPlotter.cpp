@@ -47,13 +47,18 @@ void NpRankingPlotter::ReadValues(const std::filesystem::path& path)
         }
         else if (entry.is_regular_file()) {
             cout << " ==> is a regular file, try to parse it" << endl;
-            ReadValuesOneFile(entry);
+            RegisterRes(ReadValuesOneFile(entry));
+            //if (callback(res)) {
+            //    EFT_PROF_INFO("NpRankingPlotter::ReadValues passes selection set by the callback. Register it");
+            //    RegisterRes(res);
+            //}
+            ///RegisterRes(ReadValuesOneFile(entry), callback);
         }
     }
 
 }
 
-void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
+NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
 {
     const string filename = path.string();
     cout << fmt::format("[ReadValuesOneFile] read from {}", filename) << endl;
@@ -61,7 +66,7 @@ void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
     cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension);
     if (extension != ".json") {
         cout << fmt::format(" NOT [.json]") << endl;
-        return;
+        return {};
     }
 
     cout << " => is [.json]" << endl;
@@ -86,20 +91,6 @@ void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
         , e.what()
         );
 
-         /*studyType
-          statType
-         prePostFit
-         poi_name;
-         np_name;
-
-         poi_val;
-         poi_err;
-
-         np_val;
-         np_err;
-
-         nll;*/
-
         j.at("studyType").get_to(res.studyType);
         j.at("statType").get_to(res.statType);
         j.at("prePostFit").get_to(res.prePostFit);
@@ -117,7 +108,8 @@ void NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
     cout << fmt::format("[ReavValueOneFile] read res for poi: {}, np: {}", res.poi_name, res.np_name) << endl;
     cout << setw(4) << j << endl;
     np_study_res_[res.np_name] = res;
-    RegisterRes(np_study_res_[res.np_name]);
+    return res;
+    //RegisterRes(np_study_res_[res.np_name]);
 }
 
 void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept
@@ -127,15 +119,37 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     gStyle->SetOptStat(0000000);
 
     EFT_PROF_TRACE("[NpRankingPlotter]{Plot}");
-    EFT_PROF_INFO("[NpRankingPlotter] available {} NP, plot {} out of them",
+    EFT_PROF_INFO("[NpRankingPlotter] before selector available {} NP, plot {} out of them",
                   res_for_plot_.size(),
                   settings->nb_nps_to_plot);
 
+    vector<stats::NpInfoForPlot> res_for_plot_after_selector;
 
-    std::sort(res_for_plot_.begin(), res_for_plot_.end(),
-              [&](const NpInfoForPlot& l, const NpInfoForPlot& r) {
-                  return l.impact < r.impact;
-    });
+    std::copy_if(res_for_plot_.begin(),
+                 res_for_plot_.end(),
+                 res_for_plot_after_selector.begin(),
+                 [this](const NpInfoForPlot& info) {
+                     return callback_(info);
+                 }
+    );
+
+    EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, plot {} out of them",
+                  res_for_plot_after_selector.size(),
+                  settings->nb_nps_to_plot);
+
+    EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
+
+    std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
+              [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
+              {
+                return l.impact < r.impact;
+              }
+              );
+
+//    std::sort(res_for_plot_.begin(), res_for_plot_.end(),
+//              [&](const NpInfoForPlot& l, const NpInfoForPlot& r) {
+//                  return l.impact < r.impact;
+//    });
 
     auto histo = make_shared<TH1D>("h", "",
                                    settings->nb_nps_to_plot,
@@ -194,6 +208,7 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
     EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
     NpInfoForPlot info;
     info.name = res.np_name;
+    info.poi = res.poi_name;
     if (res.prePostFit == PrePostFit::PREFIT) {
         info.post_fit_value = res.np_val;
         info.post_fit_error = res.np_err;
@@ -207,14 +222,14 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
     EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
 
 
-    static constexpr float error_full = 0.677982275;
+    //static constexpr float error_full = 0.677982275;
+    static constexpr float error_full = 0.0932585782834731;
     EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes np.err: {}, full_err: {}", res.np_err, error_full);
 
-    //if (res.np_err < error_full)
-        info.impact = res.np_err;
-        //info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
-    //else
-    //    info.impact = 0;
+    if (res.np_err < error_full)
+        info.impact = sqrt( error_full * error_full - res.np_err * res.np_err);
+    else
+        info.impact = 0;
 
     res_for_plot_.push_back(std::move(info));
 }
