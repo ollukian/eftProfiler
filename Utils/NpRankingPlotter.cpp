@@ -182,7 +182,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     }
 
     histo->GetXaxis()->LabelsOption("v");
-    histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
+    //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
+    histo->GetYaxis()->SetRangeUser(-0.05f, 0.05f);
 
     //histo->SetFillColor(kBlue);
     histo->SetFillColorAlpha(kBlue, 0.6);
