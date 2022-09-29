@@ -226,14 +226,19 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         l->Draw("same");
     }
 
-    auto graph_nps_obs = make_shared<TGraphErrors>(settings->nb_nps_to_plot);
+    auto graph_nps_obs = make_shared<TH1D>("h_neg", "",
+                                       settings->nb_nps_to_plot,
+                                       0,
+                                       settings->nb_nps_to_plot
+    );
+    //auto graph_nps_obs = make_shared<TGraphErrors>(settings->nb_nps_to_plot);
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
-        graph_nps_obs->SetPoint(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_value);
-        graph_nps_obs->SetPointError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_error);
+        graph_nps_obs->SetBinContent(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_value);
+        graph_nps_obs->SetBinError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).post_fit_error);
     }
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
-    graph_nps_obs->Draw("same");
+    graph_nps_obs->Draw("same E");
 
 
 
