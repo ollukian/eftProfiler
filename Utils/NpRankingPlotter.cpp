@@ -22,6 +22,7 @@
 #include "TStyle.h"
 #include "TLine.h"
 #include "TGraphErrors.h"
+#include "TGaxis.h"
 
 
 using namespace std;
@@ -244,14 +245,30 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                        res_for_plot_after_selector[idx_syst].name,
                        scaling * res_for_plot_after_selector.at(idx_syst).obs_value,
                        scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
-        graph_nps_obs->SetBinContent(idx_syst + 1,scaling* res_for_plot_after_selector.at(idx_syst).obs_value);
-        graph_nps_obs->SetBinError(idx_syst   + 1,  scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
+        graph_nps_obs->SetBinContent(idx_syst + 1,res_for_plot_after_selector.at(idx_syst).obs_value);
+        graph_nps_obs->SetBinError(idx_syst   + 1,  res_for_plot_after_selector.at(idx_syst).obs_error);
     }
 
-    graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
+    graph_nps_obs->Scale(scaling);
+
+    //graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
+    graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
     graph_nps_obs->SetLineWidth(2);
     graph_nps_obs->Draw("same E X0");
 
+    // draw second axes for nps
+    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmax(),
+                                        gPad->GetUymin(),
+                                        gPad->GetUxmax(),
+                                        gPad->GetUymax(),
+                                        -1.2f,
+                                        1.2f,
+                                        510,
+                                        "+L");
+    //axis_nps->SetLineColor(kRed);
+    //axis_nps->SetTextColor(kRed);
+    axis_nps->SetTitle("#hat{#theta}");
+    axis_nps->Draw();
 
 
     canvas->SaveAs("histo.pdf");
