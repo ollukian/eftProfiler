@@ -190,7 +190,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     constexpr float range_high = 0.05f;
     constexpr float range_low  = -0.05f;
-    constexpr float scaling = (range_high - range_low) / 2.f;
+    //constexpr float scaling = (range_high - range_low) / 2.f;
+    const float scaling = res_for_plot_after_selector.at(0).impact;
 
 
     histo->GetXaxis()->LabelsOption("v");
