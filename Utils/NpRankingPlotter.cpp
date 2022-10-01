@@ -185,12 +185,17 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
         histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
         histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
-        EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
+        //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
     }
+
+    constexpr float range_high = 0.05f;
+    constexpr float range_low  = -0.05f;
+    constexpr float scaling = (range_high - range_low) / 2.f;
+
 
     histo->GetXaxis()->LabelsOption("v");
     //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
-    histo->GetYaxis()->SetRangeUser(-0.05f, 0.05f);
+    histo->GetYaxis()->SetRangeUser(range_low, range_high);
 
     //histo->SetFillColor(kBlue);
     histo->SetFillColorAlpha(kBlue, 0.6);
@@ -215,8 +220,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_neg->Draw("H same");
 
     // lines to show full 1 sigma error
-    TLine l1(0, -1, settings->nb_nps_to_plot, -1);
-    TLine l2(0, 1, settings->nb_nps_to_plot, 1);
+    TLine l1(0, - 1 * scaling, settings->nb_nps_to_plot, - 1 * scaling);
+    TLine l2(0, scaling, settings->nb_nps_to_plot, scaling);
 
     for (auto l : {&l1, &l2}) {
         l->SetLineStyle(kDashed);
@@ -233,8 +238,13 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     );
     //auto graph_nps_obs = make_shared<TGraphErrors>(settings->nb_nps_to_plot);
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
-        graph_nps_obs->SetBinContent(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).obs_value);
-        graph_nps_obs->SetBinError(idx_syst, idx_syst, res_for_plot_after_selector.at(idx_syst).obs_error);
+        EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
+                       idx_syst,
+                       res_for_plot_after_selector[idx_syst].name,
+                       scaling * res_for_plot_after_selector.at(idx_syst).obs_value,
+                       scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
+        graph_nps_obs->SetBinContent(idx_syst, idx_syst, scaling* res_for_plot_after_selector.at(idx_syst).obs_value);
+        graph_nps_obs->SetBinError(idx_syst, idx_syst, scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
     }
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);

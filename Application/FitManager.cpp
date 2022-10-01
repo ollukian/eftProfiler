@@ -51,11 +51,11 @@ void FitManager::DoGlobalFit()
 
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
-    {
-        auto* nps = GetListAsArgSet("paired_nps");
-        EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps", workerId);
-        ws_->raw()->saveSnapshot("tmp_nps", *nps);
-    }
+//    {
+//        auto* nps = GetListAsArgSet("paired_nps");
+//        EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps", workerId);
+//        ws_->raw()->saveSnapshot("tmp_nps", *nps, true);
+//    }
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} do unconditional fit", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} before uncond fit: {} +- {}",
@@ -65,14 +65,14 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     );
     DoFitAllNpFloat(settings);
 
-    {
-        EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
-        EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
-        GetListAsArgSet("paired_nps")->Print("v");
-        ws_->raw()->loadSnapshot("tmp_nps");
-        EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
-        GetListAsArgSet("paired_nps")->Print("v");
-    }
+//    {
+//        EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
+//        EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
+//        GetListAsArgSet("paired_nps")->Print("v");
+//        ws_->raw()->loadSnapshot("tmp_nps");
+//        EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
+//        GetListAsArgSet("paired_nps")->Print("v");
+//    }
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} after uncond fit: {} +- {}",
@@ -119,11 +119,11 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     //EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all np float", workerId);
     //SetAllNuisanceParamsFloat();
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all globs to zero", workerId);
-    SetAllGlobObsTo(0);
+    //EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all globs to zero", workerId);
+    //SetAllGlobObsTo(0);
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
-    SetAllPOIsConst();
+    //EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
+    //SetAllPOIsConst();
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
     ws_->SetVarVal(res.poi_name, 0.f);
