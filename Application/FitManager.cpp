@@ -166,14 +166,58 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
 
+    const auto np_val = ws()->GetParVal(res.np_name);
+    const auto np_err = ws()->GetParErr(res.np_name);
+
+    const auto poi_val = ws()->GetParVal(res.poi_name);
+    const auto poi_err = ws()->GetParErr(res.poi_name);
+
+    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
+    ws()->VaryParNbSigmas(res.np_name, +1.f);
+    ws_->SetVarVal(res.poi_name, 0.f);
+    fitter.Minimize(nll, pdf);
+    EFT_PROF_INFO("[ComputeNpRanking] after +1 sigma variation of {}", res.np_name);
+    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
+                  ws()->GetParVal(res.poi_name),
+                  ws()->GetParErr(res.poi_name)
+                  );
+
+    //const auto poi_val_plus_sigma = ws()->GetParVal(res.poi_name);
+    //const auto poi_err_plus_sigma = ws()->GetParErr(res.poi_name);
+    res.poi_plus_variation_val = ws()->GetParVal(res.poi_name);
+    res.poi_plus_variation_err = ws()->GetParErr(res.poi_name);
+
+    ws()->SetVarVal(res.np_name, np_val);
+    ws()->SetVarErr(res.np_name, np_err);
+
+    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1 sigma", res.np_name);
+    ws()->VaryParNbSigmas(res.np_name, -1.f);
+    ws_->SetVarVal(res.poi_name, 0.f);
+    fitter.Minimize(nll, pdf);
+    EFT_PROF_INFO("[ComputeNpRanking] after -1 sigma variation of {}", res.np_name);
+    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
+                  ws()->GetParVal(res.poi_name),
+                  ws()->GetParErr(res.poi_name)
+    );
+
+    res.poi_minus_variation_val = ws()->GetParVal(res.poi_name);
+    res.poi_minus_variation_err = ws()->GetParErr(res.poi_name);
+
+    EFT_PROF_INFO("[ComputeNpRanking] results:");
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
+    EFT_PROF_INFO("{:^=15} | {:^=10} +- {:^=10}", "=", "=", "=");
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "nominal", poi_val, poi_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_variation_val, res.poi_plus_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_variation_val, res.poi_minus_variation_val);
+
+    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
+                                    res.poi_name,
+                                    workerId,
+                                    res.np_name
+                                    );
+
     nlohmann::json j;
     j = res;
-
-    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_{}_{}_worker_{}.json",
-                                    res.poi_name,
-                                    res.np_name,
-                                    workerId);
-
     ofstream f_res;
     f_res.exceptions(ofstream::failbit | ofstream::badbit);
 
@@ -188,46 +232,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         cout << "print to console:" << endl;
         cout << setw(4) << j << endl;
     }
-
-    const auto np_val = ws()->GetParVal(res.np_name);
-    const auto np_err = ws()->GetParErr(res.np_name);
-
-    const auto poi_val = ws()->GetParVal(res.poi_name);
-    const auto poi_err = ws()->GetParErr(res.poi_name);
-
-    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
-    ws()->VaryParNbSigmas(res.np_name, +1.f);
-    fitter.Minimize(nll, pdf);
-    EFT_PROF_INFO("[ComputeNpRanking] after +1 sigma variation of {}", res.np_name);
-    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
-                  ws()->GetParVal(res.poi_name),
-                  ws()->GetParErr(res.poi_name)
-                  );
-
-    const auto poi_val_plus_sigma = ws()->GetParVal(res.poi_name);
-    const auto poi_err_plus_sigma = ws()->GetParErr(res.poi_name);
-
-    ws()->SetVarVal(res.np_name, np_val);
-    ws()->SetVarErr(res.np_name, np_err);
-
-    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1 sigma", res.np_name);
-    ws()->VaryParNbSigmas(res.np_name, -1.f);
-    fitter.Minimize(nll, pdf);
-    EFT_PROF_INFO("[ComputeNpRanking] after -1 sigma variation of {}", res.np_name);
-    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
-                  ws()->GetParVal(res.poi_name),
-                  ws()->GetParErr(res.poi_name)
-    );
-
-    const auto poi_val_minus_sigma = ws()->GetParVal(res.poi_name);
-    const auto poi_err_minus_sigma = ws()->GetParErr(res.poi_name);
-
-    EFT_PROF_INFO("[ComputeNpRanking] results:");
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
-    EFT_PROF_INFO("{:^=15} | {:^=10} +- {:^=10}", "=", "=", "=");
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "nominal", poi_val, poi_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", poi_val_plus_sigma, poi_err_plus_sigma);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", poi_val_minus_sigma, poi_err_minus_sigma);
 }
 
 void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)

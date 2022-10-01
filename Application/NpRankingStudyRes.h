@@ -69,6 +69,12 @@ struct NpRankingStudyRes {
     double poi_val;
     double poi_err;
 
+    double poi_plus_variation_val;
+    double poi_plus_variation_err;
+
+    double poi_minus_variation_val;
+    double poi_minus_variation_err;
+
     double np_val;
     double np_err;
 
@@ -104,13 +110,15 @@ struct NpInfoForPlot
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
-                                   poi_name, np_name,
-                                   poi_val, poi_err,
-                                   np_val, np_err,
-                                   nll,
-                                   studyType,
-                                   statType,
-                                   prePostFit);
+                                    poi_name, np_name,
+                                    poi_val, poi_err,
+                                    np_val, np_err,
+                                    poi_plus_variation_val,  poi_plus_variation_err,
+                                    poi_minus_variation_val, poi_minus_variation_err,
+                                    nll,
+                                    studyType,
+                                    statType,
+                                    prePostFit);
 
 
 
