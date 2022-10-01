@@ -127,7 +127,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
     ws_->SetVarVal(res.poi_name, 0.f);
-    ws_->SetVarErr(res.poi_name,  0.f);
+    //ws_->SetVarErr(res.poi_name,  0.f);
     //ws_->SetVarVal(res.poi_name, -1.14955385407254);
     //ws_->SetVarErr(res.poi_name, 0.669981);
     //ws_->FloatVal(res.poi_name);
@@ -196,10 +196,10 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     SetAllGlobObsTo(0); // to find values for np preferred by data
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     //SetAllNuisanceParamsFloat();
-    //SetAllNuisanceParamsToValue(0);
+    SetAllNuisanceParamsToValue(0);
     //EFT_PROF_INFO("[DoFitAllNpFloat] all nuisance parameters let to float and set to zero");
-   RooAbsData* data = data_["ds_total"];
-   RooAbsPdf*  pdf = funcs_["pdf_total"];
+    RooAbsData* data = data_["ds_total"];
+    RooAbsPdf*  pdf = funcs_["pdf_total"];
 
     //auto* data = GetData("ds_total");
     //auto* pdf  = GetPdf("pdf_total");
