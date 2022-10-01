@@ -273,7 +273,8 @@ inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_s
     EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
     const auto val = GetParVal(par);
     const auto err = GetParErr(par);
-    EFT_PROF_INFO("WorkspaceWrapper::VaryParNbSigmas set {} ({2:.5f} +- {2:.5f}) to {2:.5f} +- {2:.5f}");
+    EFT_PROF_INFO("WorkspaceWrapper::VaryParNbSigmas set {} ({2:.5f} +- {2:.5f}) to {2:.5f}"
+        , par, GetParVal(par), GetParErr(par), GetParVal(par) + err * nb_sigma );
     SetVarVal(par, val + err * nb_sigma);
 }
 //inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)
