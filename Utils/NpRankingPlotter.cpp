@@ -226,8 +226,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     for (auto l : {&l1, &l2}) {
         l->SetLineStyle(kDashed);
-        l->SetLineWidth(2);
-        l->SetLineColorAlpha(kGray, 0.7f);
+        l->SetLineWidth(1);
+        l->SetLineColorAlpha(kGray, 0.9f);
         //l->DrawLine(l->GetX1(), l->GetY1(), l->GetX2(), l->GetY2());
         l->Draw("same");
     }
@@ -249,8 +249,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     }
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
-    graph_nps_obs->SetLineWidth(3);
-    graph_nps_obs->Draw("same E");
+    graph_nps_obs->SetLineWidth(2);
+    graph_nps_obs->Draw("same E X0");
 
 
 
