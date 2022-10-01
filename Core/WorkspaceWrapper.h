@@ -55,6 +55,8 @@ public:
     inline void SetVarVal(const std::string& name, double val) override;
     inline void SetVarErr(const std::string& name, double err) override;
 
+    inline void VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept override;
+
     inline RooAbsPdf* GetPdfModelGivenCategory(const std::string& cat) noexcept override;
     inline RooAbsPdf* GetPdfSBGivenCategory(const std::string& cat)    noexcept override;
     inline RooAbsPdf* GetPdfBkgGivenCategory(const std::string& cat)   noexcept override;
@@ -265,6 +267,15 @@ inline double WorkspaceWrapper::GetParErr(const std::string& par)   const  { ret
 inline double WorkspaceWrapper::GetParErrHi(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorHi();}
 inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorLo();}
 
+
+inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept
+{
+    EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
+    const auto val = GetParVal(par);
+    const auto err = GetParErr(par);
+    EFT_PROF_INFO("WorkspaceWrapper::VaryParNbSigmas set {} ({2:.5f} +- {2:.5f}) to {2:.5f} +- {2:.5f}");
+    SetVarVal(par, val + err * nb_sigma);
+}
 //inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)
 //{
 //    const std::vector<std::string> pois_{pois};

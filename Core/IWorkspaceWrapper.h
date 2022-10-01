@@ -51,6 +51,8 @@ public:
     virtual double GetParErrHi(const std::string& par) const = 0;
     virtual double GetParErrLo(const std::string& par) const = 0;
 
+    virtual void VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept = 0;
+
     //virtual void FixValConst(std::initializer_list<std::vector<std::string>> pois) = 0;
 
     //virtual void FixAllPois()   noexcept = 0;
