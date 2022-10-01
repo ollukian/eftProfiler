@@ -232,7 +232,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         l->Draw("same");
     }
 
-    auto graph_nps_obs = make_shared<TH1D>("h_neg", "",
+    auto graph_nps_obs = make_shared<TH1D>("h_nps_obs", "",
                                        settings->nb_nps_to_plot,
                                        0,
                                        settings->nb_nps_to_plot
@@ -244,11 +244,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                        res_for_plot_after_selector[idx_syst].name,
                        scaling * res_for_plot_after_selector.at(idx_syst).obs_value,
                        scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
-        graph_nps_obs->SetBinContent(idx_syst, idx_syst, scaling* res_for_plot_after_selector.at(idx_syst).obs_value);
-        graph_nps_obs->SetBinError(idx_syst, idx_syst, scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
+        graph_nps_obs->SetBinContent(idx_syst + 1,scaling* res_for_plot_after_selector.at(idx_syst).obs_value);
+        graph_nps_obs->SetBinError(idx_syst   + 1,  scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
     }
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
+    graph_nps_obs->SetLineWidth(3);
     graph_nps_obs->Draw("same E");
 
 
