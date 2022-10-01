@@ -253,11 +253,11 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     //graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
     graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
-    graph_nps_obs->SetLineWidth(2);
+    graph_nps_obs->SetLineWidth(4);
     graph_nps_obs->Draw("same E X0");
 
     // draw second axes for nps
-    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmax(),
+    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
                                         gPad->GetUymin(),
                                         gPad->GetUxmax(),
                                         gPad->GetUymax(),
