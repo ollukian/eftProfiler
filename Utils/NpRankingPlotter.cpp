@@ -178,21 +178,36 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                                    settings->nb_nps_to_plot
     );
 
+    auto histo_plus_sigma_var = make_shared<TH1D>("h_1sigma_var", "",
+                                       settings->nb_nps_to_plot,
+                                       0,
+                                       settings->nb_nps_to_plot
+    );
+
+    auto histo_minus_sigma_var = make_shared<TH1D>("h_-1sigma_var", "",
+                                                  settings->nb_nps_to_plot,
+                                                  0,
+                                                  settings->nb_nps_to_plot
+    );
+
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
         EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                        idx_syst,
                        res_for_plot_after_selector[idx_syst].name,
                        res_for_plot_after_selector[idx_syst].impact);
+        histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
+
         histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
         histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
-        histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
+        histo_plus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
+        histo_minus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
         //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
     }
 
     constexpr float range_high = 0.05f;
     constexpr float range_low  = -0.05f;
     //constexpr float scaling = (range_high - range_low) / 2.f;
-    const float scaling = res_for_plot_after_selector.at(0).impact;
+    const double scaling = res_for_plot_after_selector.at(0).impact;
 
 
     histo->GetXaxis()->LabelsOption("v");
@@ -208,6 +223,16 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_neg->SetLineColor(kBlue);
     histo_neg->SetLineWidth(2);
 
+    histo_plus_sigma_var->SetLineColorAlpha(kRed, 0.6);
+    histo_plus_sigma_var->SetLineWidth(2);
+
+    histo_minus_sigma_var->SetLineColorAlpha(kViolet, 0.6);
+    histo_minus_sigma_var->SetLineWidth(2);
+
+    auto legend = make_unique<TLegend>();
+    legend->AddEntry(histo.get(), "impact");
+    legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact");
+    legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact");
 
     std::filesystem::create_directory("figures");
 
@@ -220,6 +245,9 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     histo->Draw("H TEXT same");
     histo_neg->Draw("H same");
+
+    histo_plus_sigma_var->Draw("H TEXT same");
+    histo_minus_sigma_var->Draw("H TEXT same");
 
     // lines to show full 1 sigma error
     TLine l1(0, - 1 * scaling, settings->nb_nps_to_plot, - 1 * scaling);
@@ -250,6 +278,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     }
 
     graph_nps_obs->Scale(scaling);
+    histo_plus_sigma_var->Scale(scaling);
+    histo_minus_sigma_var->Scale(scaling);
 
     //graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
     graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
@@ -257,18 +287,18 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     graph_nps_obs->Draw("same E X0");
 
     // draw second axes for nps
-    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
-                                        gPad->GetUymin(),
-                                        gPad->GetUxmax(),
-                                        gPad->GetUymax(),
-                                        -1.2f,
-                                        1.2f,
-                                        510,
-                                        "+L");
+//    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
+//                                        gPad->GetUymin(),
+//                                        gPad->GetUxmax(),
+//                                        gPad->GetUymax(),
+//                                        -1.2f,
+//                                        1.2f,
+//                                        510,
+//                                        "+L");
     //axis_nps->SetLineColor(kRed);
     //axis_nps->SetTextColor(kRed);
-    axis_nps->SetTitle("#hat{#theta}");
-    axis_nps->Draw();
+    //axis_nps->SetTitle("#hat{#theta}");
+    //axis_nps->Draw();
 
 
     canvas->SaveAs("histo.pdf");
@@ -304,6 +334,9 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
         info.impact = sqrt( error_full * error_full - res.poi_err * res.poi_err);
     else
         info.impact = 0;
+
+    info.impact_plus_sigma_var  = res.poi_plus_variation_val - res.poi_val;
+    info.impact_minus_sigma_var = res.poi_minus_variation_val - res.poi_val;
 
     EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {:5}, full_err: {:5} ==> impact: {:5}",
                    res.poi_err,

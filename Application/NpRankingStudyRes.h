@@ -105,7 +105,10 @@ struct NpInfoForPlot
     float pre_fit_error;
     float obs_value;
     float obs_error;
-    float impact;
+
+    double impact;
+    double impact_plus_sigma_var;
+    double impact_minus_sigma_var;
 
 };
 

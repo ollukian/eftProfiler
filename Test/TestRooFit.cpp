@@ -12,7 +12,7 @@ using namespace std;
 
 int TestRooFit()
 {
-    auto file = TFile::Open("source/WS-Comb-Higgs-topU3l_obs.root");
+    auto file = TFile::Open("source/WS-Comb-Higgs_topU3l_obs.root");
     auto combWS = dynamic_cast<RooWorkspace*>(file->Get("combWS"));
     auto pdf = combWS->pdf("combPdf");
     auto data = combWS->data("combData");
@@ -25,7 +25,8 @@ int TestRooFit()
                RooFit::BatchMode(true),
                RooFit::Offset(true),
                RooFit::SumW2Error(true),
-               RooFit::Save(true)
+               RooFit::Save(true),
+               RooFit::PrintLevel(1)
                );
 
     cout << "[Info] after fit to" << endl;
