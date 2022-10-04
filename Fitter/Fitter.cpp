@@ -6,6 +6,7 @@
 // https://gitlab.cern.ch/atlas_higgs_combination/projects/lhc-comb-tools/-/tree/master/quickFit
 
 #include "Fitter.h"
+#include "IFitResult.h"
 
 #include "RooNLLVar.h"
 #include "RooMinimizer.h"
@@ -44,20 +45,12 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     //if(_errorLevel>0) minim.setErrorLevel(_errorLevel);
     minim.setStrategy( 1 );
     EFT_PROF_INFO("[Minimizer] set strategy to 1");
-    //minim.setPrintLevel( _printLevel-1 );
-    //minim.setPrintLevel( 1 );
     minim.setPrintLevel( 1 );
-    //if (_printLevel < 0)
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
-    //EFT_PROF_WARN("[Minimizer] Epsilon set to 1E-7, not to 1E-6 as originally");
     minim.setEps(1E-03 / 0.001); // used to be 1E-3 ==> minimise until 1E-6
-    //minim.setEps(1E-04 / 0.001);
-    ///minim.setEps( 1E-03 / 0.001 );
-    //EFT_PROF_TRACE("[Minimizer] set EPS to 1E-6");
     minim.setOffsetting( true );
     EFT_PROF_INFO("[Minimizer] allow offseting");
-    //if (_optConst > 0) minim.optimizeConst( _optConst );
     minim.optimizeConst( 2 );
     EFT_PROF_INFO("[Minimizer] set optimize constant 2");
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
@@ -171,9 +164,32 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     //result->correlationMatrix().Print("v");
 
     //result.reset(minim.save("fitResult","Fit Results"));
+    //eft::stats::fit::IFitResult res;
+    //FitResPtr res;
 
-    return {};
-    //return result;
+    //return {};
+    return result;
+}
+
+IFitter::FitResPtr Fitter::Fit(RooAbsData *data, RooAbsPdf *pdf) {
+    EFT_PROF_TRACE("Fitter::Fit");
+    if ( ! globs_ ) {
+        EFT_PROF_CRITICAL("Fitter::Fit globals observables are not set");
+        throw std::runtime_error("global obs are not set");
+    }
+    if ( ! nps_ ) {
+        EFT_PROF_CRITICAL("Fitter::Fit nps are not set");
+        throw std::runtime_error("nps are not set");
+    }
+    auto nll = CreatNll(data, pdf, globs_, nps_);
+    auto res = Minimize(nll, pdf);
+    return res;
+    //FitResPtr to_return;
+    //to_return.rooFitResult = res.rooFitResult;
+    //to_return.nll = nll;
+    //FitResPtr res;
+    //res.rooFitResult = Mi
+    //return  {Minimize(nll, pdf), nll->getVal()};
 }
 
 } // eft::stats::fit

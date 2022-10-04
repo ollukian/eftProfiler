@@ -15,16 +15,22 @@ namespace eft::stats::fit {
 class RooMinimizerWrapper;
 class Fitter;
 
+
 class Fitter : public IFitter {
 public:
     Fitter() = default;
     ~Fitter() noexcept override = default;
 
      RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs, RooArgSet* np) override;
-     RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{ return nullptr; }
+     //RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{ return nullptr; }
      FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       override;
-     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf)           override{return {};}
-     FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{return {};}
+     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf) override;
+     //FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{return {};}
+     void SetGlobs(RooArgSet* globs) noexcept override { globs_ = globs; };
+     void SetNps(RooArgSet* nps) noexcept override { nps_ = nps; }
+private:
+    RooArgSet* nps_   = nullptr;
+    RooArgSet* globs_ = nullptr;
 };
 
 class RooMinimizerWrapper : public RooMinimizer {

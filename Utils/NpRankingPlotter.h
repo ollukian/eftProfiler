@@ -21,6 +21,9 @@
 #include <filesystem>
 #include <functional>
 
+// fwd declaration
+class TH1D;
+
 namespace eft::plot {
 
 using namespace eft::stats;
@@ -36,11 +39,15 @@ public:
 private:
     NpRankingStudyRes ReadValuesOneFile(const std::filesystem::path& path);
     void RegisterRes(const NpRankingStudyRes& res) noexcept;
+    static NpInfoForPlot ComputeInfoForPlot(const NpRankingStudyRes& res) noexcept;
+    static std::shared_ptr<TH1D> MakeHisto1D(const std::string& name, size_t nb_bins) noexcept;
 private:
     EntriesSelector callback_ {[](const NpInfoForPlot&){return true;}};
     std::unordered_map<std::string, NpRankingStudyRes> np_study_res_;
     std::vector<NpInfoForPlot>                         res_for_plot_;
 };
+
+
 
 }
 

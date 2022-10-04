@@ -31,6 +31,8 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     string key = tokens.front();
     vector<string> vals;
 
+    // FixMe: If name of the ws contains "-" then it's assumed to be a new key...
+
     for (auto& token : tokens) {
         cout << fmt::format("token: [{}]", token) << endl;
         if (token.find('-') != string::npos) {

@@ -41,9 +41,12 @@ void FitManager::DoGlobalFit()
     cout << "[create nll]" << endl;
 
     fit::Fitter fitter;
-    auto nll = fitter.CreatNll(ds, pdf, globObs, np);
-    cout << "[minimize it]" << endl;
-    auto res = fitter.Minimize(nll, pdf);
+    fitter.SetGlobs(globObs);
+    fitter.SetNps(np);
+    auto res = fitter.Fit(ds, pdf);
+    //auto nll = fitter.CreatNll(ds, pdf, globObs, np);
+    //cout << "[minimize it]" << endl;
+    //auto res = fitter.Minimize(nll, pdf);
     cout << "[minimisation done]" << endl;
     cout << "res: " << endl;
     res->Print("v");
@@ -133,6 +136,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //ws_->FloatVal(res.poi_name);
 
     fit::Fitter fitter;
+    //fitter.SetGlobs(globObs);
+    //fitter.SetNps(nps);
 
     /*EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
     fit::Fitter fitter;
@@ -152,7 +157,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
     auto nll = fitter.CreatNll(&data, pdf, globObs, nps);
-    EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
+
+    //auto fitRes = fitter.Fit(&data, pdf);
+    //EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
 
@@ -161,10 +168,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //  * [] create: prepare nps, globs and so on
     res.ExtractPoiValErr(ws_, res.poi_name);
     res.ExtractNPValErr(ws_, res.np_name);
-    res.nll     = nll->getVal();
+    //res.nll     = nll->getVal();
 
     EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
-    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
+    //EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
 
     const auto np_val = ws()->GetParVal(res.np_name);
     const auto np_err = ws()->GetParErr(res.np_name);
@@ -203,12 +210,48 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_minus_variation_val = ws()->GetParVal(res.poi_name);
     res.poi_minus_variation_err = ws()->GetParErr(res.poi_name);
 
+    // + 1 variation
+    ws()->SetVarVal(res.np_name, np_val);
+    ws()->SetVarErr(res.np_name, np_err);
+
+    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1", res.np_name);
+    ws()->SetVarVal(res.np_name, np_val + 1.);
+    ws_->SetVarVal(res.poi_name, 0.f);
+    fitter.Minimize(nll, pdf);
+    EFT_PROF_INFO("[ComputeNpRanking] after +1 variation of {}", res.np_name);
+    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
+                  ws()->GetParVal(res.poi_name),
+                  ws()->GetParErr(res.poi_name)
+    );
+
+    res.poi_plus_one_variation_val = ws()->GetParVal(res.poi_name);
+    res.poi_plus_one_variation_err = ws()->GetParErr(res.poi_name);
+
+    // - 1 variation
+    ws()->SetVarVal(res.np_name, np_val);
+    ws()->SetVarErr(res.np_name, np_err);
+
+    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1", res.np_name);
+    ws()->SetVarVal(res.np_name, np_val + 1.);
+    ws_->SetVarVal(res.poi_name, 0.f);
+    fitter.Minimize(nll, pdf);
+    EFT_PROF_INFO("[ComputeNpRanking] after -1 variation of {}", res.np_name);
+    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
+                  ws()->GetParVal(res.poi_name),
+                  ws()->GetParErr(res.poi_name)
+    );
+
+    res.poi_minus_one_variation_val = ws()->GetParVal(res.poi_name);
+    res.poi_minus_one_variation_err = ws()->GetParErr(res.poi_name);
+
     EFT_PROF_INFO("[ComputeNpRanking] results:");
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
     EFT_PROF_INFO("{:^=15} | {:^=10} +- {:^=10}", "=", "=", "=");
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "nominal", poi_val, poi_err);
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_variation_val, res.poi_plus_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_variation_val, res.poi_minus_variation_val);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_variation_val, res.poi_minus_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 ",      res.poi_minus_one_variation_val, res.poi_minus_variation_err);
 
     const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
                                     res.poi_name,

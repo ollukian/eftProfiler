@@ -159,36 +159,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
     }
 
-    //EFT_PROF_DEBUG("[NpRankingPlotter] sorte");
 
-//    std::sort(res_for_plot_.begin(), res_for_plot_.end(),
-//              [&](const NpInfoForPlot& l, const NpInfoForPlot& r) {
-//                  return l.impact < r.impact;
-//    });
+    auto histo = MakeHisto1D("histo", settings->nb_nps_to_plot);
+    auto histo_neg = MakeHisto1D("h_neg", settings->nb_nps_to_plot);
+    auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", settings->nb_nps_to_plot);
+    auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", settings->nb_nps_to_plot);
 
-    auto histo = make_shared<TH1D>("h", "",
-                                   settings->nb_nps_to_plot,
-                                   0,
-                                   settings->nb_nps_to_plot
-                                   );
-
-    auto histo_neg = make_shared<TH1D>("h_neg", "",
-                                   settings->nb_nps_to_plot,
-                                   0,
-                                   settings->nb_nps_to_plot
-    );
-
-    auto histo_plus_sigma_var = make_shared<TH1D>("h_1sigma_var", "",
-                                       settings->nb_nps_to_plot,
-                                       0,
-                                       settings->nb_nps_to_plot
-    );
-
-    auto histo_minus_sigma_var = make_shared<TH1D>("h_-1sigma_var", "",
-                                                  settings->nb_nps_to_plot,
-                                                  0,
-                                                  settings->nb_nps_to_plot
-    );
 
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
         EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
@@ -241,9 +217,11 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
 
     canvas->SetRightMargin(0.05f);
-    canvas->SetLeftMargin(0.05f);
+    canvas->SetLeftMargin(0.10f);
     canvas->SetTopMargin(0.05f);
     canvas->SetBottomMargin(0.4f);
+
+    histo->GetXaxis()->SetLabelSize(0.03);
 
     histo->Draw("H TEXT same");
     histo_neg->Draw("H same");
@@ -259,7 +237,6 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         l->SetLineStyle(kDashed);
         l->SetLineWidth(1);
         l->SetLineColorAlpha(kGray, 0.9f);
-        //l->DrawLine(l->GetX1(), l->GetY1(), l->GetX2(), l->GetY2());
         l->Draw("same");
     }
 
@@ -313,6 +290,25 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
 void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
     EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
+    auto info = ComputeInfoForPlot(res);
+
+
+    EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
+    EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
+
+
+    //static constexpr float error_full = 0.677982275;
+
+//    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {:5}, full_err: {:5} ==> impact: {:5}",
+//                   res.poi_err,
+//                   error_full,
+//                   info.impact);
+
+    res_for_plot_.push_back(std::move(info));
+}
+
+NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res) noexcept
+{
     NpInfoForPlot info;
     info.name = res.np_name;
     info.poi = res.poi_name;
@@ -330,11 +326,6 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
         info.obs_error = res.np_err;
     }
 
-    EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
-    EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
-
-
-    //static constexpr float error_full = 0.677982275;
     static constexpr float error_full = 0.0932585782834731;
 
     if (res.poi_err < error_full)
@@ -344,13 +335,14 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
 
     info.impact_plus_sigma_var  = res.poi_plus_variation_val - res.poi_val;
     info.impact_minus_sigma_var = res.poi_minus_variation_val - res.poi_val;
+}
 
-    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {:5}, full_err: {:5} ==> impact: {:5}",
-                   res.poi_err,
-                   error_full,
-                   info.impact);
-
-    res_for_plot_.push_back(std::move(info));
+std::shared_ptr<TH1D> NpRankingPlotter::MakeHisto1D(const string& name, size_t nb_bins) noexcept {
+    return std::make_shared<TH1D>(name.c_str(), name.c_str(),
+                                  nb_bins,
+                                  0,
+                                  nb_bins
+    );
 }
 
 
