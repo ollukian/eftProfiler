@@ -335,6 +335,7 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
 
     info.impact_plus_sigma_var  = res.poi_plus_variation_val - res.poi_val;
     info.impact_minus_sigma_var = res.poi_minus_variation_val - res.poi_val;
+    return info;
 }
 
 std::shared_ptr<TH1D> NpRankingPlotter::MakeHisto1D(const string& name, size_t nb_bins) noexcept {
