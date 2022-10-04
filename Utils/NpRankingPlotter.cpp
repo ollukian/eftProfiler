@@ -223,10 +223,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_neg->SetLineColor(kBlue);
     histo_neg->SetLineWidth(2);
 
-    histo_plus_sigma_var->SetLineColorAlpha(kRed, 0.6);
+    histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.6);
+    histo_plus_sigma_var->SetLineColor(kRed);
     histo_plus_sigma_var->SetLineWidth(2);
 
-    histo_minus_sigma_var->SetLineColorAlpha(kViolet, 0.6);
+    histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.6);
+    histo_plus_sigma_var->SetLineColor(kViolet);
     histo_minus_sigma_var->SetLineWidth(2);
 
     auto legend = make_unique<TLegend>();
@@ -246,8 +248,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->Draw("H TEXT same");
     histo_neg->Draw("H same");
 
-    histo_plus_sigma_var->Draw("H TEXT same");
-    histo_minus_sigma_var->Draw("H TEXT same");
+    histo_plus_sigma_var->Draw("H same");
+    histo_minus_sigma_var->Draw("H same");
 
     // lines to show full 1 sigma error
     TLine l1(0, - 1 * scaling, settings->nb_nps_to_plot, - 1 * scaling);
@@ -278,13 +280,18 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     }
 
     graph_nps_obs->Scale(scaling);
-    histo_plus_sigma_var->Scale(scaling);
-    histo_minus_sigma_var->Scale(scaling);
+    //histo_plus_sigma_var->Scale(scaling);
+    //histo_minus_sigma_var->Scale(scaling);
 
-    //graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
-    graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
+    graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
+    graph_nps_obs->SetMarkerStyle(20);
+    graph_nps_obs->SetMarkerSize(3);
+    //graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
     graph_nps_obs->SetLineWidth(4);
-    graph_nps_obs->Draw("same E X0");
+    graph_nps_obs->Draw("same E1 X0");
+
+
+    legend->Draw("same");
 
     // draw second axes for nps
 //    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
