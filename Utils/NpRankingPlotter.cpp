@@ -228,7 +228,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_plus_sigma_var->SetLineWidth(2);
 
     histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.6);
-    histo_plus_sigma_var->SetLineColor(kViolet);
+    histo_minus_sigma_var->SetLineColor(kViolet);
     histo_minus_sigma_var->SetLineWidth(2);
 
     auto legend = make_unique<TLegend>();
@@ -285,7 +285,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
     graph_nps_obs->SetMarkerStyle(20);
-    graph_nps_obs->SetMarkerSize(3);
+    graph_nps_obs->SetMarkerSize(2);
     //graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
     graph_nps_obs->SetLineWidth(4);
     graph_nps_obs->Draw("same E1 X0");
