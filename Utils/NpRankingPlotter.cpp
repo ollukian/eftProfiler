@@ -195,29 +195,31 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->GetYaxis()->SetRangeUser(range_low, range_high);
 
     //histo->SetFillColor(kBlue);
-    histo->SetFillColorAlpha(kBlue, 0.6);
+    histo->SetFillColorAlpha(kBlue, 0.6); // used to be blue
     histo->SetLineColor(kBlue);
-    histo->SetLineWidth(2);
+    histo->SetLineWidth(3);
 
-    histo_neg->SetFillColorAlpha(kBlue, 0.6);
+    histo_neg->SetFillColorAlpha(kBlue, 0.6); // used to be blue
     histo_neg->SetLineColor(kBlue);
-    histo_neg->SetLineWidth(2);
+    histo_neg->SetLineWidth(3);
 
-    histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.6);
-    histo_plus_sigma_var->SetLineColor(kRed);
-    histo_plus_sigma_var->SetLineWidth(2);
-
-    histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.6);
-    histo_minus_sigma_var->SetLineColor(kViolet);
-    histo_minus_sigma_var->SetLineWidth(2);
-
-    histo_minus_one_var->SetFillColorAlpha(kGreen, 0.4);
+    histo_minus_one_var->SetFillColorAlpha(kGreen, 0.5);
     histo_minus_one_var->SetLineColor(kGreen);
     histo_minus_one_var->SetLineWidth(2);
 
-    histo_plus_one_var->SetFillColorAlpha(kAzure, 0.4);
-    histo_plus_one_var->SetLineColor(kAzure);
+    histo_plus_one_var->SetFillColorAlpha(kMagenta, 0.5);
+    histo_plus_one_var->SetLineColor(kMagenta);
     histo_plus_one_var->SetLineWidth(2);
+
+    histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.4);
+    histo_plus_sigma_var->SetLineColor(kRed);
+    histo_plus_sigma_var->SetLineWidth(1);
+
+    histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.4);
+    histo_minus_sigma_var->SetLineColor(kViolet);
+    histo_minus_sigma_var->SetLineWidth(1);
+
+
 
     auto legend = make_unique<TLegend>();
     legend->AddEntry(histo.get(), "impact");
