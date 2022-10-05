@@ -159,7 +159,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     auto nll = fitter.CreatNll(&data, pdf, globObs, nps);
 
     //auto fitRes = fitter.Fit(&data, pdf);
-    //EFT_PROF_INFO("[ComputeNpRanking] minimize nll with {} fixed", res.np_name);
     auto fitRes = fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
 
@@ -179,6 +178,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     const auto poi_val = ws()->GetParVal(res.poi_name);
     const auto poi_err = ws()->GetParErr(res.poi_name);
 
+
+    // + sigma var
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
     ws()->VaryParNbSigmas(res.np_name, +1.f);
     ws_->SetVarVal(res.poi_name, 0.f);
@@ -197,6 +198,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
 
+
+    // -1 sigma variation
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1 sigma", res.np_name);
     ws()->VaryParNbSigmas(res.np_name, -1.f);
     ws_->SetVarVal(res.poi_name, 0.f);
@@ -232,7 +235,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err);
 
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1", res.np_name);
-    ws()->SetVarVal(res.np_name, np_val + 1.);
+    ws()->SetVarVal(res.np_name, np_val - 1.);
     ws_->SetVarVal(res.poi_name, 0.f);
     fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] after -1 variation of {}", res.np_name);
@@ -246,7 +249,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     EFT_PROF_INFO("[ComputeNpRanking] results:");
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
-    EFT_PROF_INFO("{:^=15} | {:^=10} +- {:^=10}", "=", "=", "=");
+    EFT_PROF_INFO("{:=^15} | {:=^10} +- {:=^10}", "=", "=", "=");
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "nominal", poi_val, poi_err);
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_variation_val, res.poi_plus_variation_err);
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_variation_val, res.poi_minus_variation_err);
@@ -281,6 +284,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetAllGlobObsTo(0); // to find values for np preferred by data
+    SetAllGlobObsErrorsTo(0);
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     //SetAllNuisanceParamsFloat();
     SetAllNuisanceParamsToValue(0);
@@ -335,8 +339,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     res.ExtractPoiValErr(ws_, res.poi_name);
     res.nll = nll->getVal();
 
-    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
-    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
+    EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_val, res.poi_err);
+    EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
 
     nlohmann::json j;
     j = res;
