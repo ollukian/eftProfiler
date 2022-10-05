@@ -196,27 +196,27 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->GetYaxis()->SetTitle("#Delta #mu");
 
     //histo->SetFillColor(kBlue);
-    histo->SetFillColorAlpha(kGray, 0.6); // used to be blue
+    //histo->SetFillColorAlpha(kGray, 0.6); // used to be blue
     histo->SetLineColor(kGray);
     histo->SetLineWidth(3);
 
-    histo_neg->SetFillColorAlpha(kGray, 0.6); // used to be blue
+    //histo_neg->SetFillColorAlpha(kGray, 0.6); // used to be blue
     histo_neg->SetLineColor(kGray);
     histo_neg->SetLineWidth(3);
 
-    histo_minus_one_var->SetFillColorAlpha(kGreen, 0.5); // used to be green
+    //histo_minus_one_var->SetFillColorAlpha(kGreen, 0.5); // used to be green
     histo_minus_one_var->SetLineColor(kGreen);
     histo_minus_one_var->SetLineWidth(2);
 
-    histo_plus_one_var->SetFillColorAlpha(kBlue, 0.5); // used to be magenta
+    //histo_plus_one_var->SetFillColorAlpha(kBlue, 0.5); // used to be magenta
     histo_plus_one_var->SetLineColor(kBlue);
     histo_plus_one_var->SetLineWidth(2);
 
-    histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.4); // used to be red
+    histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.6); // used to be red
     histo_plus_sigma_var->SetLineColor(kRed);
     histo_plus_sigma_var->SetLineWidth(1);
 
-    histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.4); // used to be violet
+    histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.6); // used to be violet
     histo_minus_sigma_var->SetLineColor(kViolet);
     histo_minus_sigma_var->SetLineWidth(1);
 
@@ -282,7 +282,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
     graph_nps_obs->SetMarkerStyle(20);
-    graph_nps_obs->SetMarkerSize(2); // 2
+    graph_nps_obs->SetMarkerSize(1); // 2
     //graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
     graph_nps_obs->SetLineWidth(2); // 4
     graph_nps_obs->Draw("same E1 X0");
