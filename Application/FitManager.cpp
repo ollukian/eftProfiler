@@ -285,6 +285,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetAllGlobObsTo(0); // to find values for np preferred by data
     SetAllGlobObsErrorsTo(0);
+    SetAllNuisanceParamsErrorsTo(0);
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     //SetAllNuisanceParamsFloat();
     SetAllNuisanceParamsToValue(0);

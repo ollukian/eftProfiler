@@ -59,7 +59,8 @@ public:
     inline void SetAllGlobObsConst() noexcept override;
     inline void SetAllGlobObsFloat() noexcept override;
     inline void SetAllGlobObsTo(float val) noexcept override;
-    inline void SetAllGlobObsErrorsTo(float val) noexcept;
+    inline void SetAllGlobObsErrorsTo(float err) noexcept;
+    inline void SetAllNuisanceParamsErrorsTo(float err) noexcept;
 
     inline void SetGlobsToNPs() noexcept;
 
@@ -303,6 +304,27 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
                        dynamic_cast<RooRealVar *>(globObs)->isConstant());
         dynamic_cast<RooRealVar *>(globObs)->setError(err);
         EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
+                       name,
+                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+    }
+}
+
+inline void FitManager::SetAllNuisanceParamsErrorsTo(float err) noexcept
+{
+    EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsErrorsTo {}", err);
+    //for (const auto& globObs : *args_["globObs"]) {
+    assert(lists_["paired_globs"]->size() != 0);
+    for (const auto& globObs : *lists_["paired_nps"]) {
+        const std::string name = {globObs->GetTitle()};
+        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+                       name,
+                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+        dynamic_cast<RooRealVar *>(globObs)->setError(err);
+        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
                        name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
                        dynamic_cast<RooRealVar *>(globObs)->getError(),
