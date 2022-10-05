@@ -193,14 +193,15 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->GetXaxis()->LabelsOption("v");
     //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
     histo->GetYaxis()->SetRangeUser(range_low, range_high);
+    histo->GetYaxis()->SetTitle("#Delta #mu - #mu");
 
     //histo->SetFillColor(kBlue);
     histo->SetFillColorAlpha(kGray, 0.6); // used to be blue
-    histo->SetLineColor(kBlue);
+    histo->SetLineColor(kGray);
     histo->SetLineWidth(3);
 
     histo_neg->SetFillColorAlpha(kGray, 0.6); // used to be blue
-    histo_neg->SetLineColor(kBlue);
+    histo_neg->SetLineColor(kGray);
     histo_neg->SetLineWidth(3);
 
     histo_minus_one_var->SetFillColorAlpha(kGreen, 0.5); // used to be green
@@ -208,7 +209,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_minus_one_var->SetLineWidth(2);
 
     histo_plus_one_var->SetFillColorAlpha(kBlue, 0.5); // used to be magenta
-    histo_plus_one_var->SetLineColor(kMagenta);
+    histo_plus_one_var->SetLineColor(kBlue);
     histo_plus_one_var->SetLineWidth(2);
 
     histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.4); // used to be red
