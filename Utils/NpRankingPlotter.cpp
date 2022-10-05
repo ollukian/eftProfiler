@@ -164,6 +164,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     auto histo_neg = MakeHisto1D("h_neg", settings->nb_nps_to_plot);
     auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", settings->nb_nps_to_plot);
     auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", settings->nb_nps_to_plot);
+    auto histo_minus_one_var = MakeHisto1D("h_-1_var", settings->nb_nps_to_plot);
+    auto histo_plus_one_var = MakeHisto1D("h_+1_var", settings->nb_nps_to_plot);
 
 
     for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
@@ -177,6 +179,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
         histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
         histo_plus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
         histo_minus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
+        histo_minus_one_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
+        histo_plus_one_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
         //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
     }
 
@@ -207,10 +211,20 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_minus_sigma_var->SetLineColor(kViolet);
     histo_minus_sigma_var->SetLineWidth(2);
 
+    histo_minus_one_var->SetFillColorAlpha(kGreen, 0.6);
+    histo_minus_one_var->SetLineColor(kGreen);
+    histo_minus_one_var->SetLineWidth(2);
+
+    histo_plus_one_var->SetFillColorAlpha(kAzure, 0.6);
+    histo_plus_one_var->SetLineColor(kAzure);
+    histo_plus_one_var->SetLineWidth(2);
+
     auto legend = make_unique<TLegend>();
     legend->AddEntry(histo.get(), "impact");
     legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact");
-    legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact");
+    legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact");
+    legend->AddEntry(histo_plus_one_var.get(), "+1 impact");
+    legend->AddEntry(histo_minus_one_var.get(), "-1 impact");
 
     std::filesystem::create_directory("figures");
 
@@ -228,6 +242,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     histo_plus_sigma_var->Draw("H same");
     histo_minus_sigma_var->Draw("H same");
+    histo_plus_one_var->Draw("H same");
+    histo_minus_one_var->Draw("H same");
 
     // lines to show full 1 sigma error
     TLine l1(0, - 1 * scaling, settings->nb_nps_to_plot, - 1 * scaling);

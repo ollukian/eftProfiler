@@ -115,6 +115,8 @@ struct NpInfoForPlot
     double impact;
     double impact_plus_sigma_var;
     double impact_minus_sigma_var;
+    double impact_plus_one_var;
+    double impact_minus_one_var;
 
 };
 
