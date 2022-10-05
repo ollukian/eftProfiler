@@ -349,8 +349,10 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     else
         info.impact = 0;
 
-    info.impact_plus_sigma_var  = res.poi_plus_variation_val - res.poi_val;
-    info.impact_minus_sigma_var = res.poi_minus_variation_val - res.poi_val;
+    info.impact_plus_sigma_var  = res.poi_plus_variation_val      - res.poi_val;
+    info.impact_minus_sigma_var = res.poi_minus_variation_val     - res.poi_val;
+    info.impact_plus_one_var    = res.poi_plus_one_variation_val  - res.poi_val;
+    info.impact_minus_one_var   = res.poi_minus_one_variation_val - res.poi_val;
     return info;
 }
 
