@@ -193,7 +193,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->GetXaxis()->LabelsOption("v");
     //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
     histo->GetYaxis()->SetRangeUser(range_low, range_high);
-    histo->GetYaxis()->SetTitle("#Delta #mu - #mu");
+    histo->GetYaxis()->SetTitle("#Delta #mu");
 
     //histo->SetFillColor(kBlue);
     histo->SetFillColorAlpha(kGray, 0.6); // used to be blue
@@ -222,12 +222,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
 
 
-    auto legend = make_unique<TLegend>(0.6, 0.8, 0.9, 0.9);
-    legend->AddEntry(histo.get(), "impact");
-    legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact");
-    legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact");
-    legend->AddEntry(histo_plus_one_var.get(), "+1 impact");
-    legend->AddEntry(histo_minus_one_var.get(), "-1 impact");
+    auto legend = make_unique<TLegend>(0.7, 0.85, 0.95, 0.95);
+    legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
+    legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
+    legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
+    legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
+    legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
 
     std::filesystem::create_directory("figures");
 
@@ -240,7 +240,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     histo->GetXaxis()->SetLabelSize(0.03);
 
-    histo->Draw("H TEXT same");
+    histo->Draw("H same");
     histo_neg->Draw("H same");
 
     histo_plus_one_var->Draw("H same");
@@ -282,9 +282,9 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
     graph_nps_obs->SetMarkerStyle(20);
-    graph_nps_obs->SetMarkerSize(2);
+    graph_nps_obs->SetMarkerSize(2); // 2
     //graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
-    graph_nps_obs->SetLineWidth(4);
+    graph_nps_obs->SetLineWidth(2); // 4
     graph_nps_obs->Draw("same E1 X0");
 
 
