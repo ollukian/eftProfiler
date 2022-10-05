@@ -211,18 +211,18 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_minus_sigma_var->SetLineColor(kViolet);
     histo_minus_sigma_var->SetLineWidth(2);
 
-    histo_minus_one_var->SetFillColorAlpha(kGreen, 0.6);
+    histo_minus_one_var->SetFillColorAlpha(kGreen, 0.4);
     histo_minus_one_var->SetLineColor(kGreen);
     histo_minus_one_var->SetLineWidth(2);
 
-    histo_plus_one_var->SetFillColorAlpha(kAzure, 0.6);
+    histo_plus_one_var->SetFillColorAlpha(kAzure, 0.4);
     histo_plus_one_var->SetLineColor(kAzure);
     histo_plus_one_var->SetLineWidth(2);
 
     auto legend = make_unique<TLegend>();
     legend->AddEntry(histo.get(), "impact");
     legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact");
-    legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact");
+    legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact");
     legend->AddEntry(histo_plus_one_var.get(), "+1 impact");
     legend->AddEntry(histo_minus_one_var.get(), "-1 impact");
 
@@ -240,10 +240,11 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->Draw("H TEXT same");
     histo_neg->Draw("H same");
 
-    histo_plus_sigma_var->Draw("H same");
-    histo_minus_sigma_var->Draw("H same");
     histo_plus_one_var->Draw("H same");
     histo_minus_one_var->Draw("H same");
+    histo_plus_sigma_var->Draw("H same");
+    histo_minus_sigma_var->Draw("H same");
+
 
     // lines to show full 1 sigma error
     TLine l1(0, - 1 * scaling, settings->nb_nps_to_plot, - 1 * scaling);
