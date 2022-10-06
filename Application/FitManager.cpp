@@ -54,11 +54,15 @@ void FitManager::DoGlobalFit()
 
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
-//    {
-//        auto* nps = GetListAsArgSet("paired_nps");
-//        EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps", workerId);
-//        ws_->raw()->saveSnapshot("tmp_nps", *nps, true);
-//    }
+    {
+        auto* globObs = GetListAsArgSet("paired_globs");
+        auto* nps = GetListAsArgSet("paired_nps");
+        auto args = new RooArgSet();
+        args->add(*globObs);
+        args->add(*nps);
+        EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps with globs and obs", workerId);
+        ws_->raw()->saveSnapshot("tmp_nps", *args, true);
+    }
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} do unconditional fit", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} before uncond fit: {} +- {}",
@@ -68,14 +72,16 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     );
     DoFitAllNpFloat(settings);
 
-//    {
-//        EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
-//        EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
-//        GetListAsArgSet("paired_nps")->Print("v");
-//        ws_->raw()->loadSnapshot("tmp_nps");
-//        EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
-//        GetListAsArgSet("paired_nps")->Print("v");
-//    }
+    {
+        EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
+        EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
+        GetListAsArgSet("paired_nps")->Print("v");
+        GetListAsArgSet("paired_globs")->Print("v");
+        ws_->raw()->loadSnapshot("tmp_nps");
+        EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
+        GetListAsArgSet("paired_nps")->Print("v");
+        GetListAsArgSet("paired_globs")->Print("v");
+    }
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} after uncond fit: {} +- {}",
@@ -192,6 +198,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     const auto poi_val = ws()->GetParVal(res.poi_name);
     const auto poi_err = ws()->GetParErr(res.poi_name);
 
+    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
+    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
+
 
     // + sigma var
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
@@ -279,14 +288,16 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_minus_one_variation_err = ws()->GetParErr(res.poi_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] results:");
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
-    EFT_PROF_INFO("{:=^15} | {:=^10} +- {:=^10}", "=", "=", "=");
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "free fit", res.poi_free_fit_val, res.poi_free_fit_val);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "fixed np", res.poi_fixed_np_val, res.poi_fixed_np_val);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_sigma_variation_val, res.poi_plus_sigma_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_sigma_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 ",      res.poi_minus_one_variation_val, res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("|{:=^15} | {:=^15} +- {:=^15}|", "=", "=", "=");
+    EFT_PROF_INFO("|{:^15} + {:^15} + {:^15}|", "Study", "poi value", "poi error");
+    EFT_PROF_INFO("|{:=^15} | {:=^15} +- {:=^15}|", "=", "=", "=");
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "free fit", res.poi_free_fit_val, res.poi_free_fit_val);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "fixed np", res.poi_fixed_np_val, res.poi_fixed_np_val);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 sigma", res.poi_plus_sigma_variation_val, res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 ",      res.poi_minus_one_variation_val, res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("|{:=^15} | {:=^15} +- {:=^15}|", "=", "=", "=");
 
     const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
                                     res.poi_name,
