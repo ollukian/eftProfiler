@@ -47,10 +47,6 @@ public:
     inline void ExtractDataTotal(std::string name) override;
     inline void ExtractPdfTotal(std::string name)  override;
 
-    // TODO: to implement from the prev code
-    void SetAllNuisanceParamsConst() noexcept override;
-    void SetAllNuisanceParamsFloat() noexcept override;
-    void SetAllNuisanceParamsToValue(float val) noexcept override;
     void SetGlobalObservablesToValueFoundInFit() noexcept override{};
 
     void SetAllPOIsConst() noexcept override;
@@ -60,6 +56,14 @@ public:
     inline void SetAllGlobObsFloat() noexcept override;
     inline void SetAllGlobObsTo(float val) noexcept override;
     inline void SetAllGlobObsErrorsTo(float err) noexcept;
+    inline void SetAllGlobObsTo(float val, float err) noexcept;
+
+    // TODO: to implement from the prev code
+    void SetAllNuisanceParamsConst() noexcept override;
+    void SetAllNuisanceParamsFloat() noexcept override;
+    void SetAllNuisanceParamsToValue(float val) noexcept override;
+    inline void SetAllNuisanceParamsTo(float val, float err) noexcept;
+
     inline void SetAllNuisanceParamsErrorsTo(float err) noexcept;
 
     inline void SetGlobsToNPs() noexcept;
@@ -309,6 +313,19 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
                        dynamic_cast<RooRealVar *>(globObs)->getError(),
                        dynamic_cast<RooRealVar *>(globObs)->isConstant());
     }
+}
+
+inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
+{
+    EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {} +- {}", val, err);
+    SetAllGlobObsTo(val);
+    SetAllGlobObsErrorsTo(err);
+}
+inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
+{
+    EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsTo {} +- {}", val, err);
+    SetAllNuisanceParamsToValue(val);
+    SetAllNuisanceParamsErrorsTo(err);
 }
 
 inline void FitManager::SetAllNuisanceParamsErrorsTo(float err) noexcept
