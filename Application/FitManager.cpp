@@ -54,9 +54,17 @@ void FitManager::DoGlobalFit()
 
 void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId)
 {
+    NpRankingStudyRes res;
+    res.poi_name = settings.poi;
+    res.statType = settings.statType;
+    res.studyType = settings.studyType;
+    res.prePostFit = settings.prePostFit;
+    auto* globObs = GetListAsArgSet("paired_globs");
+    auto* nps     = GetListAsArgSet("paired_nps");
+    res.np_name = nps->operator[](workerId)->GetName();
     {
-        auto* globObs = GetListAsArgSet("paired_globs");
-        auto* nps = GetListAsArgSet("paired_nps");
+        //auto* globObs = GetListAsArgSet("paired_globs");
+        //auto* nps = GetListAsArgSet("paired_nps");
         auto args = new RooArgSet();
         args->add(*globObs);
         args->add(*nps);
@@ -72,7 +80,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     );
     DoFitAllNpFloat(settings);
 
-    {
+    const auto np_val = ws()->GetParVal(res.np_name);
+    const auto np_err = ws()->GetParErr(res.np_name);
         EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
         EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
         GetListAsArgSet("paired_nps")->Print("v");
@@ -81,7 +90,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
         GetListAsArgSet("paired_nps")->Print("v");
         GetListAsArgSet("paired_globs")->Print("v");
-    }
+
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} after uncond fit: {} +- {}",
@@ -96,8 +105,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
 
-    auto* globObs = GetListAsArgSet("paired_globs");
-    auto* nps = GetListAsArgSet("paired_nps");
 
     /*auto* globObs_list = (lists_["paired_globs"]);
     auto* nps_list     = (lists_["paired_nps"]);
@@ -117,15 +124,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         data = data_["ds_total"];
     }*/
 
-    NpRankingStudyRes res;
-    res.poi_name = settings.poi;
-    res.statType = settings.statType;
-    res.studyType = settings.studyType;
-    res.prePostFit = settings.prePostFit;
-    res.np_name = nps->operator[](workerId)->GetName();
 
-    const auto np_val = ws()->GetParVal(res.np_name);
-    const auto np_err = ws()->GetParErr(res.np_name);
+
+
 
     //const auto* glob = globObs->operator[](workerId)->GetName();
     //ws()->SetVarVal(glob, np_val);
