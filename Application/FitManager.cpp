@@ -153,7 +153,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         args_["np"]->Print("v");
     }*/
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} = {} +- {} const",
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} = {} +- {} to const",
                   workerId,
                   res.np_name,
                   ws()->GetParVal(settings.poi),
@@ -257,7 +257,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] results:");
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
     EFT_PROF_INFO("{:=^15} | {:=^10} +- {:=^10}", "=", "=", "=");
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "nominal", poi_val, poi_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "free fit", res.poi_free_fit_val, res.poi_free_fit_val);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "fixed np", res.poi_fixed_np_val, res.poi_fixed_np_val);
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_sigma_variation_val, res.poi_plus_sigma_variation_err);
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_sigma_variation_err);
