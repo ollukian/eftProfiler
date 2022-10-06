@@ -377,25 +377,25 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
 
     EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
-                   res.poi_name,
+                   res.np_name,
                    res.poi_fixed_np_val,
                    res.poi_plus_sigma_variation_val,
                    info.impact_plus_sigma_var);
 
     EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -sigma: {:10} ==> impact: {:10}",
-                   res.poi_name,
+                   res.np_name,
                    res.poi_fixed_np_val,
                    res.poi_minus_sigma_variation_val,
                    info.impact_minus_sigma_var);
 
     EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +1    : {:10} ==> impact: {:10}",
-                   res.poi_name,
+                   res.np_name,
                    res.poi_fixed_np_val,
                    res.poi_plus_one_variation_val,
                    info.impact_plus_one_var);
 
     EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1     : {:10} ==> impact: {:10}",
-                   res.poi_name,
+                   res.np_name,
                    res.poi_fixed_np_val,
                    res.poi_minus_one_variation_val,
                    info.impact_minus_one_var);
