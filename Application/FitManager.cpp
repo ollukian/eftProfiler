@@ -80,6 +80,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     );
     DoFitAllNpFloat(settings);
 
+    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
+    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
+
     const auto np_val = ws()->GetParVal(res.np_name);
     const auto np_err = ws()->GetParErr(res.np_name);
         EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
@@ -199,9 +202,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     const auto poi_val = ws()->GetParVal(res.poi_name);
     const auto poi_err = ws()->GetParErr(res.poi_name);
-
-    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
-    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
 
 
     // + sigma var
