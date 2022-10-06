@@ -355,17 +355,17 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     }*/
 
     //static constexpr float error_full = 0.0932585782834731;
-    auto error_full = res.poi_free_fit_err;
+    auto error_full = res.poi_fixed_np_err;
 
     if (res.poi_fixed_np_err < error_full)
         info.impact = sqrt( error_full * error_full - res.poi_fixed_np_err * res.poi_fixed_np_err);
     else
         info.impact = 0;
 
-    info.impact_plus_sigma_var  = res.poi_plus_sigma_variation_val  - res.poi_free_fit_val;
-    info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_free_fit_val;
-    info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_free_fit_val;
-    info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_free_fit_val;
+    info.impact_plus_sigma_var  = res.poi_plus_sigma_variation_val  - res.poi_fixed_np_val;
+    info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_fixed_np_val;
+    info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_fixed_np_val;
+    info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
     return info;
 }
 
