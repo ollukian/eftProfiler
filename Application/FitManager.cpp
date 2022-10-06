@@ -84,8 +84,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   ws()->GetParErr(settings.poi)
                   );
     //SetUpGlobObs(settings.prePostFit);
-    RooAbsData& data = GetData(settings.prePostFit);
+    //RooAbsData& data = GetData(settings.prePostFit);
     //auto pdf = GetPdf("pdf_total");
+    RooAbsData& data = *data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
     //auto* globObs = (args_["globObs"]);
 
@@ -152,7 +153,11 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         args_["np"]->Print("v");
     }*/
 
-    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} const", workerId, res.np_name);
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} = {} +- {} const",
+                  workerId,
+                  res.np_name,
+                  ws()->GetParVal(settings.poi),
+                  ws()->GetParErr(settings.poi));
     ws_->FixValConst(res.np_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
