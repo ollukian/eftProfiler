@@ -125,8 +125,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all globs to zero", workerId);
     //SetAllGlobObsTo(0);
 
-    //EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
-    //SetAllPOIsConst();
+    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
+    SetAllPOIsConst();
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
     ws_->SetVarVal(res.poi_name, 0.f);
