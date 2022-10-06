@@ -154,7 +154,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
                             +
                         (l.impact_minus_sigma_var * l.impact_minus_sigma_var))
                         >
-                        (r.impact_plus_sigma_var * r.impact_plus_sigma_var)
+                        ((r.impact_plus_sigma_var * r.impact_plus_sigma_var)
                             +
                         (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
 
