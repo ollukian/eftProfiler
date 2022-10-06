@@ -127,8 +127,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     const auto np_val = ws()->GetParVal(res.np_name);
     const auto np_err = ws()->GetParErr(res.np_name);
 
-    const auto* glob = globObs->operator[](workerId)->GetName();
-    ws()->SetVarVal(glob, np_val);
+    //const auto* glob = globObs->operator[](workerId)->GetName();
+    //ws()->SetVarVal(glob, np_val);
 
     //EFT_PROF_INFO("[ComputeNpRanking], set all globs to nps");
     //SetGlobsToNPs();
@@ -143,7 +143,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
     ws_->FloatVal(res.poi_name);
     ws_->SetVarVal(res.poi_name, 0.f);
-    //ws_->SetVarErr(res.poi_name,  0.f);
+    ws_->SetVarErr(res.poi_name,  0.f);
     //ws_->SetVarVal(res.poi_name, -1.14955385407254);
     //ws_->SetVarErr(res.poi_name, 0.669981);
     //ws_->FloatVal(res.poi_name);
