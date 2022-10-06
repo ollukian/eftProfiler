@@ -165,11 +165,13 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     // TODO: create:
     //  * [] create: print results
     //  * [] create: prepare nps, globs and so on
-    res.ExtractPoiValErr(ws_, res.poi_name);
+    //res.ExtractPoiValErr(ws_, res.poi_name);
+    res.poi_fixed_np_val = ws()->GetParVal(res.poi_name);
+    res.poi_fixed_np_err = ws()->GetParErr(res.poi_name);
     res.ExtractNPValErr(ws_, res.np_name);
     //res.nll     = nll->getVal();
 
-    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_val, res.poi_err);
+    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_fixed_np_val, res.poi_fixed_np_err);
     //EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
 
     const auto np_val = ws()->GetParVal(res.np_name);
@@ -192,8 +194,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     //const auto poi_val_plus_sigma = ws()->GetParVal(res.poi_name);
     //const auto poi_err_plus_sigma = ws()->GetParErr(res.poi_name);
-    res.poi_plus_variation_val = ws()->GetParVal(res.poi_name);
-    res.poi_plus_variation_err = ws()->GetParErr(res.poi_name);
+    res.poi_plus_sigma_variation_val = ws()->GetParVal(res.poi_name);
+    res.poi_plus_sigma_variation_err = ws()->GetParErr(res.poi_name);
 
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
@@ -210,8 +212,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   ws()->GetParErr(res.poi_name)
     );
 
-    res.poi_minus_variation_val = ws()->GetParVal(res.poi_name);
-    res.poi_minus_variation_err = ws()->GetParErr(res.poi_name);
+    res.poi_minus_sigma_variation_val = ws()->GetParVal(res.poi_name);
+    res.poi_minus_sigma_variation_err = ws()->GetParErr(res.poi_name);
 
     // + 1 variation
     ws()->SetVarVal(res.np_name, np_val);
@@ -251,10 +253,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "Study", "poi value", "poi error");
     EFT_PROF_INFO("{:=^15} | {:=^10} +- {:=^10}", "=", "=", "=");
     EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "nominal", poi_val, poi_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_variation_val, res.poi_plus_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_variation_val, res.poi_minus_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_variation_err);
-    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 ",      res.poi_minus_one_variation_val, res.poi_minus_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 sigma", res.poi_plus_sigma_variation_val, res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("{:^15} | {:^10} +- {:^10}", "-1 ",      res.poi_minus_one_variation_val, res.poi_minus_sigma_variation_err);
 
     const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
                                     res.poi_name,
@@ -337,10 +339,12 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
-    res.ExtractPoiValErr(ws_, res.poi_name);
+    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
+    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
+    //res.ExtractPoiValErr(ws_, res.poi_name);
     res.nll = nll->getVal();
 
-    EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_val, res.poi_err);
+    EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_fixed_np_val, res.poi_fixed_np_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
 
     nlohmann::json j;

@@ -5,6 +5,8 @@
 #include "NpRankingStudyRes.h"
 #include "IWorkspaceWrapper.h"
 
+#include "../Core/Logger.h"
+
 namespace eft::stats {
 
 
@@ -92,8 +94,9 @@ void from_json(const nlohmann::json& j, PrePostFit& s)
 
 void NpRankingStudyRes::ExtractPoiValErr(IWorkspaceWrapper* ws, const std::string& poi)
 {
-    this->poi_err = ws->GetParErr(poi);
-    this->poi_val = ws->GetParVal(poi);
+    EFT_PROF_CRITICAL("do not use NpRankingStudyRes::ExtractPoiValErr!!");
+    this->poi_fixed_np_err = ws->GetParErr(poi);
+    this->poi_fixed_np_val = ws->GetParVal(poi);
 }
 
 void NpRankingStudyRes::ExtractNPValErr(IWorkspaceWrapper* ws, const std::string& np)

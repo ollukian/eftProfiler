@@ -66,25 +66,28 @@ struct NpRankingStudyRes {
     std::string poi_name {"none"};
     std::string np_name {"none"};
 
-    double poi_val;
-    double poi_err;
+    double poi_free_fit_val {0};
+    double poi_free_fit_err {0};
 
-    double poi_plus_variation_val;
-    double poi_plus_variation_err;
+    double poi_fixed_np_val {0};
+    double poi_fixed_np_err {0};
 
-    double poi_minus_variation_val;
-    double poi_minus_variation_err;
+    double poi_plus_sigma_variation_val {0};
+    double poi_plus_sigma_variation_err {0};
 
-    double poi_minus_one_variation_val;
-    double poi_minus_one_variation_err;
+    double poi_minus_sigma_variation_val {0};
+    double poi_minus_sigma_variation_err {0};
 
-    double poi_plus_one_variation_val;
-    double poi_plus_one_variation_err;
+    double poi_minus_one_variation_val {0};
+    double poi_minus_one_variation_err {0};
 
-    double np_val;
-    double np_err;
+    double poi_plus_one_variation_val {0};
+    double poi_plus_one_variation_err {0};
 
-    double nll;
+    double np_val {0};
+    double np_err {0};
+
+    double nll {0};
 
     void ExtractPoiValErr(IWorkspaceWrapper* ws, const std::string& poi);
     void ExtractNPValErr(IWorkspaceWrapper* ws, const std::string& np);
@@ -105,10 +108,10 @@ struct NpInfoForPlot
 {
     std::string name;
     std::string poi;
-    float post_fit_value;
+    /*float post_fit_value;
     float post_fit_error;
     float pre_fit_value;
-    float pre_fit_error;
+    float pre_fit_error;*/
     float obs_value;
     float obs_error;
 
@@ -121,17 +124,18 @@ struct NpInfoForPlot
 };
 
 NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(NpRankingStudyRes,
-                                    poi_name, np_name,
-                                    poi_val, poi_err,
-                                    np_val, np_err,
-                                    poi_plus_variation_val,     poi_plus_variation_err,
-                                    poi_minus_variation_val,     poi_minus_variation_err,
-                                    poi_minus_one_variation_val, poi_minus_one_variation_err,
-                                    poi_plus_one_variation_val,  poi_plus_one_variation_err,
-                                    nll,
-                                    studyType,
-                                    statType,
-                                    prePostFit);
+                                   poi_name, np_name,
+                                   poi_free_fit_val,              poi_free_fit_err,
+                                   poi_fixed_np_val,              poi_fixed_np_err,
+                                   poi_plus_sigma_variation_val,  poi_plus_sigma_variation_err,
+                                   poi_minus_sigma_variation_val, poi_minus_sigma_variation_err,
+                                   poi_minus_one_variation_val,   poi_minus_one_variation_err,
+                                   poi_plus_one_variation_val,    poi_plus_one_variation_err,
+                                   np_val,                        np_err,
+                                   nll,
+                                   studyType,
+                                   statType,
+                                   prePostFit);
 
 
 
