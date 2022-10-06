@@ -172,8 +172,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   ws()->GetParVal(settings.poi),
                   ws()->GetParErr(settings.poi));
     ws_->FixValConst(res.np_name);
-    SetAllNuisanceParamsErrorsTo(0);
-    SetAllNuisanceParamsToValue(0);
+    ws_->raw()->loadSnapshot("tmp_nps");
+    //SetAllNuisanceParamsErrorsTo(0);
+    //SetAllNuisanceParamsToValue(0);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
 
@@ -205,8 +206,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     // + sigma var
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
-    SetAllNuisanceParamsErrorsTo(0);
-    SetAllNuisanceParamsToValue(0);
+    ws_->raw()->loadSnapshot("tmp_nps");
+    //SetAllNuisanceParamsErrorsTo(0);
+    //SetAllNuisanceParamsToValue(0);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
 
@@ -230,8 +232,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     // -1 sigma variation
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1 sigma", res.np_name);
-    SetAllNuisanceParamsErrorsTo(0);
-    SetAllNuisanceParamsToValue(0);
+    //SetAllNuisanceParamsErrorsTo(0);
+    //SetAllNuisanceParamsToValue(0);
+    ws_->raw()->loadSnapshot("tmp_nps");
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
     ws()->VaryParNbSigmas(res.np_name, -1.f);
@@ -251,8 +254,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err);
 
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1", res.np_name);
-    SetAllNuisanceParamsErrorsTo(0);
-    SetAllNuisanceParamsToValue(0);
+    //SetAllNuisanceParamsErrorsTo(0);
+    //SetAllNuisanceParamsToValue(0);
+    ws_->raw()->loadSnapshot("tmp_nps");
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
     ws()->SetVarVal(res.np_name, np_val + 1.);
@@ -272,8 +276,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err);
 
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1", res.np_name);
-    SetAllNuisanceParamsErrorsTo(0);
-    SetAllNuisanceParamsToValue(0);
+    //SetAllNuisanceParamsErrorsTo(0);
+    //SetAllNuisanceParamsToValue(0);
+    ws_->raw()->loadSnapshot("tmp_nps");
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
     ws()->SetVarVal(res.np_name, np_val - 1.);
