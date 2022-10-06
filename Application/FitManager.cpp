@@ -159,6 +159,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   ws()->GetParVal(settings.poi),
                   ws()->GetParErr(settings.poi));
     ws_->FixValConst(res.np_name);
+    SetAllNuisanceParamsErrorsTo(0);
+    SetAllNuisanceParamsToValue(0);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
     auto nll = fitter.CreatNll(&data, pdf, globObs, nps);
@@ -190,6 +192,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
     ws()->VaryParNbSigmas(res.np_name, +1.f);
     ws_->SetVarVal(res.poi_name, 0.f);
+    SetAllNuisanceParamsErrorsTo(0);
+    SetAllNuisanceParamsToValue(0);
     fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] after +1 sigma variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
@@ -210,6 +214,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1 sigma", res.np_name);
     ws()->VaryParNbSigmas(res.np_name, -1.f);
     ws_->SetVarVal(res.poi_name, 0.f);
+    SetAllNuisanceParamsErrorsTo(0);
+    SetAllNuisanceParamsToValue(0);
     fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] after -1 sigma variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
@@ -244,6 +250,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1", res.np_name);
     ws()->SetVarVal(res.np_name, np_val - 1.);
     ws_->SetVarVal(res.poi_name, 0.f);
+    SetAllNuisanceParamsErrorsTo(0);
+    SetAllNuisanceParamsToValue(0);
     fitter.Minimize(nll, pdf);
     EFT_PROF_INFO("[ComputeNpRanking] after -1 variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
