@@ -150,7 +150,15 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
               [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
               {
-                return l.impact > r.impact;
+                return ((l.impact_plus_sigma_var * l.impact_plus_sigma_var)
+                            +
+                        (l.impact_minus_sigma_var * l.impact_minus_sigma_var))
+                        >
+                        (r.impact_plus_sigma_var * r.impact_plus_sigma_var)
+                            +
+                        (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
+
+                //return l.impact > r.impact;
               }
               );
 
@@ -177,10 +185,10 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
         histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
         histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
-        histo_plus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
+        histo_plus_sigma_var ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
         histo_minus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
-        histo_minus_one_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
-        histo_plus_one_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
+        histo_plus_one_var   ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
+        histo_minus_one_var  ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
         //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
     }
 
@@ -196,11 +204,11 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo->GetYaxis()->SetTitle("#Delta #mu");
 
     //histo->SetFillColor(kBlue);
-    //histo->SetFillColorAlpha(kGray, 0.6); // used to be blue
+    histo->SetFillColorAlpha(kGray, 0.6); // used to be blue // gray
     histo->SetLineColor(kGray);
     histo->SetLineWidth(3);
 
-    //histo_neg->SetFillColorAlpha(kGray, 0.6); // used to be blue
+    histo_neg->SetFillColorAlpha(kGray, 0.6); // used to be blue // gray
     histo_neg->SetLineColor(kGray);
     histo_neg->SetLineWidth(3);
 
@@ -212,12 +220,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_plus_one_var->SetLineColor(kBlue);
     histo_plus_one_var->SetLineWidth(2);
 
-    histo_plus_sigma_var->SetFillColorAlpha(kRed, 0.6); // used to be red
-    histo_plus_sigma_var->SetLineColor(kRed);
+    histo_plus_sigma_var->SetFillColorAlpha(kGreen, 0.6); // used to be red
+    histo_plus_sigma_var->SetLineColor(kGreen);
     histo_plus_sigma_var->SetLineWidth(1);
 
-    histo_minus_sigma_var->SetFillColorAlpha(kViolet, 0.6); // used to be violet
-    histo_minus_sigma_var->SetLineColor(kViolet);
+    histo_minus_sigma_var->SetFillColorAlpha(kBlue, 0.6); // used to be violet
+    histo_minus_sigma_var->SetLineColor(kBlue);
     histo_minus_sigma_var->SetLineWidth(1);
 
 
@@ -347,6 +355,7 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     }
 
     static constexpr float error_full = 0.0932585782834731;
+
 
     if (res.poi_err < error_full)
         info.impact = sqrt( error_full * error_full - res.poi_err * res.poi_err);
