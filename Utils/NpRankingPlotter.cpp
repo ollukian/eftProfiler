@@ -362,10 +362,45 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     else
         info.impact = 0;
 
+//    EFT_PROF_DEBUG("NpRankingPlotter::ComputeInfoForPlot for {:30} with {} {} {} {} {}",
+//                   res.poi_name,
+//                   res.poi_fixed_np_val,
+//                   res.poi_plus_sigma_variation_val,
+//                   res.poi_minus_sigma_variation_val,
+//                   res.poi_plus_one_variation_val,
+//                   res.poi_minus_one_variation_val);
+
+
     info.impact_plus_sigma_var  = res.poi_plus_sigma_variation_val  - res.poi_fixed_np_val;
     info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_fixed_np_val;
     info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_fixed_np_val;
     info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
+
+    EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
+                   res.poi_name,
+                   res.poi_fixed_np_val,
+                   res.poi_plus_sigma_variation_val,
+                   info.impact_plus_sigma_var);
+
+    EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -sigma: {:10} ==> impact: {:10}",
+                   res.poi_name,
+                   res.poi_fixed_np_val,
+                   res.poi_minus_sigma_variation_val,
+                   info.impact_minus_sigma_var);
+
+    EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +1    : {:10} ==> impact: {:10}",
+                   res.poi_name,
+                   res.poi_fixed_np_val,
+                   res.poi_plus_one_variation_val,
+                   info.impact_plus_one_var);
+
+    EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1     : {:10} ==> impact: {:10}",
+                   res.poi_name,
+                   res.poi_fixed_np_val,
+                   res.poi_minus_one_variation_val,
+                   info.impact_minus_one_var);
+
+
     return info;
 }
 
