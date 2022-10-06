@@ -321,8 +321,8 @@ void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
     auto info = ComputeInfoForPlot(res);
 
 
-    EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
-    EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
+    //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
+    //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
 
 
     //static constexpr float error_full = 0.677982275;
@@ -340,7 +340,7 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     NpInfoForPlot info;
     info.name = res.np_name;
     info.poi = res.poi_name;
-    if (res.prePostFit == PrePostFit::PREFIT) {
+    /*if (res.prePostFit == PrePostFit::PREFIT) {
         info.post_fit_value = res.np_val;
         info.post_fit_error = res.np_err;
     }
@@ -352,20 +352,20 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     {
         info.obs_value = res.np_val;
         info.obs_error = res.np_err;
-    }
+    }*/
 
-    static constexpr float error_full = 0.0932585782834731;
-
+    //static constexpr float error_full = 0.0932585782834731;
+    auto error_full = res.poi_free_fit_err;
 
     if (res.poi_fixed_np_err < error_full)
         info.impact = sqrt( error_full * error_full - res.poi_fixed_np_err * res.poi_fixed_np_err);
     else
         info.impact = 0;
 
-    info.impact_plus_sigma_var  = res.poi_plus_sigma_variation_val - res.poi_fixed_np_val;
-    info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_fixed_np_val;
-    info.impact_plus_one_var    = res.poi_plus_one_variation_val  - res.poi_fixed_np_val;
-    info.impact_minus_one_var   = res.poi_minus_one_variation_val - res.poi_fixed_np_val;
+    info.impact_plus_sigma_var  = res.poi_plus_sigma_variation_val  - res.poi_free_fit_val;
+    info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_free_fit_val;
+    info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_free_fit_val;
+    info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_free_fit_val;
     return info;
 }
 
