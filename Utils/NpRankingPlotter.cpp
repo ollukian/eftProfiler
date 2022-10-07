@@ -354,8 +354,8 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
         info.obs_error = res.np_err;
     }*/
 
-    //static constexpr float error_full = 0.0932585782834731;
-    auto error_full = res.poi_fixed_np_err;
+    static constexpr float error_full = 0.0932585782834731;
+    //auto error_full = res.poi_fixed_np_err;
 
     if (res.poi_fixed_np_err < error_full)
         info.impact = sqrt( error_full * error_full - res.poi_fixed_np_err * res.poi_fixed_np_err);
@@ -394,7 +394,7 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
                    res.poi_plus_one_variation_val,
                    info.impact_plus_one_var);
 
-    EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1     : {:10} ==> impact: {:10}",
+    EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1    : {:10} ==> impact: {:10}",
                    res.np_name,
                    res.poi_fixed_np_val,
                    res.poi_minus_one_variation_val,

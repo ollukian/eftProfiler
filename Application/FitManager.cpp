@@ -301,16 +301,16 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_minus_one_variation_err = ws()->GetParErr(res.poi_name);
 
     EFT_PROF_INFO("[ComputeNpRanking] results:");
-    EFT_PROF_INFO("|{:=^15} | {:=^15} +- {:=^15}|", "=", "=", "=");
-    EFT_PROF_INFO("|{:^15} + {:^15} + {:^15}|", "Study", "poi value", "poi error");
-    EFT_PROF_INFO("|{:=^15} | {:=^15} +- {:=^15}|", "=", "=", "=");
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "free fit", res.poi_free_fit_val, res.poi_free_fit_val);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "fixed np", res.poi_fixed_np_val, res.poi_fixed_np_val);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 sigma", res.poi_plus_sigma_variation_val, res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
+    EFT_PROF_INFO("|{:^15} | {:^15} | {:^15}|", "Study", "poi value", "poi error");
+    EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "free fit", res.poi_free_fit_val,              res.poi_free_fit_err);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "fixed np", res.poi_fixed_np_val,              res.poi_fixed_np_err);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 sigma", res.poi_plus_sigma_variation_val,  res.poi_plus_sigma_variation_err);
     EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 ",      res.poi_plus_one_variation_val, res.poi_plus_sigma_variation_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 ",      res.poi_minus_one_variation_val, res.poi_minus_sigma_variation_err);
-    EFT_PROF_INFO("|{:=^15} | {:=^15} +- {:=^15}|", "=", "=", "=");
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 ",      res.poi_plus_one_variation_val,    res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 ",      res.poi_minus_one_variation_val,   res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
     const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
                                     res.poi_name,
