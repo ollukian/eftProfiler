@@ -83,16 +83,16 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
 
-    const auto np_val = ws()->GetParVal(res.np_name);
-    const auto np_err = ws()->GetParErr(res.np_name);
-        EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
-        EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
-        GetListAsArgSet("paired_nps")->Print("v");
-        GetListAsArgSet("paired_globs")->Print("v");
-        ws_->raw()->loadSnapshot("tmp_nps");
-        EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
-        GetListAsArgSet("paired_nps")->Print("v");
-        GetListAsArgSet("paired_globs")->Print("v");
+    const auto np_val_after_free_fit = ws()->GetParVal(res.np_name);
+    const auto np_err_after_free_fit = ws()->GetParErr(res.np_name);
+    EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
+    EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
+    GetListAsArgSet("paired_nps")->Print("v");
+    GetListAsArgSet("paired_globs")->Print("v");
+    ws_->raw()->loadSnapshot("tmp_nps");
+    EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
+    GetListAsArgSet("paired_nps")->Print("v");
+    GetListAsArgSet("paired_globs")->Print("v");
 
 
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
@@ -174,12 +174,12 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   res.np_name,
                   ws()->GetParVal(settings.poi),
                   ws()->GetParErr(settings.poi));
-    ws_->FixValConst(res.np_name);
     ws_->raw()->loadSnapshot("tmp_nps");
+    ws_->FixValConst(res.np_name);
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
-    ws()->SetVarVal(res.np_name, np_val);
-    ws()->SetVarErr(res.np_name, np_err);
+    ws()->SetVarVal(res.np_name, np_val_after_free_fit);
+    ws()->SetVarErr(res.np_name, np_err_after_free_fit);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
     auto nll = fitter.CreatNll(&data, pdf, globObs, nps);
@@ -203,10 +203,14 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     const auto poi_val = ws()->GetParVal(res.poi_name);
     const auto poi_err = ws()->GetParErr(res.poi_name);
 
+    const auto np_val = ws()->GetParVal(res.np_name);
+    const auto np_err = ws()->GetParErr(res.np_name);
+
 
     // + sigma var
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
     ws_->raw()->loadSnapshot("tmp_nps");
+    ws_->FixValConst(res.np_name);
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws()->SetVarVal(res.np_name, np_val);
@@ -235,6 +239,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws_->raw()->loadSnapshot("tmp_nps");
+    ws_->FixValConst(res.np_name);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
     ws()->VaryParNbSigmas(res.np_name, -1.f);
@@ -257,6 +262,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws_->raw()->loadSnapshot("tmp_nps");
+    ws_->FixValConst(res.np_name);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
     ws()->SetVarVal(res.np_name, np_val + 1.);
@@ -279,6 +285,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws_->raw()->loadSnapshot("tmp_nps");
+    ws_->FixValConst(res.np_name);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
     ws()->SetVarVal(res.np_name, np_val - 1.);
