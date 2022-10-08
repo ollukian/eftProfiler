@@ -220,11 +220,11 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     histo_plus_one_var->SetLineColor(kBlue);
     histo_plus_one_var->SetLineWidth(2);
 
-    histo_plus_sigma_var->SetFillColorAlpha(kGreen, 0.6); // used to be red
+    histo_plus_sigma_var->SetFillColorAlpha(kBlue, 0.6); // used to be red
     histo_plus_sigma_var->SetLineColor(kGreen);
     histo_plus_sigma_var->SetLineWidth(1);
 
-    histo_minus_sigma_var->SetFillColorAlpha(kBlue, 0.6); // used to be violet
+    histo_minus_sigma_var->SetFillColorAlpha(kGreen, 0.6); // used to be violet
     histo_minus_sigma_var->SetLineColor(kBlue);
     histo_minus_sigma_var->SetLineWidth(1);
 
