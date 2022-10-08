@@ -362,6 +362,9 @@ NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res)
     else
         info.impact = 0;
 
+    info.obs_value = res.np_val;
+    info.obs_error = res.np_err;
+
 //    EFT_PROF_DEBUG("NpRankingPlotter::ComputeInfoForPlot for {:30} with {} {} {} {} {}",
 //                   res.poi_name,
 //                   res.poi_fixed_np_val,
