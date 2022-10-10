@@ -280,6 +280,18 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
     //for (const auto& globObs : *args_["globObs"]) {
     for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
+
+        if (name.find("gamma") != std::string::npos)
+        {
+            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+                           name,
+                           dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                           dynamic_cast<RooRealVar *>(globObs)->getError(),
+                           dynamic_cast<RooRealVar *>(globObs)->isConstant());
+            EFT_PROF_INFO("[FitManager][SetAllGlobObsTo] {} is GAMMA - skip it", name);
+            continue;
+        }
+
         EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
                        name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
@@ -301,6 +313,16 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
     assert(lists_["paired_globs"]->size() != 0);
     for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
+        if (name.find("gamma") != std::string::npos)
+        {
+            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+                           name,
+                           dynamic_cast<RooRealVar *>(globObs)->getVal(),
+                           dynamic_cast<RooRealVar *>(globObs)->getError(),
+                           dynamic_cast<RooRealVar *>(globObs)->isConstant());
+            EFT_PROF_INFO("[FitManager][SetAllGlobObsErrorsTo] {} is GAMMA - skip it", name);
+            continue;
+        }
         EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
                        name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
@@ -332,7 +354,7 @@ inline void FitManager::SetAllNuisanceParamsErrorsTo(float err) noexcept
 {
     EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsErrorsTo {}", err);
     //for (const auto& globObs : *args_["globObs"]) {
-    assert(lists_["paired_globs"]->size() != 0);
+    assert(lists_["paired_nps"]->size() != 0);
     for (const auto& globObs : *lists_["paired_nps"]) {
         const std::string name = {globObs->GetTitle()};
         EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
