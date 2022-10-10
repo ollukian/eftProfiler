@@ -90,6 +90,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     GetListAsArgSet("paired_nps")->Print("v");
     GetListAsArgSet("paired_globs")->Print("v");
     ws_->raw()->loadSnapshot("tmp_nps");
+    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     EFT_PROF_DEBUG("[ComputeNpRanking] nps after loading:");
     GetListAsArgSet("paired_nps")->Print("v");
     GetListAsArgSet("paired_globs")->Print("v");
@@ -175,6 +176,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
                   ws()->GetParVal(settings.poi),
                   ws()->GetParErr(settings.poi));
     ws_->raw()->loadSnapshot("tmp_nps");
+    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     ws_->FixValConst(res.np_name);
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
@@ -210,6 +212,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     // + sigma var
     EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
     ws_->raw()->loadSnapshot("tmp_nps");
+    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     ws_->FixValConst(res.np_name);
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
@@ -239,6 +242,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws_->raw()->loadSnapshot("tmp_nps");
+    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     ws_->FixValConst(res.np_name);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
@@ -262,6 +266,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws_->raw()->loadSnapshot("tmp_nps");
+    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     ws_->FixValConst(res.np_name);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
@@ -285,6 +290,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //SetAllNuisanceParamsErrorsTo(0);
     //SetAllNuisanceParamsToValue(0);
     ws_->raw()->loadSnapshot("tmp_nps");
+    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     ws_->FixValConst(res.np_name);
     ws()->SetVarVal(res.np_name, np_val);
     ws()->SetVarErr(res.np_name, np_err);
