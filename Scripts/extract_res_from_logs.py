@@ -14,9 +14,13 @@ def get_np_name_from_list(lines : list):
         if "np_name" in this_line:
             line_components = this_line.split()
             np_name_quoted = line_components[1]
-            np_name = np_name_quoted[1:-1]
+            np_name = np_name_quoted[1:-2]
             print(f"np name: [{np_name}]")
             return np_name
+
+
+def form_filename(np : str, poi : str, worker_id : int):
+    return "res__{}__worker_{}__{}.json".format(poi, np, worker_id)
 
 
 def get_poi_name_from_list(lines : list):
@@ -24,12 +28,23 @@ def get_poi_name_from_list(lines : list):
         if "poi_name" in this_line:
             line_components = this_line.split()
             poi_name_quoted = line_components[1]
-            poi_name = poi_name_quoted[1:-1]
+            poi_name = poi_name_quoted[1:-2]
             print(f"poi name: [{poi_name}]")
             return poi_name
 
 
-def print_res_to_file(lines : list):
+def get_worker_id_from_filename(name : str):
+    name_no_prefix = name.split('/')[-1]
+    print(f"name: [{name}]")
+    print(f"name no prefix: [{name_no_prefix}]")
+    number_and_filetype = name_no_prefix.split('_')[-1]
+    print(f"name with filetype: [{number_and_filetype}]")
+    number = number_and_filetype.split('.')[0]
+    print(f"number: [{number}]")
+    return int(number)
+
+
+def print_res_to_file(lines : list, worker_id : int):
     print("to create file: {tmp} and to put inside:")
     for line in lines:
         print(line)
@@ -37,6 +52,7 @@ def print_res_to_file(lines : list):
 
     np_name = get_np_name_from_list(lines)
     poi_name = get_poi_name_from_list(lines)
+    res_filename = form_filename(np_name, poi_name, worker_id)
     return
 
 
@@ -63,13 +79,13 @@ def get_result_one_file(name : str):
         return res
 
 
-
 for filename in sys.argv[1:]:
     print(f"received: {filename} - check if it contains results...")
     if contains_result(filename):
         print(f"* {filename} contain results, extract if")
         data_one_file = get_result_one_file(filename)
-        print_res_to_file(data_one_file)
+        worker_id = get_worker_id_from_filename(filename)
+        print_res_to_file(data_one_file, worker_id)
 
 
 
