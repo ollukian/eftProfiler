@@ -19,7 +19,7 @@ def get_np_name_from_list(lines : list):
             line_components = this_line.split()
             np_name_quoted = line_components[1]
             np_name = np_name_quoted[1:-2]
-            print(f"np name: [{np_name}]")
+            # print(f"np name: [{np_name}]")
             return np_name
 
 
@@ -33,7 +33,7 @@ def get_poi_name_from_list(lines : list):
             line_components = this_line.split()
             poi_name_quoted = line_components[1]
             poi_name = poi_name_quoted[1:-2]
-            print(f"poi name: [{poi_name}]")
+            # print(f"poi name: [{poi_name}]")
             return poi_name
 
 
@@ -52,7 +52,7 @@ def print_res_to_file(lines : list, worker_id : int):
     np_name = get_np_name_from_list(lines)
     poi_name = get_poi_name_from_list(lines)
     res_filename = form_filename(np_name, poi_name, worker_id)
-    print(f"to create file: [{res_filename}] and to put inside:")
+    print(f"[INFO] create file: [{res_filename}]")
 
     is_json_started = False
 
