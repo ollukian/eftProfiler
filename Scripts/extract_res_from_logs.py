@@ -1,6 +1,8 @@
 import sys
 import argparse
 import shutil
+from os import listdir
+from os.path import isfile, join
 
 def contains_result(name : str):
     with open(name) as file_to_check:
@@ -93,29 +95,45 @@ def get_result_one_file(name : str):
         return res
 
 
-parser = argparse.ArgumentParser(description='Extracts json logs from the log files, if the json results were not '
-                                             'printed')
-parser.add_argument('-f', '--file', type=str, help='name of the log file to take info from ', required=True)
-parser.add_argument('-d', '--dir', type=str, help='name of the folder to write info to')
+def process_one_file(filename : str, res_path : str):
+    print(f"received: {filename} - check if it contains results...")
+    if contains_result(filename):
+        print(f"* {filename} contain results, extract if")
+        data_one_file = get_result_one_file(filename)
+        worker_id = get_worker_id_from_filename(filename)
+        res_filename = print_res_to_file(data_one_file, worker_id)
 
-args = parser.parse_args()
-filename = args.file
-
-res_path = '.'
-
-if args.dir:
-    res_path = args.dir
-
-print(f"received: {filename} - check if it contains results...")
-if contains_result(filename):
-    print(f"* {filename} contain results, extract if")
-    data_one_file = get_result_one_file(filename)
-    worker_id = get_worker_id_from_filename(filename)
-    res_filename = print_res_to_file(data_one_file, worker_id)
-
-    if res_path != '.':
-        print(f"[INFO] copy file to {res_path}")
+        if res_path != '.':
+            print(f"[INFO] copy file to {res_path}")
         shutil.copy2(res_filename, res_path + res_filename)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Extracts json logs from the log files, if the json results were not '
+                                                 'printed')
+    parser.add_argument('-f', '--file', type=str, help='name of the log file to take info from ', required=True)
+    parser.add_argument('-d', '--dir', type=str, help='name of the folder to write info to')
+    parser.add_argument('-m', '--multiple', help='To process all files from the folder')
+
+    args = parser.parse_args()
+    res_path = '.'
+
+    if args.dir:
+        res_path = args.dir
+
+    if args.multiple:
+        path = args.file
+        print(f"[INFO] multiple files mode, process all files in the {path} folder")
+        onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
+        for file in onlyfiles:
+            process_one_file(file, res_path)
+    else:
+        print(f"[INFO] onr file mode, process file: {args.file}")
+        process_one_file(args.file, res_path)
+
+
+
+
 
 
 
