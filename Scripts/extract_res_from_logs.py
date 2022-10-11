@@ -4,6 +4,7 @@ import shutil
 from os import listdir
 from os.path import isfile, join
 
+
 def contains_result(name : str):
     with open(name) as file_to_check:
         for this_line in file_to_check:
@@ -126,7 +127,7 @@ if __name__ == '__main__':
         print(f"[INFO] multiple files mode, process all files in the {path} folder")
         onlyfiles = [f for f in listdir(path) if isfile(join(path, f))]
         for file in onlyfiles:
-            process_one_file(file, res_path)
+            process_one_file(path + file, res_path)
     else:
         print(f"[INFO] onr file mode, process file: {args.file}")
         process_one_file(args.file, res_path)
