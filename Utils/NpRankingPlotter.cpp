@@ -197,7 +197,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value +  res_for_plot_after_selector.at(0).obs_error);
     const auto range_low = - range_high;
     //constexpr float scaling = (range_high - range_low) / 2.f;
-    const double scaling = res_for_plot_after_selector.at(0).impact;
+    const double scaling = res_for_plot_after_selector.at(0).obs_value;
     EFT_PROF_INFO("scaling: {}", scaling);
     EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
     EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
