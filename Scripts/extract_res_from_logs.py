@@ -45,14 +45,19 @@ def get_worker_id_from_filename(name : str):
 
 
 def print_res_to_file(lines : list, worker_id : int):
-    print("to create file: {tmp} and to put inside:")
-    for line in lines:
-        print(line)
-    print("end of the file")
-
     np_name = get_np_name_from_list(lines)
     poi_name = get_poi_name_from_list(lines)
     res_filename = form_filename(np_name, poi_name, worker_id)
+    print(f"to create file: [{res_filename}] and to put inside:")
+
+    is_json_started = False
+
+    for line in lines:
+        if '{' in line:
+            is_json_started = True
+
+        if is_json_started:
+            print(line)
     return
 
 
