@@ -194,9 +194,9 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     constexpr float range_high = 0.002f;
     constexpr float range_low  = -0.002f;
-    constexpr float scaling = (range_high - range_low) / 2.f;
+    //constexpr float scaling = (range_high - range_low) / 2.f;
     //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
-
+    const float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
     //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value +  res_for_plot_after_selector.at(0).obs_error);
     //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value);
     //const auto range_low = -range_high;
@@ -259,7 +259,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     canvas->SetTopMargin(0.05f);
     canvas->SetBottomMargin(0.4f);
 
-    histo->GetXaxis()->SetLabelSize(0.03);
+    histo->GetXaxis()->SetLabelSize(0.02);
 
     histo->Draw("H same");
     histo_neg->Draw("H same");
