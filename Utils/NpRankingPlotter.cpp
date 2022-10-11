@@ -63,19 +63,19 @@ void NpRankingPlotter::ReadValues(const std::filesystem::path& path)
 NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
 {
     const string filename = path.string();
-    cout << fmt::format("[ReadValuesOneFile] read from {}", filename) << endl;
+    //cout << fmt::format("[ReadValuesOneFile] read from {}", filename) << endl;
     const string extension = path.extension().string();
-    cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension);
+    //cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension);
     if (extension != ".json") {
         cout << fmt::format(" NOT [.json]") << endl;
         return {};
     }
 
-    cout << " => is [.json]" << endl;
-    cout << "[ReadValuesOneFile] try to open: " << filename << endl;
+    //cout << " => is [.json]" << endl;
+    //cout << "[ReadValuesOneFile] try to open: " << filename << endl;
     ifstream ifs(filename);
     if ( ! ifs.is_open() ) {
-        cout << "[ReadValuesOneFile] cannot open: " << filename << endl;
+        //cout << "[ReadValuesOneFile] cannot open: " << filename << endl;
         throw std::runtime_error("error opening: " + filename);
     }
 
@@ -107,8 +107,8 @@ NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::pat
     }
 
 
-    cout << fmt::format("[ReavValueOneFile] read res for poi: {}, np: {}", res.poi_name, res.np_name) << endl;
-    cout << setw(4) << j << endl;
+    EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {}, np: {}", res.poi_name, res.np_name);
+    //cout << setw(4) << j << endl;
     np_study_res_[res.np_name] = res;
     return res;
     //RegisterRes(np_study_res_[res.np_name]);
@@ -198,6 +198,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     const auto range_low = - range_high;
     //constexpr float scaling = (range_high - range_low) / 2.f;
     const double scaling = res_for_plot_after_selector.at(0).impact;
+    EFT_PROF_INFO("scaling: {}", scaling);
+    EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
+    EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
+    EFT_PROF_INFO("[0]impact_minus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_minus_sigma_var);
+    EFT_PROF_INFO("[0]impact_plus_one_var = {}", res_for_plot_after_selector.at(0).impact_plus_one_var);
+    EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
 
 
     histo->GetXaxis()->LabelsOption("v");
