@@ -9,11 +9,34 @@ def contains_result(name : str):
     return False
 
 
+def get_np_name_from_list(lines : list):
+    for this_line in lines:
+        if "np_name" in this_line:
+            line_components = this_line.split()
+            np_name_quoted = line_components[1]
+            np_name = np_name_quoted[1:-1]
+            print(f"np name: [{np_name}]")
+            return np_name
+
+
+def get_poi_name_from_list(lines : list):
+    for this_line in lines:
+        if "poi_name" in this_line:
+            line_components = this_line.split()
+            poi_name_quoted = line_components[1]
+            poi_name = poi_name_quoted[1:-1]
+            print(f"poi name: [{poi_name}]")
+            return poi_name
+
+
 def print_res_to_file(lines : list):
     print("to create file: {tmp} and to put inside:")
     for line in lines:
         print(line)
     print("end of the file")
+
+    np_name = get_np_name_from_list(lines)
+    poi_name = get_poi_name_from_list(lines)
     return
 
 
@@ -28,6 +51,8 @@ def get_result_one_file(name : str):
 
             if 'print to console:' in line:
                 is_inside_res = True
+            elif "[Application]" in line:
+                is_inside_res = False
             # elif '}' in line:
             #    is_inside_res = False
             #    # print_res_to_file(res)
@@ -37,7 +62,9 @@ def get_result_one_file(name : str):
                 res.append(line)
         return res
 
-for filename in sys.argv:
+
+
+for filename in sys.argv[1:]:
     print(f"received: {filename} - check if it contains results...")
     if contains_result(filename):
         print(f"* {filename} contain results, extract if")
