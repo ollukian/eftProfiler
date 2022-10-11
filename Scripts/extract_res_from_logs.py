@@ -4,7 +4,7 @@ import sys
 def contains_result(name : str):
     with open(name) as file_to_check:
         for this_line in file_to_check:
-            if "duplicate to the console:":
+            if "print to console:":
                 return True
     return False
 
@@ -19,19 +19,23 @@ def print_res_to_file(lines : list):
 
 def get_result_one_file(name : str):
     is_inside_res = False
+    is_after_fixed_np_fit = False
     res = list()
     with open(name) as file_to_check:
         for line in file_to_check:
-            if '{' in line:
+            if "after fixed np fit" in line:
+                is_after_fixed_np_fit = True
+
+            if 'print to console:' in line:
                 is_inside_res = True
-            elif '}' in line:
-                is_inside_res = False
-                # print_res_to_file(res)
-                return res
+            # elif '}' in line:
+            #    is_inside_res = False
+            #    # print_res_to_file(res)
+            #    return res
 
-            if is_inside_res:
+            if is_inside_res and is_after_fixed_np_fit:
                 res.append(line)
-
+        return res
 
 for filename in sys.argv:
     print(f"received: {filename} - check if it contains results...")
