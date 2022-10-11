@@ -53,6 +53,14 @@ public:
 
     virtual void VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept = 0;
 
+    virtual void SaveNPsSnapshot(const std::string& name) noexcept = 0;
+    virtual void SaveGlobsSnapshot(const std::string& name) noexcept = 0;
+    virtual void SaveNpsAndGlobsSnapshot(const std::string& name) noexcept = 0;
+
+    virtual void LoadNPsSnapshot(const std::string& name) noexcept = 0;
+    virtual void LoadGlobsSnapshot(const std::string& name) noexcept = 0;
+    virtual void LoadNpsAndGlobsSnapshot(const std::string& name) noexcept = 0;
+
     //virtual void FixValConst(std::initializer_list<std::vector<std::string>> pois) = 0;
 
     //virtual void FixAllPois()   noexcept = 0;

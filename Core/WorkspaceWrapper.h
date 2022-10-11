@@ -76,6 +76,14 @@ public:
     inline RooDataSet*      GetData(const std::string& name) override;
     inline RooSimultaneous* GetCombinedPdf(const std::string& name) override;
 
+    void SaveNPsSnapshot(const std::string& name) noexcept override;
+    void SaveGlobsSnapshot(const std::string& name) noexcept override;
+    void SaveNpsAndGlobsSnapshot(const std::string& name) noexcept override;
+
+    void LoadNPsSnapshot(const std::string& name) noexcept override;
+    void LoadGlobsSnapshot(const std::string& name) noexcept override;
+    void LoadNpsAndGlobsSnapshot(const std::string& name) noexcept override;
+
 #if 0
     inline RooDataSet* GetDataSetGivenCategory(const std::string& cat) override;
     inline RooRealVar* GetVar(const std::string& name) override;
@@ -277,6 +285,7 @@ inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_s
         par, GetParVal(par), GetParErr(par), GetParVal(par) + err * nb_sigma );
     SetVarVal(par, val + err * nb_sigma);
 }
+
 //inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)
 //{
 //    const std::vector<std::string> pois_{pois};

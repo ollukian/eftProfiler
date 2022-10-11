@@ -10,6 +10,7 @@
 #include "../Core/Logger.h"
 
 #include "NpRankingStudyRes.h"
+#include "Ranking/OneNpManager.h"
 
 #include <fstream>
 #include <iomanip>
@@ -23,6 +24,15 @@ namespace eft::stats {
 
 void FitManager::DoGlobalFit()
 {
+
+//    ranking::OneNpManager npraning = eft::stats::ranking::OneNpManager::create()
+//            .ForNP()
+//            .ForPOI()
+//            .UsingGlobalObservables()
+//            .UsingData()
+//            .UsingNPs()
+//            .UsingPdf();
+
     cout << "[DoGlobalFit]" << endl;
     auto* pdf = funcs_["pdf_total"];
     auto* ds = data_["ds_total"];
@@ -154,8 +164,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //ws_->FloatVal(res.poi_name);
 
     fit::Fitter fitter;
-    //fitter.SetGlobs(globObs);
-    //fitter.SetNps(nps);
+    //fitter.UsingGlobalObservables(globObs);
+    //fitter.UsingNPs(nps);
 
     /*EFT_PROF_INFO("[ComputeNpRanking] compute free fit values and errors on all nps");
     fit::Fitter fitter;
@@ -403,7 +413,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     //res.ExtractPoiValErr(ws_, res.poi_name);
     res.nll = nll->getVal();
 
-    EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_fixed_np_val, res.poi_fixed_np_err);
+    EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_free_fit_val, res.poi_free_fit_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
 
     nlohmann::json j;
