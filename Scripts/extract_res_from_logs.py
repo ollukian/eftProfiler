@@ -20,7 +20,7 @@ def get_np_name_from_list(lines : list):
 
 
 def form_filename(np : str, poi : str, worker_id : int):
-    return "res__{}__worker_{}__{}.json".format(poi, np, worker_id)
+    return "res__{}__worker_{}__{}.json".format(poi, worker_id, np)
 
 
 def get_poi_name_from_list(lines : list):
@@ -52,12 +52,20 @@ def print_res_to_file(lines : list, worker_id : int):
 
     is_json_started = False
 
-    for line in lines:
-        if '{' in line:
-            is_json_started = True
+    with open(res_filename, 'w') as fout:
+        for line in lines:
+            if '{' in line:
+                is_json_started = True
 
-        if is_json_started:
-            print(line)
+            if is_json_started:
+                fout.write(line)
+
+    # for line in lines:
+    #     if '{' in line:
+    #         is_json_started = True
+    #
+    #     if is_json_started:
+    #         print(line)
     return
 
 
