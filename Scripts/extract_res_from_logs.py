@@ -115,7 +115,7 @@ if contains_result(filename):
 
     if res_path != '.':
         print(f"[INFO] copy file to {res_path}")
-        shutil.copy2(res_filename, res_path + '\\' + res_filename)
+        shutil.copy2(res_filename, res_path + res_filename)
 
 
 
