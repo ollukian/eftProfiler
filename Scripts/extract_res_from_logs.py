@@ -1,5 +1,6 @@
 import sys
-
+import argparse
+import shutil
 
 def contains_result(name : str):
     with open(name) as file_to_check:
@@ -66,7 +67,7 @@ def print_res_to_file(lines : list, worker_id : int):
     #
     #     if is_json_started:
     #         print(line)
-    return
+    return res_filename
 
 
 def get_result_one_file(name : str):
@@ -92,13 +93,29 @@ def get_result_one_file(name : str):
         return res
 
 
-for filename in sys.argv[1:]:
-    print(f"received: {filename} - check if it contains results...")
-    if contains_result(filename):
-        print(f"* {filename} contain results, extract if")
-        data_one_file = get_result_one_file(filename)
-        worker_id = get_worker_id_from_filename(filename)
-        print_res_to_file(data_one_file, worker_id)
+parser = argparse.ArgumentParser(description='Extracts json logs from the log files, if the json results were not '
+                                             'printed')
+parser.add_argument('-f', '--file', type=str, help='name of the log file to take info from ', required=True)
+parser.add_argument('-d', '--dir', type=str, help='name of the folder to write info to')
+
+args = parser.parse_args()
+filename = args.file
+
+res_path = '.'
+
+if args.dir:
+    res_path = args.dir
+
+print(f"received: {filename} - check if it contains results...")
+if contains_result(filename):
+    print(f"* {filename} contain results, extract if")
+    data_one_file = get_result_one_file(filename)
+    worker_id = get_worker_id_from_filename(filename)
+    res_filename = print_res_to_file(data_one_file, worker_id)
+
+    if res_path != '.':
+        print(f"[INFO] copy file to {res_path}")
+        shutil.copy2(res_filename, res_path + '\\' + res_filename)
 
 
 
