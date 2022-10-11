@@ -8,7 +8,7 @@ from os.path import isfile, join
 def contains_result(name : str):
     with open(name) as file_to_check:
         for this_line in file_to_check:
-            if "print to console:":
+            if "print to console:" in this_line:
                 return True
     return False
 
@@ -39,12 +39,12 @@ def get_poi_name_from_list(lines : list):
 
 def get_worker_id_from_filename(name : str):
     name_no_prefix = name.split('/')[-1]
-    print(f"name: [{name}]")
-    print(f"name no prefix: [{name_no_prefix}]")
+    # print(f"name: [{name}]")
+    # print(f"name no prefix: [{name_no_prefix}]")
     number_and_filetype = name_no_prefix.split('_')[-1]
-    print(f"name with filetype: [{number_and_filetype}]")
+    # print(f"name with filetype: [{number_and_filetype}]")
     number = number_and_filetype.split('.')[0]
-    print(f"number: [{number}]")
+    # print(f"number: [{number}]")
     return int(number)
 
 
