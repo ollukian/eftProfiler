@@ -97,9 +97,11 @@ def get_result_one_file(name : str):
 
 
 def process_one_file(filename : str, res_path : str):
-    print(f"received: {filename} - check if it contains results...")
+    print(f"[INFO] check if {filename} contains results ...", end='')
+    #print(f"received: {filename} - check if it contains results...")
     if contains_result(filename):
-        print(f"* {filename} contain results, extract if")
+        print("OK")
+        #print(f"* {filename} contain results, extract if")
         data_one_file = get_result_one_file(filename)
         worker_id = get_worker_id_from_filename(filename)
         res_filename = print_res_to_file(data_one_file, worker_id)
@@ -107,6 +109,8 @@ def process_one_file(filename : str, res_path : str):
         if res_path != '.':
             print(f"[INFO] copy file to {res_path}")
         shutil.copy2(res_filename, res_path + res_filename)
+    else:
+        print("NO")
 
 
 if __name__ == '__main__':
