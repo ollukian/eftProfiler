@@ -82,7 +82,10 @@ int main(int argc, char* argv[]) {
         }
         settings->nb_nps_to_plot = nb_nps_to_plot;
         // tmp: to select only entries for the given POI
-        plotter.SetCallBack([&poi](const NpInfoForPlot& info) -> bool { return info.poi == poi;  });
+        plotter.SetCallBack([&poi](const NpInfoForPlot& info) -> bool {
+            return info.poi == poi
+                && (info.name.find("gamma") == std::string::npos);
+        });
         plotter.Plot(settings);
     }
     else if (task == "compute_unconstrained") {
