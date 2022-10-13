@@ -38,6 +38,9 @@ public:
     [[nodiscard]]
     std::optional<Val> GetVal(const Key& option) const;
 
+    [[nodiscard]]
+    inline bool HasKey(const Key& key) const noexcept;
+
     template<typename T>
     bool SetValIfArgExists(const std::string& key, T& val);
 
@@ -51,6 +54,8 @@ private:
    Keys keys;
 private:
     bool ParseInput(int argc, char* argv[]);
+    [[nodiscard]]
+    inline Key TrimKey(const Key& key) noexcept;
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
@@ -81,6 +86,29 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         }
     } // if has value
     return false;
+}
+
+bool CommandLineArgs::HasKey(const Key& key) const noexcept
+{
+    if (keys.find(key) != keys.end())
+        return true;
+    return false;
+}
+
+CommandLineArgs::Key CommandLineArgs::TrimKey(const CommandLineArgs::Key& key) noexcept
+{
+    char first_symbol = key[0];
+    char second_symbol = key[1];
+
+    if (first_symbol == '-' && second_symbol != '-')
+    {
+        return key.substr(1, key.size());
+    }
+    else if (first_symbol == '-' && second_symbol == '-')
+    {
+        return key.substr(2, key.size());
+    }
+    return {}
 }
 
 
