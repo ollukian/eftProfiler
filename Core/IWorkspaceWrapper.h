@@ -14,6 +14,7 @@
 #include <RooStats/ModelConfig.h>
 #include <RooWorkspace.h>
 #include "RooCategory.h"
+#include "RooSimultaneous.h"
 
 #include <filesystem>
 
@@ -33,7 +34,8 @@ public:
 
     // name & path to be moved
     virtual bool SetWS(std::string path, std::string name) = 0;
-    virtual RooStats::ModelConfig* SetModelConfig(std::string name)          = 0;
+    virtual RooStats::ModelConfig* SetModelConfig(std::string name) = 0;
+    virtual RooStats::ModelConfig& GetModelConfig() = 0;
 
     virtual void FixValConst(const std::string& poi)  = 0;
     virtual void FixValConst(const std::vector<std::string>& pois) = 0;
@@ -48,6 +50,16 @@ public:
     virtual double GetParErr(const std::string& par)   const = 0;
     virtual double GetParErrHi(const std::string& par) const = 0;
     virtual double GetParErrLo(const std::string& par) const = 0;
+
+    virtual void VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept = 0;
+
+    virtual void SaveNPsSnapshot(const std::string& name) noexcept = 0;
+    virtual void SaveGlobsSnapshot(const std::string& name) noexcept = 0;
+    virtual void SaveNpsAndGlobsSnapshot(const std::string& name) noexcept = 0;
+
+    virtual void LoadNPsSnapshot(const std::string& name) noexcept = 0;
+    virtual void LoadGlobsSnapshot(const std::string& name) noexcept = 0;
+    virtual void LoadNpsAndGlobsSnapshot(const std::string& name) noexcept = 0;
 
     //virtual void FixValConst(std::initializer_list<std::vector<std::string>> pois) = 0;
 

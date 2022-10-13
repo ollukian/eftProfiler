@@ -7,6 +7,7 @@
 #define EFTPROFILER_WORKSPACEWRAPPER_H
 
 #include "IWorkspaceWrapper.h"
+#include "../Core/Logger.h"
 
 #include <string>
 #include <vector>
@@ -35,6 +36,7 @@ public:
 
     inline bool SetWS(std::string path, std::string name) override;
     inline RooStats::ModelConfig* SetModelConfig(std::string name) override;
+    inline RooStats::ModelConfig& GetModelConfig() override { return *modelConfig_;}
 
     inline RooWorkspace* raw() const noexcept override { return ws_.get();}
 
@@ -52,6 +54,8 @@ public:
 
     inline void SetVarVal(const std::string& name, double val) override;
     inline void SetVarErr(const std::string& name, double err) override;
+
+    inline void VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept override;
 
     inline RooAbsPdf* GetPdfModelGivenCategory(const std::string& cat) noexcept override;
     inline RooAbsPdf* GetPdfSBGivenCategory(const std::string& cat)    noexcept override;
@@ -71,6 +75,14 @@ public:
 
     inline RooDataSet*      GetData(const std::string& name) override;
     inline RooSimultaneous* GetCombinedPdf(const std::string& name) override;
+
+    void SaveNPsSnapshot(const std::string& name) noexcept override;
+    void SaveGlobsSnapshot(const std::string& name) noexcept override;
+    void SaveNpsAndGlobsSnapshot(const std::string& name) noexcept override;
+
+    void LoadNPsSnapshot(const std::string& name) noexcept override;
+    void LoadGlobsSnapshot(const std::string& name) noexcept override;
+    void LoadNpsAndGlobsSnapshot(const std::string& name) noexcept override;
 
 #if 0
     inline RooDataSet* GetDataSetGivenCategory(const std::string& cat) override;
@@ -133,7 +145,19 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
+    std::cout << fmt::format("Fix {} const", poi) << std::endl;
+    EFT_PROF_DEBUG("[WorkspaceWrapper::FixValConst status of {} before fixing to const", poi);
+    //std::cout << " * status of " << poi << " before: " << std::endl;
+
+    if (ws_->var(poi.c_str()) == nullptr) {
+        std::cout << fmt::format("FixValConst[{}] ERROR, var is not present", poi);
+        return;
+    }
+
+    ws_->var(poi.c_str())->Print("");
     ws_->var( poi.c_str() )->setConstant(true);
+    EFT_PROF_DEBUG("[WorkspaceWrapper]{FixValConst} status of {} after fixing to const", poi);
+    ws_->var(poi.c_str())->Print("");
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
@@ -145,7 +169,11 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
+    EFT_PROF_TRACE("[WorkspaceWrapper]::FloatVal {}", poi);
+    EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} before", poi);
     ws_->var( poi.c_str() )->setConstant(false);
+    EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} after", poi);
+    ws_->var( poi.c_str() )->Print();
 }
 
 inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
@@ -157,10 +185,12 @@ inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
 {
+    EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:20} to {}", name, val);
     ws_->var( name.c_str() )->setVal(val);
 }
 inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 {
+    EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:20} to {}", name, err);
     ws_->var( name.c_str() )->setError(err);
 }
 
@@ -223,10 +253,20 @@ inline const WorkspaceWrapper::Categories& WorkspaceWrapper::GetCats() const
 
 inline RooDataSet*      WorkspaceWrapper::GetData(const std::string& name)
 {
+    if (ws_->data(  name.c_str() ) == nullptr)
+    {
+        EFT_PROF_CRITICAL("WorkspaceWrapper::GetData {} no such data is present", name);
+        return nullptr;
+    }
     return dynamic_cast<RooDataSet*> ( ws_->data( name.c_str() ) );
 }
 inline RooSimultaneous* WorkspaceWrapper::GetCombinedPdf(const std::string& name)
 {
+    if (ws_->pdf(  name.c_str() ) == nullptr)
+    {
+        EFT_PROF_CRITICAL("WorkspaceWrapper::GetCombinedPdf {} no such pdf is present", name);
+        return nullptr;
+    }
     return dynamic_cast<RooSimultaneous*> ( ws_->pdf(  name.c_str() ) );
 }
 
@@ -234,6 +274,17 @@ inline double WorkspaceWrapper::GetParVal(const std::string& par)   const  { ret
 inline double WorkspaceWrapper::GetParErr(const std::string& par)   const  { return ws_->var( par.c_str() )->getError(); };
 inline double WorkspaceWrapper::GetParErrHi(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorHi();}
 inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { return ws_->var( par.c_str() )->getAsymErrorLo();}
+
+
+inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept
+{
+    EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
+    const auto val = GetParVal(par);
+    const auto err = GetParErr(par);
+    EFT_PROF_INFO("WorkspaceWrapper::VaryParNbSigmas set {} ({} +- {}) to {}",
+        par, GetParVal(par), GetParErr(par), GetParVal(par) + err * nb_sigma );
+    SetVarVal(par, val + err * nb_sigma);
+}
 
 //inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)
 //{

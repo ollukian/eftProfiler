@@ -6,23 +6,27 @@
 // https://gitlab.cern.ch/atlas_higgs_combination/projects/lhc-comb-tools/-/tree/master/quickFit
 
 #include "Fitter.h"
+#include "IFitResult.h"
 
 #include "RooNLLVar.h"
 #include "RooMinimizer.h"
 #include "TStopwatch.h"
 #include "Math/CholeskyDecomp.h"
+#include "../Core/Logger.h"
 
 using namespace std;
 
 namespace eft::stats::fit {
 
-RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* globalObs) {
+RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* globalObs, RooArgSet* np) {
+    EFT_PROF_TRACE("[CreateNll]");
     TStopwatch timer;
     RooAbsReal* nll = pdf->createNLL(*data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
             //IntegrateBins(_samplingRelTol),
-                                    RooFit::GlobalObservables(*globalObs)
+                                    RooFit::GlobalObservables(*globalObs),
+                                    RooFit::Constrain(*np) // try with this line
             //ConditionalObservables(),
             //ExternalConstraints(*_externalConstraint)
     );
@@ -34,39 +38,37 @@ return nll;
 }
 
 IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
-    cout << "[Minimizer] create a RooMinimizerWrapper" << endl;
+    EFT_PROF_TRACE("[Minimize]");
+    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper");
     RooMinimizerWrapper minim(*nll);
-    cout << "[Minimizer] a RooMinimizerWrapper is created" << endl;
+    EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     //if(_errorLevel>0) minim.setErrorLevel(_errorLevel);
     minim.setStrategy( 1 );
-    cout << "[Minimizer] set stratego to 1" << endl;
-    //minim.setPrintLevel( _printLevel-1 );
-    minim.setPrintLevel( 3 );
-    //if (_printLevel < 0)
+    EFT_PROF_INFO("[Minimizer] set strategy to 1");
+    minim.setPrintLevel( 1 );
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
-    minim.setEps( 1E-03 / 0.001 );
-    cout << "[Minimizer] set EPS to 1E-6" << endl;
+    minim.setEps(1E-03 / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
-    cout << "[Minimizer] set offsetting true" << endl;
-    //if (_optConst > 0) minim.optimizeConst( _optConst );
+    EFT_PROF_INFO("[Minimizer] allow offseting");
     minim.optimizeConst( 2 );
-    cout << "[Minimizer] set optimize constant 2" << endl;
+    EFT_PROF_INFO("[Minimizer] set optimize constant 2");
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
     minim.setMaxFunctionCalls(5000 * pdf->getVariables()->getSize());
 
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
-      cout << endl << "Starting fit with SIMPLEX..." << endl;
+      cout << endl << "Starting fit with SIMPLEX...");
       _status += minim.simplex();
       }*/
 
-    cout << "[Minimizer] minimizerType = Minuit2" << endl;
+    EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
     minim.setMinimizerType( "Minuit2" );
     // Perform fit with MIGRAD
-    _status += minim.minimize( "Minuit2" );
-
+    _status += minim.minimize( "Minuit2", "Migrad" );
+    //_status += minim.minimize( "Minuit2");
+    EFT_PROF_INFO("[Minimizer] fit status: {}", _status);
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;
       _status += minim.hesse();
@@ -84,7 +86,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
         TIterator* citer = comps->createIterator();
         RooAbsArg* arg;
         while ((arg=(RooAbsArg*)citer->Next())) {
-            RooNLLVar* nllComp = dynamic_cast<RooNLLVar*>(arg);
+            auto* nllComp = dynamic_cast<RooNLLVar*>(arg);
             if (!nllComp) continue;
             nllComponents.push_back(nllComp);
         }
@@ -93,14 +95,14 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
 
         // Calculated corrected errors for weighted likelihood fits
         RooFitResult* rw = minim.save();
-        for (vector<RooNLLVar*>::iterator it = nllComponents.begin(); nllComponents.end() != it; ++it) {
-            (*it)->applyWeightSquared(kTRUE);
+        for (auto& nllComponent : nllComponents) {
+            nllComponent->applyWeightSquared(kTRUE);
         }
         cout << "Calculating sum-of-weights-squared correction matrix for covariance matrix" << endl;
         minim.hesse();
         RooFitResult* rw2 = minim.save();
-        for (vector<RooNLLVar*>::iterator it = nllComponents.begin(); nllComponents.end() != it; ++it) {
-            (*it)->applyWeightSquared(kFALSE);
+        for (auto & nllComponent : nllComponents) {
+            nllComponent->applyWeightSquared(kFALSE);
         }
 
         // Apply correction matrix
@@ -149,12 +151,45 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
       }*/
 
     //if(_saveFitResult) _result.reset(minim.save("fitResult","Fit Results"));
+    //EFT_PROF_DEBUG("[Minimizer] save results");
     auto result = make_unique<RooFitResult>(
             *minim.save("fitResult","Fit Results")
             );
-    //result.reset(minim.save("fitResult","Fit Results"));
 
+    EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
+    //result->Print("v");
+    //EFT_PROF_INFO("[Minimizer] covariance:");
+    //result->covarianceMatrix().Print("v");
+    //EFT_PROF_INFO("[Minimizer] correlation:");
+    //result->correlationMatrix().Print("v");
+
+    //result.reset(minim.save("fitResult","Fit Results"));
+    //eft::stats::fit::IFitResult res;
+    //FitResPtr res;
+
+    //return {};
     return result;
+}
+
+IFitter::FitResPtr Fitter::Fit(RooAbsData *data, RooAbsPdf *pdf) {
+    EFT_PROF_TRACE("Fitter::Fit");
+    if ( ! globs_ ) {
+        EFT_PROF_CRITICAL("Fitter::Fit globals observables are not set");
+        throw std::runtime_error("global obs are not set");
+    }
+    if ( ! nps_ ) {
+        EFT_PROF_CRITICAL("Fitter::Fit nps are not set");
+        throw std::runtime_error("nps are not set");
+    }
+    auto nll = CreatNll(data, pdf, globs_, nps_);
+    auto res = Minimize(nll, pdf);
+    return res;
+    //FitResPtr to_return;
+    //to_return.rooFitResult = res.rooFitResult;
+    //to_return.nll = nll;
+    //FitResPtr res;
+    //res.rooFitResult = Mi
+    //return  {Minimize(nll, pdf), nll->getVal()};
 }
 
 } // eft::stats::fit
