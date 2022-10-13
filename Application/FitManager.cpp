@@ -71,7 +71,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.prePostFit = settings.prePostFit;
     auto* globObs = GetListAsArgSet("paired_globs");
     auto* nps     = GetListAsArgSet("paired_nps");
+    auto* non_gamma_nps = GetListAsArgSet("non_gamma_nps");
     res.np_name = nps->operator[](workerId)->GetName();
+    //res.np_name = nps->operator[](workerId)->GetName();
     {
         //auto* globObs = GetListAsArgSet("paired_globs");
         //auto* nps = GetListAsArgSet("paired_nps");
@@ -719,6 +721,31 @@ RooArgSet* FitManager::GetListAsArgSet(const std::string& name) const
         res->add(*elem);
     }
     return res;
+}
+
+void FitManager::ExtractNotGammaNps() noexcept
+{
+    EFT_PROF_TRACE("FitManager::ExtractNotGammaNps");
+    if (lists_.find("paired_nps") == lists_.end())
+    {
+        EFT_PROF_CRITICAL("FitManager::ExtractNotGammaNps the lists_[paired_nps] is empty.");
+        EFT_PROF_CRITICAL("FitManager::ExtractNotGammaNps extract them before");
+        throw std::runtime_error("no paired nps extracted");
+    }
+    assert( lists_[ "paired_nps"   ]->size() != 0);
+
+    auto non_gamma_nps = new RooArgList();
+
+    for (const auto& np : *lists_["paired_nps"]) {
+        const std::string name = {np->GetTitle()};
+        if (name.find("gamma") != std::string::npos) {
+            non_gamma_nps->add(*np);
+        }
+    }
+    EFT_PROF_INFO("FitManager::ExtractNotGammaNps extracted {} non-gamma nps out of {}",
+                  lists_.at("paired_nps")->size(),
+                  non_gamma_nps->size());
+    lists_["non_gamma_nps"] = non_gamma_nps;
 }
 
 
