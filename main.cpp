@@ -75,16 +75,29 @@ int main(int argc, char* argv[]) {
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadValues(res_path);
-        auto settings = std::make_shared<RankingPlotterSettins>();
-        size_t nb_nps_to_plot = 20;
-        if (commandLineArgs.SetValIfArgExists("top", nb_nps_to_plot)) {
-            EFT_PROF_INFO("Set top: {}", nb_nps_to_plot);
+        auto settings = std::make_shared<RankingPlotterSettings>();
+        if (commandLineArgs.SetValIfArgExists("top", settings->top)) {
+            EFT_PROF_INFO("Set top: {}", settings->top);
         }
-        settings->top = nb_nps_to_plot;
+
+        if (commandLineArgs.SetValIfArgExists("fileformat", settings->fileformat)) {
+            EFT_PROF_INFO("Set fileformat: {}", settings->fileformat);
+        }
+        if (commandLineArgs.SetValIfArgExists("ignore_name", settings->ignore_name)) {
+            EFT_PROF_INFO("Set ignore_name: {}", settings->ignore_name);
+            EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
+        }
+
         // tmp: to select only entries for the given POI
-        plotter.SetCallBack([&poi](const NpInfoForPlot& info) -> bool {
-            return info.poi == poi
-                && (info.name.find("gamma") == std::string::npos);
+        plotter.SetCallBack([&poi, &settings](const NpInfoForPlot& info) -> bool {
+
+            if (settings->ignore_name.empty())
+                return info.poi == poi
+                    && (info.name.find("gamma") == std::string::npos);
+            else
+                return info.poi == poi
+                       && (info.name.find("gamma") == std::string::npos)
+                       && (info.name.find(settings->ignore_name) != std::string::npos);
         });
         plotter.Plot(settings);
     }

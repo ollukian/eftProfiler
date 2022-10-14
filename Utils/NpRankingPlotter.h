@@ -10,7 +10,7 @@
 #define EFTPROFILER_NPRANKINGPLOTTER_H
 
 #include "../Application/NpRankingStudyRes.h"
-#include "../Application/RankingPlotterSettins.h"
+#include "../Application/RankingPlotterSettings.h"
 
 #include <vector>
 #include <unordered_set>
@@ -35,7 +35,7 @@ public:
 
     void SetCallBack(EntriesSelector selector) noexcept  { callback_ = std::move(selector); }
     void ReadValues(const std::filesystem::path& path);
-    void Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept;
+    void Plot(const std::shared_ptr<RankingPlotterSettings>& settings) noexcept;
 private:
     NpRankingStudyRes ReadValuesOneFile(const std::filesystem::path& path);
     void RegisterRes(const NpRankingStudyRes& res) noexcept;

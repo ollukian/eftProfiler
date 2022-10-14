@@ -114,7 +114,7 @@ NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::pat
     //RegisterRes(np_study_res_[res.np_name]);
 }
 
-void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settings) noexcept
+void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettings>& settings) noexcept
 {
 
     gStyle->SetOptTitle(0);
@@ -325,8 +325,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     //axis_nps->SetTitle("#hat{#theta}");
     //axis_nps->Draw();
 
-
-    canvas->SaveAs("histo.pdf");
+    string name = fmt::format("Impact_{}_{}_nps.pdf", res_for_plot_after_selector[0].poi, settings->top);
+    canvas->SaveAs(std::move(name).c_str());
 }
 
 void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
