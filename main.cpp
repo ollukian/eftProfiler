@@ -73,8 +73,6 @@ int main(int argc, char* argv[]) {
             EFT_PROF_INFO("Set poi: {}", poi);
         }
 
-        eft::plot::NpRankingPlotter plotter;
-        plotter.ReadValues(res_path);
         auto settings = std::make_shared<RankingPlotterSettings>();
         if (commandLineArgs.SetValIfArgExists("top", settings->top)) {
             EFT_PROF_INFO("Set top: {}", settings->top);
@@ -87,6 +85,10 @@ int main(int argc, char* argv[]) {
             EFT_PROF_INFO("Set ignore_name: {}", settings->ignore_name[0]);
             EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
         }
+
+        eft::plot::NpRankingPlotter plotter;
+        plotter.ReadValues(res_path);
+
         // TODO: ignore suppports only one file now!
         // TODO: fileformat is not considered yet!
         // tmp: to select only entries for the given POI
