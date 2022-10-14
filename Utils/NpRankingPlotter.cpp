@@ -123,7 +123,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     EFT_PROF_TRACE("[NpRankingPlotter]{Plot}");
     EFT_PROF_INFO("[NpRankingPlotter] before selector available {} NP, plot {} out of them",
                   res_for_plot_.size(),
-                  settings->nb_nps_to_plot);
+                  settings->top);
 
     vector<stats::NpInfoForPlot> res_for_plot_after_selector;
 
@@ -138,7 +138,7 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
     EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, plot {} out of them",
                   res_for_plot_after_selector.size(),
-                  settings->nb_nps_to_plot);
+                  settings->top);
 
     EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
 
@@ -168,15 +168,15 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     }
 
 
-    auto histo = MakeHisto1D("histo", settings->nb_nps_to_plot);
-    auto histo_neg = MakeHisto1D("h_neg", settings->nb_nps_to_plot);
-    auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", settings->nb_nps_to_plot);
-    auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", settings->nb_nps_to_plot);
-    auto histo_minus_one_var = MakeHisto1D("h_-1_var", settings->nb_nps_to_plot);
-    auto histo_plus_one_var = MakeHisto1D("h_+1_var", settings->nb_nps_to_plot);
+    auto histo = MakeHisto1D("histo", settings->top);
+    auto histo_neg = MakeHisto1D("h_neg", settings->top);
+    auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", settings->top);
+    auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", settings->top);
+    auto histo_minus_one_var = MakeHisto1D("h_-1_var", settings->top);
+    auto histo_plus_one_var = MakeHisto1D("h_+1_var", settings->top);
 
 
-    for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
+    for (int idx_syst {0}; idx_syst != settings->top; ++idx_syst) {
         EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                        idx_syst,
                        res_for_plot_after_selector[idx_syst].name,
@@ -271,8 +271,8 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
 
 
     // lines to show full 1 sigma error
-    TLine l1(0, - 1 * scaling, settings->nb_nps_to_plot, - 1 * scaling);
-    TLine l2(0, scaling, settings->nb_nps_to_plot, scaling);
+    TLine l1(0, - 1 * scaling, settings->top, - 1 * scaling);
+    TLine l2(0, scaling, settings->top, scaling);
 
     for (auto l : {&l1, &l2}) {
         l->SetLineStyle(kDashed);
@@ -282,12 +282,12 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettins>& settin
     }
 
     auto graph_nps_obs = make_shared<TH1D>("h_nps_obs", "",
-                                       settings->nb_nps_to_plot,
+                                       settings->top,
                                        0,
-                                       settings->nb_nps_to_plot
+                                       settings->top
     );
-    //auto graph_nps_obs = make_shared<TGraphErrors>(settings->nb_nps_to_plot);
-    for (int idx_syst {0}; idx_syst != settings->nb_nps_to_plot; ++idx_syst) {
+    //auto graph_nps_obs = make_shared<TGraphErrors>(settings->top);
+    for (int idx_syst {0}; idx_syst != settings->top; ++idx_syst) {
         EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
                        idx_syst,
                        res_for_plot_after_selector[idx_syst].name,

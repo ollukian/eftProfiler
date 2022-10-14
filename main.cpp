@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
         auto settings = std::make_shared<RankingPlotterSettins>();
         size_t nb_nps_to_plot = 20;
         if (commandLineArgs.SetValIfArgExists("top", nb_nps_to_plot)) {
-            EFT_PROF_INFO("Set nb_nps_to_plot: {}", nb_nps_to_plot);
+            EFT_PROF_INFO("Set top: {}", nb_nps_to_plot);
         }
         settings->top = nb_nps_to_plot;
         // tmp: to select only entries for the given POI
