@@ -34,7 +34,7 @@ void NpRankingPlotter::ReadValues(const std::filesystem::path& path)
     namespace fs = std::filesystem;
 
     if (path.empty()) {
-        EFT_PROF_WARN("[NpRankingPlotter][ReadValues] no --res_path is set: directory to read values from");
+        EFT_PROF_CRITICAL("[NpRankingPlotter][ReadValues] no --input is set: directory to read values from");
         return;
     }
 

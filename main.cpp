@@ -92,7 +92,7 @@ int main(int argc, char* argv[]) {
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadSettingsFromCommandLine(&commandLineArgs);
-        plotter.ReadValues(res_path);
+        plotter.ReadValues(plotter.np_ranking_settings->input);
 
         // TODO: fileformat is not considered yet!
         // tmp: to select only entries for the given POI
