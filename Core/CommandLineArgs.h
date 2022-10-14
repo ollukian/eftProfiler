@@ -34,7 +34,7 @@ public:
     CommandLineArgs(int argc, char* argv[]);
 
     [[nodiscard]]
-    std::optional<Vals> GetVals(Key&& option) const;
+    std::optional<Vals> GetVals(const Key& option) const;
     [[nodiscard]]
     std::optional<Val> GetVal(const Key& option) const;
 
@@ -67,17 +67,21 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
     if (val_opt.has_value()) {
         if constexpr(std::is_same_v<std::string, T>) {
             val = val_opt.value();
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
+        }
+        else if constexpr(std::is_same_v<std::vector<std::string>, T>) {
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            val = GetVals(key);
         }
         else if constexpr(std::is_floating_point_v<T>) {
             val = stod(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_integral_v<T>) {
             val = stoi(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
         else {

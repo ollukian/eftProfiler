@@ -169,7 +169,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 //    //return make_pair(key, std::move(vals));
 //}
 
-optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(CommandLineArgs::Key&& option) const
+optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) const
 {
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     if (keys.find(option) == keys.end()) {
