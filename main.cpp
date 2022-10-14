@@ -77,10 +77,10 @@ int main(int argc, char* argv[]) {
         plotter.ReadValues(res_path);
         auto settings = std::make_shared<RankingPlotterSettins>();
         size_t nb_nps_to_plot = 20;
-        if (commandLineArgs.SetValIfArgExists("nb_nps_to_plot", nb_nps_to_plot)) {
+        if (commandLineArgs.SetValIfArgExists("top", nb_nps_to_plot)) {
             EFT_PROF_INFO("Set nb_nps_to_plot: {}", nb_nps_to_plot);
         }
-        settings->nb_nps_to_plot = nb_nps_to_plot;
+        settings->top = nb_nps_to_plot;
         // tmp: to select only entries for the given POI
         plotter.SetCallBack([&poi](const NpInfoForPlot& info) -> bool {
             return info.poi == poi

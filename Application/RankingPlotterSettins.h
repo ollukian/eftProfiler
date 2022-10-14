@@ -8,7 +8,7 @@
 namespace eft::plot {
 
 struct RankingPlotterSettins {
-    size_t nb_nps_to_plot {10};
+    size_t top {10};
 };
 
 } // plot
