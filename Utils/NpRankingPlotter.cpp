@@ -486,8 +486,10 @@ namespace eft::plot {
 
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine created with {} callbacks to be joined", callbacks.size());
 
-        SetCallBack(std::move([&](const NpInfoForPlot& info) -> bool
+        SetCallBack(std::move([callbacks](const NpInfoForPlot& info) -> bool
                               {
+                                  EFT_PROF_INFO("callback for {} with {} components, run all of them",
+                                                info.name, callbacks.size());
                                   return std::all_of(callbacks.begin(),
                                                      callbacks.end(),
                                                      [&](const auto& cb) -> bool
