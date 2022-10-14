@@ -101,6 +101,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     const auto np_val_after_free_fit = ws()->GetParVal(res.np_name);
     const auto np_err_after_free_fit = ws()->GetParErr(res.np_name);
+    res.np_val = np_val_after_free_fit;
+    res.np_err = np_err_after_free_fit;
     EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
     EFT_PROF_DEBUG("[ComputeNpRanking] nps before loading:");
     GetListAsArgSet("paired_nps")->Print("v");
