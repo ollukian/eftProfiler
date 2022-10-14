@@ -70,9 +70,13 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.studyType = settings.studyType;
     res.prePostFit = settings.prePostFit;
     auto* globObs = GetListAsArgSet("paired_globs");
-    auto* nps     = GetListAsArgSet("paired_nps");
+    auto* nps     = GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
     auto* non_gamma_nps = GetListAsArgSet("non_gamma_nps");
-    res.np_name = nps->operator[](workerId)->GetName();
+
+    if (settings.no_gamma)
+        res.np_name = non_gamma_nps->operator[](workerId)->GetName();
+    else
+        res.np_name = nps->operator[](workerId)->GetName();
     //res.np_name = nps->operator[](workerId)->GetName();
     {
         //auto* globObs = GetListAsArgSet("paired_globs");
@@ -560,6 +564,7 @@ void FitManager::Init(FitManagerConfig&& config)
 
     lists_[ "paired_globs" ] = pairConstr.paired_globs;
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;
+    ExtractNotGammaNps();
 
 //    for (const auto& pdf : *pairConstr.paired_constr_pdf)
 //    {
@@ -641,7 +646,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, model_config);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_pdf);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, nb_pois_to_plot);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, top);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
 
@@ -738,13 +743,14 @@ void FitManager::ExtractNotGammaNps() noexcept
 
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
-        if (name.find("gamma") != std::string::npos) {
+        if (name.find("gamma") == std::string::npos) {
+            EFT_PROF_INFO("add {} as not-gamma", name);
             non_gamma_nps->add(*np);
         }
     }
     EFT_PROF_INFO("FitManager::ExtractNotGammaNps extracted {} non-gamma nps out of {}",
-                  lists_.at("paired_nps")->size(),
-                  non_gamma_nps->size());
+                  non_gamma_nps->size(),
+                  lists_.at("paired_nps")->size());
     lists_["non_gamma_nps"] = non_gamma_nps;
 }
 
