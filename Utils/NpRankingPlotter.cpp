@@ -325,18 +325,40 @@ namespace eft::plot {
         //axis_nps->SetTitle("#hat{#theta}");
         //axis_nps->Draw();
 
-        string name = fmt::format("Impact_{}_{}_nps.pdf", res_for_plot_after_selector[0].poi, settings->top);
+        string ignore_part;
+        string select_part;
+
         if ( ! settings->ignore_name.empty() )
         {
             string ignore_in_one_string = fmt::format("Ignore_{}_patterns__", settings->ignore_name.size());
             for (const auto& patter : settings->ignore_name)
                 ignore_in_one_string += patter + "__";
 
-            name = fmt::format("Impact_{}_{}_nps__{}.pdf",
-                               res_for_plot_after_selector[0].poi,
-                               settings->top,
-                               ignore_in_one_string);
+            ignore_part = "__" + ignore_in_one_string;
+            //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
+            //                   res_for_plot_after_selector[0].poi,
+            //                   settings->top,
+            //                   ignore_in_one_string);
         }
+
+        if ( ! settings->match_names.empty() )
+        {
+            string matches_in_one_string = fmt::format("Select_{}_patterns__", settings->ignore_name.size());
+            for (const auto& patter : settings->ignore_name)
+                matches_in_one_string += patter + "__";
+
+            select_part = "__" + matches_in_one_string;
+            //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
+            //                   res_for_plot_after_selector[0].poi,
+            //                   settings->top,
+            //                   matches_in_one_string);
+        }
+
+        string name = fmt::format("Impact_{}_{}_nps{}{}.pdf",
+                                  res_for_plot_after_selector[0].poi,
+                                  settings->top,
+                                  select_part,
+                                  ignore_part);
 
         canvas->SaveAs(std::move(name).c_str());
     }
