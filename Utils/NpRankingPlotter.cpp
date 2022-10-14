@@ -167,17 +167,18 @@ namespace eft::plot {
             EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
         }
 
-
-        auto histo = MakeHisto1D("histo", settings->top);
-        auto histo_neg = MakeHisto1D("h_neg", settings->top);
-        auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", settings->top);
-        auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", settings->top);
-        auto histo_minus_one_var = MakeHisto1D("h_-1_var", settings->top);
-        auto histo_plus_one_var = MakeHisto1D("h_+1_var", settings->top);
-
         size_t nb_systematics = settings->top;
         if (nb_systematics > res_for_plot_after_selector.size())
             nb_systematics = res_for_plot_after_selector.size();
+
+        auto histo = MakeHisto1D("histo", nb_systematics);
+        auto histo_neg = MakeHisto1D("h_neg", nb_systematics);
+        auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", nb_systematics);
+        auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", nb_systematics);
+        auto histo_minus_one_var = MakeHisto1D("h_-1_var", nb_systematics);
+        auto histo_plus_one_var = MakeHisto1D("h_+1_var", nb_systematics);
+
+
 
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
