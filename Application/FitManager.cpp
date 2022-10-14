@@ -652,6 +652,9 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 
 #undef EFT_SET_VAL_IF_EXISTS
 
+    if (commandLineArgs.HasKey("no_gamma"))
+        config.no_gamma = true;
+
 //    if (commandLineArgs.SetValIfArgExists("res_path", config.res_path)) {
 //        EFT_PROF_INFO("Set res_path: {}", config.res_path);
 //    }

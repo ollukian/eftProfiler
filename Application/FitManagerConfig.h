@@ -21,7 +21,7 @@ struct FitManagerConfig {
     size_t top {20}; // np pois to plot
     double fit_precision {1E-3};
     std::string study_type;
-    bool no_gamma = false;
+    bool no_gamma {false};
 };
 
 } // stats
