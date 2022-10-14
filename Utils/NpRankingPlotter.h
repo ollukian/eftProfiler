@@ -44,8 +44,8 @@ private:
     static NpInfoForPlot         ComputeInfoForPlot(const NpRankingStudyRes& res) noexcept;
     static std::shared_ptr<TH1D> MakeHisto1D(const std::string& name, size_t nb_bins) noexcept;
 
-    static EntriesSelector CreateLambdaForIgnoringNpNames(const std::vector<std::string>& names_to_ignore) noexcept;
-    static EntriesSelector CreateLambdaForMatchingNpNames(const std::vector<std::string>& names_to_ignore) noexcept;
+    static inline EntriesSelector CreateLambdaForIgnoringNpNames(const std::vector<std::string>& names_to_ignore) noexcept;
+    static inline EntriesSelector CreateLambdaForMatchingNpNames(const std::vector<std::string>& names_to_ignore) noexcept;
 private:
     EntriesSelector callback_ {[](const NpInfoForPlot&){return true;}};
     std::unordered_map<std::string, NpRankingStudyRes> np_study_res_;
