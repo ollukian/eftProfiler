@@ -334,7 +334,7 @@ namespace eft::plot {
             for (const auto& patter : settings->ignore_name)
                 ignore_in_one_string += patter + "__";
 
-            ignore_part = "__" + ignore_in_one_string;
+            ignore_part = "__" + ignore_in_one_string.substr(0, ignore_in_one_string.size() - 2);
             //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
             //                   res_for_plot_after_selector[0].poi,
             //                   settings->top,
@@ -347,7 +347,7 @@ namespace eft::plot {
             for (const auto& patter : settings->match_names)
                 matches_in_one_string += patter + "__";
 
-            select_part = "__" + matches_in_one_string;
+            select_part = "__" + matches_in_one_string.substr(0, matches_in_one_string.size() - 2);
             //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
             //                   res_for_plot_after_selector[0].poi,
             //                   settings->top,
