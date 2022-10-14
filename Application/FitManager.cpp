@@ -335,6 +335,9 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 ",      res.poi_plus_one_variation_val,    res.poi_plus_sigma_variation_err);
     EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 ",      res.poi_minus_one_variation_val,   res.poi_minus_sigma_variation_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
+    EFT_PROF_INFO("|{:^15} | {:^15} | {:^15}|", "Study", "np value", "np error");
+    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", " * ", res.np_val, res.np_err);
+    EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
     const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
                                     res.poi_name,
