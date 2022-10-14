@@ -479,7 +479,7 @@ namespace eft::plot {
         //   return info.poi == np_ranking_settings->poi;
         //});
 
-        callbacks.push_back(std::move([&](const NpInfoForPlot& info) -> bool {
+        callbacks.emplace_back(std::move([&](const NpInfoForPlot& info) -> bool {
             EFT_PROF_INFO("callback for gamma for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
             return info.name.find("gamma") == std::string::npos;
         }));
