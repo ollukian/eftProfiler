@@ -97,7 +97,7 @@ int main(int argc, char* argv[]) {
             else
                 return info.poi == poi
                        && (info.name.find("gamma") == std::string::npos)
-                       && (info.name.find(settings->ignore_name) != std::string::npos);
+                       && (info.name.find(settings->ignore_name[0]) != std::string::npos);
         });
         plotter.Plot(settings);
     }
