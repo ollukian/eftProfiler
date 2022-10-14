@@ -84,10 +84,11 @@ int main(int argc, char* argv[]) {
             EFT_PROF_INFO("Set fileformat: {}", settings->fileformat);
         }
         if (commandLineArgs.SetValIfArgExists("ignore_name", settings->ignore_name)) {
-            EFT_PROF_INFO("Set ignore_name: {}", settings->ignore_name);
+            EFT_PROF_INFO("Set ignore_name: {}", settings->ignore_name[0]);
             EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
         }
-
+        // TODO: ignore suppports only one file now!
+        // TODO: fileformat is not considered yet!
         // tmp: to select only entries for the given POI
         plotter.SetCallBack([&poi, &settings](const NpInfoForPlot& info) -> bool {
 
