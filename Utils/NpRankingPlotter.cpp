@@ -114,7 +114,7 @@ NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::pat
     //RegisterRes(np_study_res_[res.np_name]);
 }
 
-void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettings>& settings) noexcept
+void NpRankingPlotter::Plot(const unique_ptr<RankingPlotterSettings>& settings) noexcept
 {
 
     gStyle->SetOptTitle(0);
@@ -439,6 +439,72 @@ std::shared_ptr<TH1D> NpRankingPlotter::MakeHisto1D(const string& name, size_t n
                                   0,
                                   nb_bins
     );
+}
+
+void NpRankingPlotter::ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs) {
+    EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine");
+
+    np_ranking_settings = make_unique<RankingPlotterSettings>();
+
+    if (cmdLineArgs->SetValIfArgExists("input", np_ranking_settings->input)) {
+        EFT_PROF_INFO("Set input: {}", np_ranking_settings->input);
+    }
+    if (cmdLineArgs->SetValIfArgExists("poi", np_ranking_settings->poi)) {
+        EFT_PROF_INFO("Set poi: {}", np_ranking_settings->poi);
+    }
+
+    if (cmdLineArgs->SetValIfArgExists("top", np_ranking_settings->top)) {
+        EFT_PROF_INFO("Set top: {}", np_ranking_settings->top);
+    }
+
+    if (cmdLineArgs->SetValIfArgExists("fileformat", np_ranking_settings->fileformat)) {
+        EFT_PROF_INFO("Set fileformat: {}", np_ranking_settings->fileformat);
+    }
+    if (cmdLineArgs->SetValIfArgExists("ignore_name", np_ranking_settings->ignore_name)) {
+        EFT_PROF_INFO("Set ignore_name with: {} elements", np_ranking_settings->ignore_name.size());
+        EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
+    }
+    if (cmdLineArgs->SetValIfArgExists("match_names", np_ranking_settings->match_names)) {
+        EFT_PROF_INFO("Set match_names with: {} elements", np_ranking_settings->match_names.size());
+        EFT_PROF_INFO("It will modify the callback, by requiring this string to be present in the filenames");
+    }
+
+    vector<EntriesSelector> callbacks;
+    if ( ! np_ranking_settings->ignore_name.empty() )
+        callbacks.push_back(CreateLambdaForIgnoringNpNames(np_ranking_settings->ignore_name));
+    if ( ! np_ranking_settings->match_names.empty() )
+        callbacks.push_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
+
+    callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
+       return info.poi == np_ranking_settings->poi;
+    });
+
+    callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
+        return info.name.find("gamma") == std::string::npos;
+    });
+
+    EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine created with {} callbacks to be joined", callbacks.size());
+
+    SetCallBack([&callbacks](const NpInfoForPlot& info) -> bool
+                {
+                    return std::all_of(callbacks.begin(),
+                                       callbacks.end(),
+                                       [&info](const auto& cb) -> bool
+                    {
+                        return cb(info);
+                    });
+                });
+
+//    SetCallBack([this](const NpInfoForPlot& info) -> bool {
+//        if (np_ranking_settings->ignore_name.empty())
+//            return info.poi == np_ranking_settings->poi
+//                   && (info.name.find("gamma") == std::string::npos);
+//        else
+//            return info.poi == poi
+//                   && (info.name.find("gamma") == std::string::npos)
+//                   && (info.name.find(plotter.np_ranking_settings->ignore_name[0]) == std::string::npos);
+//    });
+
 }
 
 
