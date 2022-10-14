@@ -60,6 +60,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
         }
     }
 
+    keys.insert(key);
     ops[std::move(key)] = std::move(vals);
 
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
