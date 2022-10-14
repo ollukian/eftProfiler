@@ -55,7 +55,7 @@ private:
 private:
     bool ParseInput(int argc, char* argv[]);
     [[nodiscard]]
-    inline Key TrimKey(const Key& key) noexcept;
+    static inline Key TrimKey(const Key& key) noexcept;
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
@@ -100,15 +100,19 @@ CommandLineArgs::Key CommandLineArgs::TrimKey(const CommandLineArgs::Key& key) n
     char first_symbol = key[0];
     char second_symbol = key[1];
 
+    if (first_symbol != '-')
+    {
+        EFT_PROF_WARN("CommandLineArgs::TrimKey key {} is already trimmed", key);
+        return key;
+    }
+
     if (first_symbol == '-' && second_symbol != '-')
     {
         return key.substr(1, key.size());
     }
-    else if (first_symbol == '-' && second_symbol == '-')
-    {
+    else {
         return key.substr(2, key.size());
     }
-    return {}
 }
 
 
