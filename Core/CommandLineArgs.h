@@ -72,7 +72,8 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         }
         else if constexpr(std::is_same_v<std::vector<std::string>, T>) {
             EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
-            val = GetVals(key);
+            val = GetVals(key).value();
+            // TODO: to do the same with arrays and other containers. decay_type ?
         }
         else if constexpr(std::is_floating_point_v<T>) {
             val = stod(val_opt.value());
