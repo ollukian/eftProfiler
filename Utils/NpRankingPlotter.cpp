@@ -475,18 +475,14 @@ namespace eft::plot {
         //if ( ! np_ranking_settings->match_names.empty() )
         //    callbacks.push_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
 
-        callbacks.emplace_back([&](const NpInfoForPlot& info) -> bool {
-            EFT_PROF_WARN("[poi comparison]: compare {} and {} -> {}", info.poi, np_ranking_settings->poi, info.poi == np_ranking_settings->poi);
-            return info.poi == np_ranking_settings->poi;
-        });
-
-        callbacks.emplace_back([&](const NpInfoForPlot& info) -> bool {
-            return info.name.find("gamma") == std::string::npos;
-        });
-
-        //callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
-        //    return info.name.find("gamma") == std::string::npos;
+        //callbacks.push_back([this](const NpInfoForPlot& info) -> bool {
+        //   return info.poi == np_ranking_settings->poi;
         //});
+
+        callbacks.push_back(std::move([&](const NpInfoForPlot& info) -> bool {
+            EFT_PROF_INFO("callback for gamma for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
+            return info.name.find("gamma") == std::string::npos;
+        }));
 
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine created with {} callbacks to be joined", callbacks.size());
 
@@ -496,8 +492,8 @@ namespace eft::plot {
                                                      callbacks.end(),
                                                      [&](const auto& cb) -> bool
                                                      {
-                                                         cout << "in callback, it's one of " << callbacks.size() << " callbacks" << endl;
-                                                         cout << "this one will return: " << cb(info) << endl;
+                                                         EFT_PROF_INFO("callback for {} res: {}",
+                                                                       info.name, cb(info));
                                                          return cb(info);
                                                      });
                               }));
