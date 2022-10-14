@@ -471,16 +471,17 @@ namespace eft::plot {
 
         vector<EntriesSelector> callbacks;
         if ( ! np_ranking_settings->ignore_name.empty() )
-            callbacks.push_back(CreateLambdaForIgnoringNpNames(np_ranking_settings->ignore_name));
-        //if ( ! np_ranking_settings->match_names.empty() )
-        //    callbacks.push_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
+            callbacks.emplace_back(CreateLambdaForIgnoringNpNames(np_ranking_settings->ignore_name));
+        if ( ! np_ranking_settings->match_names.empty() )
+            callbacks.emplace_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
 
-        //callbacks.push_back([this](const NpInfoForPlot& info) -> bool {
-        //   return info.poi == np_ranking_settings->poi;
-        //});
+        callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
+            EFT_PROF_INFO("callback [poi match] for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
+           return info.poi == np_ranking_settings->poi;
+        });
 
         callbacks.emplace_back(std::move([&](const NpInfoForPlot& info) -> bool {
-            EFT_PROF_INFO("callback for gamma for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
+            EFT_PROF_INFO("callback [no gamma] for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
             return info.name.find("gamma") == std::string::npos;
         }));
 
@@ -488,7 +489,7 @@ namespace eft::plot {
 
         SetCallBack(std::move([callbacks](const NpInfoForPlot& info) -> bool
                               {
-                                  EFT_PROF_INFO("callback for {} with {} components, run all of them",
+                                  EFT_PROF_INFO("Global callback for {} with {} components",
                                                 info.name, callbacks.size());
                                   return std::all_of(callbacks.begin(),
                                                      callbacks.end(),
