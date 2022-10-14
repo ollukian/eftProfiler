@@ -106,7 +106,7 @@ CommandLineArgs::Key CommandLineArgs::TrimKey(const CommandLineArgs::Key& key) n
         return key;
     }
 
-    if (first_symbol == '-' && second_symbol != '-')
+    if (second_symbol != '-')
     {
         return key.substr(1, key.size());
     }
