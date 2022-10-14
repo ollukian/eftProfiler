@@ -326,6 +326,18 @@ void NpRankingPlotter::Plot(const std::shared_ptr<RankingPlotterSettings>& setti
     //axis_nps->Draw();
 
     string name = fmt::format("Impact_{}_{}_nps.pdf", res_for_plot_after_selector[0].poi, settings->top);
+    if ( ! settings->ignore_name.empty() )
+    {
+        string ignore_in_one_string = fmt::format("Ignore_{}_patterns__", settings->ignore_name.size());
+        for (const auto& patter : settings->ignore_name)
+            ignore_in_one_string += patter + "__";
+
+        name = fmt::format("Impact_{}_{}_nps__{}.pdf",
+                           res_for_plot_after_selector[0].poi,
+                           settings->top,
+                           ignore_in_one_string);
+    }
+
     canvas->SaveAs(std::move(name).c_str());
 }
 

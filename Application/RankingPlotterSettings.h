@@ -10,7 +10,7 @@ namespace eft::plot {
 struct RankingPlotterSettings {
     size_t top {10};
     std::string fileformat {"pdf"};
-    std::string ignore_name {""};
+    std::vector<std::string> ignore_name {};
 };
 
 } // plot
