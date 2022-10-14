@@ -57,7 +57,7 @@ public:
 NpRankingPlotter::EntriesSelector
 NpRankingPlotter::CreateLambdaForIgnoringNpNames(const std::vector<std::string>& names_to_ignore) noexcept {
     return [&](const NpInfoForPlot& info) -> bool {
-        std::all_of(names_to_ignore.begin(), names_to_ignore.end(), [&](const auto& name) -> bool
+        return std::all_of(names_to_ignore.begin(), names_to_ignore.end(), [&](const auto& name) -> bool
         {
             return (info.name.find(name) == std::string::npos);
         });
@@ -67,7 +67,7 @@ NpRankingPlotter::CreateLambdaForIgnoringNpNames(const std::vector<std::string>&
 NpRankingPlotter::EntriesSelector
 NpRankingPlotter::CreateLambdaForMatchingNpNames(const std::vector<std::string>& names_to_ignore) noexcept {
     return [&](const NpInfoForPlot& info) -> bool {
-        std::all_of(names_to_ignore.begin(), names_to_ignore.end(), [&](const auto& name) -> bool
+        return std::all_of(names_to_ignore.begin(), names_to_ignore.end(), [&](const auto& name) -> bool
         {
             return (info.name.find(name) != std::string::npos);
         });
