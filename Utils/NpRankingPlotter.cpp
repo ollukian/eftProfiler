@@ -175,8 +175,11 @@ namespace eft::plot {
         auto histo_minus_one_var = MakeHisto1D("h_-1_var", settings->top);
         auto histo_plus_one_var = MakeHisto1D("h_+1_var", settings->top);
 
+        size_t nb_systematics = settings->top;
+        if (nb_systematics > res_for_plot_after_selector.size())
+            nb_systematics = res_for_plot_after_selector.size();
 
-        for (int idx_syst {0}; idx_syst != settings->top; ++idx_syst) {
+        for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
@@ -271,8 +274,8 @@ namespace eft::plot {
 
 
         // lines to show full 1 sigma error
-        TLine l1(0, - 1 * scaling, settings->top, - 1 * scaling);
-        TLine l2(0, scaling, settings->top, scaling);
+        TLine l1(0, - 1 * scaling, nb_systematics, - 1 * scaling);
+        TLine l2(0, scaling, nb_systematics, scaling);
 
         for (auto l : {&l1, &l2}) {
             l->SetLineStyle(kDashed);
@@ -287,7 +290,7 @@ namespace eft::plot {
                                                settings->top
         );
         //auto graph_nps_obs = make_shared<TGraphErrors>(settings->top);
-        for (int idx_syst {0}; idx_syst != settings->top; ++idx_syst) {
+        for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
