@@ -344,7 +344,7 @@ namespace eft::plot {
         if ( ! settings->match_names.empty() )
         {
             string matches_in_one_string = fmt::format("Select_{}_patterns__", settings->ignore_name.size());
-            for (const auto& patter : settings->ignore_name)
+            for (const auto& patter : settings->match_names)
                 matches_in_one_string += patter + "__";
 
             select_part = "__" + matches_in_one_string;
