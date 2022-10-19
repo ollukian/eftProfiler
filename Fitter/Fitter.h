@@ -6,6 +6,8 @@
 #define EFTPROFILER_FITTER_H
 
 #include "IFitter.h"
+#include "FitSettings.h"
+
 #include "RooMinimizer.h"
 #include "RooAbsReal.h"
 #include "TMatrixDSym.h"
@@ -21,10 +23,10 @@ public:
     Fitter() = default;
     ~Fitter() noexcept override = default;
 
-     RooAbsReal* CreatNll(RooAbsData* data, RooAbsPdf* pdf, RooArgSet* globalObs, RooArgSet* np) override;
+     RooAbsReal* CreatNll(const FitSettings& settings) override;
      //RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) override{ return nullptr; }
-     FitResPtr   Minimize(RooAbsReal* nll, RooAbsPdf* pdf)       override;
-     FitResPtr   Fit(RooAbsData* data, RooAbsPdf* pdf) override;
+     FitResPtr   Minimize(const FitSettings& settings)       override;
+     FitResPtr   Fit(const FitSettings& settings) override;
      //FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{return {};}
      void SetGlobs(RooArgSet* globs) noexcept override { globs_ = globs; };
      void SetNps(RooArgSet* nps) noexcept override { nps_ = nps; }

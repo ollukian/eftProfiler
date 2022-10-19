@@ -18,15 +18,15 @@ using namespace std;
 
 namespace eft::stats::fit {
 
-RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* globalObs, RooArgSet* np) {
+RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
     EFT_PROF_TRACE("[CreateNll]");
     TStopwatch timer;
-    RooAbsReal* nll = pdf->createNLL(*data,
+    RooAbsReal* nll = settings.pdf->createNLL(*settings.data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
             //IntegrateBins(_samplingRelTol),
-                                    RooFit::GlobalObservables(*globalObs),
-                                    RooFit::Constrain(*np) // try with this line
+                                    RooFit::GlobalObservables(*settings.globalObs),
+                                    RooFit::Constrain(*settings.nps) // try with this line
             //ConditionalObservables(),
             //ExternalConstraints(*_externalConstraint)
     );
@@ -37,10 +37,10 @@ RooAbsReal* Fitter::CreatNll(RooAbsData *data, RooAbsPdf *pdf, RooArgSet* global
 return nll;
 }
 
-IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
+IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
     EFT_PROF_TRACE("[Minimize]");
     EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper");
-    RooMinimizerWrapper minim(*nll);
+    RooMinimizerWrapper minim(*settings.nll);
     EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     //if(_errorLevel>0) minim.setErrorLevel(_errorLevel);
     minim.setStrategy( 1 );
@@ -54,7 +54,7 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
     minim.optimizeConst( 2 );
     EFT_PROF_INFO("[Minimizer] set optimize constant 2");
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
-    minim.setMaxFunctionCalls(5000 * pdf->getVariables()->getSize());
+    minim.setMaxFunctionCalls(5000 * settings.pdf->getVariables()->getSize());
 
     int _status = 0;
 
@@ -77,28 +77,25 @@ IFitter::FitResPtr Fitter::Minimize(RooAbsReal *nll, RooAbsPdf* pdf) {
 
     // Copied from RooAbsPdf::fitTo()
     //if (_doSumW2==1 && minim.getNPar()>0) {
-    if (false) {
-        cout << endl << "Evaluating SumW2 error..." << endl <<endl;
+    if (settings.errors != Errors::DEFAULT) {
+    //if (false) {
+        EFT_PROF_INFO("[Minimizer] Evaluating SumW2 error...");
         // Make list of RooNLLVar components of FCN
-        RooArgSet* comps = nll->getComponents();
+        EFT_PROF_DEBUG("[Minimizer] extract nll components");
+        shared_ptr<RooArgSet> comps = make_shared<RooArgSet>(*settings.nll->getComponents());
+        EFT_PROF_DEBUG("[Minimizer] extracted {} nll components", comps->getSize());
         vector<RooNLLVar*> nllComponents;
         nllComponents.reserve(comps->getSize());
-        TIterator* citer = comps->createIterator();
-        RooAbsArg* arg;
-        while ((arg=(RooAbsArg*)citer->Next())) {
-            auto* nllComp = dynamic_cast<RooNLLVar*>(arg);
-            if (!nllComp) continue;
-            nllComponents.push_back(nllComp);
+        for (const auto nll_comp : *comps) {
+            nllComponents.push_back(dynamic_cast<RooNLLVar*>(nll_comp));
         }
-        delete citer;
-        delete comps;
 
         // Calculated corrected errors for weighted likelihood fits
         RooFitResult* rw = minim.save();
         for (auto& nllComponent : nllComponents) {
             nllComponent->applyWeightSquared(kTRUE);
         }
-        cout << "Calculating sum-of-weights-squared correction matrix for covariance matrix" << endl;
+        EFT_PROF_INFO("Calculating sum-of-weights-squared correction matrix for covariance matrix");
         minim.hesse();
         RooFitResult* rw2 = minim.save();
         for (auto & nllComponent : nllComponents) {
