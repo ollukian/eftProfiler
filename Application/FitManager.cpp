@@ -135,7 +135,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     fit::FitSettings fitSettings;
     fitSettings.pdf = pdf;
     fitSettings.data = &data;
-    fitSettings.pois = args_["poi"]; // TODO: wrap around by a function
+    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
     fitSettings.errors = settings.errors;
 
     fit::Fitter fitter;
@@ -429,7 +429,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fit::FitSettings fitSettings;
     fitSettings.pdf = pdf;
     fitSettings.data = data;
-    fitSettings.pois = args_["poi"]; // TODO: wrap around by a function
+    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
     fitSettings.errors = settings.errors;
 
 
