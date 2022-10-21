@@ -114,7 +114,9 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
         EFT_PROF_DEBUG("[Minimizer] results are save");
         EFT_PROF_DEBUG("[Minimizer] apply covariances");
         for (auto& nllComponent : nllComponents) {
+            EFT_PROF_DEBUG("apply cov to {}...", nllComponent->GetName());
             nllComponent->applyWeightSquared(kTRUE);
+            EFT_PROF_DEBUG("apply cov to {} DONE", nllComponent->GetName());
         }
         EFT_PROF_DEBUG("[Minimizer] covariances are added");
         EFT_PROF_INFO("Calculating sum-of-weights-squared correction matrix for covariance matrix");
