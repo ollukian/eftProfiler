@@ -217,8 +217,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
 
-    auto nll = fitter.CreatNll(fitSettings);
-    fitSettings.nll = nll;
+    fitSettings.nll = fitter.CreatNll(fitSettings);
     //auto fitRes = fitter.Fit(&data, pdf);
     auto fitRes = fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
@@ -434,15 +433,16 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
-    auto nll = fitter.CreatNll(fitSettings);
-    auto fitRes = fitter.Minimize(fitSettings);
+    auto fitRes = fitter.Fit(fitSettings);
+    //auto nll = fitter.CreatNll(fitSettings);
+    //auto fitRes = fitter.Minimize(fitSettings);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
     //res.ExtractPoiValErr(ws_, res.poi_name);
-    res.nll = nll->getVal();
+    res.nll = fitSettings.nll->getVal();
 
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_free_fit_val, res.poi_free_fit_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);

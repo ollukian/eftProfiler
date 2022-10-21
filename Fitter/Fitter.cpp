@@ -195,6 +195,7 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     settings.nps = nps_;
 
     auto nll = CreatNll(settings);
+    settings.nll = nll;
     auto res = Minimize(settings);
     return res;
     //FitResPtr to_return;
