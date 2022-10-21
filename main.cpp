@@ -63,6 +63,68 @@ int main(int argc, char* argv[]) {
            // throw std::runtime_error("wrong --study_type flag option");
         }
 
+        // construct Errors type from the input strings "errors" : vector<string>
+        {
+            bool isHesse {false};
+            bool isMinos {false};
+            bool refineNPs {false};
+            bool refinePOIs {false};
+
+            // todo: add stringutils: trim, tolowcase, tocapitalcase
+
+            for (const string& arg : config.errors) {
+                if (arg == "Minos" || arg == "minos")
+                    isMinos = true;
+                else if (arg == "Hesse" || arg == "HESSE" || arg == "hesse")
+                    isHesse = true;
+                else if (arg == "nps" || arg == "NPs" || arg == "Nps" || arg == "NP" || arg == "np")
+                    refineNPs = true;
+                else if (arg == "POIs" || arg == "Pois" || arg == "pois" || arg == "poi")
+                    refinePOIs = true;
+                else {
+                    EFT_PROF_CRITICAL("Command line, key -errors, got UNKNOWN argument: {}", arg);
+                    EFT_PROF_CRITICAL("Known: Minos, Hesse, nps, pois, np, poi");
+                }
+            } // args
+
+            // if only Minos with no other option - refine everything
+            if (config.errors.size() == 1) {
+                if (isMinos) {
+                    refineNPs = true;
+                    refinePOIs = true;
+                }
+            }
+
+            // check logic // TODO: to make an independent function to construct if from a string and to validate
+            if (isHesse && isMinos) {
+                EFT_PROF_CRITICAL("Command line, key -errors, cannot use MINOS and HESSE at the same time, use on of them");
+                return 0;
+            }
+            if (!isHesse && !isMinos) {
+                EFT_PROF_WARN("Command line, key -errors, neither MINOS nor HESSE are set, use DEFAULT - no error re-evaluation");
+                settings.errors = eft::stats::fit::Errors::DEFAULT;
+            }
+            else if (isHesse) {
+                EFT_PROF_INFO("Use HESSE");
+                settings.errors = eft::stats::fit::Errors::HESSE;
+            }
+            else { // MINOS
+                if (refineNPs && refinePOIs) {
+                    EFT_PROF_INFO("Use MINOS for nps and pois");
+                    settings.errors = eft::stats::fit::Errors::MINOS_ALL;
+                }
+                else if (refineNPs) {
+                    EFT_PROF_INFO("Use MINOS only for nps");
+                    settings.errors = eft::stats::fit::Errors::MINOS_NPS;
+                }
+                else {
+                    EFT_PROF_INFO("Use MINOS only for pois");
+                    settings.errors = eft::stats::fit::Errors::MINOS_POIS;
+                }
+            } // MINOS
+
+        } // construction of errros type
+
         //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
         settings.studyType = eft::stats::StudyType::OBSERVED;
         settings.poi = config.poi;
