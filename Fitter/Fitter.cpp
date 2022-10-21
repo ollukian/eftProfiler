@@ -96,6 +96,34 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
             minim.save("hesse", "")->Print();
         }
 
+        EFT_PROF_WARN("before code from quick");
+        {
+            RooArgSet *comps = settings.nll->getComponents();
+            vector<RooNLLVar *> nllComponents;
+            nllComponents.reserve(comps->getSize());
+            TIterator *citer = comps->createIterator();
+            RooAbsArg *arg;
+            cout << "*****before iteratinf over comps" << endl;
+            while ((arg = (RooAbsArg *) citer->Next())) {
+                RooNLLVar *nllComp = dynamic_cast<RooNLLVar *>(arg);
+                if(!nllComp) continue;
+                nllComponents.push_back(nllComp);
+            }
+            cout << "*****after iteratinf over comps" << endl;
+            delete citer;
+            delete comps;
+
+            // Calculated corrected errors for weighted likelihood fits
+            cout << "*****before applying" << endl;
+            RooFitResult* rw = minim.save();
+            for (vector<RooNLLVar*>::iterator it = nllComponents.begin(); nllComponents.end() != it; ++it) {
+                (*it)->applyWeightSquared(kTRUE);
+            }
+            cout << "*****after applying" << endl;
+        }
+        EFT_PROF_WARN("after code from quick");
+
+
         EFT_PROF_INFO("[Minimizer] Evaluating SumW2 error...");
         // Make list of RooNLLVar components of FCN
         EFT_PROF_DEBUG("[Minimizer] extract nll components");
