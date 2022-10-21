@@ -45,7 +45,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
         throw std::runtime_error("no nll is set for minimisation");
     }
 
-    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper");
+    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
     RooMinimizerWrapper minim(*settings.nll);
     EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     minim.setStrategy( 1 );
@@ -101,17 +101,22 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
         EFT_PROF_DEBUG("[Minimizer] extract nll components");
         shared_ptr<RooArgSet> comps = make_shared<RooArgSet>(*settings.nll->getComponents());
         EFT_PROF_DEBUG("[Minimizer] extracted {} nll components", comps->getSize());
+        EFT_PROF_DEBUG("[Minimizer] add nll components..");
         vector<RooNLLVar*> nllComponents;
         nllComponents.reserve(comps->getSize());
         for (const auto nll_comp : *comps) {
             nllComponents.push_back(dynamic_cast<RooNLLVar*>(nll_comp));
         }
-
+        EFT_PROF_DEBUG("[Minimizer] {} nll components are added", nllComponents.size());
         // Calculated corrected errors for weighted likelihood fits
+        EFT_PROF_DEBUG("[Minimizer] save minim results");
         RooFitResult* rw = minim.save();
+        EFT_PROF_DEBUG("[Minimizer] results are save");
+        EFT_PROF_DEBUG("[Minimizer] apply covariances");
         for (auto& nllComponent : nllComponents) {
             nllComponent->applyWeightSquared(kTRUE);
         }
+        EFT_PROF_DEBUG("[Minimizer] covariances are added");
         EFT_PROF_INFO("Calculating sum-of-weights-squared correction matrix for covariance matrix");
         minim.hesse();
         RooFitResult* rw2 = minim.save();
