@@ -58,6 +58,7 @@ void FitManager::DoGlobalFit()
     fit::FitSettings settings;
     settings.data = ds;
     settings.pdf = pdf;
+    settings.nps = args_["pois"];
     auto res = fitter.Fit(settings);
     //auto nll = fitter.CreatNll(ds, pdf, globObs, np);
     //cout << "[minimize it]" << endl;
@@ -421,14 +422,22 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     ws_->FloatVal(res.poi_name);
 
     fit::Fitter fitter;
+    fitter.SetNps(nps);
+    fitter.SetGlobs(globObs);
+
+    fit::FitSettings fitSettings;
+    fitSettings.pdf = pdf;
+    fitSettings.data = data;
+    fitSettings.pois = args_["poi"]; // TODO: wrap around by a function
+
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
-    auto nll = fitter.CreatNll(data, pdf, globObs, nps);
+    auto nll = fitter.CreatNll(fitSettings);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps before free fit:");
     //args_["np"]->Print("v");
     //EFT_PROF_INFO("[DoFitAllNpFloat] minimize nll for free fit");
-    auto fitRes = fitter.Minimize(nll, pdf);
+    auto fitRes = fitter.Minimize(fitSettings);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
@@ -619,6 +628,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     if (commandLineArgs.SetValIfArgExists("errors", config.errors)) {
         EFT_PROF_INFO("Set errors with: {} elements", config.errors.size());
     }
+
+    // reconstruct errors enum from the input strings
 
 
 }
