@@ -25,8 +25,8 @@ RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
             //IntegrateBins(_samplingRelTol),
-                                    RooFit::GlobalObservables(*settings.globalObs),
-                                    RooFit::Constrain(*settings.nps) // try with this line
+                                    RooFit::GlobalObservables(*globs_),
+                                    RooFit::Constrain(*nps_) // try with this line
             //ConditionalObservables(),
             //ExternalConstraints(*_externalConstraint)
     );
@@ -39,6 +39,12 @@ return nll;
 
 IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
     EFT_PROF_TRACE("[Minimize]");
+
+    if (settings.nll == nullptr) {
+        EFT_PROF_CRITICAL("minimize, no nll is set");
+        throw std::runtime_error("no nll is set for minimisation");
+    }
+
     EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper");
     RooMinimizerWrapper minim(*settings.nll);
     EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");

@@ -218,6 +218,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
 
     auto nll = fitter.CreatNll(fitSettings);
+    fitSettings.nll = nll;
     //auto fitRes = fitter.Fit(&data, pdf);
     auto fitRes = fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
@@ -434,9 +435,6 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
     auto nll = fitter.CreatNll(fitSettings);
-    //EFT_PROF_INFO("[DoFitAllNpFloat] print nps before free fit:");
-    //args_["np"]->Print("v");
-    //EFT_PROF_INFO("[DoFitAllNpFloat] minimize nll for free fit");
     auto fitRes = fitter.Minimize(fitSettings);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
