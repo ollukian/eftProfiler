@@ -99,10 +99,10 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
         EFT_PROF_INFO("[Minimizer] Evaluating SumW2 error...");
         // Make list of RooNLLVar components of FCN
         EFT_PROF_DEBUG("[Minimizer] extract nll components");
-        shared_ptr<RooArgSet> comps = make_shared<RooArgSet>(*settings.nll->getComponents());
+        unique_ptr<RooArgSet> comps = make_unique<RooArgSet>(*settings.nll->getComponents());
         EFT_PROF_DEBUG("[Minimizer] extracted {} nll components", comps->getSize());
         EFT_PROF_DEBUG("[Minimizer] add nll components..");
-        vector<RooNLLVar*> nllComponents;
+        vector<unique_ptr<RooNLLVar>> nllComponents;
         nllComponents.reserve(comps->getSize());
         for (const auto nll_comp : *comps) {
             nllComponents.emplace_back(dynamic_cast<RooNLLVar*>(nll_comp));
