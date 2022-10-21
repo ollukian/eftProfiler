@@ -4,9 +4,5 @@
 
 #include "FitSettings.h"
 
-namespace eft {
-    namespace stats {
-        namespace fit {
-        } // eft
-    } // stats
+namespace eft::stats::fit {
 } // fit

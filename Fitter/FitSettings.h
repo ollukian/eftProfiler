@@ -19,6 +19,7 @@ struct FitSettings {
     RooAbsPdf*  pdf         = nullptr;
     RooArgSet*  globalObs   = nullptr;
     RooArgSet*  nps         = nullptr;
+    RooArgSet*  pois        = nullptr;
     RooAbsReal* nll         = nullptr;
     Errors      errors = Errors::DEFAULT;
 };
