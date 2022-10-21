@@ -527,16 +527,6 @@ namespace eft::plot {
                                                      });
                               }));
 
-//    SetCallBack([this](const NpInfoForPlot& info) -> bool {
-//        if (np_ranking_settings->ignore_name.empty())
-//            return info.poi == np_ranking_settings->poi
-//                   && (info.name.find("gamma") == std::string::npos);
-//        else
-//            return info.poi == poi
-//                   && (info.name.find("gamma") == std::string::npos)
-//                   && (info.name.find(plotter.np_ranking_settings->ignore_name[0]) == std::string::npos);
-//    });
-
     }
 
 
