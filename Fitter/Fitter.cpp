@@ -133,7 +133,10 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
         vector<unique_ptr<RooNLLVar>> nllComponents;
         nllComponents.reserve(comps->getSize());
         for (const auto nll_comp : *comps) {
-            nllComponents.emplace_back(make_unique<RooNLLVar>(*dynamic_cast<RooNLLVar*>(nll_comp)));
+            auto* nllComp = dynamic_cast<RooNLLVar*>(nll_comp);
+            if(!nllComp)
+                continue;
+            nllComponents.emplace_back(make_unique<RooNLLVar>(*nllComp));
         }
         EFT_PROF_DEBUG("[Minimizer] {} nll components are added", nllComponents.size());
         // Calculated corrected errors for weighted likelihood fits
