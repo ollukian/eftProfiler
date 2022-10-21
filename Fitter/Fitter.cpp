@@ -96,34 +96,6 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
             minim.save("hesse", "")->Print();
         }
 
-        EFT_PROF_WARN("before code from quick");
-        {
-            RooArgSet *comps = settings.nll->getComponents();
-            vector<RooNLLVar *> nllComponents;
-            nllComponents.reserve(comps->getSize());
-            TIterator *citer = comps->createIterator();
-            RooAbsArg *arg;
-            cout << "*****before iteratinf over comps" << endl;
-            while ((arg = (RooAbsArg *) citer->Next())) {
-                RooNLLVar *nllComp = dynamic_cast<RooNLLVar *>(arg);
-                if(!nllComp) continue;
-                nllComponents.push_back(nllComp);
-            }
-            cout << "*****after iteratinf over comps" << endl;
-            delete citer;
-            delete comps;
-
-            // Calculated corrected errors for weighted likelihood fits
-            cout << "*****before applying" << endl;
-            RooFitResult* rw = minim.save();
-            for (vector<RooNLLVar*>::iterator it = nllComponents.begin(); nllComponents.end() != it; ++it) {
-                (*it)->applyWeightSquared(kTRUE);
-            }
-            cout << "*****after applying" << endl;
-        }
-        EFT_PROF_WARN("after code from quick");
-
-
         EFT_PROF_INFO("[Minimizer] Evaluating SumW2 error...");
         // Make list of RooNLLVar components of FCN
         EFT_PROF_DEBUG("[Minimizer] extract nll components");
@@ -152,8 +124,9 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
         EFT_PROF_DEBUG("[Minimizer] covariances are added");
         EFT_PROF_INFO("Calculating sum-of-weights-squared correction matrix for covariance matrix");
         minim.hesse();
+        EFT_PROF_INFO("[Minimizer] hesse successfully finished working, applying the sum-of-weights-squared correction matrix");
         RooFitResult* rw2 = minim.save();
-        for (auto & nllComponent : nllComponents) {
+        for (auto& nllComponent : nllComponents) {
             nllComponent->applyWeightSquared(kFALSE);
         }
 
