@@ -136,6 +136,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     fitSettings.pdf = pdf;
     fitSettings.data = &data;
     fitSettings.pois = args_["poi"]; // TODO: wrap around by a function
+    fitSettings.errors = settings.errors;
 
     fit::Fitter fitter;
     fitter.SetNps(nps);
@@ -429,6 +430,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fitSettings.pdf = pdf;
     fitSettings.data = data;
     fitSettings.pois = args_["poi"]; // TODO: wrap around by a function
+    fitSettings.errors = settings.errors;
 
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
