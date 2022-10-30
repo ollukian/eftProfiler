@@ -17,7 +17,7 @@ struct FitManagerConfig {
     std::string comb_data {"combData"};
     std::string res_path {"."};
     std::string poi {"cHG"};
-    std::vector<std::string> errors {"Minos"};
+    std::vector<std::string> errors;
     size_t worker_id {0};
     size_t top {20}; // np pois to plot
     double fit_precision {1E-3};
