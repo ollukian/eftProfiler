@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::Init();
     CommandLineArgs commandLineArgs(argc, argv);
 
-    if (commandLineArgs.HasKey("-h") || commandLineArgs.HasKey("help"))
+    if (commandLineArgs.HasKey("h") || commandLineArgs.HasKey("help"))
     {
         cout << "for task, use one of the following:" << endl;
         for (const auto& task : {"compute_ranking, plot_ranking, compute_unconstrained"}) {
@@ -65,6 +65,7 @@ int main(int argc, char* argv[]) {
 
         // construct Errors type from the input strings "errors" : vector<string>
         {
+            EFT_PROF_INFO("Identify errors evaluation type from {} arguments", config.errors.size());
             bool isHesse {false};
             bool isMinos {false};
             bool refineNPs {false};
@@ -73,14 +74,22 @@ int main(int argc, char* argv[]) {
             // todo: add stringutils: trim, tolowcase, tocapitalcase
 
             for (const string& arg : config.errors) {
-                if (arg == "Minos" || arg == "minos")
+                if (arg == "Minos" || arg == "minos") {
+                    EFT_PROF_INFO("found Minos argument");
                     isMinos = true;
-                else if (arg == "Hesse" || arg == "HESSE" || arg == "hesse")
+                }
+                else if (arg == "Hesse" || arg == "HESSE" || arg == "hesse") {
+                    EFT_PROF_INFO("found Hesse argument");
                     isHesse = true;
-                else if (arg == "nps" || arg == "NPs" || arg == "Nps" || arg == "NP" || arg == "np")
+                }
+                else if (arg == "nps" || arg == "NPs" || arg == "Nps" || arg == "NP" || arg == "np") {
+                    EFT_PROF_INFO("found NP argument");
                     refineNPs = true;
-                else if (arg == "POIs" || arg == "Pois" || arg == "pois" || arg == "poi")
+                }
+                else if (arg == "POIs" || arg == "Pois" || arg == "pois" || arg == "poi") {
+                    EFT_PROF_INFO("found POI argument");
                     refinePOIs = true;
+                }
                 else {
                     EFT_PROF_CRITICAL("Command line, key -errors, got UNKNOWN argument: {}", arg);
                     EFT_PROF_CRITICAL("Known: Minos, Hesse, nps, pois, np, poi");
@@ -94,6 +103,12 @@ int main(int argc, char* argv[]) {
                     refinePOIs = true;
                 }
             }
+
+            EFT_PROF_DEBUG("status of arguments..");
+            EFT_PROF_DEBUG("Minos -> {}", isMinos);
+            EFT_PROF_DEBUG("Hesse -> {}", isHesse);
+            EFT_PROF_DEBUG("nps -> {}", refineNPs);
+            EFT_PROF_DEBUG("pois -> {}", refinePOIs);
 
             // check logic // TODO: to make an independent function to construct if from a string and to validate
             if (isHesse && isMinos) {
