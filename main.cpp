@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
             // todo: add stringutils: trim, tolowcase, tocapitalcase
 
             for (const string& arg : config.errors) {
+                EFT_PROF_DEBUG("dispatch: {}", arg);
                 if (arg == "Minos" || arg == "minos") {
                     EFT_PROF_INFO("found Minos argument");
                     isMinos = true;
@@ -102,6 +103,7 @@ int main(int argc, char* argv[]) {
             // if only Minos with no other option - refine everything
             if (config.errors.size() == 1) {
                 if (isMinos) {
+                    EFT_PROF_WARN("Minos with no arguments, refine everything (nps and POIs)");
                     refineNPs = true;
                     refinePOIs = true;
                 }
