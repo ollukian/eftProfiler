@@ -65,7 +65,10 @@ int main(int argc, char* argv[]) {
 
         // construct Errors type from the input strings "errors" : vector<string>
         {
-            EFT_PROF_INFO("Identify errors evaluation type from {} arguments", config.errors.size());
+            EFT_PROF_INFO("Identify errors evaluation type from {} arguments:", config.errors.size());
+            for (const auto& arg : config.errors) {
+                EFT_PROF_DEBUG("=> [{}], arg");
+            }
             bool isHesse {false};
             bool isMinos {false};
             bool refineNPs {false};
