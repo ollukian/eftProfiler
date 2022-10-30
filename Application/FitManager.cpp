@@ -137,6 +137,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     fitSettings.data = &data;
     fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
     fitSettings.errors = settings.errors;
+    fitSettings.nps = nps;
 
     fit::Fitter fitter;
     fitter.SetNps(nps);
