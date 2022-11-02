@@ -158,7 +158,6 @@ namespace eft::plot {
                               +
                               (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
 
-                      //return l.impact > r.impact;
                   }
         );
 
@@ -316,18 +315,18 @@ namespace eft::plot {
         legend->Draw("same");
 
         // draw second axes for nps
-//    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
-//                                        gPad->GetUymin(),
-//                                        gPad->GetUxmax(),
-//                                        gPad->GetUymax(),
-//                                        -1.2f,
-//                                        1.2f,
-//                                        510,
-//                                        "+L");
-        //axis_nps->SetLineColor(kRed);
-        //axis_nps->SetTextColor(kRed);
-        //axis_nps->SetTitle("#hat{#theta}");
-        //axis_nps->Draw();
+        auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
+                                        gPad->GetUymin(),
+                                        gPad->GetUxmax(),
+                                        gPad->GetUymax(),
+                                        -1.2f,
+                                        1.2f,
+                                        510,
+                                        "");
+        axis_nps->SetLineColor(kRed);
+        axis_nps->SetTextColor(kRed);
+        axis_nps->SetTitle("#hat{#theta}");
+        axis_nps->Draw();
 
         string ignore_part;
         string select_part;
