@@ -327,6 +327,9 @@ namespace eft::plot {
         axis_nps->SetLineColor(kRed);
         axis_nps->SetTextColor(kRed);
         axis_nps->SetTitle("#hat{#theta}");
+        //axis_nps->SetTextSize(0.5);
+        axis_nps->SetLabelColor(kRed);
+        axis_nps->SetLabelSize(0.5);
         axis_nps->Draw();
 
         string ignore_part;
