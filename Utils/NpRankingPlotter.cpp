@@ -217,7 +217,7 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
-        histo->GetYaxis()->SetTitleOffset(0.7);
+        histo->GetYaxis()->SetTitleOffset(1.2);
         histo->GetYaxis()->SetTitle("#Delta #mu");
 
         //histo->SetFillColor(kBlue);
