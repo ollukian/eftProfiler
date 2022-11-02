@@ -330,7 +330,7 @@ namespace eft::plot {
         //axis_nps->SetTextSize(0.5);
         axis_nps->SetLabelColor(kRed);
         axis_nps->SetLabelSize(0.05);
-        axis_nps->SetLabelOffset(0.5);
+        axis_nps->SetTitleOffset(0.5);
         axis_nps->Draw();
 
         string ignore_part;
