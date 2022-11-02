@@ -217,6 +217,7 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
+        histo->GetYaxis()->SetTitleOffset(0.3);
         histo->GetYaxis()->SetTitle("#Delta #mu");
 
         //histo->SetFillColor(kBlue);
@@ -315,9 +316,9 @@ namespace eft::plot {
         legend->Draw("same");
 
         // draw second axes for nps
-        auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
+        auto axis_nps = make_unique<TGaxis>(nb_systematics,
                                         gPad->GetUymin(),
-                                        gPad->GetUxmax(),
+                                        nb_systematics,
                                         gPad->GetUymax(),
                                         -1.2f,
                                         1.2f,
