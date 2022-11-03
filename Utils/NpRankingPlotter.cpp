@@ -217,7 +217,7 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
-        histo->GetYaxis()->SetTitleOffset(1.2);
+        histo->GetYaxis()->SetTitleOffset(1.4);
         histo->GetYaxis()->SetTitle("#Delta #mu");
 
         //histo->SetFillColor(kBlue);
@@ -333,7 +333,7 @@ namespace eft::plot {
         axis_nps->SetLabelFont(histo->GetLabelFont());
         axis_nps->SetLabelSize(0.02);
         axis_nps->SetTitleOffset(0.5);
-        axis_nps->SetTitleSize(0.05);
+        axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
 
         string ignore_part;
