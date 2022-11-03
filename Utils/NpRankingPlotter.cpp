@@ -316,10 +316,11 @@ namespace eft::plot {
         legend->Draw("same");
 
         // draw second axes for nps
-        auto axis_nps = make_unique<TGaxis>(nb_systematics,
+        auto axis_nps = make_unique<TGaxis>(
+                                        nb_systematics,
                                         - 1 * scaling,
                                         nb_systematics,
-                                        -1 * scaling,
+                                        1 * scaling,
                                         -1.2f,
                                         1.2f,
                                         510,
