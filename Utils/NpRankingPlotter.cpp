@@ -258,7 +258,7 @@ namespace eft::plot {
 
         auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
 
-        canvas->SetRightMargin(0.05f);
+        canvas->SetRightMargin(0.10f); // 0.05
         canvas->SetLeftMargin(0.10f);
         canvas->SetTopMargin(0.05f);
         canvas->SetBottomMargin(0.4f);
@@ -324,13 +324,14 @@ namespace eft::plot {
                                         1.2f,
                                         510,
                                         "+L");
-        axis_nps->SetLineColor(kRed);
-        axis_nps->SetTextColor(kRed);
-        axis_nps->SetTitle("#hat{#theta}");
+        //axis_nps->SetLineColor(kRed);
+        //axis_nps->SetTextColor(kRed);
+        axis_nps->SetTitle("#hat{#theta} - #theta_0");
         //axis_nps->SetTextSize(0.5);
         axis_nps->SetLabelColor(kRed);
         axis_nps->SetLabelSize(0.05);
         axis_nps->SetTitleOffset(0.5);
+        axis_nps->SetTitleSize(0.5);
         axis_nps->Draw();
 
         string ignore_part;
