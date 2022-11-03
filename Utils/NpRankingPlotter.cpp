@@ -337,7 +337,7 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
-        float y = 0.9f, dy = - 0.3f;
+        float y = 0.9f, dy = 0.3f;
         float x = 0.12f;
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
