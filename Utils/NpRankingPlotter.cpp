@@ -342,13 +342,13 @@ namespace eft::plot {
         //mylatex.SetTextFont(72);
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
-        latex.DrawLatex(0.15, 0.85, "ATLAS");
+        latex.DrawLatex(0.12, 0.92, "ATLAS");
         latex.SetTextFont(42); //put back the font
         //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
-        latex.DrawLatex(0.25, 0.85, "Internal");
-        latex.DrawLatex(0.15, 0.75, "top SMEFT");
-        latex.DrawLatex(0.25, 0.75, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
-        latex.DrawLatex(0.45, 0.85, "info on selection (text) names");
+        latex.DrawLatex(0.20, 0.92, "Internal");
+        latex.DrawLatex(0.12, 0.85, "top SMEFT");
+        latex.DrawLatex(0.20, 0.85, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
+        latex.DrawLatex(0.35, 0.92, "info on selection (text) names");
 
         string ignore_part;
         string select_part;
