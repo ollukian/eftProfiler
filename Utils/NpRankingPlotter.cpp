@@ -247,7 +247,7 @@ namespace eft::plot {
 
 
 
-        auto legend = make_unique<TLegend>(0.7, 0.85, 0.95, 0.95);
+        auto legend = make_unique<TLegend>(0.7, 0.85, 0.90, 0.95);
         legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
         legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
         legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
@@ -328,9 +328,9 @@ namespace eft::plot {
         //axis_nps->SetTextColor(kRed);
         axis_nps->SetTitle("#hat{#theta} - #theta_0");
         //axis_nps->SetTextSize(0.5);
-        axis_nps->SetLabelColor(kRed);
-        axis_nps->SetLabelSize(0.05);
-        axis_nps->SetTitleOffset(0.5);
+        //axis_nps->SetLabelColor(kRed);
+        axis_nps->SetLabelSize(0.02);
+        axis_nps->SetTitleOffset(0.05);
         axis_nps->SetTitleSize(0.5);
         axis_nps->Draw();
 
@@ -435,6 +435,12 @@ namespace eft::plot {
         info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_fixed_np_val;
         info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_fixed_np_val;
         info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
+
+        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, np val: {:10} ==> np error: {:10}",
+                       res.np_name,
+                       res.poi_fixed_np_val,
+                       res.np_val,
+                       res.np_err);
 
         EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
                        res.np_name,
