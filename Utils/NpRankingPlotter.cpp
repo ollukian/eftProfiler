@@ -337,22 +337,24 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
+        float y = 0.9f, dy = - 0.3f;
+        float x = 0.12f;
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
         //mylatex.SetTextFont(72);
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
-        latex.DrawLatex(0.12, 0.90, "ATLAS");
+        latex.DrawLatex(x, y, "ATLAS");
         latex.SetTextFont(42); //put back the font
         //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
-        latex.DrawLatex(0.22, 0.90, "Internal");
+        latex.DrawLatex(x + 0.08, y, "Internal");
 
         latex.SetTextSize(0.030); //0.045 is std
-        latex.DrawLatex(0.12, 0.85, "top SMEFT");
-        latex.DrawLatex(0.12, 0.88, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
-        latex.DrawLatex(0.35, 0.90, "info on selection (text) names");
+        latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
+        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
+        latex.DrawLatex(0.35, y, "info on selection (text) names");
 
-        latex.DrawLatex(0.12, 0.83, settings->poi.c_str());
+        latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
 
         string ignore_part;
         string select_part;
