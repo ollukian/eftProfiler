@@ -317,9 +317,9 @@ namespace eft::plot {
 
         // draw second axes for nps
         auto axis_nps = make_unique<TGaxis>(nb_systematics,
-                                        -0.002,
+                                        - 1 * scaling,
                                         nb_systematics,
-                                        0.002,
+                                        -1 * scaling,
                                         -1.2f,
                                         1.2f,
                                         510,
@@ -329,9 +329,10 @@ namespace eft::plot {
         axis_nps->SetTitle("#hat{#theta} - #theta_0");
         //axis_nps->SetTextSize(0.5);
         //axis_nps->SetLabelColor(kRed);
+        axis_nps->SetLabelFont(histo->GetLabelFont());
         axis_nps->SetLabelSize(0.02);
         axis_nps->SetTitleOffset(0.05);
-        axis_nps->SetTitleSize(0.5);
+        axis_nps->SetTitleSize(0.05);
         axis_nps->Draw();
 
         string ignore_part;
