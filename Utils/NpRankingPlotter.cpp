@@ -337,7 +337,7 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
-        float y = 0.9f, dy = 0.3f;
+        float y = 0.9f, dy = 0.03f;
         float x = 0.12f;
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
@@ -347,7 +347,7 @@ namespace eft::plot {
         latex.DrawLatex(x, y, "ATLAS");
         latex.SetTextFont(42); //put back the font
         //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
-        latex.DrawLatex(x + 0.08, y, "Internal");
+        latex.DrawLatex(x + 0.10, y, "Internal");
 
         latex.SetTextSize(0.030); //0.045 is std
         latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
