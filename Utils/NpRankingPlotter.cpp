@@ -332,9 +332,23 @@ namespace eft::plot {
         //axis_nps->SetLabelColor(kRed);
         axis_nps->SetLabelFont(histo->GetLabelFont());
         axis_nps->SetLabelSize(0.02);
-        axis_nps->SetTitleOffset(0.5);
+        axis_nps->SetTitleOffset(1.0);
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
+
+        TLatex latex;
+        latex.SetNDC();
+        latex.SetTextSize(0.040); //0.045 is std
+        //mylatex.SetTextFont(72);
+        latex.SetTextFont(72);
+        latex.SetTextColor(kBlack);
+        latex.DrawLatex(0.15, 0.85, "ATLAS");
+        latex.SetTextFont(42); //put back the font
+        //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
+        latex.DrawLatex(0.25, 0.85, "Internal");
+        latex.DrawLatex(0.15, 0.75, "top SMEFT");
+        latex.DrawLatex(0.25, 0.75, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
+        latex.DrawLatex(0.45, 0.85, "info on selection (text) names");
 
         string ignore_part;
         string select_part;
