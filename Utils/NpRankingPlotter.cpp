@@ -321,13 +321,13 @@ namespace eft::plot {
                                         - 1 * scaling,
                                         nb_systematics,
                                         1 * scaling,
-                                        -1.2f,
-                                        1.2f,
+                                        -1.f,
+                                        1.f,
                                         510,
                                         "+L");
         //axis_nps->SetLineColor(kRed);
         //axis_nps->SetTextColor(kRed);
-        axis_nps->SetTitle("#hat{#theta} - #theta_0");
+        axis_nps->SetTitle("#hat{#theta} - #theta_{0}");
         //axis_nps->SetTextSize(0.5);
         //axis_nps->SetLabelColor(kRed);
         axis_nps->SetLabelFont(histo->GetLabelFont());
