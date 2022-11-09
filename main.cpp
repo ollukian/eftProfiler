@@ -167,6 +167,16 @@ int main(int argc, char* argv[]) {
         plotter.ReadValues(plotter.np_ranking_settings->input);
 
         // TODO: fileformat is not considered yet!
+        // tmp: to select only entries for the given POI
+//        plotter.SetCallBack([&poi, &plotter](const NpInfoForPlot& info) -> bool {
+//            if (plotter.np_ranking_settings->ignore_name.empty())
+//                return info.poi == poi
+//                    && (info.name.find("gamma") == std::string::npos);
+//            else
+//                return info.poi == poi
+//                       && (info.name.find("gamma") == std::string::npos)
+//                       && (info.name.find(plotter.np_ranking_settings->ignore_name[0]) == std::string::npos);
+//        });
         plotter.Plot(plotter.np_ranking_settings);
     }
     else if (task == "compute_unconstrained") {
