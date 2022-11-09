@@ -29,23 +29,30 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
         cout << fmt::format("add: [{}] token", tokens.back()) << endl;
     }
     string key = tokens.front();
+    key = TrimKey(key);
     vector<string> vals;
 
     // FixMe: If name of the ws contains "-" then it's assumed to be a new key...
 
     for (auto& token : tokens) {
         cout << fmt::format("token: [{}]", token) << endl;
-        if (token.find('-') != string::npos) {
-            cout << fmt::format("\t[{}] is a new key", token) << endl;
-            if ( ! key.empty() ) { // get rid of the prev key
+        if (token[0] == '-' && token[1] == '-') {
+            //if ( ! key.empty() ) { // get rid of the prev key
                 ops[key] = vals;
+                keys.insert(key);
                 EFT_PROF_DEBUG("register: {:20} => {:20} vals", key, vals.size());
                 vals.clear();
-            }
-
-            key = token.substr(token.find_first_not_of('-'), token.size());
-            //keys.insert(token);
+            //}
+            key = TrimKey(token);
+            //auto key_trimmed = TrimKey(token);
+            cout << fmt::format("\t[{}] is a new key", key) << endl;
             keys.insert(key);
+
+
+            //key = token.substr(2, token.length());
+            //key = token.substr(token.find_first_not_of('-'), token.size());
+            //keys.insert(token);
+            //keys.insert(key);
         }
         else {
             cout << fmt::format("\t[{}] is a val", token) << endl;
@@ -53,15 +60,30 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
         }
     }
 
+    keys.insert(key);
     ops[std::move(key)] = std::move(vals);
 
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
     EFT_PROF_INFO("| {:^20} | ==> | {:^20} |", "Option", "Values");
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
-    for (const auto& [key_, vals_] : ops) {
-        for (const auto& val_ : vals_) {
-            EFT_PROF_INFO("| {:>20} | ==> | {:<20} |", key_, val_);
-            //cout << "* " < << key_ << " \t " << val_ << endl;
+    for (const auto& key_ : keys) {
+        if (ops.at(key_).empty())
+        //if (ops.find(key_) == ops.end())
+        {
+            EFT_PROF_INFO("| {:>20} |     | {:<20} |", key_, ' ');
+        }
+        else {
+            const auto& vals_ = ops.at(key_);
+            bool is_first = true;
+            for (const auto& val_: vals_) {
+                if (is_first) {
+                    EFT_PROF_INFO("| {:>20} | ==> | {:<20} |", key_, val_);
+                    is_first = false;
+                }
+                else
+                    EFT_PROF_INFO("| {:>20} | ==> | {:<20} |", ' ', val_);
+                //cout << "* " < << key_ << " \t " << val_ << endl;
+            }
         }
     }
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
@@ -147,7 +169,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 //    //return make_pair(key, std::move(vals));
 //}
 
-optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(CommandLineArgs::Key&& option) const
+optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) const
 {
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     if (keys.find(option) == keys.end()) {

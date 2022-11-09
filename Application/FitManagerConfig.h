@@ -16,11 +16,12 @@ struct FitManagerConfig {
     std::string comb_pdf {"combPdf"};
     std::string comb_data {"combData"};
     std::string res_path {"."};
-    std::string poi {"cG"};
+    std::string poi {"cHG"};
     size_t worker_id {0};
-    size_t nb_pois_to_plot {20};
+    size_t top {20}; // np pois to plot
     double fit_precision {1E-3};
     std::string study_type;
+    bool no_gamma {false};
 };
 
 } // stats

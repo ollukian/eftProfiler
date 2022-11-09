@@ -66,27 +66,46 @@ int main(int argc, char* argv[]) {
         using namespace eft::plot;
         string res_path;
         string poi;
-        if (commandLineArgs.SetValIfArgExists("res_path", res_path)) {
-            EFT_PROF_INFO("Set res_path: {}", res_path);
-        }
-        if (commandLineArgs.SetValIfArgExists("poi", poi)) {
-            EFT_PROF_INFO("Set poi: {}", poi);
-        }
+//        if (commandLineArgs.SetValIfArgExists("res_path", res_path)) {
+//            EFT_PROF_INFO("Set res_path: {}", res_path);
+//        }
+//        if (commandLineArgs.SetValIfArgExists("poi", poi)) {
+//            EFT_PROF_INFO("Set poi: {}", poi);
+//        }
+//
+//        auto settings = std::make_shared<RankingPlotterSettings>();
+//        if (commandLineArgs.SetValIfArgExists("top", settings->top)) {
+//            EFT_PROF_INFO("Set top: {}", settings->top);
+//        }
+//
+//        if (commandLineArgs.SetValIfArgExists("fileformat", settings->fileformat)) {
+//            EFT_PROF_INFO("Set fileformat: {}", settings->fileformat);
+//        }
+//        if (commandLineArgs.SetValIfArgExists("ignore_name", settings->ignore_name)) {
+//            EFT_PROF_INFO("Set ignore_name: {}", settings->ignore_name[0]);
+//            EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
+//        }
+//        if (commandLineArgs.SetValIfArgExists("match_names", settings->match_names)) {
+//            EFT_PROF_INFO("Set match_names: {}", settings->match_names[0]);
+//            EFT_PROF_INFO("It will modify the callback, by requiring this string to be present in the filenames");
+//        }
 
         eft::plot::NpRankingPlotter plotter;
-        plotter.ReadValues(res_path);
-        auto settings = std::make_shared<RankingPlotterSettins>();
-        size_t nb_nps_to_plot = 20;
-        if (commandLineArgs.SetValIfArgExists("nb_nps_to_plot", nb_nps_to_plot)) {
-            EFT_PROF_INFO("Set nb_nps_to_plot: {}", nb_nps_to_plot);
-        }
-        settings->nb_nps_to_plot = nb_nps_to_plot;
+        plotter.ReadSettingsFromCommandLine(&commandLineArgs);
+        plotter.ReadValues(plotter.np_ranking_settings->input);
+
+        // TODO: fileformat is not considered yet!
         // tmp: to select only entries for the given POI
-        plotter.SetCallBack([&poi](const NpInfoForPlot& info) -> bool {
-            return info.poi == poi
-                && (info.name.find("gamma") == std::string::npos);
-        });
-        plotter.Plot(settings);
+//        plotter.SetCallBack([&poi, &plotter](const NpInfoForPlot& info) -> bool {
+//            if (plotter.np_ranking_settings->ignore_name.empty())
+//                return info.poi == poi
+//                    && (info.name.find("gamma") == std::string::npos);
+//            else
+//                return info.poi == poi
+//                       && (info.name.find("gamma") == std::string::npos)
+//                       && (info.name.find(plotter.np_ranking_settings->ignore_name[0]) == std::string::npos);
+//        });
+        plotter.Plot(plotter.np_ranking_settings);
     }
     else if (task == "compute_unconstrained") {
         EFT_PROF_INFO("Compute Unconstrained fit");

@@ -34,9 +34,12 @@ public:
     CommandLineArgs(int argc, char* argv[]);
 
     [[nodiscard]]
-    std::optional<Vals> GetVals(Key&& option) const;
+    std::optional<Vals> GetVals(const Key& option) const;
     [[nodiscard]]
     std::optional<Val> GetVal(const Key& option) const;
+
+    [[nodiscard]]
+    inline bool HasKey(const Key& key) const noexcept;
 
     template<typename T>
     bool SetValIfArgExists(const std::string& key, T& val);
@@ -51,6 +54,8 @@ private:
    Keys keys;
 private:
     bool ParseInput(int argc, char* argv[]);
+    [[nodiscard]]
+    static inline Key TrimKey(const Key& key) noexcept;
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
@@ -62,17 +67,22 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
     if (val_opt.has_value()) {
         if constexpr(std::is_same_v<std::string, T>) {
             val = val_opt.value();
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
+        }
+        else if constexpr(std::is_same_v<std::vector<std::string>, T>) {
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            val = GetVals(key).value();
+            // TODO: to do the same with arrays and other containers. decay_type ?
         }
         else if constexpr(std::is_floating_point_v<T>) {
             val = stod(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_integral_v<T>) {
             val = stoi(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
         else {
@@ -81,6 +91,33 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         }
     } // if has value
     return false;
+}
+
+bool CommandLineArgs::HasKey(const Key& key) const noexcept
+{
+    if (keys.find(key) != keys.end())
+        return true;
+    return false;
+}
+
+CommandLineArgs::Key CommandLineArgs::TrimKey(const CommandLineArgs::Key& key) noexcept
+{
+    char first_symbol = key[0];
+    char second_symbol = key[1];
+
+    if (first_symbol != '-')
+    {
+        EFT_PROF_WARN("CommandLineArgs::TrimKey key {} is already trimmed", key);
+        return key;
+    }
+
+    if (second_symbol != '-')
+    {
+        return key.substr(1, key.size());
+    }
+    else {
+        return key.substr(2, key.size());
+    }
 }
 
 
