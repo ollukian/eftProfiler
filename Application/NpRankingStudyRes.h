@@ -101,6 +101,7 @@ struct NpRankingStudySettings
     StatType  statType  {StatType::NP_RANKING};
     StudyType studyType {StudyType::NOTDEF};
     PrePostFit prePostFit {PrePostFit::OBSERVED};
+    bool no_gamma {false};
 };
 
 // Only information relevant for plotting
