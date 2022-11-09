@@ -712,7 +712,7 @@ void FitManager::ExtractNotGammaNps() noexcept
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
         if (name.find("gamma") == std::string::npos) {
-            EFT_PROF_INFO("add {} as not-gamma", name);
+            EFT_PROF_DEBUG("add {} as not-gamma", name);
             non_gamma_nps->add(*np);
         }
     }

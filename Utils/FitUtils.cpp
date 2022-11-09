@@ -38,7 +38,7 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
             for (const auto& np : *nps) {
                 //EFT_PROF_DEBUG("FitUtils::GetPairConstraints check if pdf depends on np: {}", np->GetName());
                 if (constraint_pdf->dependsOn(*np)){
-                    EFT_PROF_DEBUG("FitUtils::GetPairConstraints pdf depends on np: {}", np->GetName());
+                    //EFT_PROF_DEBUG("FitUtils::GetPairConstraints pdf depends on np: {}", np->GetName());
                     target_np = dynamic_cast<RooRealVar*>(np);
                     break;
                 }
@@ -53,11 +53,11 @@ FitUtils::GetPairConstraints(RooAbsPdf *pdf,
                               nuis_components->first()->GetName());
             target_np = (RooRealVar *) nuis_components->first();
         }
-        EFT_PROF_DEBUG("FitUtils::GetPairConstraint loop over globs");
+        //EFT_PROF_DEBUG("FitUtils::GetPairConstraint loop over globs");
         for (const auto& glob : *globs) {
            // EFT_PROF_DEBUG("FitUtils::GetPairConstraint check glob: {}", glob->GetName());
             if (constraint_pdf->dependsOn(*glob)){
-                EFT_PROF_DEBUG("FitUtils::GetPairConstraint pdf depends on glob: {}", glob->GetName());
+                //EFT_PROF_DEBUG("FitUtils::GetPairConstraint pdf depends on glob: {}", glob->GetName());
                 target_glob = dynamic_cast<RooRealVar*>(glob);
                 break;
             }
