@@ -24,7 +24,7 @@ void OneNpManager::ResetPoi()
     EFT_PROF_TRACE("OneNpManager::ResetPoi");
     ws_->FloatVal(poi_);
     ws_->SetVarVal(poi_, poi_init_value);
-    ws_->SetVarVal(poi_, poi_init_error);
+    ws_->SetVarErr(poi_, poi_init_error);
 }
 void OneNpManager::LoadSnapshot(const std::string& name)
 {
