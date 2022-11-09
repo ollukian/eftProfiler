@@ -280,7 +280,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     EFT_PROF_DEBUG("create np manager");
     ranking::OneNpManager npManager = ranking::OneNpManager::create()
-            .UsingPdf(pdf)
+            .UsingPdf(const_cast<RooAbsPdf *>(pdf))
             .UsingData(&data)
             .UsingGlobalObservables(globObs)
             .UsingNPs(nps)
@@ -632,8 +632,8 @@ void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
 
     SetAllGlobObsTo(0., 0.);
     NpRankingStudySettings settings;
-    settings.poi
-    DoFitAllNpFloat();
+    //settings.poi
+    //DoFitAllNpFloat();
     //SetUpGlobObs(studyType);
 
     string ds_name;
