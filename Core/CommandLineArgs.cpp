@@ -32,7 +32,6 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     key = TrimKey(key);
     vector<string> vals;
 
-    // FixMe: If name of the ws contains "-" then it's assumed to be a new key...
 
     for (auto& token : tokens) {
         cout << fmt::format("token: [{}]", token) << endl;

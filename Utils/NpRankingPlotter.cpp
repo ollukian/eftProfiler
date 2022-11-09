@@ -398,6 +398,10 @@ namespace eft::plot {
         EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
         auto info = ComputeInfoForPlot(res);
 
+    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
+        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
+        auto info = ComputeInfoForPlot(res);
+
 
         //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
         //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
