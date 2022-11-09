@@ -397,28 +397,6 @@ namespace eft::plot {
     void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
         EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
         auto info = ComputeInfoForPlot(res);
-
-    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
-        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
-        auto info = ComputeInfoForPlot(res);
-
-    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
-        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
-        auto info = ComputeInfoForPlot(res);
-
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
-
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
-
-        //static constexpr float error_full = 0.677982275;
-
-//    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {:5}, full_err: {:5} ==> impact: {:5}",
-//                   res.poi_fixed_np_err,
-//                   error_full,
-//                   info.impact);
-
         res_for_plot_.push_back(std::move(info));
     }
 

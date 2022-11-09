@@ -278,7 +278,7 @@ inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { ret
 
 inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept
 {
-    EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
+    //EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
     const auto val = GetParVal(par);
     const auto err = GetParErr(par);
     EFT_PROF_INFO("WorkspaceWrapper::VaryParNbSigmas set {} ({} +- {}) to {}",
