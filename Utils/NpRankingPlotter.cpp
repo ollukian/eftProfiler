@@ -158,7 +158,6 @@ namespace eft::plot {
                               +
                               (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
 
-                      //return l.impact > r.impact;
                   }
         );
 
@@ -218,6 +217,7 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
+        histo->GetYaxis()->SetTitleOffset(1.4);
         histo->GetYaxis()->SetTitle("#Delta #mu");
 
         //histo->SetFillColor(kBlue);
@@ -247,7 +247,7 @@ namespace eft::plot {
 
 
 
-        auto legend = make_unique<TLegend>(0.7, 0.85, 0.95, 0.95);
+        auto legend = make_unique<TLegend>(0.7, 0.85, 0.90, 0.95);
         legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
         legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
         legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
@@ -258,7 +258,7 @@ namespace eft::plot {
 
         auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
 
-        canvas->SetRightMargin(0.05f);
+        canvas->SetRightMargin(0.10f); // 0.05
         canvas->SetLeftMargin(0.10f);
         canvas->SetTopMargin(0.05f);
         canvas->SetBottomMargin(0.4f);
@@ -316,18 +316,45 @@ namespace eft::plot {
         legend->Draw("same");
 
         // draw second axes for nps
-//    auto axis_nps = make_unique<TGaxis>(gPad->GetUxmin(),
-//                                        gPad->GetUymin(),
-//                                        gPad->GetUxmax(),
-//                                        gPad->GetUymax(),
-//                                        -1.2f,
-//                                        1.2f,
-//                                        510,
-//                                        "+L");
+        auto axis_nps = make_unique<TGaxis>(
+                                        nb_systematics,
+                                        - 1 * scaling,
+                                        nb_systematics,
+                                        1 * scaling,
+                                        -1.f,
+                                        1.f,
+                                        510,
+                                        "+L");
         //axis_nps->SetLineColor(kRed);
         //axis_nps->SetTextColor(kRed);
-        //axis_nps->SetTitle("#hat{#theta}");
-        //axis_nps->Draw();
+        axis_nps->SetTitle("#hat{#theta} - #theta_{0}");
+        //axis_nps->SetTextSize(0.5);
+        //axis_nps->SetLabelColor(kRed);
+        axis_nps->SetLabelFont(histo->GetLabelFont());
+        axis_nps->SetLabelSize(0.02);
+        axis_nps->SetTitleOffset(1.0);
+        axis_nps->SetTitleSize(0.02);
+        axis_nps->Draw();
+
+        TLatex latex;
+        float y = 0.9f, dy = 0.03f;
+        float x = 0.12f;
+        latex.SetNDC();
+        latex.SetTextSize(0.040); //0.045 is std
+        //mylatex.SetTextFont(72);
+        latex.SetTextFont(72);
+        latex.SetTextColor(kBlack);
+        latex.DrawLatex(x, y, "ATLAS");
+        latex.SetTextFont(42); //put back the font
+        //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
+        latex.DrawLatex(x + 0.10, y, "Internal");
+
+        latex.SetTextSize(0.030); //0.045 is std
+        latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
+        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
+        latex.DrawLatex(0.35, y, "info on selection (text) names");
+
+        latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
 
         string ignore_part;
         string select_part;
@@ -371,10 +398,19 @@ namespace eft::plot {
         EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
         auto info = ComputeInfoForPlot(res);
 
+    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
+        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
+        auto info = ComputeInfoForPlot(res);
+
+    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
+        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
+        auto info = ComputeInfoForPlot(res);
 
         //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
         //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
 
+        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
+        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
 
         //static constexpr float error_full = 0.677982275;
 
@@ -430,6 +466,12 @@ namespace eft::plot {
         info.impact_minus_sigma_var = res.poi_minus_sigma_variation_val - res.poi_fixed_np_val;
         info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_fixed_np_val;
         info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
+
+        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, np val: {:10} ==> np error: {:10}",
+                       res.np_name,
+                       res.poi_fixed_np_val,
+                       res.np_val,
+                       res.np_err);
 
         EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
                        res.np_name,

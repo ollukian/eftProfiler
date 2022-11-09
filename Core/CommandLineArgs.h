@@ -74,6 +74,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
             val = GetVals(key).value();
             // TODO: to do the same with arrays and other containers. decay_type ?
+            // TODO: add unfolding of a vector by looping over it and extracting components
         }
         else if constexpr(std::is_floating_point_v<T>) {
             val = stod(val_opt.value());
@@ -87,6 +88,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         }
         else {
             EFT_PROF_CRITICAL("[CommandLineArgs] value for key: {:10} ==> {:10} UNKNOWN TYPE", key, val_opt.value());
+            EFT_PROF_CRITICAL("[CommandLineArgs] support of: string, int, float, string, vector<string>");
             return false;
         }
     } // if has value

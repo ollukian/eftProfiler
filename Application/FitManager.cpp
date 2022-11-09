@@ -12,6 +12,8 @@
 #include "NpRankingStudyRes.h"
 #include "Ranking/OneNpManager.h"
 
+#include "FitSettings.h"
+
 #include <fstream>
 #include <iomanip>
 #include "CommandLineArgs.h"
@@ -53,7 +55,11 @@ void FitManager::DoGlobalFit()
     fit::Fitter fitter;
     fitter.SetGlobs(globObs);
     fitter.SetNps(np);
-    auto res = fitter.Fit(ds, pdf);
+    fit::FitSettings settings;
+    settings.data = ds;
+    settings.pdf = pdf;
+    settings.nps = args_["pois"];
+    auto res = fitter.Fit(settings);
     //auto nll = fitter.CreatNll(ds, pdf, globObs, np);
     //cout << "[minimize it]" << endl;
     //auto res = fitter.Minimize(nll, pdf);
@@ -125,6 +131,17 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //auto pdf = GetPdf("pdf_total");
     RooAbsData& data = *data_["ds_total"];
     RooAbsPdf*  pdf = funcs_["pdf_total"];
+
+    fit::FitSettings fitSettings;
+    fitSettings.pdf = pdf;
+    fitSettings.data = &data;
+    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
+    fitSettings.errors = settings.errors;
+    fitSettings.nps = nps;
+
+    fit::Fitter fitter;
+    fitter.SetNps(nps);
+    fitter.SetGlobs(globObs);
     //auto* globObs = (args_["globObs"]);
 
 
@@ -171,7 +188,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     //ws_->SetVarErr(res.poi_name, 0.669981);
     //ws_->FloatVal(res.poi_name);
 
-    fit::Fitter fitter;
     //fitter.UsingGlobalObservables(globObs);
     //fitter.UsingNPs(nps);
 
@@ -202,10 +218,10 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err_after_free_fit);
 
     EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
-    auto nll = fitter.CreatNll(&data, pdf, globObs, nps);
 
+    fitSettings.nll = fitter.CreatNll(fitSettings);
     //auto fitRes = fitter.Fit(&data, pdf);
-    auto fitRes = fitter.Minimize(nll, pdf);
+    auto fitRes = fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
 
     // TODO: create:
@@ -239,7 +255,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     ws()->VaryParNbSigmas(res.np_name, +1.f);
     ws_->SetVarVal(res.poi_name, 0.f);
-    fitter.Minimize(nll, pdf);
+    fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] after +1 sigma variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
                   ws()->GetParVal(res.poi_name),
@@ -266,7 +282,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err);
     ws()->VaryParNbSigmas(res.np_name, -1.f);
     ws_->SetVarVal(res.poi_name, 0.f);
-    fitter.Minimize(nll, pdf);
+    fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] after -1 sigma variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
                   ws()->GetParVal(res.poi_name),
@@ -290,7 +306,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err);
     ws()->SetVarVal(res.np_name, np_val + 1.);
     ws_->SetVarVal(res.poi_name, 0.f);
-    fitter.Minimize(nll, pdf);
+    fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] after +1 variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
                   ws()->GetParVal(res.poi_name),
@@ -314,7 +330,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     ws()->SetVarErr(res.np_name, np_err);
     ws()->SetVarVal(res.np_name, np_val - 1.);
     ws_->SetVarVal(res.poi_name, 0.f);
-    fitter.Minimize(nll, pdf);
+    fitter.Minimize(fitSettings);
     EFT_PROF_INFO("[ComputeNpRanking] after -1 variation of {}", res.np_name);
     EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
                   ws()->GetParVal(res.poi_name),
@@ -368,7 +384,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     //SetAllGlobObsErrorsTo(0);
-    SetAllNuisanceParamsTo(0, 0);
+    //SetAllNuisanceParamsTo(0, 0);
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
     //SetAllNuisanceParamsFloat();
     //EFT_PROF_INFO("[DoFitAllNpFloat] all nuisance parameters let to float and set to zero");
@@ -408,21 +424,28 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     ws_->FloatVal(res.poi_name);
 
     fit::Fitter fitter;
+    fitter.SetNps(nps);
+    fitter.SetGlobs(globObs);
+
+    fit::FitSettings fitSettings;
+    fitSettings.pdf = pdf;
+    fitSettings.data = data;
+    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
+    fitSettings.errors = settings.errors;
+
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
-    auto nll = fitter.CreatNll(data, pdf, globObs, nps);
-    //EFT_PROF_INFO("[DoFitAllNpFloat] print nps before free fit:");
-    //args_["np"]->Print("v");
-    //EFT_PROF_INFO("[DoFitAllNpFloat] minimize nll for free fit");
-    auto fitRes = fitter.Minimize(nll, pdf);
+    auto fitRes = fitter.Fit(fitSettings);
+    //auto nll = fitter.CreatNll(fitSettings);
+    //auto fitRes = fitter.Minimize(fitSettings);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
     //res.ExtractPoiValErr(ws_, res.poi_name);
-    res.nll = nll->getVal();
+    res.nll = fitSettings.nll->getVal();
 
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_free_fit_val, res.poi_free_fit_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
@@ -521,14 +544,14 @@ void FitManager::ExtractPOIs() noexcept
     args_["pois"] = (RooArgSet *) ws_->GetPOIs();
     // create list of pois in string format
     pois_.reserve(args_["pois"]->size());
-    cout << fmt::format("[FitManager] Extracted {} POIs to args[pois]", args_["pois"]->size());
-    cout << fmt::format("[FitManager] create a list of POIs in string format...");
+    EFT_PROF_INFO("[FitManager] Extracted {} POIs to args[pois]", args_["pois"]->size());
+    EFT_PROF_DEBUG("[FitManager] create a list of POIs in string format...");
     for (const auto& poi : *args_["pois"]) {
         string name = {poi->GetTitle()};
         pois_.push_back(std::move(name));
     }
-    cout << fmt::format("[FitManager] list of POIs in string format:");
-    for (const auto& poi : pois_) { cout << "\t" << poi << endl; }
+    EFT_PROF_DEBUG("[FitManager] list of POIs in string format:");
+    for (const auto& poi : pois_) { EFT_PROF_INFO("[{}]", poi); }
 }
 
 void FitManager::Init(FitManagerConfig&& config)
@@ -564,70 +587,10 @@ void FitManager::Init(FitManagerConfig&& config)
     EFT_PROF_INFO("[FitManager] paired_globs {}:",      pairConstr.paired_globs->size());
     EFT_PROF_INFO("[FitManager] paired_nps {}:",        pairConstr.paired_nps->size());
 
-    //auto paired_globs = new RooArgSet();
-    //auto paired_nps = new RooArgSet();
-
     lists_[ "paired_globs" ] = pairConstr.paired_globs;
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;
     ExtractNotGammaNps();
 
-//    for (const auto& pdf : *pairConstr.paired_constr_pdf)
-//    {
-//        pdf->Print();
-//    }
-//
-//    EFT_PROF_INFO("[FitManager] paired_globs {}:", pairConstr.paired_globs->size());
-//    for (const auto& pdf : *pairConstr.paired_globs)
-//    {
-//        pdf->Print();
-//    }
-//
-//    EFT_PROF_INFO("[FitManager] paired_nps {}:", pairConstr.paired_nps->size());
-//    for (const auto& pdf : *pairConstr.paired_nps)
-//    {
-//        pdf->Print();
-//    }
-
-    //throw std::runtime_error("enough ;)");
-
-   /* cout << setfill('*') << setw(45) << "" << endl;
-    cout << setw(20) << "" << setw(15) << " global obs: " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    GetArgsClosure().at("globObs")->Print("v");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " obs: " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    GetArgsClosure().at("obs")->Print("v");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " All Np " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    GetArgsClosure().at("np_all")->Print("v");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " real Np " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    GetArgsClosure().at("np")->Print("v");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " dataComb " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    GetDataClosure().at("ds_total")->Print("v");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setw(20) << "" << setw(15) << " pdfComb " << setw(10) << "" << endl;
-    cout << setw(45) << "" << endl;
-    cout << setfill(' ');
-    GetFuncClosure().at("pdf_total")->Print("v");
-    cout << setfill('*') << setw(45) << "" << endl;
-
-    cout << setfill(' ');*/
     EFT_PROF_INFO("[FitManager] INIT DONE");
 }
 
@@ -654,31 +617,22 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, top);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
+    //EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, errors);
+    // TODO: add support of fmt::format for vectors of strings to enable the
+    // extraction of cmd line args with a macto
 
 #undef EFT_SET_VAL_IF_EXISTS
 
     if (commandLineArgs.HasKey("no_gamma"))
         config.no_gamma = true;
 
-//    if (commandLineArgs.SetValIfArgExists("res_path", config.res_path)) {
-//        EFT_PROF_INFO("Set res_path: {}", config.res_path);
-//    }
-//
-//    if (commandLineArgs.SetValIfArgExists("worker_id", config.worker_id)) {
-//        EFT_PROF_INFO("Set worker_id: {}", config.res_path);
-//    }
-//
-//    if (commandLineArgs.SetValIfArgExists("poi", config.poi)) {
-//        EFT_PROF_INFO("Set poi: {}", config.poi);
-//    }
-//
-//    if (commandLineArgs.SetValIfArgExists("ws_path", config.ws_path)) {
-//        EFT_PROF_INFO("Set ws_path: {}", config.ws_path);
-//    }
-//
-//    if (commandLineArgs.SetValIfArgExists("ws_name", config.ws_name)) {
-//        EFT_PROF_INFO("Set ws_name: {}", config.ws_name);
-//    }
+    if (commandLineArgs.SetValIfArgExists("errors", config.errors)) {
+        EFT_PROF_INFO("Set errors with: {} elements", config.errors.size());
+    }
+
+    // reconstruct errors enum from the input strings
+
+
 }
 
 void FitManager::CreateAsimovData(PrePostFit studyType) noexcept

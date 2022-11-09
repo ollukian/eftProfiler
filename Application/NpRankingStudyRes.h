@@ -6,6 +6,7 @@
 #define EFTPROFILER_NPRANKINGSTUDYRES_H
 
 #include "nlohmann/json.hpp"
+#include "ErrorsReEvaluation.h"
 // fwd declaration
 class IWorkspaceWrapper;
 
@@ -101,6 +102,7 @@ struct NpRankingStudySettings
     StatType  statType  {StatType::NP_RANKING};
     StudyType studyType {StudyType::NOTDEF};
     PrePostFit prePostFit {PrePostFit::OBSERVED};
+    fit::Errors errors {fit::Errors::DEFAULT};
     bool no_gamma {false};
 };
 
