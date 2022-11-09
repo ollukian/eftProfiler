@@ -97,13 +97,13 @@ FitUtils::GetConstraintPdfs(RooAbsPdf* pdf,
     for (const auto constrain : *all_constraints) {
         //EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs deal with {} constrain", constrain->GetName());
         if (constrain->IsA() == RooProdPdf::Class()) {
-            EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs {} is composite, add components", constrain->GetName());
+            //EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs {} is composite, add components", constrain->GetName());
             auto components = new RooArgSet();
             FindUniqueProdComponents( dynamic_cast<RooProdPdf*>(constrain), components );
             constraint_pdfs->add(*components);
         }
         else {
-            EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs {} is not composite, add it directly", constrain->GetName());
+            //EFT_PROF_DEBUG("FitUtils::GetConstraintPdfs {} is not composite, add it directly", constrain->GetName());
             constraint_pdfs->add(*constrain);
         }
     }
@@ -137,18 +137,18 @@ RooArgSet* FitUtils::UnfoldComponents(RooAbsArg* target,
     EFT_PROF_TRACE("FitUtils::UnfoldComponents");
     auto found_components = new RooArgSet();
     if (reference_components->contains(*target)) {
-        EFT_PROF_DEBUG("FitUtils::UnfoldComponents ref_comp contains target, add the target to the found comps");
+        //EFT_PROF_DEBUG("FitUtils::UnfoldComponents ref_comp contains target, add the target to the found comps");
         found_components->add(*target);
     }
     auto inner_components = new RooArgSet();
     if (target->IsA() == RooAbsPdf::Class()){
-        EFT_PROF_DEBUG("FitUtils::UnfoldComponents target is RooAbsPdf, add targer->components, substruct target to the inner_comp");
+        //EFT_PROF_DEBUG("FitUtils::UnfoldComponents target is RooAbsPdf, add targer->components, substruct target to the inner_comp");
         inner_components = ((RooAbsPdf*) target)->getComponents();
         inner_components->remove(*target);
     }
     else if (target->IsA() == RooProduct::Class()) {
         inner_components->add(((RooProduct *) target)->components());
-        EFT_PROF_DEBUG("FitUtils::UnfoldComponents target is RooProduct. add target->components to the inner_components");
+        //EFT_PROF_DEBUG("FitUtils::UnfoldComponents target is RooProduct. add target->components to the inner_components");
     }
     if (inner_components->getSize() != 0){
         for (const auto& component : *inner_components) {
