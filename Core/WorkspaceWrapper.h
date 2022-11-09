@@ -145,19 +145,12 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
-    std::cout << fmt::format("Fix {} const", poi) << std::endl;
-    EFT_PROF_DEBUG("[WorkspaceWrapper::FixValConst status of {} before fixing to const", poi);
-    //std::cout << " * status of " << poi << " before: " << std::endl;
-
+    EFT_PROF_DEBUG("[WorkspaceWrapper::FixValConst {} const", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
-        std::cout << fmt::format("FixValConst[{}] ERROR, var is not present", poi);
+        EFT_PROF_CRITICAL("WorkspaceWrapper::FixValConst variable {} is not present in the WS", poi);
         return;
     }
-
-    ws_->var(poi.c_str())->Print("");
     ws_->var( poi.c_str() )->setConstant(true);
-    EFT_PROF_DEBUG("[WorkspaceWrapper]{FixValConst} status of {} after fixing to const", poi);
-    ws_->var(poi.c_str())->Print("");
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)

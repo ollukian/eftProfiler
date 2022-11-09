@@ -45,6 +45,7 @@ public:
     inline const StudyRes& GetResult(const std::string& type) const;
     void RunPreFit(char sign);
     void RunPostFit(char sign);
+    void RunFitFixingNpAtCentralValue();
 
     OneNpManager(const OneNpManager&) = default;
     OneNpManager(OneNpManager&&) = delete;

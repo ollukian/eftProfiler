@@ -75,6 +75,15 @@ void OneNpManager::RunPostFit(char sign)
 
     SavePostFit(sign);
 }
+void OneNpManager::RunFitFixingNpAtCentralValue()
+{
+    EFT_PROF_INFO("[OneNpManager] run fit fixing np at its central value");
+    ResetToInitState();
+
+    RunFit();
+
+    SaveResAs("fixed_np_fit");
+}
 
 void OneNpManager::RunFit()
 {

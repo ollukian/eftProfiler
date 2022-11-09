@@ -41,10 +41,7 @@ int main(int argc, char* argv[]) {
         auto* manager = new eft::stats::FitManager();
         eft::stats::FitManagerConfig config;
 
-        config.ws_name = "combWS";
         config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
-        config.model_config = "ModelConfig";
-
         eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;

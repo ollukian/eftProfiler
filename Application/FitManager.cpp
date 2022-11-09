@@ -295,18 +295,22 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
 
-    res.poi_fixed_np_val = np_val_free;
-    res.poi_fixed_np_err = np_err_free;
+    res.np_val = np_val_free;
+    res.np_err = np_err_free;
 
     npManager.SetNpPreferredValue(np_val_free, np_err_free);
     npManager.SetPoiPreferredValue(0., 0.);
 
+    npManager.RunFitFixingNpAtCentralValue();
     npManager.RunPreFit('+');
     npManager.RunPreFit('-');
     npManager.RunPostFit('+');
     npManager.RunPostFit('-');
 
     // TODO: get NpRankingStudyRes directly from the NpManager
+    res.poi_fixed_np_val = npManager.GetResult("fixed_np_fit").poi_val;
+    res.poi_fixed_np_err = npManager.GetResult("fixed_np_fit").poi_err;
+
     res.poi_plus_one_variation_val = npManager.GetResult("prefit_+").poi_val;
     res.poi_plus_one_variation_err = npManager.GetResult("prefit_+").poi_err;
 
@@ -320,20 +324,19 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.poi_minus_sigma_variation_err = npManager.GetResult("postfit_-").poi_err;
 
 
-
     EFT_PROF_INFO("[ComputeNpRanking] results:");
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
     EFT_PROF_INFO("|{:^15} | {:^15} | {:^15}|", "Study", "poi value", "poi error");
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "free fit", res.poi_free_fit_val,              res.poi_free_fit_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "fixed np", res.poi_fixed_np_val,              res.poi_fixed_np_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 sigma", res.poi_plus_sigma_variation_val,  res.poi_plus_sigma_variation_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "+1 ",      res.poi_plus_one_variation_val,    res.poi_plus_sigma_variation_err);
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", "-1 ",      res.poi_minus_one_variation_val,   res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", "free fit", res.poi_free_fit_val,              res.poi_free_fit_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", "fixed np", res.poi_fixed_np_val,              res.poi_fixed_np_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", "+1 sigma", res.poi_plus_sigma_variation_val,  res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", "-1 sigma", res.poi_minus_sigma_variation_val, res.poi_minus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", "+1 ",      res.poi_plus_one_variation_val,    res.poi_plus_sigma_variation_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", "-1 ",      res.poi_minus_one_variation_val,   res.poi_minus_sigma_variation_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
     EFT_PROF_INFO("|{:^15} | {:^15} | {:^15}|", "Study", "np value", "np error");
-    EFT_PROF_INFO("|{:^15} | {:^10} +- {:^10}|", " * ", res.np_val, res.np_err);
+    EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", " * ", res.np_val, res.np_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
     const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
@@ -598,21 +601,39 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, top);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, snapshot);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
     //EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, errors);
     // TODO: add support of fmt::format for vectors of strings to enable the
     // extraction of cmd line args with a macto
 
 #undef EFT_SET_VAL_IF_EXISTS
 
-    if (commandLineArgs.HasKey("no_gamma"))
-        config.no_gamma = true;
+// Parse bool options
+
+#ifndef EFT_ADD_BOOL_OPTIONS
+#define EFT_ADD_BOOL_OPTIONS(args, config, param)                       \
+    if (args.HasKey(#param)) {                                          \
+        config.param = true;                                            \
+        EFT_PROF_INFO("[FitManager] Add flag option: {:15}", #param);    \
+     }
+#endif
+
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, no_gamma);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, fit_all_pois);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, fit_single_poi);
+
+#undef EFT_ADD_BOOL_OPTIONS
+
 
     if (commandLineArgs.SetValIfArgExists("errors", config.errors)) {
         EFT_PROF_INFO("Set errors with: {} elements", config.errors.size());
     }
 
-    // reconstruct errors enum from the input strings
-
+    if (config.fit_all_pois && config.fit_single_poi) {
+        EFT_PROF_CRITICAL("CommandLineArgs impossible to use \"fit_all_pois\" and \"fit_single_poi\" simultaneously");
+        throw std::runtime_error("ERROR ^------- see the message above");
+    }
 
 }
 
