@@ -21,9 +21,9 @@ int main(int argc, char* argv[]) {
             cout << '\t' << task << endl;
         }
         cout << "* Available keys" << endl;
-        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40+", "=", "=", "=") << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
         cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}", "type", "key", "default value", "comment") << endl;
-        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=") << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
         for (const auto& options : std::vector<std::array<string, 4>>{
                 {"string",          "task",             "",             "Use on of the following: compute_ranking, plot_ranking, compute_unconstrained"},
                 {"string",          "ws_path",          "",             ""},
@@ -52,7 +52,7 @@ int main(int argc, char* argv[]) {
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}", options[0], options[1], options[2], options[3]) << endl;
         }
-        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=") << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
         return 0;
     }
 
