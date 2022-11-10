@@ -385,13 +385,17 @@ namespace eft::plot {
             //                   matches_in_one_string);
         }
 
-        string name = fmt::format("Impact_{}_{}_nps{}{}.pdf",
-                                  res_for_plot_after_selector[0].poi,
-                                  settings->top,
-                                  select_part,
-                                  ignore_part);
 
-        canvas->SaveAs(std::move(name).c_str());
+        for (const std::string& fileformat : settings->fileformat) {
+            string name = fmt::format("Impact_{}_{}_nps{}{}.{}",
+                                      res_for_plot_after_selector[ 0 ].poi,
+                                      settings->top,
+                                      select_part,
+                                      ignore_part,
+                                      fileformat);
+
+            canvas->SaveAs(std::move(name).c_str());
+        }
     }
 
     void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
