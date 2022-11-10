@@ -72,6 +72,7 @@ public:
     inline const RooArgSet* GetGlobObs() const override;
     inline const RooArgSet* GetPOIs() const override;
     inline const Categories& GetCats() const override;
+    inline RooRealVar* GetVar(const std::string& name) override;
 
     inline RooDataSet*      GetData(const std::string& name) override;
     inline RooSimultaneous* GetCombinedPdf(const std::string& name) override;
@@ -130,7 +131,10 @@ private:
     //inline void FixValConst(const std::vector<std::string>& pois) { for (const std::string& poi : pois) { ws_->var( poi.c_str() )->setConstant(true) override; } } override;
 };
 
-
+inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
+{
+    return ws_->var(name.c_str());
+}
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
     TFile* f_ = TFile::Open(std::move(path).c_str());
