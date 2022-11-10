@@ -20,6 +20,29 @@ int main(int argc, char* argv[]) {
         for (const auto& task : {"compute_ranking, plot_ranking, compute_unconstrained"}) {
             cout << '\t' << task << endl;
         }
+        cout << "* Available keys" << endl;
+        cout << "    type            key         default value;\n" << endl;
+        cout << fmt::format("{:=40}") << endl;
+        for (const auto& option : {
+                                 "    string            ws_path;\n"
+                                 "    string            ws_name         {\"combWS\"};\n"
+                                 "    string            model_config    {\"ModelConfig\"};\n"
+                                 "    string            comb_pdf        {\"combPdf\"};\n"
+                                 "    string            comb_data       {\"combData\"};\n"
+                                 "    string            res_path        {\".\"};\n"
+                                 "    string            poi             {\"cHG\"};\n"
+                                 "    vector<string>    errors;\n"
+                                 "    size_t            worker_id       {0};\n"
+                                 "    size_t            top             {20}; // np pois to plot\n"
+                                 "    double            fit_precision   {1E-3};\n"
+                                 "    double            poi_init_val    {0.};\n"
+                                 "    string            study_type;\n"
+                                 "    string            snapshot;\n"
+                                 "    bool              no_gamma        {false};\n"
+                                 "    bool              fit_all_pois    {false};\n"
+                                 "    bool              fit_single_poi  {true};\n"}) {
+            cout << '\t' << option << endl;
+        }
         return 0;
     }
 
