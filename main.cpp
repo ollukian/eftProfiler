@@ -21,8 +21,9 @@ int main(int argc, char* argv[]) {
             cout << '\t' << task << endl;
         }
         cout << "* Available keys" << endl;
-        cout << "    type            key         default value;\n" << endl;
-        cout << fmt::format("{:=40}") << endl;
+        cout << fmt::format("+{:=^25}==={:=^20}===={:=^15}+", "=", "=", "=") << endl;
+        cout << fmt::format("|{:^25} | {:^20} | {:^15}|", "type", "key", "default value") << endl;
+        cout << fmt::format("+{:=^25}==={:=^20}===={:=^15}+", "=", "=", "=") << endl;
         for (const auto& option : {
                                  "    string            ws_path;\n"
                                  "    string            ws_name         {\"combWS\"};\n"
@@ -40,8 +41,9 @@ int main(int argc, char* argv[]) {
                                  "    string            snapshot;\n"
                                  "    bool              no_gamma        {false};\n"
                                  "    bool              fit_all_pois    {false};\n"
-                                 "    bool              fit_single_poi  {true};\n"}) {
-            cout << '\t' << option << endl;
+                                 "    bool              fit_single_poi  {true};\n"})
+        {
+            cout << option << endl;
         }
         return 0;
     }
