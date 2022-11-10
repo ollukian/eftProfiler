@@ -716,7 +716,7 @@ void FitManager::ExtractNotGammaNps() noexcept
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
         if (name.find("gamma") == std::string::npos) {
-            EFT_PROF_DEBUG("add {:50} as not-gamma", name);
+            EFT_PROF_DEBUG("add {:60} as not-gamma", name);
             non_gamma_nps->add(*np);
         }
     }
@@ -742,7 +742,7 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
             {
                 std::string np_name   = np->GetName();
                 std::string glob_name = glob->GetName();
-                EFT_PROF_DEBUG("Set glob: {} to the value of np: {} => {}",
+                EFT_PROF_DEBUG("Set glob: {:60} to the value of np: {:1} => {:10}",
                                std::move(glob_name),
                                std::move(np_name),
                                np->getVal()
