@@ -21,30 +21,38 @@ int main(int argc, char* argv[]) {
             cout << '\t' << task << endl;
         }
         cout << "* Available keys" << endl;
-        cout << fmt::format("+{:=^25}==={:=^20}===={:=^15}+", "=", "=", "=") << endl;
-        cout << fmt::format("|{:^25} | {:^20} | {:^15}|", "type", "key", "default value") << endl;
-        cout << fmt::format("+{:=^25}==={:=^20}===={:=^15}+", "=", "=", "=") << endl;
-        for (const auto& option : {
-                                 "    string            ws_path;\n"
-                                 "    string            ws_name         {\"combWS\"};\n"
-                                 "    string            model_config    {\"ModelConfig\"};\n"
-                                 "    string            comb_pdf        {\"combPdf\"};\n"
-                                 "    string            comb_data       {\"combData\"};\n"
-                                 "    string            res_path        {\".\"};\n"
-                                 "    string            poi             {\"cHG\"};\n"
-                                 "    vector<string>    errors;\n"
-                                 "    size_t            worker_id       {0};\n"
-                                 "    size_t            top             {20}; // np pois to plot\n"
-                                 "    double            fit_precision   {1E-3};\n"
-                                 "    double            poi_init_val    {0.};\n"
-                                 "    string            study_type;\n"
-                                 "    string            snapshot;\n"
-                                 "    bool              no_gamma        {false};\n"
-                                 "    bool              fit_all_pois    {false};\n"
-                                 "    bool              fit_single_poi  {true};\n"})
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40+", "=", "=", "=") << endl;
+        cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}", "type", "key", "default value", "comment") << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=") << endl;
+        for (const auto& options : std::vector<std::array<string, 4>>{
+                {"string",          "task",             "",             "Use on of the following: compute_ranking, plot_ranking, compute_unconstrained"},
+                {"string",          "ws_path",          "",             ""},
+                {"string",          "ws_name",          "combWS",       ""},
+                {"string",          "model_config",     "ModelConfig",  ""},
+                {"string",          "comb_pdf",         "combPdf",      ""},
+                {"string",          "comb_data",        "combData",     ""},
+                {"string",          "res_path",         "."             "path where to save the resulting json file"},
+                {"string",          "poi",              "cHG",          ""},
+                {"vector<string>",  "errors",           "",             ""},
+                {"size_t",          "worker_id",        "0",            ""},
+                {"size_t",          "top",              "20",           "number of pois to plot"},
+                {"double",          "fit_precision",    "1E-3",         ""},
+                {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
+                {"string",          "study_type",       "",             ""},
+                {"string",          "snapshot",         "",             ""},
+                {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
+                {"bool",            "fit_all_pois",    "false",         "If fit all pois available in the Workspace"},
+                {"bool",            "fit_single_poi",  "true",          "If fix all pois available in the Workspace, apart from the one to fit"},
+                {"size_t",          "top {10};"},
+                {"string",          "input",            "",             ""},
+                {"vector<string>",  "fileformat",       "pdf",          "Format(s) of the output plot"},
+                {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
+                {"vector<string>",  "match_names",      "",             "Patterns in the names of systematics to be matched (not regex yet), just string.find()"},
+        })
         {
-            cout << option << endl;
+            cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}", options[0], options[1], options[2], options[3]) << endl;
         }
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=") << endl;
         return 0;
     }
 
