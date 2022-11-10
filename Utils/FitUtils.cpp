@@ -134,7 +134,7 @@ void FitUtils::FindUniqueProdComponents(RooProdPdf *base_pdf,
 RooArgSet* FitUtils::UnfoldComponents(RooAbsArg* target,
                                       const RooArgSet* reference_components)
 {
-    EFT_PROF_TRACE("FitUtils::UnfoldComponents");
+    //EFT_PROF_TRACE("FitUtils::UnfoldComponents");
     auto found_components = new RooArgSet();
     if (reference_components->contains(*target)) {
         //EFT_PROF_DEBUG("FitUtils::UnfoldComponents ref_comp contains target, add the target to the found comps");
@@ -155,7 +155,7 @@ RooArgSet* FitUtils::UnfoldComponents(RooAbsArg* target,
             found_components->add(*UnfoldComponents(component, reference_components));
         }
     }
-    EFT_PROF_DEBUG("UnfoldComponents leave with {} elems", found_components->size());
+    //EFT_PROF_DEBUG("UnfoldComponents leave with {} elems", found_components->size());
     return found_components;
 }
 

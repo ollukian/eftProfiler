@@ -14,9 +14,9 @@ namespace eft::stats::ranking {
 
 void OneNpManager::ResetNp() {
     EFT_PROF_TRACE("OneNpManager::ResetNp");
-    ws_->FixValConst(np_);
     ws_->SetVarVal(np_, np_found_in_data_value);
     ws_->SetVarErr(np_, np_found_in_data_error);
+    ws_->FixValConst(np_);
 }
 
 void OneNpManager::ResetPoi()

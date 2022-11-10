@@ -163,10 +163,10 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
     EFT_PROF_TRACE("[WorkspaceWrapper]::FloatVal {}", poi);
-    EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} before", poi);
+    //EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} before", poi);
     ws_->var( poi.c_str() )->setConstant(false);
-    EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} after", poi);
-    ws_->var( poi.c_str() )->Print();
+    //EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} after", poi);
+    //ws_->var( poi.c_str() )->Print();
 }
 
 inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)

@@ -301,7 +301,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     res.np_err = np_err_free;
 
     npManager.SetNpPreferredValue(np_val_free, np_err_free);
-    npManager.SetPoiPreferredValue(0., 0.);
+    npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
 
     npManager.RunFitFixingNpAtCentralValue();
     npManager.RunPreFit('+');
@@ -692,7 +692,7 @@ RooArgSet* FitManager::GetListAsArgSet(const std::string& name) const
 
         throw std::out_of_range(error_message);
     }
-    EFT_PROF_DEBUG("FitManager::GetListAsArgSet for {} - found");
+    //EFT_PROF_DEBUG("FitManager::GetListAsArgSet for {} - found", name);
     const auto* list = lists_.at(name);
     for (const auto elem : *list) {
         res->add(*elem);
@@ -716,7 +716,7 @@ void FitManager::ExtractNotGammaNps() noexcept
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
         if (name.find("gamma") == std::string::npos) {
-            EFT_PROF_DEBUG("add {} as not-gamma", name);
+            EFT_PROF_DEBUG("add {:50} as not-gamma", name);
             non_gamma_nps->add(*np);
         }
     }

@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
     if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
 
-        auto* manager = new eft::stats::FitManager();
+        auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
         config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
@@ -146,11 +146,11 @@ int main(int argc, char* argv[]) {
         settings.studyType = eft::stats::StudyType::OBSERVED;
         settings.poi = config.poi;
         settings.path_to_save_res = "res.json";
+        settings.poi_init_val = config.poi_init_val;
 
         auto worker_id = config.worker_id;
 
         manager->Init(std::move(config));
-        EFT_PROF_WARN("try start compute one worker");
         manager->ComputeNpRankingOneWorker(std::move(settings), worker_id);
     }
     else if (task == "plot_ranking") {
@@ -179,7 +179,7 @@ int main(int argc, char* argv[]) {
     else if (task == "compute_unconstrained") {
         EFT_PROF_INFO("Compute Unconstrained fit");
 
-        auto* manager = new eft::stats::FitManager();
+        auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
         config.ws_name = "combWS";

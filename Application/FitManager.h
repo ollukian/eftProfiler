@@ -341,20 +341,20 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
 
 inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {} +- {}", val, err);
+    //EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {} +- {}", val, err);
     SetAllGlobObsTo(val);
     SetAllGlobObsErrorsTo(err);
 }
 inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsTo {} +- {}", val, err);
+    //EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsTo {} +- {}", val, err);
     SetAllNuisanceParamsToValue(val);
     SetAllNuisanceParamsErrorsTo(err);
 }
 
 inline void FitManager::SetAllNuisanceParamsErrorsTo(float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsErrorsTo {}", err);
+    EFT_PROF_TRACE("[FitManager] SetAllNuisanceParamsErrorsTo {}", err);
     //for (const auto& globObs : *args_["globObs"]) {
     assert(lists_["paired_nps"]->size() != 0);
     for (const auto& np : *lists_["paired_nps"]) {
@@ -403,6 +403,10 @@ inline RooAbsData& FitManager::GetData(PrePostFit studyType) noexcept
     if (studyType == PrePostFit::PREFIT) {
         EFT_PROF_TRACE("[FitManager]{GetData} PREFIT, return data_[ \"asimov_prefit\" ]");
         return *data_[ "asimov_prefit" ];
+        //ws_->raw()->saveSnapshot("condGlobObs", *globalObservables_, kTRUE);
+        //cout << "[ComputeExpectedNll]: after saving snapshots" << endl;
+        //PrintInnerParams();
+        //ws_->raw()->loadSnapshot("condGlobObs");
     }
     EFT_PROF_TRACE("[FitManager]{GetData} POSTFIT, return data_[ \"asimov_postfit\" ]");
     return *data_[ "asimov_postfit" ];
