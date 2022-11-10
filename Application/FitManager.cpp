@@ -343,7 +343,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     if ( !std::filesystem::exists(settings.path_to_save_res) ) {
         EFT_PROF_INFO("Required path directory {} needs to be created", settings.path_to_save_res);
-        std::filesystem::create_directory(settings.path_to_save_res);
+        std::filesystem::create_directories(settings.path_to_save_res);
     }
 
     const string name = fmt::format("{}/res__{}__worker_{}__{}.json",
