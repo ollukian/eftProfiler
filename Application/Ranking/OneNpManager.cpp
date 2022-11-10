@@ -141,6 +141,10 @@ bool OneNpManagerBuilder::CheckValidity()
         EFT_PROF_CRITICAL("OneNpManagerBuilder no WorkSpace set");
         return false;
     }
+    if (result_.pois_ == nullptr) {
+        EFT_PROF_CRITICAL("OneNpManagerBuilder no pois set");
+        return false;
+    }
     if (result_.np_.empty()) {
         EFT_PROF_CRITICAL("OneNpManagerBuilder no np to check set");
         return false;

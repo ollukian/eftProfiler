@@ -290,7 +290,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
             .UsingErrors(settings.errors)
             .UsingWS(ws_)
             .UsingSnapshotWithInitVals("tmp_nps")
-            .ForPOI(res.poi_name);
+            .ForPOI(res.poi_name)
+            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)));
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);
