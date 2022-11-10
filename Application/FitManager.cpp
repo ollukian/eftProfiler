@@ -9,6 +9,8 @@
 
 #include "../Core/Logger.h"
 
+#include "../Vendors/spdlog/fmt/fmt.h"
+
 #include "NpRankingStudyRes.h"
 #include "Ranking/OneNpManager.h"
 
@@ -366,17 +368,15 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
-    SetAllGlobObsTo(0, 0); // to find values for np preferred by data
-    //SetAllGlobObsErrorsTo(0);
-    //SetAllNuisanceParamsTo(0, 0);
+    SetUpGlobObs(settings.prePostFit);
+    //SetAllGlobObsTo(0, 0); // to find values for np preferred by data
     EFT_PROF_INFO("[DoFitAllNpFloat] all global observables set to zero");
-    //SetAllNuisanceParamsFloat();
-    //EFT_PROF_INFO("[DoFitAllNpFloat] all nuisance parameters let to float and set to zero");
-    RooAbsData* data = data_["ds_total"];
-    RooAbsPdf*  pdf = funcs_["pdf_total"];
 
-    //auto* data = GetData("ds_total");
-    //auto* pdf  = GetPdf("pdf_total");
+    //RooAbsData* data = data_["ds_total"];
+    //RooAbsPdf*  pdf = funcs_["pdf_total"];
+
+    auto& data = GetData(settings.prePostFit);
+    auto* pdf  = GetPdf("pdf_total");
     auto* globObs = GetListAsArgSet("paired_globs");
     auto* nps = GetListAsArgSet("paired_nps");
 
@@ -397,13 +397,14 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     res.poi_name = settings.poi;
     res.statType = StatType::FULL;
     res.studyType = StudyType::NOTDEF;
-    res.prePostFit = PrePostFit::PREFIT;
+    res.prePostFit = settings.prePostFit;
 
     //EFT_PROF_INFO("[DoFitAllNpFloat], set all globs to nps");
     //SetGlobsToNPs();
 
     EFT_PROF_INFO("[DoFitAllNpFloat], set all POIs const");
     SetAllPOIsConst();
+    // TODO: float all pois, if needed by a flag
     EFT_PROF_INFO("[DoFitAllNpFloat], float single POI: {}", res.poi_name);
     ws_->FloatVal(res.poi_name);
 
@@ -412,8 +413,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fitter.SetGlobs(globObs);
 
     fit::FitSettings fitSettings;
-    fitSettings.pdf = pdf;
-    fitSettings.data = data;
+    fitSettings.pdf = const_cast<RooAbsPdf*>(pdf);
+    fitSettings.data = &data;
     fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
     fitSettings.errors = settings.errors;
 
@@ -643,18 +644,21 @@ void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
     assert(studyType != PrePostFit::OBSERVED);
 
     if (studyType == PrePostFit::PREFIT && data_.find("asimov_prefit") == data_.end()) {
-        EFT_PROF_INFO("[FitManager]{AsimovData} return cached asimov_prefit");
+        EFT_PROF_INFO("[FitManager]{CreateAsimovData} required Asimov [prefit] is already present, no need to generate new");
         return;
     }
     if (studyType == PrePostFit::POSTFIT && data_.find("asimov_postfit") == data_.end()) {
-        EFT_PROF_INFO("[FitManager]{AsimovData} return cached asimov_postfit");
+        EFT_PROF_INFO("[FitManager]{CreateAsimovData} required Asimov [postfit] is already present, no need to generate new");
         return;
     }
 
+    //SetUpGlobObs(studyType);
     SetAllGlobObsTo(0., 0.);
     NpRankingStudySettings settings;
     //settings.poi
-    //DoFitAllNpFloat();
+    DoFitAllNpFloat(std::move(settings));
+    SetGlobalObservablesToValueFoundInFit();
+    SetAllGlobObsConst();
     //SetUpGlobObs(studyType);
 
     string ds_name;
@@ -681,8 +685,8 @@ RooArgSet* FitManager::GetListAsArgSet(const std::string& name) const
     if (lists_.find(name) == lists_.end())
     {
         EFT_PROF_WARN("FitManager::GetListAsArgSet no list: {} is available", name);
-        string error_message = fmt::format("FitManager::GetListAsArgSet no list: {name} is available,"
-                                           "Use one of the {} followings:", lists_.size());
+        string error_message = fmt::format("FitManager::GetListAsArgSet no list: {} is available,"
+                                           "Use one of the {} followings:", name, lists_.size());
 
         for (const auto& list : lists_) error_message += "[" + list.first + "], ";
 
@@ -720,6 +724,34 @@ void FitManager::ExtractNotGammaNps() noexcept
                   non_gamma_nps->size(),
                   lists_.at("paired_nps")->size());
     lists_["non_gamma_nps"] = non_gamma_nps;
+}
+
+void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
+{
+    EFT_PROF_INFO("Set global observables to the values found in fit for the corresponding Nuisance parameters");
+    auto *globObs = GetListAsArgSet("paired_globs");
+    auto *nps = GetListAsArgSet("paired_nps"); // TODO: refactor to use GetNps
+    const size_t nb_nps = nps->size();
+    for (size_t idx_np {0}; idx_np < nb_nps; ++idx_np)
+    {
+        auto np = dynamic_cast<RooRealVar*>(nps->operator[](idx_np));
+        for (size_t idx_glob {0}; idx_glob < nb_nps; ++idx_glob)
+        {
+            auto glob = dynamic_cast<RooRealVar*>( globObs->operator[](idx_glob) );
+            if (glob->dependsOn(*np))
+            {
+                std::string np_name   = np->GetName();
+                std::string glob_name = glob->GetName();
+                EFT_PROF_DEBUG("Set glob: {} to the value of np: {} => {}",
+                               std::move(glob_name),
+                               std::move(np_name),
+                               np->getVal()
+                               );
+                glob->setVal(np->getVal());
+            }
+        }
+    }
+
 }
 
 
