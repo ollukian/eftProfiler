@@ -175,11 +175,10 @@ int main(int argc, char* argv[]) {
 
         } // construction of errros type
 
-        //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
-        settings.studyType = eft::stats::StudyType::OBSERVED;
-        settings.poi = config.poi;
-        settings.path_to_save_res = "res.json";
-        settings.poi_init_val = config.poi_init_val;
+        settings.poi                = config.poi;
+        settings.path_to_save_res   = config.res_path;
+        settings.poi_init_val       = config.poi_init_val;
+        settings.fit_precision      = config.fit_precision;
 
         auto worker_id = config.worker_id;
 

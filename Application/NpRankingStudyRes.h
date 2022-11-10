@@ -45,8 +45,8 @@ enum class StatType : uint8_t
 enum class PrePostFit : uint8_t
 {
    OBSERVED = 0,
-   PREFIT  = 1,
-   POSTFIT = 2
+   PREFIT   = 1,
+   POSTFIT  = 2
 };
 
 void to_json(nlohmann::json& j, const StudyType& s);
@@ -105,6 +105,7 @@ struct NpRankingStudySettings
     fit::Errors errors {fit::Errors::DEFAULT};
     bool no_gamma {false};
     double poi_init_val {0.};
+    double fit_precision {0.};
 };
 
 // Only information relevant for plotting
