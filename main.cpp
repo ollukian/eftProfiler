@@ -77,6 +77,7 @@ int main(int argc, char* argv[]) {
         eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
+        settings.poi = config.poi;
 
         const string postFit = config.study_type;
         if (postFit == "prefit")

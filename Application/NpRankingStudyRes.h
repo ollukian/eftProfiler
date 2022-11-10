@@ -98,7 +98,7 @@ struct NpRankingStudyRes {
 struct NpRankingStudySettings
 {
     std::string poi;
-    std::string path_to_save_res;
+    std::string path_to_save_res {"/pbs/home/o/ollukian/public/EFT/git/eftProfiler/"};
     StatType  statType  {StatType::NP_RANKING};
     StudyType studyType {StudyType::NOTDEF};
     PrePostFit prePostFit {PrePostFit::OBSERVED};

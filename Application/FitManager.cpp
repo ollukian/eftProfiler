@@ -341,7 +341,13 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", " * ", res.np_val, res.np_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
-    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res__{}__worker_{}__{}.json",
+    if ( !std::filesystem::exists(settings.path_to_save_res) ) {
+        EFT_PROF_INFO("Required path directory {} needs to be created", settings.path_to_save_res);
+        std::filesystem::create_directory(settings.path_to_save_res);
+    }
+
+    const string name = fmt::format("{}/res__{}__worker_{}__{}.json",
+                                    settings.path_to_save_res,
                                     res.poi_name,
                                     workerId,
                                     res.np_name
