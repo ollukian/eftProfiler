@@ -504,7 +504,7 @@ namespace eft::plot {
         }
 
         if (cmdLineArgs->SetValIfArgExists("fileformat", np_ranking_settings->fileformat)) {
-            EFT_PROF_INFO("Set fileformat: {}", np_ranking_settings->fileformat);
+            EFT_PROF_INFO("Set fileformats: {}", np_ranking_settings->fileformat.size());
         }
         if (cmdLineArgs->SetValIfArgExists("ignore_name", np_ranking_settings->ignore_name)) {
             EFT_PROF_INFO("Set ignore_name with: {} elements", np_ranking_settings->ignore_name.size());

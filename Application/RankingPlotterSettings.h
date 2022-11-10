@@ -11,7 +11,7 @@ struct RankingPlotterSettings {
     size_t top {10};
     std::string poi;
     std::string input;
-    std::string fileformat {"pdf"};
+    std::vector<std::string> fileformat {"pdf"};
     std::vector<std::string> ignore_name {};
     std::vector<std::string> match_names {};
 };
