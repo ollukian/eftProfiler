@@ -305,6 +305,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
 
     npManager.RunFitFixingNpAtCentralValue();
+    EFT_PROF_INFO("Now we're only interested in central values of the POI => set error type to default");
+    npManager.SetErrors(fit::Errors::DEFAULT);
     npManager.RunPreFit('+');
     npManager.RunPreFit('-');
     npManager.RunPostFit('+');
