@@ -41,6 +41,7 @@ public:
     static inline OneNpManagerBuilder create();
     inline void SetNpPreferredValue(double val = 0., double err = 0.);
     inline void SetPoiPreferredValue(double val = 1., double err = 0.);
+    inline void SetErrors(fit::Errors errors) noexcept;
 
     inline const StudyRes& GetResult(const std::string& type) const;
     void RunPreFit(char sign);
@@ -110,6 +111,12 @@ private:
 private:
     bool CheckValidity();
 };
+
+inline void OneNpManager::SetErrors(fit::Errors errors) noexcept
+{
+    EFT_PROF_INFO("[OneNpManager] set errors evaluation regime to DEFAULT");
+    errors_ = errors;
+}
 
 OneNpManagerBuilder::operator OneNpManager() {
     if (CheckValidity())
