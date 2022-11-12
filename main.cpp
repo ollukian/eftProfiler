@@ -89,6 +89,8 @@ int main(int argc, char* argv[]) {
         eft::stats::NpRankingStudySettings settings;
         settings.poi = config.poi;
 
+        // TODO: refactor this parsing to be inside "FitManager::ReadConfigFromCommandLine"
+
         const string postFit = config.study_type;
         if (postFit == "prefit")
             settings.prePostFit = eft::stats::PrePostFit::PREFIT;
@@ -206,7 +208,7 @@ int main(int argc, char* argv[]) {
         plotter.ReadSettingsFromCommandLine(&commandLineArgs);
         plotter.ReadValues(plotter.np_ranking_settings->input);
 
-        // TODO: fileformat is not considered yet!
+        // TODO: to use the same "readconfig" from fitmanager and then just to extract required args
         // tmp: to select only entries for the given POI
 //        plotter.SetCallBack([&poi, &plotter](const NpInfoForPlot& info) -> bool {
 //            if (plotter.np_ranking_settings->ignore_name.empty())
