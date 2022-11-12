@@ -17,6 +17,8 @@ struct FitManagerConfig {
     std::string comb_data {"combData"};
     std::string res_path {"."};
     std::string poi {"cHG"};
+    std::string color_prefit;   // <== to add
+    std::string color_postfit;  // <== to add
     std::vector<std::string> errors;
     size_t worker_id {0};
     size_t top {20}; // np pois to plot
@@ -27,6 +29,8 @@ struct FitManagerConfig {
     bool no_gamma {false};
     bool fit_all_pois {false};
     bool fit_single_poi {true};
+    bool vertical {false}; // <== to add
+    bool reuse_nll {true};
 };
 
 } // stats

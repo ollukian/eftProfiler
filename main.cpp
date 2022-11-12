@@ -25,15 +25,16 @@ int main(int argc, char* argv[]) {
         cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", "type", "key", "default value", "comment") << endl;
         cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
         for (const auto& options : std::vector<std::array<string, 4>>{
+                {"",                "",                 "",             "WARNING: x in front of the comment: not supported yet"},
                 {"string",          "task",             "",             "Use on of the following: compute_ranking, plot_ranking, compute_unconstrained"},
                 {"string",          "ws_path",          "",             ""},
-                {"string",          "ws_name",          "combWS",       ""},
-                {"string",          "model_config",     "ModelConfig",  ""},
-                {"string",          "comb_pdf",         "combPdf",      ""},
-                {"string",          "comb_data",        "combData",     ""},
+                {"string",          "ws_name",          "combWS",       "Name of the workspace in the file"},
+                {"string",          "model_config",     "ModelConfig",  "Name of the RooStats::ModelConfig in the file"},
+                {"string",          "comb_pdf",         "combPdf",      "Name of the pdf  to be used (usually, combined pdf)"},
+                {"string",          "comb_data",        "combData",     "Name of the data to be used (usually, combined pdf)"},
                 {"string",          "res_path",         ".",            "path where to save the resulting json file"},
                 {"string",          "poi",              "cHG",          ""},
-                {"vector<string>",  "errors",           "",             ""},
+                {"vector<string>",  "errors",           "",             "Minos nps | Minos pois | Minos | Hesse"},
                 {"size_t",          "worker_id",        "0",            ""},
                 {"size_t",          "top",              "20",           "number of pois to plot"},
                 {"double",          "fit_precision",    "1E-3",         ""},
@@ -41,12 +42,16 @@ int main(int argc, char* argv[]) {
                 {"string",          "study_type",       "",             ""},
                 {"string",          "snapshot",         "",             ""},
                 {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
-                {"bool",            "fit_all_pois",    "false",         "If fit all pois available in the Workspace"},
-                {"bool",            "fit_single_poi",  "true",          "If fix all pois available in the Workspace, apart from the one to fit"},
-                {"string",          "input",            "",             ""},
+                {"bool",            "fit_all_pois",    "false",         "x If fit all pois available in the Workspace"},
+                {"bool",            "fit_single_poi",  "true",          "x If fix all pois available in the Workspace, apart from the one to fit"},
+                {"string",          "input",            "",             "x "},
                 {"vector<string>",  "fileformat",       "pdf",          "Format(s) of the output plot"},
                 {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
                 {"vector<string>",  "match_names",      "",             "Patterns in the names of systematics to be matched (not regex yet), just string.find()"},
+                {"bool",            "vertical",         "false",        "x Orientation of the impact plot: whether to be vertical or standard (horizontal)"},
+                {"string",          "color_prefit",     "blue",         "x Colour for + variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
+                {"string",          "color_postfit",    "green",        "x Colour for - variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
+                {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", options[0], options[1], options[2], options[3]) << endl;
