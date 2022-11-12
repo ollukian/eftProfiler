@@ -439,6 +439,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
     fitter.Fit(fitSettings);
+    EFT_PROF_WARN("[DoFitAllNpFloat] after fit");
     //auto fitRes = fitter.Fit(fitSettings);
     //auto nll = fitter.CreatNll(fitSettings);
     //auto fitRes = fitter.Minimize(fitSettings);
@@ -448,7 +449,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
     //res.ExtractPoiValErr(ws_, res.poi_name);
-    res.nll = fitSettings.nll->getVal();
+    //res.nll = fitSettings.nll->getVal();
 
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_free_fit_val, res.poi_free_fit_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
