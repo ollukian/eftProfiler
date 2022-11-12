@@ -15,7 +15,7 @@ struct FitManagerConfig {
     std::string model_config {"ModelConfig"};
     std::string comb_pdf {"combPdf"};
     std::string comb_data {"combData"};
-    std::string res_path {"."};
+    std::string res_path;
     std::string poi {"cHG"};
     std::string color_prefit;   // <== to add
     std::string color_postfit;  // <== to add

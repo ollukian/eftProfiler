@@ -344,8 +344,13 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", " * ", res.np_val, res.np_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
-    const std::filesystem::path path_res = std::filesystem::current_path() / settings.path_to_save_res;
-    EFT_PROF_INFO("Save res to {}", path_res);
+    //EFT_PROF_DEBUG("current path: {}", std::filesystem::current_path().string());
+
+    std::filesystem::path path_res = std::filesystem::current_path();
+    if ( !settings.path_to_save_res.empty() )
+        path_res /= settings.path_to_save_res;
+    EFT_PROF_INFO("Save res to {}", path_res).string();
+
 
     if ( !std::filesystem::exists(path_res) ) {
         EFT_PROF_INFO("Required path directory {} needs to be created", path_res);
@@ -353,7 +358,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     }
 
     const string name = fmt::format("{}/res__{}__worker_{}__{}.json",
-                                    path_res,
+                                    path_res.string(),
                                     res.poi_name,
                                     workerId,
                                     res.np_name
@@ -450,7 +455,20 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     nlohmann::json j;
     j = res;
 
-    const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_no_constrains__{}_{}.json",
+    std::filesystem::path path_res = std::filesystem::current_path();
+    if ( !settings.path_to_save_res.empty() )
+        path_res /= settings.path_to_save_res;
+    EFT_PROF_INFO("Save res to {}", path_res.string());
+
+
+    if ( !std::filesystem::exists(path_res) ) {
+        EFT_PROF_INFO("Required path directory {} needs to be created", path_res);
+        std::filesystem::create_directories(path_res);
+    }
+
+    //const string name = fmt::format("/pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_no_constrains__{}_{}.json",
+    const string name = fmt::format("{}/res_no_constrains__{}_{}.json",
+                                    path_res.string(),
                                     res.poi_name,
                                     res.np_name);
 
