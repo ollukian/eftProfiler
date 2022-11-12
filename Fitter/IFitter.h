@@ -24,7 +24,7 @@ public:
 
     virtual RooAbsReal* CreatNll(const FitSettings& settings)      = 0;
     //virtual RooAbsReal* CreatNll(std::string&& data, std::string&& pdf, RooArgSet* globalObs) = 0;
-    virtual FitResPtr   Minimize(const FitSettings& settings)       = 0;
+    virtual IFitter::FitResPtr Minimize(const FitSettings& settings, RooAbsReal *nll) = 0;
     virtual FitResPtr   Fit(FitSettings& settings) = 0;
     virtual void SetGlobs(RooArgSet* globs) noexcept = 0;
     virtual void SetNps(RooArgSet* nps) noexcept = 0;

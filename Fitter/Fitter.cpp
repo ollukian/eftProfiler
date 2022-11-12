@@ -37,16 +37,17 @@ RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
 return nll;
 }
 
-IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
+IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll) {
     EFT_PROF_TRACE("[Minimize]");
 
-    if (settings.nll == nullptr) {
+    if (nll == nullptr) {
         EFT_PROF_CRITICAL("minimize, no nll is set");
         throw std::runtime_error("no nll is set for minimisation");
     }
 
     EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
-    RooMinimizerWrapper minim(*settings.nll);
+    //RooMinimizerWrapper minim(*settings.nll);
+    RooMinimizerWrapper minim(*nll);
     EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     minim.setStrategy( 1 );
     EFT_PROF_INFO("[Minimizer] set strategy to 1");
@@ -246,9 +247,10 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     settings.globalObs = globs_;
     settings.nps = nps_;
 
-    auto nll = CreatNll(settings);
-    settings.nll = nll;
-    auto res = Minimize(settings);
+    std::unique_ptr<RooAbsReal> nll;
+    nll.reset(CreatNll(settings));
+    //settings.nll = nll;
+    auto res = Minimize(settings, nll.get());
     return res;
     //FitResPtr to_return;
     //to_return.rooFitResult = res.rooFitResult;

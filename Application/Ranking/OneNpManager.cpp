@@ -99,8 +99,11 @@ void OneNpManager::RunFit()
     fitSettings.errors = errors_;
     fitSettings.nps = nps_;
 
-    fitSettings.nll = fitter.CreatNll(fitSettings);
-    auto fitRes = fitter.Minimize(fitSettings);
+    std::unique_ptr<RooAbsReal> nll;
+    nll.reset(fitter.CreatNll(fitSettings));
+    //std::shared_ptr<RooAbsReal> nll = std::make_shared<RooAbsReal>( *fitter.CreatNll(fitSettings) );
+    //fitSettings.nll = fitter.CreatNll(fitSettings);
+    auto fitRes = fitter.Minimize(fitSettings, nll.get());
 }
 
 void OneNpManager::SaveResAs(std::string key)
