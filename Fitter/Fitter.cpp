@@ -250,8 +250,10 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     std::unique_ptr<RooAbsReal> nll;
     nll.reset(CreatNll(settings));
     //settings.nll = nll;
-    auto res = Minimize(settings, nll.get());
-    return res;
+    Minimize(settings, nll.get());
+    return {};
+    //auto res = Minimize(settings, nll.get());
+    //return res;
     //FitResPtr to_return;
     //to_return.rooFitResult = res.rooFitResult;
     //to_return.nll = nll;

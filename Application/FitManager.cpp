@@ -438,7 +438,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
-    auto fitRes = fitter.Fit(fitSettings);
+    fitter.Fit(fitSettings);
+    //auto fitRes = fitter.Fit(fitSettings);
     //auto nll = fitter.CreatNll(fitSettings);
     //auto fitRes = fitter.Minimize(fitSettings);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
