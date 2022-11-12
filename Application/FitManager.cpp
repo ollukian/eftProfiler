@@ -349,7 +349,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     std::filesystem::path path_res = std::filesystem::current_path();
     if ( !settings.path_to_save_res.empty() )
         path_res /= settings.path_to_save_res;
-    EFT_PROF_INFO("Save res to {}", path_res).string();
+    EFT_PROF_INFO("Save res to {}", path_res.string());
 
 
     if ( !std::filesystem::exists(path_res) ) {
