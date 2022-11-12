@@ -344,13 +344,16 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", " * ", res.np_val, res.np_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
-    if ( !std::filesystem::exists(settings.path_to_save_res) ) {
-        EFT_PROF_INFO("Required path directory {} needs to be created", settings.path_to_save_res);
-        std::filesystem::create_directories(settings.path_to_save_res);
+    const std::filesystem::path path_res = std::filesystem::current_path() / settings.path_to_save_res;
+    EFT_PROF_INFO("Save res to {}", path_res);
+
+    if ( !std::filesystem::exists(path_res) ) {
+        EFT_PROF_INFO("Required path directory {} needs to be created", path_res);
+        std::filesystem::create_directories(path_res);
     }
 
     const string name = fmt::format("{}/res__{}__worker_{}__{}.json",
-                                    settings.path_to_save_res,
+                                    path_res,
                                     res.poi_name,
                                     workerId,
                                     res.np_name
@@ -613,6 +616,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, snapshot);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit);
     //EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, errors);
     // TODO: add support of fmt::format for vectors of strings to enable the
     // extraction of cmd line args with a macto
@@ -632,7 +637,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, no_gamma);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, fit_all_pois);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, fit_single_poi);
-
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, vertical);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, reuse_nll);
 #undef EFT_ADD_BOOL_OPTIONS
 
 
