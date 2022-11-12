@@ -30,7 +30,12 @@ struct FitManagerConfig {
     bool fit_all_pois {false};
     bool fit_single_poi {true};
     bool vertical {false}; // <== to add
-    bool reuse_nll {true};
+    bool reuse_nll {true}; // <== to add
+    float rmargin {0.10}; // <== to add
+    float lmargin {0.10}; // <== to add
+    float tmargin {0.05}; // <== to add
+    float bmargin {0.40}; // <== to add
+    std::vector<size_t> plt_size {1200, 800}; // <== to add
 };
 
 } // stats
