@@ -346,11 +346,11 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
 
     //EFT_PROF_DEBUG("current path: {}", std::filesystem::current_path().string());
 
-    std::filesystem::path path_res = std::filesystem::current_path();
-    if ( !settings.path_to_save_res.empty() )
-        path_res /= settings.path_to_save_res;
-    EFT_PROF_INFO("Save res to {}", path_res.string());
-
+    //std::filesystem::path path_res = std::filesystem::current_path();
+    //if ( !settings.path_to_save_res.empty() )
+    // /   path_res /= settings.path_to_save_res;
+    //EFT_PROF_INFO("Save res to {}", path_res.string());
+    std::filesystem::path path_res = settings.path_to_save_res;
 
     if ( !std::filesystem::exists(path_res) ) {
         EFT_PROF_INFO("Required path directory {} needs to be created", path_res);
@@ -455,9 +455,10 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     nlohmann::json j;
     j = res;
 
-    std::filesystem::path path_res = std::filesystem::current_path();
-    if ( !settings.path_to_save_res.empty() )
-        path_res /= settings.path_to_save_res;
+    //std::filesystem::path path_res = std::filesystem::current_path();
+    std::filesystem::path path_res = settings.path_to_save_res;
+    //if ( !settings.path_to_save_res.empty() )
+    //    path_res /= settings.path_to_save_res;
     EFT_PROF_INFO("Save res to {}", path_res.string());
 
 

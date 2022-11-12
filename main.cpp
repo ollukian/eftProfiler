@@ -189,6 +189,7 @@ int main(int argc, char* argv[]) {
         settings.path_to_save_res   = config.res_path;
         settings.poi_init_val       = config.poi_init_val;
         settings.fit_precision      = config.fit_precision;
+        EFT_PROF_CRITICAL("save res to: {}", settings.path_to_save_res);
 
         auto worker_id = config.worker_id;
 
