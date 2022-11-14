@@ -43,7 +43,7 @@ struct FitManagerConfig {
     std::vector<size_t>         plt_size            {1200, 800}; // <== to add
     float                       rmul                {-0.002};
     float                       rmuh                {0.002};
-    float                       np_scale            {0.001};
+    float                       np_scale            {1E-9};
     std::vector<std::string>    fileformat          {"pdf"};
     std::vector<std::string>    ignore_name         {};
     std::vector<std::string>    match_names         {};

@@ -200,7 +200,9 @@ namespace eft::plot {
         const float range_low  = settings->rmul; // -0.002
         //constexpr float scaling = (range_high - range_low) / 2.f;
         //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
-        const float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
+        float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
+        if (settings->np_scale > 1E-9)
+            scaling = settings->np_scale;
         //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value +  res_for_plot_after_selector.at(0).obs_error);
         //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value);
         //const auto range_low = -range_high;
@@ -355,8 +357,17 @@ namespace eft::plot {
 
         latex.SetTextSize(0.030); //0.045 is std
         latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
-        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
-        latex.DrawLatex(0.35, y, "info on selection (text) names");
+        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 36-139 fb^{-1})");
+
+        string selection_info = "All nuissance parameters";
+        if ( ! settings->match_names.empty() ) {
+            selection_info = "Group of Nuissance parameters: ";
+            for (const string& match : settings->match_names) {
+                selection_info += match + " ";
+            }
+        }
+
+        latex.DrawLatex(0.35, y, selection_info.c_str());
 
         latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
 
@@ -531,6 +542,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, output);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, out_dir);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, input);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

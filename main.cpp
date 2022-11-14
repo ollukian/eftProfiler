@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
                 {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
                 {"float",           "rmul",             "-0.002",       "LOW  value for the POI axis on the ranking plot"},
                 {"float",           "rmuh",             " 0.002",       "HIGH value for the POI axis on the ranking plot"},
-                {"float",           "np_scale",         "0.001",        "x Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
+                {"float",           "np_scale",         "[post fit of top np]", "Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
                 {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
                 {"string",          "out_dir",          "figures",      "Directory to save result plot"},
                 {"string",          "output",           "",             "Force using specified name (without format, format is to be set by --fileformat)"}
