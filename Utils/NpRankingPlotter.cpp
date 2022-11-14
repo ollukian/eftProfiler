@@ -389,14 +389,19 @@ namespace eft::plot {
             //                   matches_in_one_string);
         }
 
+        std::string stem_name;
+        if (settings->output.empty())
+            stem_name = fmt::format("Impact_{}_{}_nps{}{}",
+                                    settings->poi,
+                                    settings->top,
+                                    select_part,
+                                    ignore_part);
+        else
+            stem_name = settings->output;
+
 
         for (const std::string& fileformat : settings->fileformat) {
-            string name = fmt::format("Impact_{}_{}_nps{}{}.{}",
-                                      res_for_plot_after_selector[ 0 ].poi,
-                                      settings->top,
-                                      select_part,
-                                      ignore_part,
-                                      fileformat);
+            string name = stem_name + fileformat;
 
             canvas->SaveAs(std::move(name).c_str());
         }
