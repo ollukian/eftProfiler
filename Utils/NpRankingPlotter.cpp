@@ -196,8 +196,8 @@ namespace eft::plot {
             //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
         }
 
-        constexpr float range_high = 0.002f;
-        constexpr float range_low  = -0.002f;
+        const float range_high = settings->rmuh; //  0.002f;
+        const float range_low  = settings->rmul; // -0.002
         //constexpr float scaling = (range_high - range_low) / 2.f;
         //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
         const float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
@@ -525,8 +525,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, vertical);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, output);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, out_dir);
-
-
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, input);
 #undef EFT_GET_FROM_CONFIG
 #endif
 
