@@ -616,6 +616,11 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 {
     EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
 
+    // Use macros of a few kinds:
+    // - trivial values (of a trivial types)
+    // - bool values (which do not require key)
+    // - arrays (and all decaying types)
+
 #ifndef EFT_SET_VAL_IF_EXISTS
 #define EFT_SET_VAL_IF_EXISTS(args, config, param)                                  \
     if (args.SetValIfArgExists(#param, config.param)) {                             \
@@ -643,10 +648,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmuh);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_scale);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, save_prelim);
-    //EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, errors);
-    // TODO: add support of fmt::format for vectors of strings to enable the
-    // extraction of cmd line args with a macto
-
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, out_dir);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, output);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
@@ -655,7 +658,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 #define EFT_ADD_BOOL_OPTIONS(args, config, param)                       \
     if (args.HasKey(#param)) {                                          \
         config.param = true;                                            \
-        EFT_PROF_INFO("[FitManager] Add flag option: {:15}", #param);    \
+        EFT_PROF_INFO("[FitManager] Add flag option: {:15}", #param);   \
      }
 #endif
 
@@ -666,14 +669,26 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, reuse_nll);
 #undef EFT_ADD_BOOL_OPTIONS
 
+    // vectors
+#ifndef EFT_ADD_VEC_OPTION
+#define EFT_ADD_VEC_OPTION(args, config, param)                                                 \
+    if (args.SetValIfArgExists(#param, config.param)) {                                         \
+        EFT_PROF_INFO("Add vector [{}] option with: {:15} params", #param, config.param.size());  \
+     }
 
-    if (commandLineArgs.SetValIfArgExists("errors", config.errors)) {
-        EFT_PROF_INFO("Set errors with: {} elements", config.errors.size());
-    }
+#endif
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, errors);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, fileformat);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, ignore_name);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, match_names);
+#undef EFT_ADD_VEC_OPTION
+
+
 
     if (config.fit_all_pois && config.fit_single_poi) {
         EFT_PROF_CRITICAL("CommandLineArgs impossible to use \"fit_all_pois\" and \"fit_single_poi\" simultaneously");
-        throw std::runtime_error("ERROR ^------- see the message above");
+        return;
+        //hrow std::runtime_error("ERROR ^------- see the message above");
     }
 
 }

@@ -8,12 +8,25 @@
 namespace eft::plot {
 
 struct RankingPlotterSettings {
-    size_t top {10};
-    std::string poi;
-    std::string input;
-    std::vector<std::string> fileformat {"pdf"};
-    std::vector<std::string> ignore_name {};
-    std::vector<std::string> match_names {};
+    size_t                      top;
+    std::string                 poi;
+    std::string                 input;
+    std::vector<std::string>    fileformat ;
+    std::vector<std::string>    ignore_name {};
+    std::vector<std::string>    match_names {};
+    std::string                 out_dir {};
+    std::string                 output  {};
+    bool                        vertical;     // <== to add
+    std::string                 color_prefit;   // <== to add
+    std::string                 color_postfit;  // <== to add
+    float                       rmargin;      // <== to add
+    float                       lmargin;      // <== to add
+    float                       tmargin;      // <== to add
+    float                       bmargin;      // <== to add
+    std::vector<size_t>         plt_size; // <== to add
+    float                       rmul;
+    float                       rmuh;
+    float                       np_scale;
 };
 
 } // plot

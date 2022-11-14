@@ -39,11 +39,11 @@ int main(int argc, char* argv[]) {
                 {"size_t",          "top",              "20",           "number of pois to plot"},
                 {"double",          "fit_precision",    "1E-3",         ""},
                 {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
-                {"float",           "rmargin",          "0.10",         "x Canvas margin RIGHT"},
-                {"float",           "lmargin",          "0.10",         "x Canvas margin LEFT"},
-                {"float",           "tmargin",          "0.05",         "x Canvas margin TOP"},
-                {"float",           "bmargin",          "0.40",         "x Canvas margin BOTTOM"},
-                {"vector<size_t>",  "plt_size"          "1200 800",     "x Size of the canvas (x, y). Example: --plt_size 1200 800"},
+                {"float",           "rmargin",          "0.10",         "Canvas margin RIGHT"},
+                {"float",           "lmargin",          "0.10",         "Canvas margin LEFT"},
+                {"float",           "tmargin",          "0.05",         "Canvas margin TOP"},
+                {"float",           "bmargin",          "0.40",         "Canvas margin BOTTOM"},
+                {"vector<size_t>",  "plt_size"          "1200 800",     "Size of the canvas (x, y). Example: --plt_size 1200 800"},
                 {"string",          "study_type",       "",             ""},
                 {"string",          "snapshot",         "",             ""},
                 {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
@@ -61,6 +61,8 @@ int main(int argc, char* argv[]) {
                 {"float",           "rmuh",             " 0.002",       "x HIGH value for the POI axis on the ranking plot"},
                 {"float",           "np_scale",         "0.001",        "x Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
                 {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
+                {"string",          "out_dir",          "figures",      "Directory to save result plot"},
+                {"string"           "output"            "",             "Force using specified name (without format, format is to be set by --fileformat)";
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", options[0], options[1], options[2], options[3]) << endl;
@@ -206,7 +208,6 @@ int main(int argc, char* argv[]) {
         using namespace eft::plot;
         string res_path;
         string poi;
-//
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadSettingsFromCommandLine(&commandLineArgs);

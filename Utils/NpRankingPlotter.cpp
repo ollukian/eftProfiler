@@ -7,6 +7,7 @@
 
 #include "../Core/Logger.h"
 #include "NpRankingPlotter.h"
+#include "../Application/FitManager.h"
 
 #include <iostream>
 #include <fstream>
@@ -254,14 +255,17 @@ namespace eft::plot {
         legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
         legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
 
-        std::filesystem::create_directory("figures");
+        std::filesystem::create_directory(settings->out_dir); // figures -> by default
 
-        auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
+        auto canvas = std::make_unique<TCanvas>("c",
+                                                            "c",
+                                                                settings->plt_size[0],
+                                                                settings->plt_size[1]); // 1200 x 800
 
-        canvas->SetRightMargin(0.10f); // 0.05
-        canvas->SetLeftMargin(0.10f);
-        canvas->SetTopMargin(0.05f);
-        canvas->SetBottomMargin(0.4f);
+        canvas->SetRightMargin  (settings->rmargin); // 0.10
+        canvas->SetLeftMargin   (settings->lmargin); // 0.10
+        canvas->SetTopMargin    (settings->tmargin); // 0.05
+        canvas->SetBottomMargin (settings->bmargin); // 0.4
 
         histo->GetXaxis()->SetLabelSize(0.02);
 
@@ -494,30 +498,37 @@ namespace eft::plot {
     void NpRankingPlotter::ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs) {
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine");
 
+        eft::stats::FitManagerConfig config;
+        eft::stats::FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
+
         np_ranking_settings = make_unique<RankingPlotterSettings>();
 
-        if (cmdLineArgs->SetValIfArgExists("input", np_ranking_settings->input)) {
-            EFT_PROF_INFO("Set input: {}", np_ranking_settings->input);
-        }
-        if (cmdLineArgs->SetValIfArgExists("poi", np_ranking_settings->poi)) {
-            EFT_PROF_INFO("Set poi: {}", np_ranking_settings->poi);
-        }
+#ifndef EFT_GET_FROM_CONFIG
+#define EFT_GET_FROM_CONFIG(config, settings, param) \
+    settings->param = config.param;
 
-        if (cmdLineArgs->SetValIfArgExists("top", np_ranking_settings->top)) {
-            EFT_PROF_INFO("Set top: {}", np_ranking_settings->top);
-        }
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, fileformat);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, top);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, ignore_name);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, match_names);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, poi);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_prefit);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_postfit);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, lmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, tmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, bmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, plt_size);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmul);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmuh);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, vertical);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, output);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, out_dir);
 
-        if (cmdLineArgs->SetValIfArgExists("fileformat", np_ranking_settings->fileformat)) {
-            EFT_PROF_INFO("Set fileformats: {}", np_ranking_settings->fileformat.size());
-        }
-        if (cmdLineArgs->SetValIfArgExists("ignore_name", np_ranking_settings->ignore_name)) {
-            EFT_PROF_INFO("Set ignore_name with: {} elements", np_ranking_settings->ignore_name.size());
-            EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
-        }
-        if (cmdLineArgs->SetValIfArgExists("match_names", np_ranking_settings->match_names)) {
-            EFT_PROF_INFO("Set match_names with: {} elements", np_ranking_settings->match_names.size());
-            EFT_PROF_INFO("It will modify the callback, by requiring this string to be present in the filenames");
-        }
+
+#undef EFT_GET_FROM_CONFIG
+#endif
 
         vector<EntriesSelector> callbacks;
         if ( ! np_ranking_settings->ignore_name.empty() )
