@@ -50,6 +50,7 @@ struct FitManagerConfig {
     size_t                      top                 {20};       // np pois to plot
     std::string                 out_dir             {"figures"};
     std::string                 output              {};
+    std::string                 input               {};
 };
 
 template<typename OStream>
