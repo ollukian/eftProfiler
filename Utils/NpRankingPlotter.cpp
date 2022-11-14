@@ -401,7 +401,7 @@ namespace eft::plot {
 
 
         for (const std::string& fileformat : settings->fileformat) {
-            string name = stem_name + fileformat;
+            string name = stem_name + '.' + fileformat;
 
             canvas->SaveAs(std::move(name).c_str());
         }
