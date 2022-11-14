@@ -15,7 +15,7 @@ submit_one_worker()
 }
 
 ws_path=../source/WS-Comb-EFT-fitbasis-Asimov_v3.root
-poi=eHRe33
+poi=ceHRe33
 for worker_id in {0..20}
 do
   submit_one_worker
