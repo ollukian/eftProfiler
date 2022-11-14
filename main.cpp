@@ -57,6 +57,10 @@ int main(int argc, char* argv[]) {
                 {"string",          "color_prefit",     "blue",         "x Colour for + variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
                 {"string",          "color_postfit",    "green",        "x Colour for - variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
                 {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
+                {"float",           "rmul",             "-0.002",       "x LOW  value for the POI axis on the ranking plot"},
+                {"float",           "rmuh",             " 0.002",       "x HIGH value for the POI axis on the ranking plot"},
+                {"float",           "np_scale",         "0.001",        "x Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
+                {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", options[0], options[1], options[2], options[3]) << endl;

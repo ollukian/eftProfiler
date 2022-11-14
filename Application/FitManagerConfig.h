@@ -36,6 +36,11 @@ struct FitManagerConfig {
     float tmargin {0.05}; // <== to add
     float bmargin {0.40}; // <== to add
     std::vector<size_t> plt_size {1200, 800}; // <== to add
+    float rmul        {-0.002};
+    float rmuh        {0.002};
+    float np_scale    {0.001};
+    bool  save_prelim {false};
+
 };
 
 } // stats

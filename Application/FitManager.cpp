@@ -639,6 +639,10 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmul);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmuh);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_scale);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, save_prelim);
     //EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, errors);
     // TODO: add support of fmt::format for vectors of strings to enable the
     // extraction of cmd line args with a macto

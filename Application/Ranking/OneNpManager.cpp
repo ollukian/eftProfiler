@@ -46,9 +46,11 @@ void OneNpManager::VaryNpPostfit(char sign) noexcept
 {
     EFT_PROF_DEBUG("OneNpManager::VaryNpPostfit vary {} on {}sigma", np_, sign);
     if (sign == '+')
-        ws_->VaryParNbSigmas(np_, +1.f);
+        ws_->SetVarVal(np_, np_found_in_data_value + np_found_in_data_error);
+        //ws_->VaryParNbSigmas(np_, +1.f);
     else if (sign == '-')
-        ws_->VaryParNbSigmas(np_, -1.f);
+        ws_->SetVarVal(np_, np_found_in_data_value - np_found_in_data_error);
+        //ws_->VaryParNbSigmas(np_, -1.f);
     else
         EFT_PROF_CRITICAL("[OneNpManager::VaryNpPostfit] Called with {}. use only '+' or '-' as an argument",
                           sign);
