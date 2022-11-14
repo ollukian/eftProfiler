@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
                 {"float",           "np_scale",         "0.001",        "x Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
                 {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
                 {"string",          "out_dir",          "figures",      "Directory to save result plot"},
-                {"string"           "output"            "",             "Force using specified name (without format, format is to be set by --fileformat)";
+                {"string"           "output"            "",             "Force using specified name (without format, format is to be set by --fileformat)"}
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", options[0], options[1], options[2], options[3]) << endl;
