@@ -208,14 +208,16 @@ void CommandLineArgs::ReportStatus() const noexcept
         all_keys.insert(key);
     }
 
-    size_t unknown_keys {0};
+    std::set<Key> unknown_keys;
+    size_t unknown_keys_count {0};
 
     // check which keys are not requested, but are parsed (== not correct keys in the request)
     for (const auto& key : all_keys)
     {
         if (_requested_keys.find(key) == _requested_keys.end()) {
             EFT_PROF_CRITICAL("Used an unknown key: {:10} in the command line", key);
-            unknown_keys++;
+            unknown_keys_count++;
+            unknown_keys.insert(key);
         }
 
         //if (_parsed_keys.find(key) == _parsed_keys.end()) {
@@ -224,7 +226,19 @@ void CommandLineArgs::ReportStatus() const noexcept
         //}
     } // all keys
 
-    EFT_PROF_DEBUG("CommandLine: used {} unknown keys", unknown_keys);
+    EFT_PROF_DEBUG("CommandLine: used {} unknown keys:", unknown_keys_count);
+
+    if (unknown_keys_count != 0) {
+        for (const auto& key : unknown_keys) {
+            EFT_PROF_WARN("{:10} unknown command line option", key);
+        }
+        EFT_PROF_CRITICAL("Use on of the following keys:");
+        for (const auto& key : _requested_keys) {
+            EFT_PROF_WARN("{:10}", key);
+        }
+        throw std::runtime_error("Unknown command line options");
+    }
+
     EFT_PROF_DEBUG("CommandLine: code checked {} keys", _requested_keys.size());
 
 }
