@@ -52,8 +52,8 @@ public:
     void ReportStatus() const noexcept;
 private:
     std::map<Key, Vals> ops;
-    std::set<Key> _requested_keys; // to track down that all keys have been asked for
-    std::set<Key> _parsed_keys;   // to track down that all keys have been asked for
+    mutable std::set<Key> _requested_keys; // to track down that all keys have been asked for
+    mutable std::set<Key> _parsed_keys;   // to track down that all keys have been asked for
     Keys keys;
 private:
     bool ParseInput(int argc, char* argv[]);
@@ -104,6 +104,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 
 bool CommandLineArgs::HasKey(const Key& key) const noexcept
 {
+    _requested_keys.insert(key);
     if (keys.find(key) != keys.end())
         return true;
     return false;

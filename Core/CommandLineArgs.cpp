@@ -180,6 +180,7 @@ void CommandLineArgs::AddKey(CommandLineArgs::Key key)
 optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) const
 {
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
+    _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
     //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
@@ -190,6 +191,7 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
+    _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
         return nullopt;
     }
