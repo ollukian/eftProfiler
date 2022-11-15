@@ -621,6 +621,11 @@ NpRankingPlotter::ParseReplacements(const std::vector<std::string>& replacements
         std::string val = raw.substr(pos_separator + 1, raw.length());
         res.emplace_back(std::move(key), std::move(val));
     }
+
+    for (const auto& key_val : res) {
+        EFT_PROF_DEBUG("Add replacing: {:10} ==> {:10}}", key_val.first, key_val.second);
+    }
+
     return res;
 }
 
