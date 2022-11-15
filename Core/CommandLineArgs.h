@@ -48,14 +48,18 @@ public:
     const auto& GetOps() const noexcept { return ops; }
     [[nodiscard]]
     const auto& GetKeys() const noexcept { return keys;}
-    //const std::map<std::string, std::string>& GetArgs
+
+    void ReportStatus() const noexcept;
 private:
-   std::map<Key, Vals> ops;
-   Keys keys;
+    std::map<Key, Vals> ops;
+    std::set<Key> _requested_keys; // to track down that all keys have been asked for
+    std::set<Key> _parsed_keys;   // to track down that all keys have been asked for
+    Keys keys;
 private:
     bool ParseInput(int argc, char* argv[]);
     [[nodiscard]]
     static inline Key TrimKey(const Key& key) noexcept;
+    void AddKey(Key key);
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
@@ -63,6 +67,9 @@ template<typename T>
 bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 {
     EFT_PROF_INFO("[CommandLineArgs] try to get value for key: {}", key);
+
+    _requested_keys.insert(key); // to show that this key has been checked
+
     auto val_opt = GetVal(key);
     if (val_opt.has_value()) {
         if constexpr(std::is_same_v<std::string, T>) {

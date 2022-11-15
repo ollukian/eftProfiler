@@ -696,6 +696,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
         //hrow std::runtime_error("ERROR ^------- see the message above");
     }
 
+    commandLineArgs.ReportStatus();
 }
 
 void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
