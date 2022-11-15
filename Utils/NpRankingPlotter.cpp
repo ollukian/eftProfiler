@@ -185,7 +185,12 @@ namespace eft::plot {
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
                            res_for_plot_after_selector[idx_syst].impact);
-            histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
+
+            string bin_label = res_for_plot_after_selector[idx_syst].name;
+            if ( ! settings->replacements.empty() )
+                ReplaceStrings(bin_label, settings->replacements);
+
+            histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
 
             histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
             histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
@@ -269,7 +274,7 @@ namespace eft::plot {
         canvas->SetTopMargin    (settings->tmargin); // 0.05
         canvas->SetBottomMargin (settings->bmargin); // 0.4
 
-        histo->GetXaxis()->SetLabelSize(0.02);
+        histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
         histo->Draw("H same");
         histo_neg->Draw("H same");
@@ -543,8 +548,12 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, out_dir);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, input);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, label_size);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_prefix);
 #undef EFT_GET_FROM_CONFIG
 #endif
+
+        np_ranking_settings->replacements = ParseReplacements(config.replace);
 
         vector<EntriesSelector> callbacks;
         if ( ! np_ranking_settings->ignore_name.empty() )
@@ -590,5 +599,46 @@ namespace eft::plot {
 
     }
 
+
+std::vector<NpRankingPlotter::Replacement>
+NpRankingPlotter::ParseReplacements(const std::vector<std::string>& replacements)
+{
+    // convert vector of "key:val" to vector of pairs: <key, val>
+    EFT_PROF_TRACE("ParseReplacements");
+    vector<Replacement> res;
+    res.reserve(replacements.size());
+    for (const auto& raw : replacements)
+    {
+        auto pos_separator = raw.find(':');
+        if (pos_separator == std::string::npos) {
+            throw std::logic_error(fmt::format("Cannot parse replacement string {}, {}",
+                                               raw,
+                                               ". Must have format: 'key1:val1, key2:val2, ...'"));
+
+        }
+
+        std::string key = raw.substr(0, pos_separator);
+        std::string val = raw.substr(pos_separator + 1, raw.length());
+        res.emplace_back(std::move(key), std::move(val));
+    }
+    return res;
+}
+
+void NpRankingPlotter::ReplaceStrings(std::string& s, const std::vector<Replacement>& replacements)
+{
+    for (const auto& replacement : replacements) {
+        EFT_PROF_DEBUG("Replace {} using {:10} -> {:10} replacement", s, replacement.first, replacement.second);
+        StringUtils::Replace(s, replacement.first, replacement.second);
+    }
+}
+
+void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
+{
+    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes) is not implemented");
+}
+string NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes)
+{
+    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes) is not implemented");
+}
 
 }

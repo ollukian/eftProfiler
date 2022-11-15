@@ -27,6 +27,12 @@ struct RankingPlotterSettings {
     float                       rmul;
     float                       rmuh;
     float                       np_scale;
+    float                       label_size;
+    std::vector<std::string>    remove_prefix;
+
+    using Replacement = std::pair<std::string, std::string>;
+
+    std::vector<Replacement>    replacements;
 };
 
 } // plot

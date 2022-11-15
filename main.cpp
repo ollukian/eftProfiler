@@ -21,9 +21,9 @@ int main(int argc, char* argv[]) {
             cout << '\t' << task << endl;
         }
         cout << "* Available keys" << endl;
-        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
-        cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", "type", "key", "default value", "comment") << endl;
-        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^60}=", "=", "=", "=", "=") << endl;
+        cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", "type", "key", "default value", "comment") << endl;
+        cout << fmt::format("+{:=^20}=+={:=^20}=+=={:=^15}=+=={:=^60}+", "=", "=", "=", "=") << endl;
         for (const auto& options : std::vector<std::array<string, 4>>{
                 {"",                "",                 "",             "WARNING: x in front of the comment: not supported yet"},
                 {"string",          "task",             "",             "Use on of the following: compute_ranking, plot_ranking, compute_unconstrained"},
@@ -62,12 +62,16 @@ int main(int argc, char* argv[]) {
                 {"float",           "np_scale",         "[post fit of top np]", "Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
                 {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
                 {"string",          "out_dir",          "figures",      "Directory to save result plot"},
-                {"string",          "output",           "",             "Force using specified name (without format, format is to be set by --fileformat)"}
+                {"string",          "output",           "",             "Force using specified name (without format, format is to be set by --fileformat)"},
+                {"float",           "label_size",       "",             "Size of the label (where np names are printed)"},
+                {"size_t",          "label_font",       "62",           "Font of the label text (where np names are printed); See ROOT Fonts: https://root.cern.ch/doc/master/classTAttText.html#ATTTEXT5"},
+                {"vector<string>",  "remove_prefix",    "",             R"(x Substring (prefix) to be cut from the names of nps (ex: "ATLAS_Hgg_bias_**" with "ATLAS_" being option will become: "Hgg_bias_*")"},
+                {"vector<string>",  "replace",          "",             R"(x Replace keys by values in the np names. Format: "key1:val2 key2:val2 ...". Ex:"ATLAS_:LHC Bkg:MC" replaces "ATLAS_" by "LHC" and "Bkg" by "MC")"}
         })
         {
-            cout << fmt::format("|{:^20} | {:^20} | {:^15}| {:^40}|", options[0], options[1], options[2], options[3]) << endl;
+            cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;
         }
-        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^40}+", "=", "=", "=", "=") << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^60}+", "=", "=", "=", "=") << endl;
         return 0;
     }
 

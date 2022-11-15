@@ -9,7 +9,7 @@ submit_one_worker()
   echo "sh job_script.sh --task compute_ranking --errors Hesse --poi_init_val 0 --worker_id ${worker_id} --poi ${poi} --res_path /pbs/home/o/ollukian/public/EFT/git/eftProfiler/res_${poi}/ --no_gamma --ws_path ${ws_path}" >> "${current_script}"
 
   echo "source ${current_script}"
-  sbatch --mail-user lukianchuk@lal.in2p3.fr --mail-type=END,FAIL -L sps --mem 20G --export=ALL --job-name "${poi}_${worker_id}" --output "/sps/atlas/o/ollukian/scratch/Log_${poi}_${worker_id}.OU" --error "/sps/atlas/o/ollukian/scratch/Log_${poi}_${worker_id}.ER" "${current_script}"
+  sbatch --mail-user lukianchuk@lal.in2p3.fr --mail-type=END,FAIL -L sps --mem 20G --export=ALL --job-name "${worker_id}${poi}" --output "/sps/atlas/o/ollukian/scratch/Log_${poi}_${worker_id}.OU" --error "/sps/atlas/o/ollukian/scratch/Log_${poi}_${worker_id}.ER" "${current_script}"
 
   sleep 10
 }

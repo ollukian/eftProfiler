@@ -44,6 +44,7 @@ struct FitManagerConfig {
     float                       rmul                {-0.002};
     float                       rmuh                {0.002};
     float                       np_scale            {1E-9};
+    float                       label_size          {0.02};
     std::vector<std::string>    fileformat          {"pdf"};
     std::vector<std::string>    ignore_name         {};
     std::vector<std::string>    match_names         {};
@@ -51,6 +52,8 @@ struct FitManagerConfig {
     std::string                 out_dir             {"figures"};
     std::string                 output              {};
     std::string                 input               {};
+    std::vector<std::string>    remove_prefix       {};
+    std::vector<std::string>    replace             {};
 };
 
 template<typename OStream>
