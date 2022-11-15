@@ -66,7 +66,7 @@ int main(int argc, char* argv[]) {
                 {"float",           "label_size",       "",             "Size of the label (where np names are printed)"},
                 {"size_t",          "label_font",       "62",           "Font of the label text (where np names are printed); See ROOT Fonts: https://root.cern.ch/doc/master/classTAttText.html#ATTTEXT5"},
                 {"vector<string>",  "remove_prefix",    "",             R"(x Substring (prefix) to be cut from the names of nps (ex: "ATLAS_Hgg_bias_**" with "ATLAS_" being option will become: "Hgg_bias_*")"},
-                {"vector<string>",  "replace",          "",             R"(x Replace keys by values in the np names. Format: "key1:val2 key2:val2 ...". Ex:"ATLAS_:LHC Bkg:MC" replaces "ATLAS_" by "LHC" and "Bkg" by "MC")"}
+                {"vector<string>",  "replace",          "",             R"(Replace in labels. Format: "key1:val2 Key2:val2 ...". Ex:"ATLAS_:LHC" replaces "ATLAS_" by "LHC")"}
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;

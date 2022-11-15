@@ -653,6 +653,10 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, input);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_scale);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, label_size);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, lmargin);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmargin);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, tmargin);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, bmargin);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
