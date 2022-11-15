@@ -230,7 +230,7 @@ void CommandLineArgs::ReportStatus() const noexcept
 
     if (unknown_keys_count != 0) {
         for (const auto& key : unknown_keys) {
-            EFT_PROF_WARN("{:10} <=== unknown command line option", key);
+            EFT_PROF_WARN("{:10} unknown command line option", key);
         }
         EFT_PROF_CRITICAL("Use on of the following keys:");
         for (const auto& key : _requested_keys) {

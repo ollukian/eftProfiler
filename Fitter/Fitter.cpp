@@ -71,6 +71,12 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 
     EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
     minim.setMinimizerType( "Minuit2" );
+
+    // retry taken from:
+    // https://gitlab.cern.ch/atlas-physics/stat/tools/StatisticsTools/-/blob/master/src/ExtendedMinimizer.cxx#L228
+
+
+
     // Perform fit with MIGRAD
     _status += minim.minimize( "Minuit2", "Migrad" );
     //_status += minim.minimize( "Minuit2");
