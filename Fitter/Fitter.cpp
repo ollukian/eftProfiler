@@ -37,16 +37,17 @@ RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
 return nll;
 }
 
-IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
+IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll) {
     EFT_PROF_TRACE("[Minimize]");
 
-    if (settings.nll == nullptr) {
+    if (nll == nullptr) {
         EFT_PROF_CRITICAL("minimize, no nll is set");
         throw std::runtime_error("no nll is set for minimisation");
     }
 
     EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
-    RooMinimizerWrapper minim(*settings.nll);
+    //RooMinimizerWrapper minim(*settings.nll);
+    RooMinimizerWrapper minim(*nll);
     EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     minim.setStrategy( 1 );
     EFT_PROF_INFO("[Minimizer] set strategy to 1");
@@ -80,12 +81,48 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
       minim.save("hesse","")->Print();
       }*/
 
+    switch (settings.errors) {
+        case Errors::HESSE:
+            EFT_PROF_INFO("[Minimizer] start HESSE...");
+            minim.hesse();
+            EFT_PROF_INFO("[Minimizer] HESSE is done");
+            //minim.save("hesse", "")->Print();
+            break; // nothing
+        case Errors::MINOS_NPS:
+            assert(settings.nps);
+            EFT_PROF_INFO("[Minimizer] re-estimate errors for NPS");
+            minim.minos(*settings.nps);
+            break;
+        case Errors::MINOS_POIS:
+            EFT_PROF_INFO("[Minimizer] re-estimate errors for POIS");
+            assert(settings.pois);
+            minim.minos(*settings.pois);
+            break;
+        case Errors::MINOS_ALL:
+            EFT_PROF_INFO("[Minimizer] re-estimate errors for NPS & POIS");
+            assert(settings.nps);
+            assert(settings.pois);
+            minim.minos(RooArgSet{*settings.pois, *settings.nps});
+            break;
+        case Errors::DEFAULT:
+            EFT_PROF_INFO("[Minimizer] no need to re-estimate errors, default strategy is set");
+            break;
+    }
+
+//    if (settings.errors == Errors::HESSE) {
+//        EFT_PROF_INFO("[Minimizer] start HESSE...");
+//        minim.hesse();
+//        EFT_PROF_INFO("[Minimizer] HESSE is done");
+//        //minim.save("hesse", "")->Print();
+//    }
+
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// COPIED from QuickFit:                                                                                        //
     // https://gitlab.cern.ch/atlas_higgs_combination/projects/lhc-comb-tools/-/blob/master/quickFit/src/fitTool.cxx //
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Copied from RooAbsPdf::fitTo()
     //if (_doSumW2==1 && minim.getNPar()>0) {
+#if 0
     if (settings.errors != Errors::DEFAULT) {
     //if (false) {
 
@@ -93,8 +130,10 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
             EFT_PROF_INFO("[Minimizer] start HESSE...");
             minim.hesse();
             EFT_PROF_INFO("[Minimizer] HESSE is done");
-            minim.save("hesse", "")->Print();
+            //minim.save("hesse", "")->Print();
         }
+
+
 
         EFT_PROF_INFO("[Minimizer] Evaluating SumW2 error...");
         // Make list of RooNLLVar components of FCN
@@ -158,7 +197,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
 
         switch (settings.errors) {
             case Errors::HESSE:
-                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors");
+                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors with MINOS: already done Hesse");
                 break; // nothing
             case Errors::MINOS_NPS:
                 assert(settings.nps);
@@ -177,19 +216,22 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
                 minim.minos(RooArgSet{*settings.pois, *settings.nps});
                 break;
             case Errors::DEFAULT:
-                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors");
+                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors, default strategy is set");
                 break;
         }
 
 
     }
+#endif
 
-    auto result = make_unique<RooFitResult>(
-            *minim.save("fitResult","Fit Results")
-            );
+    EFT_PROF_INFO("[Minimizer] fit is finished");
+    return {};
+    //auto result = make_unique<RooFitResult>(
+    //        *minim.save("fitResult","Fit Results")
+    //        );
 
-    EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
-    return result;
+    //EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
+    //return result;
 }
 
 IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
@@ -205,10 +247,13 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     settings.globalObs = globs_;
     settings.nps = nps_;
 
-    auto nll = CreatNll(settings);
-    settings.nll = nll;
-    auto res = Minimize(settings);
-    return res;
+    std::unique_ptr<RooAbsReal> nll;
+    nll.reset(CreatNll(settings));
+    //settings.nll = nll;
+    Minimize(settings, nll.get());
+    return {};
+    //auto res = Minimize(settings, nll.get());
+    //return res;
     //FitResPtr to_return;
     //to_return.rooFitResult = res.rooFitResult;
     //to_return.nll = nll;

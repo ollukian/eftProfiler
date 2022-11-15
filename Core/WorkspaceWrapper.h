@@ -72,6 +72,7 @@ public:
     inline const RooArgSet* GetGlobObs() const override;
     inline const RooArgSet* GetPOIs() const override;
     inline const Categories& GetCats() const override;
+    inline RooRealVar* GetVar(const std::string& name) override;
 
     inline RooDataSet*      GetData(const std::string& name) override;
     inline RooSimultaneous* GetCombinedPdf(const std::string& name) override;
@@ -130,7 +131,10 @@ private:
     //inline void FixValConst(const std::vector<std::string>& pois) { for (const std::string& poi : pois) { ws_->var( poi.c_str() )->setConstant(true) override; } } override;
 };
 
-
+inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
+{
+    return ws_->var(name.c_str());
+}
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
     TFile* f_ = TFile::Open(std::move(path).c_str());
@@ -145,19 +149,12 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
-    std::cout << fmt::format("Fix {} const", poi) << std::endl;
-    EFT_PROF_DEBUG("[WorkspaceWrapper::FixValConst status of {} before fixing to const", poi);
-    //std::cout << " * status of " << poi << " before: " << std::endl;
-
+    EFT_PROF_DEBUG("[WorkspaceWrapper::FixValConst {} const", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
-        std::cout << fmt::format("FixValConst[{}] ERROR, var is not present", poi);
+        EFT_PROF_CRITICAL("WorkspaceWrapper::FixValConst variable {} is not present in the WS", poi);
         return;
     }
-
-    ws_->var(poi.c_str())->Print("");
     ws_->var( poi.c_str() )->setConstant(true);
-    EFT_PROF_DEBUG("[WorkspaceWrapper]{FixValConst} status of {} after fixing to const", poi);
-    ws_->var(poi.c_str())->Print("");
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
@@ -170,10 +167,10 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
     EFT_PROF_TRACE("[WorkspaceWrapper]::FloatVal {}", poi);
-    EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} before", poi);
+    //EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} before", poi);
     ws_->var( poi.c_str() )->setConstant(false);
-    EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} after", poi);
-    ws_->var( poi.c_str() )->Print();
+    //EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} after", poi);
+    //ws_->var( poi.c_str() )->Print();
 }
 
 inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
@@ -278,7 +275,7 @@ inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { ret
 
 inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept
 {
-    EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
+    //EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
     const auto val = GetParVal(par);
     const auto err = GetParErr(par);
     EFT_PROF_INFO("WorkspaceWrapper::VaryParNbSigmas set {} ({} +- {}) to {}",
