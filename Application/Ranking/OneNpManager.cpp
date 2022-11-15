@@ -102,6 +102,7 @@ void OneNpManager::RunFit()
     fitSettings.nps = nps_;
     fitSettings.retry = np_ranking_settings_.retry;
     fitSettings.strategy = np_ranking_settings_.strategy;
+    fitSettings.eps = np_ranking_settings_.fit_precision;
 
     std::unique_ptr<RooAbsReal> nll;
     nll.reset(fitter.CreatNll(fitSettings));
