@@ -49,7 +49,7 @@ public:
     inline void ExtractDataTotal(std::string name) override;
     inline void ExtractPdfTotal(std::string name)  override;
 
-    void SetGlobalObservablesToValueFoundInFit() noexcept override{};
+    void SetGlobalObservablesToValueFoundInFit() noexcept override;
 
     void SetAllPOIsConst() noexcept override;
     void SetAllPOIsFloat() noexcept override;
@@ -257,7 +257,7 @@ inline void FitManager::SetAllGlobObsConst() noexcept
     for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
         dynamic_cast<RooRealVar *>(globObs)->setConstant(true);
-        EFT_PROF_DEBUG("[FitManager] set {} const, status after: {} +- {}  (const? ==> {})", name,
+        EFT_PROF_DEBUG("[FitManager] set {:60} const, status after: {:1} +- {:10}  (const? ==> {})", name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
                        dynamic_cast<RooRealVar *>(globObs)->getError(),
                        dynamic_cast<RooRealVar *>(globObs)->isConstant());
@@ -270,7 +270,7 @@ inline void FitManager::SetAllGlobObsFloat() noexcept
     for (const auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
         dynamic_cast<RooRealVar *>(globObs)->setConstant(false);
-        EFT_PROF_DEBUG("[FitManager] set {:30} float, status after: {} +- {}  (const? ==> {})", name,
+        EFT_PROF_DEBUG("[FitManager] set {:60} float, status after: {:1} +- {:10}  (const? ==> {})", name,
                        dynamic_cast<RooRealVar *>(globObs)->getVal(),
                        dynamic_cast<RooRealVar *>(globObs)->getError(),
                        dynamic_cast<RooRealVar *>(globObs)->isConstant());
@@ -285,26 +285,26 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
 
         if (name.find("gamma") != std::string::npos)
         {
-            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
-                           name,
-                           dynamic_cast<RooRealVar *>(globObs)->getVal(),
-                           dynamic_cast<RooRealVar *>(globObs)->getError(),
-                           dynamic_cast<RooRealVar *>(globObs)->isConstant());
-            EFT_PROF_INFO("[FitManager][SetAllGlobObsTo] {} is GAMMA - skip it", name);
+//            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+//                           name,
+//                           dynamic_cast<RooRealVar *>(globObs)->getVal(),
+//                           dynamic_cast<RooRealVar *>(globObs)->getError(),
+//                           dynamic_cast<RooRealVar *>(globObs)->isConstant());
+            EFT_PROF_INFO("[FitManager][SetAllGlobObsTo] {:60} is GAMMA - skip it", name);
             continue;
         }
 
-        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
-                       dynamic_cast<RooRealVar *>(globObs)->getError(),
-                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+//                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+//                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
         dynamic_cast<RooRealVar *>(globObs)->setVal(val);
-        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} after: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
-                       dynamic_cast<RooRealVar *>(globObs)->getError(),
-                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] status of {:30} after: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+//                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+//                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
     }
 }
 
@@ -317,59 +317,59 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
         const std::string name = {globObs->GetTitle()};
         if (name.find("gamma") != std::string::npos)
         {
-            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
-                           name,
-                           dynamic_cast<RooRealVar *>(globObs)->getVal(),
-                           dynamic_cast<RooRealVar *>(globObs)->getError(),
-                           dynamic_cast<RooRealVar *>(globObs)->isConstant());
-            EFT_PROF_INFO("[FitManager][SetAllGlobObsErrorsTo] {} is GAMMA - skip it", name);
+//            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+//                           name,
+//                           dynamic_cast<RooRealVar *>(globObs)->getVal(),
+//                           dynamic_cast<RooRealVar *>(globObs)->getError(),
+//                           dynamic_cast<RooRealVar *>(globObs)->isConstant());
+            EFT_PROF_INFO("[FitManager][SetAllGlobObsErrorsTo] {:60} is GAMMA - skip it", name);
             continue;
         }
-        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
-                       dynamic_cast<RooRealVar *>(globObs)->getError(),
-                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+//                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+//                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
         dynamic_cast<RooRealVar *>(globObs)->setError(err);
-        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
-                       dynamic_cast<RooRealVar *>(globObs)->getError(),
-                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(globObs)->getVal(),
+//                       dynamic_cast<RooRealVar *>(globObs)->getError(),
+//                       dynamic_cast<RooRealVar *>(globObs)->isConstant());
     }
 }
 
 inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {} +- {}", val, err);
+    //EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {} +- {}", val, err);
     SetAllGlobObsTo(val);
     SetAllGlobObsErrorsTo(err);
 }
 inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsTo {} +- {}", val, err);
+    //EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsTo {} +- {}", val, err);
     SetAllNuisanceParamsToValue(val);
     SetAllNuisanceParamsErrorsTo(err);
 }
 
 inline void FitManager::SetAllNuisanceParamsErrorsTo(float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsErrorsTo {}", err);
+    EFT_PROF_TRACE("[FitManager] SetAllNuisanceParamsErrorsTo {}", err);
     //for (const auto& globObs : *args_["globObs"]) {
     assert(lists_["paired_nps"]->size() != 0);
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
-        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(np)->getVal(),
-                       dynamic_cast<RooRealVar *>(np)->getError(),
-                       dynamic_cast<RooRealVar *>(np)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(np)->getVal(),
+//                       dynamic_cast<RooRealVar *>(np)->getError(),
+//                       dynamic_cast<RooRealVar *>(np)->isConstant());
         dynamic_cast<RooRealVar *>(np)->setError(err);
-        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(np)->getVal(),
-                       dynamic_cast<RooRealVar *>(np)->getError(),
-                       dynamic_cast<RooRealVar *>(np)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(np)->getVal(),
+//                       dynamic_cast<RooRealVar *>(np)->getError(),
+//                       dynamic_cast<RooRealVar *>(np)->isConstant());
     }
 }
 
@@ -379,17 +379,17 @@ inline void FitManager::SetAllNuisanceParamsToValue(float val) noexcept
     //for (const auto& globObs : *args_["np"]) {
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
-        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} before: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(np)->getVal(),
-                       dynamic_cast<RooRealVar *>(np)->getError(),
-                       dynamic_cast<RooRealVar *>(np)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} before: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(np)->getVal(),
+//                       dynamic_cast<RooRealVar *>(np)->getError(),
+//                       dynamic_cast<RooRealVar *>(np)->isConstant());
         dynamic_cast<RooRealVar *>(np)->setVal(val);
-        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} after: {} +- {}  (const? ==> {})",
-                       name,
-                       dynamic_cast<RooRealVar *>(np)->getVal(),
-                       dynamic_cast<RooRealVar *>(np)->getError(),
-                       dynamic_cast<RooRealVar *>(np)->isConstant());
+//        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} after: {} +- {}  (const? ==> {})",
+//                       name,
+//                       dynamic_cast<RooRealVar *>(np)->getVal(),
+//                       dynamic_cast<RooRealVar *>(np)->getError(),
+//                       dynamic_cast<RooRealVar *>(np)->isConstant());
     }
 }
 
@@ -403,6 +403,10 @@ inline RooAbsData& FitManager::GetData(PrePostFit studyType) noexcept
     if (studyType == PrePostFit::PREFIT) {
         EFT_PROF_TRACE("[FitManager]{GetData} PREFIT, return data_[ \"asimov_prefit\" ]");
         return *data_[ "asimov_prefit" ];
+        //ws_->raw()->saveSnapshot("condGlobObs", *globalObservables_, kTRUE);
+        //cout << "[ComputeExpectedNll]: after saving snapshots" << endl;
+        //PrintInnerParams();
+        //ws_->raw()->loadSnapshot("condGlobObs");
     }
     EFT_PROF_TRACE("[FitManager]{GetData} POSTFIT, return data_[ \"asimov_postfit\" ]");
     return *data_[ "asimov_postfit" ];
@@ -411,15 +415,15 @@ inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
 {
     EFT_PROF_TRACE("[FitManager]{SetUpGlobObs}");
     if (studyType == PrePostFit::POSTFIT) {
-        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} POSTFIT ==> fix glob obs to const, not change their values");
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} POSTFIT ==> fix glob obs to const, without changing their values");
     }
     else if (studyType == PrePostFit::PREFIT) {
         EFT_PROF_INFO("[FitManager]{SetUpGlobObs} PREFIT ==> fix glob obs to 0 (const)");
         SetAllGlobObsTo(0);
     }
     else {
-        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} OBSERVED ==> fix glob obs to (const), not change their values");
-        //SetAllGlobObsTo(0);
+        EFT_PROF_INFO("[FitManager]{SetUpGlobObs} OBSERVED ==> fix glob obs to (const)");
+        SetAllGlobObsTo(0);
     }
     SetAllGlobObsConst();
 }
@@ -437,7 +441,7 @@ void FitManager::SetGlobsToNPs() noexcept {
     for (size_t idx {0}; idx < sz; ++idx) {
         auto* glob = dynamic_cast<RooRealVar*>( globs->at(idx) );
         auto* np   = dynamic_cast<RooRealVar*>( nps->at(idx) );
-        EFT_PROF_DEBUG("Set glob: {} with val {} +- {} to {}",
+        EFT_PROF_DEBUG("Set glob: {:60} with val {} +- {} to {}",
                        glob->GetName(),
                        glob->getVal(),
                        glob->getError(),
@@ -445,7 +449,7 @@ void FitManager::SetGlobsToNPs() noexcept {
                        np->getError()
                        );
         glob->setVal(np->getVal());
-        EFT_PROF_DEBUG(" * glob: {} after: {} +- {}",
+        EFT_PROF_DEBUG(" * glob: {:60} after: {} +- {}",
                        glob->GetName(),
                        glob->getVal(),
                        glob->getError()

@@ -20,6 +20,58 @@ int main(int argc, char* argv[]) {
         for (const auto& task : {"compute_ranking, plot_ranking, compute_unconstrained"}) {
             cout << '\t' << task << endl;
         }
+        cout << "* Available keys" << endl;
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^60}=", "=", "=", "=", "=") << endl;
+        cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", "type", "key", "default value", "comment") << endl;
+        cout << fmt::format("+{:=^20}=+={:=^20}=+=={:=^15}=+=={:=^60}+", "=", "=", "=", "=") << endl;
+        for (const auto& options : std::vector<std::array<string, 4>>{
+                {"",                "",                 "",             "WARNING: x in front of the comment: not supported yet"},
+                {"string",          "task",             "",             "Use on of the following: compute_ranking, plot_ranking, compute_unconstrained"},
+                {"string",          "ws_path",          "",             ""},
+                {"string",          "ws_name",          "combWS",       "Name of the workspace in the file"},
+                {"string",          "model_config",     "ModelConfig",  "Name of the RooStats::ModelConfig in the file"},
+                {"string",          "comb_pdf",         "combPdf",      "Name of the pdf  to be used (usually, combined pdf)"},
+                {"string",          "comb_data",        "combData",     "Name of the data to be used (usually, combined pdf)"},
+                {"string",          "res_path",         ".",            "path where to save the resulting json file"},
+                {"string",          "poi",              "cHG",          ""},
+                {"vector<string>",  "errors",           "",             "Minos nps | Minos pois | Minos | Hesse"},
+                {"size_t",          "worker_id",        "0",            ""},
+                {"size_t",          "top",              "20",           "number of pois to plot"},
+                {"double",          "fit_precision",    "1E-3",         ""},
+                {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
+                {"float",           "rmargin",          "0.10",         "Canvas margin RIGHT"},
+                {"float",           "lmargin",          "0.10",         "Canvas margin LEFT"},
+                {"float",           "tmargin",          "0.05",         "Canvas margin TOP"},
+                {"float",           "bmargin",          "0.40",         "Canvas margin BOTTOM"},
+                {"vector<size_t>",  "plt_size",         "1200 800",     "Size of the canvas (x, y). Example: --plt_size 1200 800"},
+                {"string",          "study_type",       "",             ""},
+                {"string",          "snapshot",         "",             ""},
+                {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
+                {"bool",            "fit_all_pois",    "false",         "x If fit all pois available in the Workspace"},
+                {"bool",            "fit_single_poi",  "true",          "x If fix all pois available in the Workspace, apart from the one to fit"},
+                {"string",          "input",            "",             "x "},
+                {"vector<string>",  "fileformat",       "pdf",          "Format(s) of the output plot"},
+                {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
+                {"vector<string>",  "match_names",      "",             "Patterns in the names of systematics to be matched (not regex yet), just string.find()"},
+                {"bool",            "vertical",         "false",        "x Orientation of the impact plot: whether to be vertical or standard (horizontal)"},
+                {"string",          "color_prefit",     "blue",         "x Colour for + variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
+                {"string",          "color_postfit",    "green",        "x Colour for - variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
+                {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
+                {"float",           "rmul",             "-0.002",       "LOW  value for the POI axis on the ranking plot"},
+                {"float",           "rmuh",             " 0.002",       "HIGH value for the POI axis on the ranking plot"},
+                {"float",           "np_scale",         "[post fit of top np]", "Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
+                {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
+                {"string",          "out_dir",          "figures",      "Directory to save result plot"},
+                {"string",          "output",           "",             "Force using specified name (without format, format is to be set by --fileformat)"},
+                {"float",           "label_size",       "",             "Size of the label (where np names are printed)"},
+                {"size_t",          "label_font",       "62",           "Font of the label text (where np names are printed); See ROOT Fonts: https://root.cern.ch/doc/master/classTAttText.html#ATTTEXT5"},
+                {"vector<string>",  "remove_prefix",    "",             R"(x Substring (prefix) to be cut from the names of nps (ex: "ATLAS_Hgg_bias_**" with "ATLAS_" being option will become: "Hgg_bias_*")"},
+                {"vector<string>",  "replace",          "",             R"(Replace in labels. Format: "key1:val2 Key2:val2 ...". Ex:"ATLAS_:LHC" replaces "ATLAS_" by "LHC")"}
+        })
+        {
+            cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;
+        }
+        cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^60}+", "=", "=", "=", "=") << endl;
         return 0;
     }
 
@@ -38,16 +90,16 @@ int main(int argc, char* argv[]) {
     if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
 
-        auto* manager = new eft::stats::FitManager();
+        auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
-        config.ws_name = "combWS";
         config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
-        config.model_config = "ModelConfig";
-
         eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
+        settings.poi = config.poi;
+
+        // TODO: refactor this parsing to be inside "FitManager::ReadConfigFromCommandLine"
 
         const string postFit = config.study_type;
         if (postFit == "prefit")
@@ -145,28 +197,27 @@ int main(int argc, char* argv[]) {
 
         } // construction of errros type
 
-        //settings.prePostFit = eft::stats::PrePostFit::PREFIT;
-        settings.studyType = eft::stats::StudyType::OBSERVED;
-        settings.poi = config.poi;
-        settings.path_to_save_res = "res.json";
+        settings.poi                = config.poi;
+        settings.path_to_save_res   = config.res_path;
+        settings.poi_init_val       = config.poi_init_val;
+        settings.fit_precision      = config.fit_precision;
+        EFT_PROF_CRITICAL("save res to: {}", settings.path_to_save_res);
 
         auto worker_id = config.worker_id;
 
         manager->Init(std::move(config));
-        EFT_PROF_WARN("try start compute one worker");
         manager->ComputeNpRankingOneWorker(std::move(settings), worker_id);
     }
     else if (task == "plot_ranking") {
         using namespace eft::plot;
         string res_path;
         string poi;
-//
 
         eft::plot::NpRankingPlotter plotter;
         plotter.ReadSettingsFromCommandLine(&commandLineArgs);
         plotter.ReadValues(plotter.np_ranking_settings->input);
 
-        // TODO: fileformat is not considered yet!
+        // TODO: to use the same "readconfig" from fitmanager and then just to extract required args
         // tmp: to select only entries for the given POI
 //        plotter.SetCallBack([&poi, &plotter](const NpInfoForPlot& info) -> bool {
 //            if (plotter.np_ranking_settings->ignore_name.empty())
@@ -182,7 +233,7 @@ int main(int argc, char* argv[]) {
     else if (task == "compute_unconstrained") {
         EFT_PROF_INFO("Compute Unconstrained fit");
 
-        auto* manager = new eft::stats::FitManager();
+        auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
         config.ws_name = "combWS";

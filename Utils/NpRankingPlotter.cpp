@@ -7,6 +7,7 @@
 
 #include "../Core/Logger.h"
 #include "NpRankingPlotter.h"
+#include "../Application/FitManager.h"
 
 #include <iostream>
 #include <fstream>
@@ -184,7 +185,12 @@ namespace eft::plot {
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
                            res_for_plot_after_selector[idx_syst].impact);
-            histo->GetXaxis()->SetBinLabel(idx_syst + 1, res_for_plot_after_selector[idx_syst].name.c_str());
+
+            string bin_label = res_for_plot_after_selector[idx_syst].name;
+            if ( ! settings->replacements.empty() )
+                ReplaceStrings(bin_label, settings->replacements);
+
+            histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
 
             histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
             histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
@@ -195,11 +201,13 @@ namespace eft::plot {
             //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
         }
 
-        constexpr float range_high = 0.002f;
-        constexpr float range_low  = -0.002f;
+        const float range_high = settings->rmuh; //  0.002f;
+        const float range_low  = settings->rmul; // -0.002
         //constexpr float scaling = (range_high - range_low) / 2.f;
         //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
-        const float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
+        float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
+        if (settings->np_scale > 1E-9)
+            scaling = settings->np_scale;
         //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value +  res_for_plot_after_selector.at(0).obs_error);
         //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value);
         //const auto range_low = -range_high;
@@ -254,16 +262,19 @@ namespace eft::plot {
         legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
         legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
 
-        std::filesystem::create_directory("figures");
+        std::filesystem::create_directory(settings->out_dir); // figures -> by default
 
-        auto canvas = std::make_unique<TCanvas>("c", "c", 1200, 800);
+        auto canvas = std::make_unique<TCanvas>("c",
+                                                            "c",
+                                                                settings->plt_size[0],
+                                                                settings->plt_size[1]); // 1200 x 800
 
-        canvas->SetRightMargin(0.10f); // 0.05
-        canvas->SetLeftMargin(0.10f);
-        canvas->SetTopMargin(0.05f);
-        canvas->SetBottomMargin(0.4f);
+        canvas->SetRightMargin  (settings->rmargin); // 0.10
+        canvas->SetLeftMargin   (settings->lmargin); // 0.10
+        canvas->SetTopMargin    (settings->tmargin); // 0.05
+        canvas->SetBottomMargin (settings->bmargin); // 0.4
 
-        histo->GetXaxis()->SetLabelSize(0.02);
+        histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
         histo->Draw("H same");
         histo_neg->Draw("H same");
@@ -351,8 +362,17 @@ namespace eft::plot {
 
         latex.SetTextSize(0.030); //0.045 is std
         latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
-        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 139 fb^{-1})");
-        latex.DrawLatex(0.35, y, "info on selection (text) names");
+        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 36-139 fb^{-1})");
+
+        string selection_info = "All nuissance parameters";
+        if ( ! settings->match_names.empty() ) {
+            selection_info = "Group of Nuissance parameters: ";
+            for (const string& match : settings->match_names) {
+                selection_info += match + " ";
+            }
+        }
+
+        latex.DrawLatex(0.35, y, selection_info.c_str());
 
         latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
 
@@ -385,40 +405,27 @@ namespace eft::plot {
             //                   matches_in_one_string);
         }
 
-        string name = fmt::format("Impact_{}_{}_nps{}{}.pdf",
-                                  res_for_plot_after_selector[0].poi,
-                                  settings->top,
-                                  select_part,
-                                  ignore_part);
+        std::string stem_name;
+        if (settings->output.empty())
+            stem_name = fmt::format("Impact_{}_{}_nps{}{}",
+                                    settings->poi,
+                                    settings->top,
+                                    select_part,
+                                    ignore_part);
+        else
+            stem_name = settings->output;
 
-        canvas->SaveAs(std::move(name).c_str());
+
+        for (const std::string& fileformat : settings->fileformat) {
+            string name = stem_name + '.' + fileformat;
+
+            canvas->SaveAs(std::move(name).c_str());
+        }
     }
 
     void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
         EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
         auto info = ComputeInfoForPlot(res);
-
-    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
-        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
-        auto info = ComputeInfoForPlot(res);
-
-    void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
-        EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
-        auto info = ComputeInfoForPlot(res);
-
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
-
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} put real formulae for  => now we just plot it's error");
-        //EFT_PROF_WARN("[NpPlotter]{RegisterRes} now we use predef value for");
-
-        //static constexpr float error_full = 0.677982275;
-
-//    EFT_PROF_DEBUG("NpRankingPlotter::RegisterRes poi.err: {:5}, full_err: {:5} ==> impact: {:5}",
-//                   res.poi_fixed_np_err,
-//                   error_full,
-//                   info.impact);
-
         res_for_plot_.push_back(std::move(info));
     }
 
@@ -512,30 +519,41 @@ namespace eft::plot {
     void NpRankingPlotter::ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs) {
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine");
 
+        eft::stats::FitManagerConfig config;
+        eft::stats::FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
+
         np_ranking_settings = make_unique<RankingPlotterSettings>();
 
-        if (cmdLineArgs->SetValIfArgExists("input", np_ranking_settings->input)) {
-            EFT_PROF_INFO("Set input: {}", np_ranking_settings->input);
-        }
-        if (cmdLineArgs->SetValIfArgExists("poi", np_ranking_settings->poi)) {
-            EFT_PROF_INFO("Set poi: {}", np_ranking_settings->poi);
-        }
+#ifndef EFT_GET_FROM_CONFIG
+#define EFT_GET_FROM_CONFIG(config, settings, param) \
+    settings->param = config.param;
 
-        if (cmdLineArgs->SetValIfArgExists("top", np_ranking_settings->top)) {
-            EFT_PROF_INFO("Set top: {}", np_ranking_settings->top);
-        }
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, fileformat);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, top);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, ignore_name);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, match_names);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, poi);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_prefit);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_postfit);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, lmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, tmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, bmargin);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, plt_size);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmul);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmuh);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, vertical);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, output);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, out_dir);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, input);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, label_size);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_prefix);
+#undef EFT_GET_FROM_CONFIG
+#endif
 
-        if (cmdLineArgs->SetValIfArgExists("fileformat", np_ranking_settings->fileformat)) {
-            EFT_PROF_INFO("Set fileformat: {}", np_ranking_settings->fileformat);
-        }
-        if (cmdLineArgs->SetValIfArgExists("ignore_name", np_ranking_settings->ignore_name)) {
-            EFT_PROF_INFO("Set ignore_name with: {} elements", np_ranking_settings->ignore_name.size());
-            EFT_PROF_INFO("It will modify the callback, by requiring this string not to be present in the filenames");
-        }
-        if (cmdLineArgs->SetValIfArgExists("match_names", np_ranking_settings->match_names)) {
-            EFT_PROF_INFO("Set match_names with: {} elements", np_ranking_settings->match_names.size());
-            EFT_PROF_INFO("It will modify the callback, by requiring this string to be present in the filenames");
-        }
+        np_ranking_settings->replacements = ParseReplacements(config.replace);
 
         vector<EntriesSelector> callbacks;
         if ( ! np_ranking_settings->ignore_name.empty() )
@@ -581,5 +599,52 @@ namespace eft::plot {
 
     }
 
+
+std::vector<NpRankingPlotter::Replacement>
+NpRankingPlotter::ParseReplacements(const std::vector<std::string>& replacements)
+{
+    // convert vector of "key:val" to vector of pairs: <key, val>
+    EFT_PROF_TRACE("ParseReplacements for {} objects", replacements.size());
+    vector<Replacement> res;
+    res.reserve(replacements.size());
+    for (const auto& raw : replacements)
+    {
+        EFT_PROF_DEBUG("Extract replacement from: {}", raw);
+        auto pos_separator = raw.find(':');
+        if (pos_separator == std::string::npos) {
+            throw std::logic_error(fmt::format("Cannot parse replacement string {}, {}",
+                                               raw,
+                                               ". Must have format: 'key1:val1, key2:val2, ...'"));
+
+        }
+
+        std::string key = raw.substr(0, pos_separator);
+        std::string val = raw.substr(pos_separator + 1, raw.length());
+        res.emplace_back(std::move(key), std::move(val));
+    }
+
+    for (const auto& key_val : res) {
+        EFT_PROF_DEBUG("Add replacing: {:10} ==> {:10}", key_val.first, key_val.second);
+    }
+
+    return res;
+}
+
+void NpRankingPlotter::ReplaceStrings(std::string& s, const std::vector<Replacement>& replacements)
+{
+    for (const auto& replacement : replacements) {
+        EFT_PROF_DEBUG("Replace {} using {:10} -> {:10} replacement", s, replacement.first, replacement.second);
+        StringUtils::Replace(s, replacement.first, replacement.second);
+    }
+}
+
+void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
+{
+    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes) is not implemented");
+}
+string NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes)
+{
+    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes) is not implemented");
+}
 
 }

@@ -45,8 +45,8 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
             key = TrimKey(token);
             //auto key_trimmed = TrimKey(token);
             cout << fmt::format("\t[{}] is a new key", key) << endl;
-            keys.insert(key);
-
+            //keys.insert(key);
+            AddKey(key);
 
             //key = token.substr(2, token.length());
             //key = token.substr(token.find_first_not_of('-'), token.size());
@@ -59,7 +59,8 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
         }
     }
 
-    keys.insert(key);
+    AddKey(key);
+    //keys.insert(key);
     ops[std::move(key)] = std::move(vals);
 
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
@@ -136,6 +137,14 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     return true;
 }
 
+void CommandLineArgs::AddKey(CommandLineArgs::Key key)
+{
+    EFT_PROF_DEBUG("Add key from output: {}", key);
+    //_requested_keys[key] = true;
+    _parsed_keys.insert(key);
+    keys.insert(std::move(key));
+}
+
 //std::pair<CommandLineArgs::Key, CommandLineArgs::Vals>
 //CommandLineArgs::ExtractVals(std::string_view raw) noexcept
 //{
@@ -171,6 +180,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) const
 {
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
+    _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
     //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
@@ -181,8 +191,54 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
+    _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
         return nullopt;
     }
     return ops.at(option)[0];
+}
+
+void CommandLineArgs::ReportStatus() const noexcept
+{
+    std::set<Key> all_keys;
+    for (const auto& key: _requested_keys) {
+        all_keys.insert(key);
+    }
+    for (const auto& key: _parsed_keys) {
+        all_keys.insert(key);
+    }
+
+    std::set<Key> unknown_keys;
+    size_t unknown_keys_count {0};
+
+    // check which keys are not requested, but are parsed (== not correct keys in the request)
+    for (const auto& key : all_keys)
+    {
+        if (_requested_keys.find(key) == _requested_keys.end()) {
+            EFT_PROF_CRITICAL("Used an unknown key: {:10} in the command line", key);
+            unknown_keys_count++;
+            unknown_keys.insert(key);
+        }
+
+        //if (_parsed_keys.find(key) == _parsed_keys.end()) {
+        //    EFT_PROF_CRITICAL("IMPLEMENTATION: forgot to  {} in the command line", key);
+        //    unknown_keys++;
+        //}
+    } // all keys
+
+    EFT_PROF_DEBUG("CommandLine: used {} unknown keys:", unknown_keys_count);
+
+    if (unknown_keys_count != 0) {
+        for (const auto& key : unknown_keys) {
+            EFT_PROF_WARN("{:10} <=== unknown command line option", key);
+        }
+        EFT_PROF_CRITICAL("Use on of the following keys:");
+        for (const auto& key : _requested_keys) {
+            EFT_PROF_WARN("{:10}", key);
+        }
+        throw std::runtime_error("Unknown command line options. Use the ones above");
+    }
+
+    EFT_PROF_DEBUG("CommandLine: code checked {} keys", _requested_keys.size());
+
 }
