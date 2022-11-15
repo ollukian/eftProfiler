@@ -230,13 +230,13 @@ void CommandLineArgs::ReportStatus() const noexcept
 
     if (unknown_keys_count != 0) {
         for (const auto& key : unknown_keys) {
-            EFT_PROF_WARN("{:10} unknown command line option", key);
+            EFT_PROF_WARN("{:10} <=== unknown command line option", key);
         }
         EFT_PROF_CRITICAL("Use on of the following keys:");
         for (const auto& key : _requested_keys) {
             EFT_PROF_WARN("{:10}", key);
         }
-        throw std::runtime_error("Unknown command line options");
+        throw std::runtime_error("Unknown command line options. Use the ones above");
     }
 
     EFT_PROF_DEBUG("CommandLine: code checked {} keys", _requested_keys.size());
