@@ -437,6 +437,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fitSettings.errors = settings.errors;
     fitSettings.retry = settings.retry;
     fitSettings.strategy = settings.strategy;
+    fitSettings.eps = settings.fit_precision;
+    // TODO: use one set of settings...
 
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
