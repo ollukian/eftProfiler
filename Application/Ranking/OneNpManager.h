@@ -237,6 +237,7 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingErrors(fit::Errors errors)
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingFitSettings(NpRankingStudySettings settings) noexcept
 {
     result_.np_ranking_settings_ = settings;
+    return *this;
 }
 
 } // eft::stats::ranking
