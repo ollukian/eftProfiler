@@ -106,6 +106,8 @@ struct NpRankingStudySettings
     bool no_gamma {false};
     double poi_init_val {0.};
     double fit_precision {0.};
+    size_t retry;
+    size_t strategy;
 };
 
 // Only information relevant for plotting

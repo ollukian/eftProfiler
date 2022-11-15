@@ -24,6 +24,8 @@ struct FitManagerConfig {
     std::vector<std::string>    errors;
     size_t                      worker_id           {0};
     double                      fit_precision       {1E-3};
+    size_t                      strategy            {1};
+    size_t                      retry               {0};
     double                      poi_init_val        {0.};
     std::string                 study_type;
     std::string                 snapshot;

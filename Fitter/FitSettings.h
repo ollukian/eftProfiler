@@ -22,6 +22,9 @@ struct FitSettings {
     RooArgSet*  pois        = nullptr;
     RooAbsReal* nll         = nullptr;
     Errors      errors = Errors::DEFAULT;
+    uint8_t     retry       = 0;
+    uint8_t     strategy    = 0;
+    double      eps         {};
 };
 
 } // eft::stats::fit

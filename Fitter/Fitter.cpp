@@ -49,19 +49,21 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     //RooMinimizerWrapper minim(*settings.nll);
     RooMinimizerWrapper minim(*nll);
     EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
-    minim.setStrategy( 1 );
-    EFT_PROF_INFO("[Minimizer] set strategy to 1");
+    minim.setStrategy( settings.strategy );
+    EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
     minim.setPrintLevel( 1 );
+    EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
-    minim.setEps(1E-03 / 0.001); // used to be 1E-3 ==> minimise until 1E-6
+    EFT_PROF_INFO("[Minimizer] set eps to {}", settings.eps);
+    minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
-    EFT_PROF_INFO("[Minimizer] allow offseting");
+    EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
+    EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
     minim.optimizeConst( 2 );
-    EFT_PROF_INFO("[Minimizer] set optimize constant 2");
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
     minim.setMaxFunctionCalls(5000 * settings.pdf->getVariables()->getSize());
-
+    EFT_PROF_INFO("[Minimizer] max function calls: {}", 5000 * settings.pdf->getVariables()->getSize());
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
@@ -74,13 +76,37 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 
     // retry taken from:
     // https://gitlab.cern.ch/atlas-physics/stat/tools/StatisticsTools/-/blob/master/src/ExtendedMinimizer.cxx#L228
-
-
-
-    // Perform fit with MIGRAD
+    EFT_PROF_INFO("Try to minimize nll..");
     _status += minim.minimize( "Minuit2", "Migrad" );
-    //_status += minim.minimize( "Minuit2");
     EFT_PROF_INFO("[Minimizer] fit status: {}", _status);
+
+    size_t retry = settings.retry;
+    size_t strategy = settings.strategy;
+
+    while (_status != 0 && _status != 1 && strategy < 2 && retry > 0)
+    {
+        EFT_PROF_INFO("Fit failed with status: {} using strategy {}, try again with strategy: {}",
+                      _status,
+                      strategy,
+                      strategy + 1);
+        --retry;
+        ++strategy;
+        minim.setStrategy(strategy);
+        EFT_PROF_INFO("Change strategy to {}", strategy);
+        _status = minim.minimize("Minuit2", "Migrag");
+        EFT_PROF_INFO("After retrying, fit status: {}", _status);
+    }
+
+    if (_status != 0 && _status != 1) {
+        EFT_PROF_CRITICAL("After all attempts, fit failed with status: {}", _status);
+        EFT_PROF_CRITICAL("Return back fit strategy to {}", settings.strategy);
+        minim.setStrategy(settings.strategy);
+    }
+    else {
+        EFT_PROF_INFO("Successfull minimization! Return back fit strategy");
+        minim.setStrategy(settings.strategy);
+    }
+
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;
       _status += minim.hesse();

@@ -291,7 +291,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
             .UsingWS(ws_)
             .UsingSnapshotWithInitVals("tmp_nps")
             .ForPOI(res.poi_name)
-            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)));
+            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
+            .UsingFitSettings(settings);
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);
@@ -434,6 +435,8 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fitSettings.data = &data;
     fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
     fitSettings.errors = settings.errors;
+    fitSettings.retry = settings.retry;
+    fitSettings.strategy = settings.strategy;
 
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");

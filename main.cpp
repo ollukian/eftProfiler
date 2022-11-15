@@ -38,6 +38,8 @@ int main(int argc, char* argv[]) {
                 {"size_t",          "worker_id",        "0",            ""},
                 {"size_t",          "top",              "20",           "number of pois to plot"},
                 {"double",          "fit_precision",    "1E-3",         "x "},
+                {"size_t",          "strategy",         "0",            "Strategy from RooMinimizer (0, 1, 2)"},
+                {"size_t",          "retry",            "0",            "Nb of times to retry fit in case of failure (0, 1, 2)"},
                 {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
                 {"float",           "rmargin",          "0.10",         "Canvas margin RIGHT"},
                 {"float",           "lmargin",          "0.10",         "Canvas margin LEFT"},
@@ -201,6 +203,8 @@ int main(int argc, char* argv[]) {
         settings.path_to_save_res   = config.res_path;
         settings.poi_init_val       = config.poi_init_val;
         settings.fit_precision      = config.fit_precision;
+        settings.retry = config.retry;
+        settings.strategy = config.strategy;
         EFT_PROF_CRITICAL("save res to: {}", settings.path_to_save_res);
 
         auto worker_id = config.worker_id;
