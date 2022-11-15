@@ -604,11 +604,12 @@ std::vector<NpRankingPlotter::Replacement>
 NpRankingPlotter::ParseReplacements(const std::vector<std::string>& replacements)
 {
     // convert vector of "key:val" to vector of pairs: <key, val>
-    EFT_PROF_TRACE("ParseReplacements");
+    EFT_PROF_TRACE("ParseReplacements for {} objects", replacements.size());
     vector<Replacement> res;
     res.reserve(replacements.size());
     for (const auto& raw : replacements)
     {
+        EFT_PROF_DEBUG("Extract replacement from: {}", raw);
         auto pos_separator = raw.find(':');
         if (pos_separator == std::string::npos) {
             throw std::logic_error(fmt::format("Cannot parse replacement string {}, {}",
