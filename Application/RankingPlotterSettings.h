@@ -38,6 +38,9 @@ struct RankingPlotterSettings {
     std::string                 lumi;
     std::string                 experiment;
     std::string                 res_status;
+    float                       np_offset;
+    float                       mu_offset;
+    std::string                 mu_latex;
 };
 
 } // plot

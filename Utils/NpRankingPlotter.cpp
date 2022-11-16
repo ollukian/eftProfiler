@@ -225,7 +225,7 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
-        histo->GetYaxis()->SetTitleOffset(1.4);
+        histo->GetYaxis()->SetTitleOffset(settings->mu_offset); // 1.4
         histo->GetYaxis()->SetTitle("#Delta #mu");
 
         //histo->SetFillColor(kBlue);
@@ -343,7 +343,7 @@ namespace eft::plot {
         //axis_nps->SetLabelColor(kRed);
         axis_nps->SetLabelFont(histo->GetLabelFont());
         axis_nps->SetLabelSize(0.02);
-        axis_nps->SetTitleOffset(1.0);
+        axis_nps->SetTitleOffset(settings->np_offset); // 1.0
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
 
@@ -380,7 +380,11 @@ namespace eft::plot {
 
         latex.DrawLatex(0.35, y, selection_info.c_str());
 
-        latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
+        if (settings->mu_latex.empty())
+            latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
+        else
+            latex.DrawLatex(x, y - 3 * dy, settings->mu_latex.c_str());
+
 
         string ignore_part;
         string select_part;
@@ -561,6 +565,9 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, lumi);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, experiment);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, res_status);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_offset);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_offset);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_latex);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

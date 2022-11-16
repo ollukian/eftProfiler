@@ -61,6 +61,9 @@ struct FitManagerConfig {
     std::string                 lumi                {"36.1-139"};
     std::string                 experiment          {"ATLAS"};
     std::string                 res_status          {"Internal"};
+    float                       mu_offset           {1.4};
+    float                       np_offset           {1.0};
+    std::string                 mu_latex            {};
 };
 
 template<typename OStream>
