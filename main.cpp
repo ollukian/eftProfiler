@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
         cout << fmt::format("+{:=^20}=+={:=^20}=+=={:=^15}=+=={:=^60}+", "=", "=", "=", "=") << endl;
         for (const auto& options : std::vector<std::array<string, 4>>{
                 {"",                "",                 "",             "WARNING: x in front of the comment: not supported yet"},
-                {"string",          "task",             "",             "Use on of the following: compute_ranking, plot_ranking, compute_unconstrained"},
+                {"string",          "task",             "",             "compute_ranking | plot_ranking | compute_unconstrained"},
                 {"string",          "ws_path",          "",             ""},
                 {"string",          "ws_name",          "combWS",       "Name of the workspace in the file"},
                 {"string",          "model_config",     "ModelConfig",  "Name of the RooStats::ModelConfig in the file"},
