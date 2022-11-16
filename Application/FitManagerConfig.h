@@ -56,6 +56,11 @@ struct FitManagerConfig {
     std::string                 input               {};
     std::vector<std::string>    remove_prefix       {};
     std::vector<std::string>    replace             {};
+    std::string                 ds_title            {"Higgs Combination"};
+    float                       energy              {13};
+    std::string                 lumi                {"36.1-139"};
+    std::string                 experiment          {"ATLAS"};
+    std::string                 res_status          {"Internal"};
 };
 
 template<typename OStream>

@@ -355,14 +355,20 @@ namespace eft::plot {
         //mylatex.SetTextFont(72);
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
-        latex.DrawLatex(x, y, "ATLAS");
+        latex.DrawLatex(x, y, settings->experiment.c_str());
         latex.SetTextFont(42); //put back the font
         //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
-        latex.DrawLatex(x + 0.10, y, "Internal");
+        latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
 
         latex.SetTextSize(0.030); //0.045 is std
         latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
-        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 36-139 fb^{-1})");
+
+        string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+                                                 settings->ds_title,
+                                                 settings->energy,
+                                                 settings->lumi);
+
+        latex.DrawLatex(x, y - 2 * dy, text_ds_energy_lumi.c_str());
 
         string selection_info = "All nuissance parameters";
         if ( ! settings->match_names.empty() ) {
@@ -550,6 +556,11 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, label_size);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_prefix);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, ds_title);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, energy);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, lumi);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, experiment);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, res_status);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

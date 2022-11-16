@@ -68,7 +68,12 @@ int main(int argc, char* argv[]) {
                 {"float",           "label_size",       "",             "Size of the label (where np names are printed)"},
                 {"size_t",          "label_font",       "62",           "Font of the label text (where np names are printed); See ROOT Fonts: https://root.cern.ch/doc/master/classTAttText.html#ATTTEXT5"},
                 {"vector<string>",  "remove_prefix",    "",             R"(x Substring (prefix) to be cut from the names of nps (ex: "ATLAS_Hgg_bias_**" with "ATLAS_" being option will become: "Hgg_bias_*")"},
-                {"vector<string>",  "replace",          "",             R"(Replace in labels. Format: "key1:val2 Key2:val2 ...". Ex:"ATLAS_:LHC" replaces "ATLAS_" by "LHC")"}
+                {"vector<string>",  "replace",          "",             R"(Replace in labels. Format: "key1:val2 Key2:val2 ...". Ex:"ATLAS_:LHC" replaces "ATLAS_" by "LHC")"},
+                {"string",          "ds_title",         "Higgs Combination", "Text description of the dataset. Allowed to use commands from TLatex"},
+                {"float",           "energy",           "13 [TeV]",     R"(x Center-of-mass energy [TeV] x To change units use []. Ex: "27[Mev]" => will force MeV)"},
+                {"string",          "lumi",             "36.1-139 [fb^-1]",  R"(x Luminosity [fb^-1]          x To change units use []. Ex: "25[pb]   => will force pb^-1"  )"},
+                {"string",          "experiment",       "ATLAS",        "Name of the experiment to be printed."},
+                {"string",          "res_status",       "Internal",     "What should be printed after experiment. Ex: Work-in-progress, Internal, Simulation, ..."},
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;

@@ -31,8 +31,13 @@ struct RankingPlotterSettings {
     std::vector<std::string>    remove_prefix;
 
     using Replacement = std::pair<std::string, std::string>;
-
     std::vector<Replacement>    replacements;
+
+    std::string                 ds_title;
+    float                       energy;
+    std::string                 lumi;
+    std::string                 experiment;
+    std::string                 res_status;
 };
 
 } // plot
