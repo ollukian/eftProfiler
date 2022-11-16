@@ -128,12 +128,17 @@ namespace eft::plot {
 
         vector<stats::NpInfoForPlot> res_for_plot_after_selector;
 
+        // TODO: wrap by "GetSelected"
         std::copy_if(res_for_plot_.begin(),
                      res_for_plot_.end(),
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
                          bool res = callback_(info);
-                         EFT_PROF_INFO("callback for poi: {:10}, np: {:40} -> {}", info.poi, info.name, res);
+                         EFT_PROF_INFO("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
+                                       "overall",
+                                       info.poi,
+                                       info.name,
+                                       res);
                          return res;
                      }
         );
@@ -582,13 +587,22 @@ namespace eft::plot {
 
         callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
             bool res = (info.poi == np_ranking_settings->poi);
-            EFT_PROF_DEBUG("callback [poi match] for POI: {:10}, np: {:20} result: {}", info.poi, info.name, res);
+            EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
+                           "poi match",
+                           np_ranking_settings->poi,
+                           info.poi,
+                           info.name,
+                           res);
             return res;
         });
 
         callbacks.emplace_back(std::move([&](const NpInfoForPlot& info) -> bool {
             bool res = info.name.find("gamma") == std::string::npos;
-            EFT_PROF_DEBUG("callback [no gamma]  for POI: {:10}, np: {:20} result: {}", info.poi, info.name, res);
+            EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
+                           "no gamma",
+                           info.poi,
+                           info.name,
+                           res);
             return res;
         }));
 
