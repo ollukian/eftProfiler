@@ -38,18 +38,18 @@ namespace eft::plot {
             EFT_PROF_CRITICAL("[NpRankingPlotter][ReadValues] no --input is set: directory to read values from");
             return;
         }
-
-        cout << "[NpRankingPlotter] read values from: " << path.string() << endl;
-        cout << "[NpRankingPlotter] start looping over the directory" << endl;
+        EFT_PROF_INFO("Read result files from {}", path.string());
+        //cout << "[NpRankingPlotter] read values from: " << path.string() << endl;
 
         for (const auto& entry : fs::directory_iterator{path}) {
             const auto filenameStr = entry.path().filename().string();
-            cout << filenameStr;
+            //cout << filenameStr;
             if (entry.is_directory()) {
-                cout << " ==> is a directory" << endl;
+                EFT_PROF_INFO("{} is a directory, skip it", filenameStr);
             }
             else if (entry.is_regular_file()) {
-                cout << " ==> is a regular file, try to parse it" << endl;
+                //EFT_PROF_DEBUG();
+                //cout << " ==> is a regular file, try to parse it" << endl;
                 RegisterRes(ReadValuesOneFile(entry));
                 //if (callback(res)) {
                 //    EFT_PROF_INFO("NpRankingPlotter::ReadValues passes selection set by the callback. Register it");
@@ -490,29 +490,29 @@ namespace eft::plot {
                        res.np_val,
                        res.np_err);
 
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_plus_sigma_variation_val,
-                       info.impact_plus_sigma_var);
-
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -sigma: {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_minus_sigma_variation_val,
-                       info.impact_minus_sigma_var);
-
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +1    : {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_plus_one_variation_val,
-                       info.impact_plus_one_var);
-
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1    : {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_minus_one_variation_val,
-                       info.impact_minus_one_var);
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_plus_sigma_variation_val,
+//                       info.impact_plus_sigma_var);
+//
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -sigma: {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_minus_sigma_variation_val,
+//                       info.impact_minus_sigma_var);
+//
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +1    : {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_plus_one_variation_val,
+//                       info.impact_plus_one_var);
+//
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1    : {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_minus_one_variation_val,
+//                       info.impact_minus_one_var);
 
 
         return info;
@@ -580,27 +580,29 @@ namespace eft::plot {
             callbacks.emplace_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
 
         callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
-            EFT_PROF_INFO("callback [poi match] for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
-           return info.poi == np_ranking_settings->poi;
+            bool res = (info.poi == np_ranking_settings->poi);
+            EFT_PROF_INFO("callback [poi match] for POI: {:10}, np: {:20} result: {}", info.poi, info.name, res);
+            return res;
         });
 
         callbacks.emplace_back(std::move([&](const NpInfoForPlot& info) -> bool {
-            EFT_PROF_INFO("callback [no gamma] for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
-            return info.name.find("gamma") == std::string::npos;
+            bool res = info.name.find("gamma") == std::string::npos;
+            EFT_PROF_INFO("callback [no gamma] for POI: {:10}, np: {:20} result: {}", info.poi, info.name, res);
+            return res;
         }));
 
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine created with {} callbacks to be joined", callbacks.size());
 
         SetCallBack(std::move([callbacks](const NpInfoForPlot& info) -> bool
                               {
-                                  EFT_PROF_INFO("Global callback for {} with {} components",
-                                                info.name, callbacks.size());
+                                  //EFT_PROF_INFO("Global callback for {} with {} components",
+                                  //              info.name, callbacks.size());
                                   return std::all_of(callbacks.begin(),
                                                      callbacks.end(),
                                                      [&](const auto& cb) -> bool
                                                      {
-                                                         EFT_PROF_INFO("callback for {} res: {}",
-                                                                       info.name, cb(info));
+                                                         //EFT_PROF_INFO("callback for {} res: {}",
+                                                         //              info.name, cb(info));
                                                          return cb(info);
                                                      });
                               }));
