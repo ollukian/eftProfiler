@@ -42,7 +42,7 @@ public:
 
 
 inline void StringUtils::Replace(std::string& s, const std::string& what, const std::string& with) {
-    if (with.empty())
+    if (what.empty())
         return;
     auto pos_begin = s.find(what);
     std::cout << "pos_begin: " << pos_begin << std::endl;
