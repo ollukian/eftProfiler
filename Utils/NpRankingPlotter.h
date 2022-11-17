@@ -57,7 +57,7 @@ private:
     using Replacement = std::pair<std::string, std::string>;
 
     static void        RemovePrefix(std::string& s,    const std::vector<std::string>& prefixes);
-    static std::string RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes);
+    static inline std::string RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes);
 
     static inline void        ReplaceStrings(std::string& s,    const std::vector<std::string>& replacements);
     static inline std::string ReplaceStringsCopy(std::string s, const std::vector<std::string>& replacements);
@@ -118,6 +118,11 @@ inline std::string NpRankingPlotter::ReplaceStringsCopy(std::string s, const std
 inline std::string NpRankingPlotter::ReplaceStringsCopy(std::string s, const std::vector<NpRankingPlotter::Replacement>& replacements)
 {
     ReplaceStrings(s, replacements);
+    return s;
+}
+inline std::string NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes)
+{
+    RemovePrefix(s, prefixes);
     return s;
 }
 

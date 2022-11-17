@@ -680,10 +680,5 @@ void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
         StringUtils::RemovePrefix(s, prefix);
     }
 }
-string NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes)
-{
-    StringUtils::RemovePrefix(s, prefix);
-    return s;
-}
 
 }
