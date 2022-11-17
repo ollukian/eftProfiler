@@ -410,7 +410,7 @@ namespace eft::plot {
 
         if ( ! settings->match_names.empty() )
         {
-            string matches_in_one_string = fmt::format("Select_{}_patterns__", settings->ignore_name.size());
+            string matches_in_one_string = fmt::format("Select_{}_patterns__", settings->match_names.size());
             for (const auto& patter : settings->match_names)
                 matches_in_one_string += patter + "__";
 
@@ -464,7 +464,7 @@ namespace eft::plot {
             info.obs_error = res.np_err;
         }*/
 
-        const auto error_full = res.poi_fixed_np_err;
+        const auto error_full = res.poi_free_fit_err;
         //static constexpr float error_full = 0.0932585782834731;
         //auto error_full = res.poi_fixed_np_err;
 
