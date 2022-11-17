@@ -45,9 +45,6 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
     if (what.empty())
         return;
     auto pos_begin = s.find(what);
-    std::cout << "pos_begin: " << pos_begin << std::endl;
-    std::cout << "what: {" << what << "}" << std::endl;
-    std::cout << "with: {" << with << "}" << std::endl;
     if (pos_begin == std::string::npos)
         return;
     if (with.empty())
@@ -141,7 +138,10 @@ std::string StringUtils::Strip(const std::string& s) {
     while (idx_last_not_space > 0 && isspace(s.at(idx_last_not_space))) {
         idx_last_not_space--;
     }
-    return s.substr(idx_first_not_space, idx_last_not_space - idx_first_not_space + 1);
+    if (idx_last_not_space != idx_first_not_space)
+        return s.substr(idx_first_not_space, idx_last_not_space - idx_first_not_space + 1);
+    else
+        return "";
 }
 
 std::vector<std::string> StringUtils::SplitBy(const std::string& s, char sep) {

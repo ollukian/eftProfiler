@@ -53,7 +53,7 @@ void TestStrip()
         ASSERT_EQUAL(s3_stripped, s3_res);
     }
     {
-        string s3 {" "};
+        string s3 {"  "};
         const string s3_res {""};
         auto s3_stripped = SU::Strip(s3);
         ASSERT_EQUAL(s3_stripped, s3_res);
