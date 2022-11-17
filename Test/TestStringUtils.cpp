@@ -6,17 +6,37 @@
 #include "test_runner.h"
 #include "Tester.h"
 
+using SU = eft::StringUtils;
+using std::string;
+using std::vector;
+
+using Sentence = string;
+using Words = vector<string>;
+
 void TestJoin()
 {
-    using eft::StringUtils;
-    //StringUtils::Join();
-}
+    {
+        Words words{"one", "two", "three"};
+        const auto obtained = SU::Join(' ', words);
+        const Sentence expected{"one two three"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+    {
+        Words words{"one", "two"};
+        const auto obtained = SU::Join('_', words);
+        const Sentence expected{"one_two"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+    {
+        Words words {"one"};
+        const auto obtained = SU::Join('*', words);
+        const Sentence expected{"one"};
+        ASSERT_EQUAL(expected, obtained);
+    }
 
+}
 void TestStrip()
 {
-    using SU = eft::StringUtils;
-    using std::string;
-
     {
         string s1{"no_strip"};
         auto res1 = SU::Strip(s1);
@@ -59,11 +79,9 @@ void TestStrip()
         ASSERT_EQUAL(s3_stripped, s3_res);
     }
 }
-
 void TestRemovePrefix()
 {
-    using SU = eft::StringUtils;
-    using std::string;
+
     {
         string s {"abcd"};
         const string prefix {"a"};
@@ -95,8 +113,7 @@ void TestRemovePrefix()
 }
 void TestRemoveSuffix()
 {
-    using SU = eft::StringUtils;
-    using std::string;
+
     {
         string s {"abcd"};
         const string suffix {"d"};
@@ -133,11 +150,8 @@ void TestRemoveSuffix()
         ASSERT_EQUAL(s, s_res);
     }
 }
-
 void TestReplace()
 {
-    using SU = eft::StringUtils;
-    using std::string;
 
     {
         string s{"bad_string"};
@@ -181,6 +195,28 @@ void TestReplace()
         ASSERT_EQUAL(s, "ATLAS_cool_Hgg_systematics_HComb");
     }
 }
+void TestSplit()
+{
+
+    {
+        const Sentence s {"no_split"};
+        const auto obtained = SU::Split(s, ' ');
+        const Words expected {"no_split"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+    {
+        const Sentence s {"one two"};
+        const auto obtained = SU::Split(s, ' ');
+        const Words expected {"one", "two"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+    {
+        const Sentence s {"hey_there_i_am_here"};
+        const auto obtained = SU::Split(s, '_');
+        const Words expected {"hey", "there", "i", "am", "here"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+}
 
 void TestStringUtils()
 {
@@ -190,4 +226,5 @@ void TestStringUtils()
     RUN_TEST(tr, TestRemovePrefix);
     RUN_TEST(tr, TestRemoveSuffix);
     RUN_TEST(tr, TestReplace);
+    RUN_TEST(tr, TestSplit);
 }

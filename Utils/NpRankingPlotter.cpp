@@ -195,6 +195,11 @@ namespace eft::plot {
             string bin_label = res_for_plot_after_selector[idx_syst].name;
             if ( ! settings->replacements.empty() )
                 ReplaceStrings(bin_label, settings->replacements);
+            if ( ! settings->remove_prefix.empty() )
+                RemovePrefix(bin_label, settings->remove_prefix);
+            if ( ! settings->remove_suffix.empty() )
+                RemoveSuffix(bin_label, settings->remove_suffix);
+
 
             histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
 
@@ -566,6 +571,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, label_size);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_prefix);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_suffix);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, ds_title);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, energy);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, lumi);
@@ -678,6 +684,13 @@ void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
     for (const auto& prefix : prefixes) {
         EFT_PROF_DEBUG("Remove prefix: {:10} from {:10}");
         StringUtils::RemovePrefix(s, prefix);
+    }
+}
+void NpRankingPlotter::RemoveSuffix(string& s, const vector<string>& suffixes)
+{
+    for (const auto& suffix : suffixes) {
+        EFT_PROF_DEBUG("Remove suffix: {:10} from {:10}");
+        StringUtils::RemoveSuffix(s, suffix);
     }
 }
 

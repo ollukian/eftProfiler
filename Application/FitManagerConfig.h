@@ -55,6 +55,7 @@ struct FitManagerConfig {
     std::string                 output              {};
     std::string                 input               {};
     std::vector<std::string>    remove_prefix       {};
+    std::vector<std::string>    remove_suffix       {};
     std::vector<std::string>    replace             {};
     std::string                 ds_title            {"Higgs Combination"};
     float                       energy              {13};

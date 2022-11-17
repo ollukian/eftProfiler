@@ -42,7 +42,6 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
             AddKey(key);
         }
         else {
-            cout << fmt::format("\t[{}] is a val", token) << endl;
             vals.push_back(token);
         }
     }

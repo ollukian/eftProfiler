@@ -7,19 +7,23 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include <sstream>
 #include <iostream>
 #include <algorithm>
+#include <iterator>
 
 namespace eft {
 
+template <typename Iterator>
+class IteratorRange;
 
     // c++14 only, so no std::string_view
 class StringUtils {
 public:
     //static inline std::vector<std::string> ParseText(const std::string& s) noexcept;
     static inline std::string              Strip(const std::string& s);
-    static inline std::vector<std::string> SplitBy(const std::string& s, char sep);
+    static inline std::vector<std::string> Split(const std::string& s, char sep = ' ');
 
     static inline void          Ltrim(std::string &s);
     static inline void          Rtrim(std::string &s);
@@ -39,6 +43,32 @@ public:
     template <typename Container>
     static inline std::string    Join(char c, const Container& cont);
 };
+
+template <typename Iterator>
+class IteratorRange {
+public:
+    IteratorRange(Iterator begin, Iterator end)
+            : first(begin)
+            , last(end)
+    {
+    }
+
+    Iterator begin() const {
+        return first;
+    }
+
+    Iterator end() const {
+        return last;
+    }
+
+private:
+    Iterator first, last;
+};
+
+template <typename Collection>
+auto Head(Collection& v, size_t top) {
+    return IteratorRange{v.begin(), next(v.begin(), std::min(top, v.size()))};
+}
 
 
 inline void StringUtils::Replace(std::string& s, const std::string& what, const std::string& with) {
@@ -144,7 +174,7 @@ std::string StringUtils::Strip(const std::string& s) {
         return "";
 }
 
-std::vector<std::string> StringUtils::SplitBy(const std::string& s, char sep) {
+std::vector<std::string> StringUtils::Split(const std::string& s, char sep) {
     std::vector<std::string> result;
     std::string string_copy = s;
     while (!string_copy.empty()) {

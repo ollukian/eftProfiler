@@ -29,6 +29,7 @@ struct RankingPlotterSettings {
     float                       np_scale;
     float                       label_size;
     std::vector<std::string>    remove_prefix;
+    std::vector<std::string>    remove_suffix;
 
     using Replacement = std::pair<std::string, std::string>;
     std::vector<Replacement>    replacements;
