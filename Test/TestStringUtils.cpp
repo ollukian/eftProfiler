@@ -169,12 +169,15 @@ void TestReplace()
     }
     {
         string s{"experiment_cool_thisChannel_systematics_some_combination_channel"};
-        const string replace_what_1{"experiment"};
-        const string replace_with_1{"ATLAS"};
-        const string replace_what_2{"some_combination_channel"};
-        const string replace_with_2{"HComb"};
+        const string replace_what_1 {"experiment"};
+        const string replace_with_1 {"ATLAS"};
+        const string replace_what_2 {"some_combination_channel"};
+        const string replace_with_2 {"HComb"};
+        const string replace_what_3 {"thisChannel"};
+        const string replace_with_3 {"Hgg"};
         SU::Replace(s, replace_what_1, replace_with_1);
         SU::Replace(s, replace_what_2, replace_with_2);
+        SU::Replace(s, replace_what_3, replace_with_3);
         ASSERT_EQUAL(s, "ATLAS_cool_Hgg_systematics_HComb");
     }
 }
