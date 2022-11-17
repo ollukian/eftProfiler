@@ -67,7 +67,7 @@ add_subdirectory(Utils)
 add_subdirectory(Fitter)
 add_subdirectory(Application)
 
-add_executable(eftProfiler main.cpp Test/TestRooFit.cpp Test/TestStringUtils.cpp Test/test_runner.h)
+add_executable(eftProfiler main.cpp Test/TestRooFit.cpp Test/TestStringUtils.cpp Test/test_runner.h Test/Tester.h)
 
 # target ROOT
 target_link_libraries( eftProfiler PUBLIC ${ROOT_LIBRARIES} )

@@ -5,6 +5,7 @@
 #include "Application/FitManager.h"
 #include "Utils/NpRankingPlotter.h"
 #include "Core/CommandLineArgs.h"
+#include "Test/Tester.h"
 #include "Core/Logger.h"
 
 using namespace std;
@@ -37,7 +38,7 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "errors",           "",             "Minos nps | Minos pois | Minos | Hesse"},
                 {"size_t",          "worker_id",        "0",            ""},
                 {"size_t",          "top",              "20",           "number of pois to plot"},
-                {"double",          "fit_precision",    "1E-3",         "x "},
+                {"double",          "eps",              "1E-3",         "Fit precision"},
                 {"size_t",          "strategy",         "1",            "Strategy from RooMinimizer (0, 1, 2)"},
                 {"size_t",          "retry",            "0",            "Nb of times to retry fit in case of failure (0, 1, 2)"},
                 {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
@@ -47,11 +48,11 @@ int main(int argc, char* argv[]) {
                 {"float",           "bmargin",          "0.40",         "Canvas margin BOTTOM"},
                 {"vector<size_t>",  "plt_size",         "1200 800",     "Size of the canvas (x, y). Example: --plt_size 1200 800"},
                 {"string",          "study_type",       "",             ""},
-                {"string",          "snapshot",         "",             "x"},
+                {"string",          "snapshot",         "",             "x Snapshot to be load before each fit"},
                 {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
                 {"bool",            "fit_all_pois",    "false",         "x If fit all pois available in the Workspace"},
                 {"bool",            "fit_single_poi",  "true",          "x If fix all pois available in the Workspace, apart from the one to fit"},
-                {"string",          "input",            "",             "x "},
+                {"string",          "input",            "",             "Folder to read json results from (for plotting)"},
                 {"vector<string>",  "fileformat",       "pdf",          "Format(s) of the output plot"},
                 {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
                 {"vector<string>",  "match_names",      "",             "Patterns in the names of systematics to be matched (not regex yet), just string.find()"},
@@ -70,8 +71,8 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "remove_prefix",    "",             R"(x Prefix to be cut from the names of nps (ex: "ATLAS_Hgg_bias_**" with "ATLAS_" being option will become: "Hgg_bias_*")"},
                 {"vector<string>",  "replace",          "",             R"(Replace in labels. Format: "key1:val2 Key2:val2 ...". Ex:"ATLAS_:LHC" replaces "ATLAS_" by "LHC")"},
                 {"string",          "ds_title",         "Higgs Combination", "Text description of the dataset. Allowed to use commands from TLatex"},
-                {"float",           "energy",           "13",           R"(x Center-of-mass energy [TeV] x To change units use []. Ex: "27[Mev]" => will force MeV)"},
-                {"string",          "lumi",             "36.1-139",     R"(x Luminosity [fb^-1]          x To change units use []. Ex: "25[pb]   => will force pb^-1"  )"},
+                {"float",           "energy",           "13",           R"(Center-of-mass energy [TeV] x To change units use []. Ex: "27[Mev]" => will force MeV)"},
+                {"string",          "lumi",             "36.1-139",     R"(Luminosity [fb^-1]          x To change units use []. Ex: "25[pb]   => will force pb^-1"  )"},
                 {"string",          "experiment",       "ATLAS",        "Name of the experiment to be printed."},
                 {"string",          "res_status",       "Internal",     "Work-in-progress, Internal, Simulation, ..."},
                 {"float",           "mu_offset",        "",             "Offset of the POI label"},
@@ -98,7 +99,10 @@ int main(int argc, char* argv[]) {
         EFT_PROF_INFO("Set task: {}", task);
     }
 
-    if (task == "compute_ranking") {
+    if (task == "run_tests") {
+        TestStringUtils();
+    }
+    else if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
 
         auto manager = make_unique<eft::stats::FitManager>();

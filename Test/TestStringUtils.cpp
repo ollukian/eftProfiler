@@ -4,6 +4,7 @@
 
 #include "../Utils/StringUtils.h"
 #include "test_runner.h"
+#include "Tester.h"
 
 void TestJoin()
 {
@@ -16,13 +17,121 @@ void TestStrip()
     using SU = eft::StringUtils;
     using std::string;
 
-    const string s1 {"no_strip"};
-    auto res1 = SU::Strip(s1);
-    ASSERT_EQUAL(s1, res1);
+    {
+        string s1{"no_strip"};
+        auto res1 = SU::Strip(s1);
+        ASSERT_EQUAL(s1, res1);
+    }
+    {
+        string s2{" one_strip_front"};
+        const string s2_res{"one_strip_front"};
+        auto s2_stripped = SU::Strip(s2);
+        ASSERT_EQUAL(s2_stripped, s2_res);
+    }
+    {
+        string s3 {"                many_strips_front"};
+        const string s3_res {"many_strips_front"};
+        auto s3_stripped = SU::Strip(s3);
+        ASSERT_EQUAL(s3_stripped, s3_res);
+    }
+    {
+        string s2{"one_strip_back "};
+        const string s2_res{"one_strip_back"};
+        auto s2_stripped = SU::Strip(s2);
+        ASSERT_EQUAL(s2_stripped, s2_res);
+    }
+    {
+        string s3 {"many_strips_back            "};
+        const string s3_res {"many_strips_back"};
+        auto s3_stripped = SU::Strip(s3);
+        ASSERT_EQUAL(s3_stripped, s3_res);
+    }
+    {
+        string s3 {"      many_strips            "};
+        const string s3_res {"many_strips"};
+        auto s3_stripped = SU::Strip(s3);
+        ASSERT_EQUAL(s3_stripped, s3_res);
+    }
+    {
+        string s3 {" "};
+        const string s3_res {""};
+        auto s3_stripped = SU::Strip(s3);
+        ASSERT_EQUAL(s3_stripped, s3_res);
+    }
+}
 
-    const string s2 {"_one_strip"};
-    auto res2 = SU::Strip(s1);
-    ASSERT_EQUAL(s1, res1);
+void TestRemovePrefix()
+{
+    using SU = eft::StringUtils;
+    using std::string;
+    {
+        string s {"abcd"};
+        const string prefix {"a"};
+        const string s_res{"bcd"};
+        SU::RemovePrefix(s, prefix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"aaabcd"};
+        const string prefix {"aaa"};
+        const string s_res{"bcd"};
+        SU::RemovePrefix(s, prefix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"abcd"};
+        const string prefix {"e"};
+        const string s_res{"abcd"};
+        SU::RemovePrefix(s, prefix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"abcd"};
+        const string prefix {"abcdefghfkfls fdfdfd"};
+        const string s_res{"abcd"};
+        SU::RemovePrefix(s, prefix);
+        ASSERT_EQUAL(s, s_res);
+    }
+}
+void TestRemoveSuffix()
+{
+    using SU = eft::StringUtils;
+    using std::string;
+    {
+        string s {"abcd"};
+        const string suffix {"d"};
+        const string s_res{"abc"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"abcddd"};
+        const string suffix {"ddd"};
+        const string s_res{"abc"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"abcd"};
+        const string suffix {"e"};
+        const string s_res{"abcd"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"abcd"};
+        const string suffix {"abcdefghfkfls fdfdfd"};
+        const string s_res{"abcd"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"abcd"};
+        const string suffix {""};
+        const string s_res{"abcd"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
 }
 
 void TestStringUtils()
@@ -30,4 +139,5 @@ void TestStringUtils()
     TestRunner tr;
     RUN_TEST(tr, TestJoin);
     RUN_TEST(tr, TestStrip);
+    RUN_TEST(tr, TestRemovePrefix);
 }
