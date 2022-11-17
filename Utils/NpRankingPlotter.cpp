@@ -107,8 +107,12 @@ namespace eft::plot {
                 j.at("nll").get_to(res.nll);
         }
 
+        if (res.np_name == "none")
+        {
+            EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {:10}, np: {:30} => skip not constrained", res.poi_name, res.np_name);
+        }
 
-        EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {}, np: {}", res.poi_name, res.np_name);
+        EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {:10}, np: {:30}", res.poi_name, res.np_name);
         //cout << setw(4) << j << endl;
         np_study_res_[res.np_name] = res;
         return res;
