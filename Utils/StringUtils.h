@@ -52,9 +52,13 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
  inline void StringUtils::RemovePrefix(std::string& s, const std::string& prefix)
  {
     auto pos_prefix = s.find(prefix);
+    std::cerr << "s: {" << s << "}" << std::endl;
+    std::cerr << "prefix: {" << prefix << "}" << std::endl;
+    std::cerr << "pos prefix: " << pos_prefix << std::endl;
+     std::cerr << "return: " << s.substr(pos_prefix +prefix.length(), s.length()) << std::endl;
     if (pos_prefix == std::string::npos)
         return;
-    s = s.substr(pos_prefix, prefix.length());
+    s = s.substr(pos_prefix +prefix.length(), s.length());
  }
 inline std::string StringUtils::RemovePrefixCopy(std::string s, const std::string& prefix)
 {
