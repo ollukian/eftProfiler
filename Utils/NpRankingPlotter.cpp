@@ -682,7 +682,8 @@ void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
 }
 string NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes)
 {
-    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes) is not implemented");
+    StringUtils::RemovePrefix(s, prefix);
+    return s;
 }
 
 }
