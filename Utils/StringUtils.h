@@ -27,6 +27,11 @@ public:
     static inline std::string   RtrimCopy(std::string s);
     static inline std::string   TrimCopy(std::string s);
 
+    static inline void          RemovePrefix(std::string& s, const std::string& prefix);
+    static inline std::string   RemovePrefixCopy(std::string s,  const std::string& prefix);
+    static inline void          RemoveSuffix(std::string& s, const std::string& suffix);
+    static inline std::string   RemoveSuffixCopy(std::string s,  const std::string& suffix);
+
     static inline void          Replace(std::string& s, const std::string& what, const std::string& with);
     static inline std::string   ReplaceCopy(std::string s, const std::string& what, const std::string& with);
 
@@ -44,6 +49,28 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
     s.replace(pos_begin, what.length(), with);
 }
 
+ inline void StringUtils::RemovePrefix(std::string& s, const std::string& prefix)
+ {
+    auto pos_prefix = s.find(prefix);
+    if (pos_prefix == std::string::npos)
+        return;
+    s = s.substr(pos_prefix, prefix.length());
+ }
+inline std::string StringUtils::RemovePrefixCopy(std::string s, const std::string& prefix)
+{
+    RemovePrefix(s, prefix);
+    return s;
+}
+inline void StringUtils::RemoveSuffix(std::string& s, const std::string& suffix) {
+    auto pos_suffix = s.rfind(suffix);
+    if (pos_suffix == std::string::npos)
+        return;
+    s = s.substr(pos_suffix, suffix.length());
+}
+inline std::string StringUtils::RemoveSuffixCopy(std::string s, const std::string& suffix) {
+    RemoveSuffix(s, suffix);
+    return s;
+}
 inline std::string StringUtils::ReplaceCopy(std::string s, const std::string& what, const std::string& with) {
     Replace(s, what, with);
     return s;
