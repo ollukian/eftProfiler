@@ -211,7 +211,7 @@ int main(int argc, char* argv[]) {
         settings.poi                = config.poi;
         settings.path_to_save_res   = config.res_path;
         settings.poi_init_val       = config.poi_init_val;
-        settings.fit_precision      = config.fit_precision;
+        settings.eps                = config.eps;
         settings.retry = config.retry;
         settings.strategy = config.strategy;
         EFT_PROF_CRITICAL("save res to: {}", settings.path_to_save_res);
