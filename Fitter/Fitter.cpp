@@ -55,7 +55,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     minim.setProfile(); /* print out time */
-    EFT_PROF_INFO("[Minimizer] set eps to {}", settings.eps);
+    EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001", settings.eps);
     minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
     EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);

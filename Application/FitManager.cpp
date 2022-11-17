@@ -437,7 +437,7 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fitSettings.errors = settings.errors;
     fitSettings.retry = settings.retry;
     fitSettings.strategy = settings.strategy;
-    fitSettings.eps = settings.fit_precision;
+    fitSettings.eps = settings.eps;
     // TODO: use one set of settings...
 
 
@@ -643,7 +643,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_pdf);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, top);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, eps);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, snapshot);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
