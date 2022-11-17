@@ -132,7 +132,7 @@ std::string StringUtils::Strip(const std::string& s) {
     while (idx_first_not_space < idx_max && isspace(s.at(idx_first_not_space))) {
        idx_first_not_space++;
     }
-    while (idx_first_not_space > 0 && isspace(s.at(idx_last_not_space))) {
+    while (idx_last_not_space > 0 && isspace(s.at(idx_last_not_space))) {
         idx_last_not_space--;
     }
     return s.substr(idx_first_not_space, idx_last_not_space - idx_first_not_space + 1);
