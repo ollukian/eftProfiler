@@ -65,9 +65,13 @@ inline std::string StringUtils::RemovePrefixCopy(std::string s, const std::strin
 }
 inline void StringUtils::RemoveSuffix(std::string& s, const std::string& suffix) {
     auto pos_suffix = s.rfind(suffix);
+    std::cerr << "s: {" << s << "}" << std::endl;
+    std::cerr << "suffix: {" << suffix << "}" << std::endl;
+    std::cerr << "pos_suffix: {" << pos_suffix << "}" << std::endl;
     if (pos_suffix == std::string::npos)
         return;
-    s = s.substr(pos_suffix + suffix.length(), s.length());
+    std::cerr << "return: {" << s.substr(0, pos_suffix) << "}" << std::endl;
+    s = s.substr(0, pos_suffix);
 }
 inline std::string StringUtils::RemoveSuffixCopy(std::string s, const std::string& suffix) {
     RemoveSuffix(s, suffix);
