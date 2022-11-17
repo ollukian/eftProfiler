@@ -1,3 +1,4 @@
-echo "[INFO] run from singularity file: {$1} with args" ${@:2}
+echo "[INFO] run from singularity with args" ${@}
 
-singularity exec --bind /cvmfs -H "$PWD" /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/atlas_higgs_combination/software/hcomb-docker/analyzer:2-2 sh "$1" "${@:2}" ||
+sh wrap_by_singularity.sh sh run.sh $@ || echo "[ERROR] running form singularity"; exit;
+echo "[INFO] successfully ran from singularity with args: " ${@}
