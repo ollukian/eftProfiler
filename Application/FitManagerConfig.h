@@ -65,6 +65,7 @@ struct FitManagerConfig {
     float                       mu_offset           {1.4};
     float                       np_offset           {1.0};
     std::string                 mu_latex            {};
+    std::vector<std::string>    np_names            {};
 };
 
 template<typename OStream>

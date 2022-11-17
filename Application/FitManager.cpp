@@ -706,6 +706,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_VEC_OPTION(commandLineArgs, config, replace);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, remove_prefix);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, remove_suffix);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, np_names);
 #undef EFT_ADD_VEC_OPTION
 
 

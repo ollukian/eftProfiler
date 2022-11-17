@@ -188,22 +188,36 @@ namespace eft::plot {
         auto histo_minus_one_var = MakeHisto1D("h_-1_var", nb_systematics);
         auto histo_plus_one_var = MakeHisto1D("h_+1_var", nb_systematics);
 
+        if ( ! settings->np_names.empty() ) {
+            if (settings->np_names.size() != nb_systematics) {
+                EFT_PROF_CRITICAL("Number of provided systematics names: {} doesn't match the amount to be plot: {}",
+                                  settings->np_names.size(),
+                                  nb_systematics);
+                throw std::logic_error("check --np_names");
+            }
+        }
 
-
+        // idx_syst -> int, because TH1D::SetBinContent requires int as an argument
+        // no idea why not size_t
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
                            res_for_plot_after_selector[idx_syst].impact);
 
-            string bin_label = res_for_plot_after_selector[idx_syst].name;
-            if ( ! settings->replacements.empty() )
-                ReplaceStrings(bin_label, settings->replacements);
-            if ( ! settings->remove_prefix.empty() )
-                RemovePrefix(bin_label, settings->remove_prefix);
-            if ( ! settings->remove_suffix.empty() )
-                RemoveSuffix(bin_label, settings->remove_suffix);
-
+            string bin_label;
+            if (settings->np_names.empty()) {
+                bin_label = res_for_plot_after_selector[ idx_syst ].name;
+                if(!settings->replacements.empty())
+                    ReplaceStrings(bin_label, settings->replacements);
+                if(!settings->remove_prefix.empty())
+                    RemovePrefix(bin_label, settings->remove_prefix);
+                if(!settings->remove_suffix.empty())
+                    RemoveSuffix(bin_label, settings->remove_suffix);
+            }
+            else {
+                bin_label = settings->np_names.at(idx_syst);
+            }
 
             histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
 
@@ -270,7 +284,7 @@ namespace eft::plot {
 
 
 
-        auto legend = make_unique<TLegend>(0.7, 0.85, 0.90, 0.95);
+        auto legend = make_unique<TLegend>(1 - settings->tmargin - 0.2, 1 - settings->rmargin - 0.1, 1 - settings->tmargin, 1 - settings->rmargin);
         legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
         legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
         legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
@@ -584,6 +598,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_offset);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_offset);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_latex);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_names);
 #undef EFT_GET_FROM_CONFIG
 #endif
 
