@@ -127,7 +127,7 @@ std::string StringUtils::Join(char c, const Container& cont) {
 
 std::string StringUtils::Strip(const std::string& s) {
     size_t idx_first_not_space = 0;
-    size_t idx_last_not_space  = s.size();
+    size_t idx_last_not_space  = s.size() - 1;
     size_t idx_max = s.length() - 1;
     while (idx_first_not_space < idx_max && isspace(s.at(idx_first_not_space))) {
        idx_first_not_space++;

@@ -26,7 +26,6 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
         tokens.emplace_back(argv[idx]);
-        cout << fmt::format("add: [{}] token", tokens.back()) << endl;
     }
     string key = tokens.front();
     key = TrimKey(key);
@@ -34,24 +33,13 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 
 
     for (auto& token : tokens) {
-        cout << fmt::format("token: [{}]", token) << endl;
         if (token[0] == '-' && token[1] == '-') {
-            //if ( ! key.empty() ) { // get rid of the prev key
                 ops[key] = vals;
                 keys.insert(key);
                 EFT_PROF_DEBUG("register: {:20} => {:20} vals", key, vals.size());
                 vals.clear();
-            //}
             key = TrimKey(token);
-            //auto key_trimmed = TrimKey(token);
-            cout << fmt::format("\t[{}] is a new key", key) << endl;
-            //keys.insert(key);
             AddKey(key);
-
-            //key = token.substr(2, token.length());
-            //key = token.substr(token.find_first_not_of('-'), token.size());
-            //keys.insert(token);
-            //keys.insert(key);
         }
         else {
             cout << fmt::format("\t[{}] is a val", token) << endl;
@@ -60,7 +48,6 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     }
 
     AddKey(key);
-    //keys.insert(key);
     ops[std::move(key)] = std::move(vals);
 
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
@@ -68,7 +55,6 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
     for (const auto& key_ : keys) {
         if (ops.at(key_).empty())
-        //if (ops.find(key_) == ops.end())
         {
             EFT_PROF_INFO("| {:>20} |     | {:<20} |", key_, ' ');
         }
@@ -82,58 +68,10 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
                 }
                 else
                     EFT_PROF_INFO("| {:>20} | ==> | {:<20} |", ' ', val_);
-                //cout << "* " < << key_ << " \t " << val_ << endl;
             }
         }
     }
     EFT_PROF_INFO("+={:=^20}=+=====+={:=^20}=+", "=", "=");
-
-//    while ( ! args.empty() ) {
-//        size_t idx_first_arg_begin = args.find_first_of('-');
-//        size_t idx_last_arg_begin  = args.find_first_not_of('-');
-//        string arg_line = args.substr(idx_first_arg_begin, idx_last_arg_begin - idx_first_arg_begin);
-//        //args = args.substr(idx_last_arg_begin + 1, args.size());
-//        //args = args.substr(args.find_first_not_of(' '))
-//        cout << "to parse: {" << arg_line << "}" << endl;
-//        auto [key, vals] = ExtractVals(std::move(arg_line));
-//        size_t pos_last_val = args.find(vals.back());
-//
-//        args = args.substr(pos_last_val + vals.back().size() + 1, args.size());
-//        cout << "left for the next: {" << args << "}" << endl;
-//        keys.insert(key);
-//        ops[key] = std::move(vals);
-//
-//
-//
-//    }
-
-    //for (size_t idx {1}; idx != argc; ++idx) {
-        //cout << "parse input. Idx: " << idx << endl;
-        //string arg = {argv[idx]};
-        //cout << "arg: " << arg << endl;
-
-//        if (arg.find('-') != string::npos) {
-//            cout << "arg contains - symbol" << endl;
-//            if (idx < argc - 1) {
-//                cout << "* can increase idx" << endl;
-//                string new_args = argv[++idx];
-//                cout << "* new args: " << new_args << endl;
-//                while (arg.find('-') == string::npos) {
-//                    cout << " ** keep adding";
-//                    arg += ' ' + new_args;
-//                    new_args = argv[++idx];
-//                    cout << "arg: {" << arg << "}, new_args: {" << new_args << "}" << endl;
-//                } // extracted all relevant args
-//            }
-//        }
-
-       // cout << fmt::format("\t{}", arg) << endl;
-//
-//        auto [key, vals] = ExtractVals(std::move(arg));
-//        keys.insert(key);
-//        //keys.push_back(key);
-//        ops[key] = std::move(vals);
-//    }
     return true;
 }
 
