@@ -47,7 +47,10 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
     auto pos_begin = s.find(what);
     if (pos_begin == std::string::npos)
         return;
-    s.replace(pos_begin, what.length(), with);
+    if (with.empty())
+        s.erase(pos_begin, what.length());
+    else
+        s.replace(pos_begin, what.length(), with);
 }
 
  inline void StringUtils::RemovePrefix(std::string& s, const std::string& prefix)
@@ -65,12 +68,8 @@ inline std::string StringUtils::RemovePrefixCopy(std::string s, const std::strin
 }
 inline void StringUtils::RemoveSuffix(std::string& s, const std::string& suffix) {
     auto pos_suffix = s.rfind(suffix);
-    std::cerr << "s: {" << s << "}" << std::endl;
-    std::cerr << "suffix: {" << suffix << "}" << std::endl;
-    std::cerr << "pos_suffix: {" << pos_suffix << "}" << std::endl;
     if (pos_suffix == std::string::npos)
         return;
-    std::cerr << "return: {" << s.substr(0, pos_suffix) << "}" << std::endl;
     s = s.substr(0, pos_suffix);
 }
 inline std::string StringUtils::RemoveSuffixCopy(std::string s, const std::string& suffix) {
