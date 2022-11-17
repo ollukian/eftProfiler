@@ -56,9 +56,12 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
     std::cerr << "s: {" << s << "}" << std::endl;
     std::cerr << "prefix: {" << prefix << "}" << std::endl;
     std::cerr << "pos prefix: " << pos_prefix << std::endl;
-     std::cerr << "return: " << s.substr(pos_prefix +prefix.length(), s.length()) << std::endl;
-    if (pos_prefix == std::string::npos)
+    if (pos_prefix == std::string::npos) {
+        std::cerr << "no such prefix" << std::endl;
         return;
+    }
+
+     std::cerr << "return: " << s.substr(pos_prefix +prefix.length(), s.length()) << std::endl;
     s = s.substr(pos_prefix +prefix.length(), s.length());
  }
 inline std::string StringUtils::RemovePrefixCopy(std::string s, const std::string& prefix)

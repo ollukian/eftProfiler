@@ -140,4 +140,5 @@ void TestStringUtils()
     RUN_TEST(tr, TestJoin);
     RUN_TEST(tr, TestStrip);
     RUN_TEST(tr, TestRemovePrefix);
+    RUN_TEST(tr, TestRemoveSuffix);
 }
