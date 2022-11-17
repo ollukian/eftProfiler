@@ -24,7 +24,7 @@ submit_one_worker()
   sleep 10
 }
 
-WS_NAME="WS_Comb_Higgs_topU3l_obs.root"
+WS_NAME="WS-Comb-Higgs_topU3l_obs.root"
 POI=cHG
 
 EFT_PROFILER_PATH="${PWD}"
