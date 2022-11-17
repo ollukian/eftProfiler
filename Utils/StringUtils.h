@@ -45,6 +45,9 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
     if (with.empty())
         return;
     auto pos_begin = s.find(what);
+    std::cout << "pos_begin: " << pos_begin << std::endl;
+    std::cout << "what: {" << what << "}" << std::endl;
+    std::cout << "with: {" << with << "}" << std::endl;
     if (pos_begin == std::string::npos)
         return;
     if (with.empty())
