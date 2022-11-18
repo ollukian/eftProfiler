@@ -8,6 +8,7 @@
 #include "../Core/Logger.h"
 #include "NpRankingPlotter.h"
 #include "../Application/FitManager.h"
+#include "../Utils/FileSystemUtils.h"
 
 #include <iostream>
 #include <fstream>
@@ -604,12 +605,22 @@ namespace eft::plot {
 
         np_ranking_settings->replacements = ParseReplacements(config.replace);
 
+        if (np_ranking_settings->np_names.size() == 1) {
+            const string& np_names_string = np_ranking_settings->np_names.at(0);
+            const auto pos_filename = np_names_string.find("file:");
+            if (pos_filename != std::string::npos)
+            {
+                ReadNpNamesFromFile(np_names_string.substr(pos_filename + 1, np_names_string.length()));
+            }
+        }
+
         vector<EntriesSelector> callbacks;
         if ( ! np_ranking_settings->ignore_name.empty() )
             callbacks.emplace_back(CreateLambdaForIgnoringNpNames(np_ranking_settings->ignore_name));
         if ( ! np_ranking_settings->match_names.empty() )
             callbacks.emplace_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
 
+        // TODO: add function: add callback poi match
         callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
             bool res = (info.poi == np_ranking_settings->poi);
             EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
@@ -647,15 +658,7 @@ namespace eft::plot {
                                                      });
                               }));
 
-//    SetCallBack([this](const NpInfoForPlot& info) -> bool {
-//        if (np_ranking_settings->ignore_name.empty())
-//            return info.poi == np_ranking_settings->poi
-//                   && (info.name.find("gamma") == std::string::npos);
-//        else
-//            return info.poi == poi
-//                   && (info.name.find("gamma") == std::string::npos)
-//                   && (info.name.find(plotter.np_ranking_settings->ignore_name[0]) == std::string::npos);
-//    });
+
 
     }
 
@@ -711,6 +714,12 @@ void NpRankingPlotter::RemoveSuffix(string& s, const vector<string>& suffixes)
         EFT_PROF_DEBUG("Remove suffix: {:10} from {:10}", suffix, s);
         StringUtils::RemoveSuffix(s, suffix);
     }
+}
+
+void NpRankingPlotter::ReadNpNamesFromFile(const std::string& path) const
+{
+    EFT_PROF_INFO("Read np names from: {}", path);
+    np_ranking_settings->np_names = utils::FileSystemUtils::ReadLines(path).value();
 }
 
 }

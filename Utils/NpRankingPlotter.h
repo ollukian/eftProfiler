@@ -69,7 +69,7 @@ private:
 
     static std::vector<Replacement> ParseReplacements(const std::vector<std::string>& replacements);
 
-    static std::vector<std::string> ReadNpNamesFromFile(const std::string& path);
+    void ReadNpNamesFromFile(const std::string& path) const;
 public:
     std::unique_ptr<RankingPlotterSettings> np_ranking_settings;
 };
