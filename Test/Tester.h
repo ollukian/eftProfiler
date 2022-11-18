@@ -23,7 +23,7 @@ class Tester {
     using Group = std::vector<Test>;
 
 public:
-    void AddTest(const Test& test, std::string name = {""}, std::string groupname = {"common"});
+    void AddTest(Test test, std::string name = {""}, std::string groupname = {"common"});
     void RunTests(const std::string& groupname = {""});
     //void Report();
 
