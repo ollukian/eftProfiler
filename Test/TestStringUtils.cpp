@@ -5,6 +5,7 @@
 #include "../Utils/StringUtils.h"
 #include "test_runner.h"
 #include "Tester.h"
+#include "EftTests.h"
 
 using SU = eft::StringUtils;
 using std::string;
@@ -220,11 +221,17 @@ void TestSplit()
 
 void TestStringUtils()
 {
-    TestRunner tr;
-    RUN_TEST(tr, TestJoin);
-    RUN_TEST(tr, TestStrip);
-    RUN_TEST(tr, TestRemovePrefix);
-    RUN_TEST(tr, TestRemoveSuffix);
-    RUN_TEST(tr, TestReplace);
-    RUN_TEST(tr, TestSplit);
+    EFT_ADD_TEST(TestJoin, "StringUtils");
+    EFT_ADD_TEST(TestStrip, "StringUtils");
+    EFT_ADD_TEST(TestRemovePrefix, "StringUtils");
+    EFT_ADD_TEST(TestRemoveSuffix, "StringUtils");
+    EFT_ADD_TEST(TestReplace, "StringUtils");
+    EFT_ADD_TEST(TestSplit, "StringUtils");
+    // TestRunner tr;
+    // RUN_TEST(tr, TestJoin);
+    // RUN_TEST(tr, TestStrip);
+    // RUN_TEST(tr, TestRemovePrefix);
+    // RUN_TEST(tr, TestRemoveSuffix);
+    // RUN_TEST(tr, TestReplace);
+    // RUN_TEST(tr, TestSplit);
 }

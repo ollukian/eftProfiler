@@ -5,6 +5,7 @@
 #include "../Utils/FileSystemUtils.h"
 #include "test_runner.h"
 #include "Tester.h"
+#include "EftTests.h"
 
 using FS = eft::utils::FileSystemUtils;
 using namespace std;
@@ -59,6 +60,9 @@ void TestReadLines()
 }
 
 void TestFileSystemUtils() {
-    TestRunner tr;
-    RUN_TEST(tr, TestReadLines);
+    EFT_ADD_TEST(TestReadLines, "filesystem");
+    // TestRunner tr;
+    // RUN_TEST(tr, TestReadLines);
 }
+
+
