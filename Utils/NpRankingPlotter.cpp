@@ -152,6 +152,11 @@ namespace eft::plot {
                       res_for_plot_after_selector.size(),
                       settings->top);
 
+        if (res_for_plot_after_selector.empty()) {
+            EFT_PROF_ERROR("No entries passing selection is available");
+            return;
+        }
+
         EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
 
 //        EFT_PROF_DEBUG("impacts before sorting:");
@@ -285,7 +290,10 @@ namespace eft::plot {
 
 
 
-        auto legend = make_unique<TLegend>(1 - settings->tmargin - 0.2, 1 - settings->rmargin - 0.1, 1 - settings->tmargin, 1 - settings->rmargin);
+        auto legend = make_unique<TLegend>(1 - settings->rmargin - 0.2,
+                                           1 - settings->tmargin - 0.1,
+                                           1 - settings->rmargin,
+                                           1 - settings->tmargin);
         legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
         legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
         legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
@@ -378,8 +386,8 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
-        float y = 0.9f, dy = 0.03f;
-        float x = 0.12f;
+        float y = 1 - settings->tmargin - 0.01, dy = 0.03f;
+        float x = 0.02 + settings->lmargin; // 0.12
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
         //mylatex.SetTextFont(72);

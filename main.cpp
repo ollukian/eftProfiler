@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
                 {"float",           "mu_offset",        "",             "Offset of the POI label"},
                 {"float",           "np_offset",        "",             "Offset of the NP label"},
                 {"string",          "mu_latex",         "[POI]",        "Name of the POI to be printed on the 3rd line in TLatex format."},
-                {"vector<string>",  "np_names",         "",             R"(Either list (Ex: cute_np1 cool_np2 #mu_latex ...) or x "file:my_filename.txt")"},
+                {"vector<string>",  "np_names",         "",             R"(Either list (Ex: cute_np1 cool_np2 #mu_latex ...) or "file:my_filename.txt" - to read from file)"},
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;
