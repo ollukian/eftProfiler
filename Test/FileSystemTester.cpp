@@ -16,11 +16,12 @@ void TestReadLines()
 
     {
         const filesystem::path test_path {"__tmp_test_file.txt"};
-        fstream fs(test_path, fstream::in | fstream::out);
-        ASSERT(fs.is_open());
+        fstream fs_out(test_path, fstream::out);
+        ASSERT(fs_out.is_open());
 
-        fs << "first line" << endl;
-        fs << "second line" << endl;
+        fs_out << "first line" << endl;
+        fs_out << "second line" << endl;
+        fs_out.close();
         const auto res = FS::ReadLines(test_path);
         ASSERT(res.has_value());
         ASSERT_EQUAL(res->size(), 2);
@@ -31,11 +32,12 @@ void TestReadLines()
     }
     {
         const filesystem::path test_path {"__tmp_test_file.txt"};
-        fstream fs(test_path, fstream::in | fstream::out);
-        ASSERT(fs.is_open());
+        fstream fs_out(test_path, fstream::out);
+        ASSERT(fs_out.is_open());
 
         const std::string line {"one line with a lot of things here even if they take a looooot of space such that you cannot even imagine it for yourself"};
-        fs << line << endl;
+        fs_out << line << endl;
+        fs_out.close();
         const auto res = FS::ReadLines(test_path);
         ASSERT(res.has_value());
         ASSERT_EQUAL(res->size(), 1);
@@ -45,11 +47,12 @@ void TestReadLines()
     }
     {
         const std::string test_path ("__tmp_test_file.txt");
-        fstream fs(test_path, fstream::in | fstream::out);
-        ASSERT(fs.is_open());
+        fstream fs_out(test_path, fstream::out);
+        ASSERT(fs_out.is_open());
 
         const std::string line {"one line with a lot of things here even if they take a looooot of space such that you cannot even imagine it for yourself"};
-        fs << line << endl;
+        fs_out << line << endl;
+        fs_out.close();
         const auto res = FS::ReadLines(test_path);
         ASSERT(res.has_value());
         ASSERT_EQUAL(res->size(), 1);

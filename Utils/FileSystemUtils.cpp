@@ -15,7 +15,7 @@ optional<vector<string>> FileSystemUtils::ReadLines(const filesystem::path& path
         EFT_PROF_CRITICAL("Cannot open: {} - path doesn't exist", path.string());
         return {};
     }
-    std::fstream fs(path, ios_base::in);
+    std::fstream fs(path, fstream::in);
     if ( ! fs.is_open() )
     {
         EFT_PROF_CRITICAL("Cannot open file: {} ", path.string());

@@ -20,7 +20,7 @@
 class Tester {
 
     using Test = std::function<void()>;
-    using Group = std::vector<Test>;
+    using Group = std::vector<std::pair<std::string, Test>>;
 
 public:
     void InitSetTests();

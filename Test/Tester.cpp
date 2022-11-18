@@ -6,8 +6,8 @@
 
 void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 {
-    EFT_PROF_DEBUG("Add test: {:15} to the group: {:15}");
-    tests_[std::move(name)].push_back(test);
+    EFT_PROF_DEBUG("Add test: {:15} to the group: {:15}", name, groupname);
+    tests_[std::move(name)].push_back({name, test});
 }
 
 void Tester::RunTests(const std::string& groupname)
@@ -16,9 +16,9 @@ void Tester::RunTests(const std::string& groupname)
     for (const auto& [groupname_, tests] : tests_)
     {
         EFT_PROF_INFO("Running test group: {:10}", groupname_);
-        for (const auto& test : tests)
+        for (const auto& [name, function] : tests)
         {
-            RUN_TEST(tr_, test);
+            tr_.RunTest(function, name);
         }
     }
 }
