@@ -199,7 +199,7 @@ namespace eft::plot {
                 EFT_PROF_CRITICAL("Number of provided systematics names: {} doesn't match the amount to be plot: {}",
                                   settings->np_names.size(),
                                   nb_systematics);
-                throw std::logic_error("check --np_names");
+                return;
             }
         }
 
@@ -386,7 +386,7 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
-        float y = 1 - settings->tmargin - 0.01, dy = 0.03f;
+        float y = 1 - settings->tmargin - 0.03, dy = 0.03f;
         float x = 0.02 + settings->lmargin; // 0.12
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
