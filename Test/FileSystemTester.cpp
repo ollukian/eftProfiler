@@ -62,12 +62,15 @@ void TestReadLines()
     }
 }
 
+//void TestGetListOfFiles()
+//{
+//    filesystem::create_directory("__tmp_dir");
+//}
+
 
 EFT_IMPLEMENT_TESTFILE(FileSystem)
 {
     EFT_ADD_TEST(TestReadLines, "filesystem");
-    // TestRunner tr;
-    // RUN_TEST(tr, TestReadLines);
 }
 EFT_END_IMPLEMENT_TESTFILE(FileSystem);
 

@@ -61,6 +61,12 @@ inline std::unique_ptr<Tester>& Tester::Get()
     void Test##namethis();
 #endif
 
+#ifndef EFT_RUN_TESTFILE
+#define EFT_RUN_TESTFILE(namethis) \
+    Test##namethis();
+#endif
+
+
 #ifndef EFT_IMPLEMENT_TESTFILE
 #define EFT_IMPLEMENT_TESTFILE(namethis) \
     void Test##namethis()
