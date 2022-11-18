@@ -6,5 +6,6 @@
 #define EFTPROFILER_TESTER_H
 
 void TestStringUtils();
+void TestFileSystemUtils();
 
 #endif //EFTPROFILER_TESTER_H
