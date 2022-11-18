@@ -384,7 +384,8 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
-        float y = 1.f - settings->tmargin - 0.04f, dy = 0.03f;
+        float y = 1.f - settings->tmargin - 0.04f;
+        float dy = 0.03f;
         float x = 0.02f + settings->lmargin; // 0.12
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
@@ -394,7 +395,8 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
         latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
 
-        latex.SetTextSize(settings->text_size); // 0.030
+        //latex.SetTextSize(settings->text_size); // 0.030
+        latex.SetTextSize(0.030); // 0.030
         latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
 
         string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
