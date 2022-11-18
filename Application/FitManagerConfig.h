@@ -66,6 +66,10 @@ struct FitManagerConfig {
     float                       np_offset           {1.0};
     std::string                 mu_latex            {};
     std::vector<std::string>    np_names            {};
+    float                       text_size           {30};
+    float                       text_font           {42};
+    std::vector<std::string>    add_text            {};
+    std::vector<std::string>    add_text_ndc        {};
 };
 
 template<typename OStream>

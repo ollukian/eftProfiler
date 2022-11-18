@@ -80,6 +80,10 @@ int main(int argc, char* argv[]) {
                 {"float",           "np_offset",        "",             "Offset of the NP label"},
                 {"string",          "mu_latex",         "[POI]",        "Name of the POI to be printed on the 3rd line in TLatex format."},
                 {"vector<string>",  "np_names",         "",             R"(Either list (Ex: cute_np1 cool_np2 #mu_latex ...) or "file:my_filename.txt" - to read from file)"},
+                {"float",           "text_size",        "30",           R"(Size of the: energy, dataset title, POI, luminosity)"},
+                {"float",           "text_font",        "42",           R"(Font of the: energy, dataset title, POI, luminosity)"},
+                {"vector<string>",  "add_text",         "",             R"(x [x y text [size][font]] to be added. Ex: "2 4 abc" or: "1 2 xyz 27 34")"},
+                {"vector<string>",  "add_text_ndc",     "",             R"(x [x y text [size][font]] to be added. (X, Y) - in NDC. Example: "0.1 0.4 WriteTextInNDC")"},
         })
         {
             cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;

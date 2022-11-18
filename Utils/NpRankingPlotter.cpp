@@ -386,19 +386,19 @@ namespace eft::plot {
         axis_nps->Draw();
 
         TLatex latex;
-        float y = 1 - settings->tmargin - 0.03, dy = 0.03f;
-        float x = 0.02 + settings->lmargin; // 0.12
+        float y = 1.f - settings->tmargin - 0.04f, dy = 0.03f;
+        float x = 0.02f + settings->lmargin; // 0.12
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
         //mylatex.SetTextFont(72);
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
         latex.DrawLatex(x, y, settings->experiment.c_str());
-        latex.SetTextFont(42); //put back the font
+        latex.SetTextFont(settings->text_font); //put back the font 42
         //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
         latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
 
-        latex.SetTextSize(0.030); //0.045 is std
+        latex.SetTextSize(settings->text_size); // 0.030
         latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
 
         string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
@@ -608,6 +608,10 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_offset);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_latex);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_names);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, text_size);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, text_font);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text_ndc);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

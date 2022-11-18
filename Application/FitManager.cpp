@@ -672,6 +672,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_offset);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, mu_offset);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, mu_latex);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_size);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_font);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
@@ -707,6 +709,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_VEC_OPTION(commandLineArgs, config, remove_prefix);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, remove_suffix);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, np_names);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text_ndc);
 #undef EFT_ADD_VEC_OPTION
 
 

@@ -43,6 +43,11 @@ struct RankingPlotterSettings {
     float                       mu_offset;
     std::string                 mu_latex;
     std::vector<std::string>    np_names;
+    float                       text_size;
+
+    float                       text_font;
+    std::vector<std::string>    add_text;
+    std::vector<std::string>    add_text_ndc;
 };
 
 } // plot
