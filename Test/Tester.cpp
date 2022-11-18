@@ -24,6 +24,7 @@ void Tester::RunTests(const std::string& groupname)
 }
 
 void Tester::InitSetTests() {
+    EFT_PROF_DEBUG("Init set tests");
     TestFileSystem();
     TestStringUtils();
 }

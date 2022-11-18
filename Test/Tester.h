@@ -72,10 +72,10 @@ inline std::unique_ptr<Tester>& Tester::Get()
 #endif
 
 #define EFT_RUN_TESTS()             \
-    while (false)   {               \
+    do  {                           \
     Tester::Get()->InitSetTests();  \
     Tester::Get()->RunTests();      \
-}
+} while (false)
 
 
 
