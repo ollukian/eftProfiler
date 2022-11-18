@@ -38,11 +38,12 @@ struct FitManagerConfig {
     bool                        vertical            {false};     // <== to add
     std::string                 color_prefit;   // <== to add
     std::string                 color_postfit;  // <== to add
-    float                       rmargin             {0.10};      // <== to add
-    float                       lmargin             {0.10};      // <== to add
-    float                       tmargin             {0.05};      // <== to add
-    float                       bmargin             {0.40};      // <== to add
-    std::vector<size_t>         plt_size            {1200, 800}; // <== to add
+    std::string                 color_np;  // <== to add
+    float                       rmargin             {0.10};
+    float                       lmargin             {0.10};
+    float                       tmargin             {0.05};
+    float                       bmargin             {0.40};
+    std::vector<size_t>         plt_size            {1200, 800};
     float                       rmul                {-0.002};
     float                       rmuh                {0.002};
     float                       np_scale            {1E-9};
@@ -68,6 +69,7 @@ struct FitManagerConfig {
     std::vector<std::string>    np_names            {};
     float                       text_size           {0.030};
     float                       text_font           {42};
+    float                       dy                  {0.03};
     std::vector<std::string>    add_text            {};
     std::vector<std::string>    add_text_ndc        {};
 };

@@ -57,8 +57,9 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
                 {"vector<string>",  "match_names",      "",             "Patterns in the names of systematics to be matched (not regex yet), just string.find()"},
                 {"bool",            "vertical",         "false",        "x Orientation of the impact plot: whether to be vertical or standard (horizontal)"},
-                {"string",          "color_prefit",     "blue",         "x Colour for + variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
-                {"string",          "color_postfit",    "green",        "x Colour for - variation. Formats: kBlue RGB(x, y, z) RGBA(x, y, z, a) | x in [0..255]"},
+                {"string",          "color_prefit",     "blue",         "x Colour for + variation. Formats: kBlue | RGB(x, y, z) | RGBA(x, y, z, a) || x in [0..255]"},
+                {"string",          "color_postfit",    "green",        "x Colour for - variation. Formats: kBlue | RGB(x, y, z) | RGBA(x, y, z, a) || x in [0..255]"},
+                {"string",          "color_np",         "black",        "x Colour for NP graph.    Formats: kBlue | RGB(x, y, z) | RGBA(x, y, z, a) || x in [0..255]"},
                 {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
                 {"float",           "rmul",             "-0.002",       "LOW  value for the POI axis on the ranking plot"},
                 {"float",           "rmuh",             " 0.002",       "HIGH value for the POI axis on the ranking plot"},
@@ -82,11 +83,12 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "np_names",         "",             R"(Either list (Ex: cute_np1 cool_np2 #mu_latex ...) or "file:my_filename.txt" - to read from file)"},
                 {"float",           "text_size",        "0.030",        R"(Size of the: energy, dataset title, POI, luminosity)"},
                 {"float",           "text_font",        "42",           R"(Font of the: energy, dataset title, POI, luminosity)"},
+                {"float",           "dy",               "0.03",         R"(Distance between text lines)"},
                 {"vector<string>",  "add_text",         "",             R"(x [x y text [size][font]] to be added. Ex: "2 4 abc" or: "1 2 xyz 27 34")"},
                 {"vector<string>",  "add_text_ndc",     "",             R"(x [x y text [size][font]] to be added. (X, Y) - in NDC. Example: "0.1 0.4 WriteTextInNDC")"},
         })
         {
-            cout << fmt::format("|{:^20} | {:^20} | {:^15} | {:^60}|", options[0], options[1], options[2], options[3]) << endl;
+            cout << fmt::format("|{:^20} | {:<20} | {:^15} | {:<60}|", options[0], options[1], options[2], options[3]) << endl;
         }
         cout << fmt::format("+{:=^20}==={:=^20}===={:=^15}===={:=^60}+", "=", "=", "=", "=") << endl;
         return 0;

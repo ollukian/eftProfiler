@@ -385,7 +385,7 @@ namespace eft::plot {
 
         TLatex latex;
         float y = 1.f - settings->tmargin - 0.04f;
-        float dy = 0.03f;
+        float dy = settings->dy; // 0.03
         float x = 0.02f + settings->lmargin; // 0.12
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
@@ -581,6 +581,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, poi);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_prefit);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_postfit);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_np);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, lmargin);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmargin);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, tmargin);
@@ -610,6 +611,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, text_font);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text_ndc);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, dy);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

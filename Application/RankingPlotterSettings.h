@@ -16,14 +16,15 @@ struct RankingPlotterSettings {
     std::vector<std::string>    match_names {};
     std::string                 out_dir {};
     std::string                 output  {};
-    bool                        vertical;     // <== to add
+    bool                        vertical;       // <== to add
     std::string                 color_prefit;   // <== to add
     std::string                 color_postfit;  // <== to add
-    float                       rmargin;      // <== to add
-    float                       lmargin;      // <== to add
-    float                       tmargin;      // <== to add
-    float                       bmargin;      // <== to add
-    std::vector<size_t>         plt_size; // <== to add
+    std::string                 color_np;       // <== to add
+    float                       rmargin;
+    float                       lmargin;
+    float                       tmargin;
+    float                       bmargin;
+    std::vector<size_t>         plt_size;
     float                       rmul;
     float                       rmuh;
     float                       np_scale;
@@ -46,6 +47,7 @@ struct RankingPlotterSettings {
     float                       text_size;
 
     float                       text_font;
+    float                       dy;
     std::vector<std::string>    add_text;
     std::vector<std::string>    add_text_ndc;
 };
