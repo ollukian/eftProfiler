@@ -357,10 +357,8 @@ namespace eft::plot {
         graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
         graph_nps_obs->SetMarkerStyle(20);
         graph_nps_obs->SetMarkerSize(1); // 2
-        //graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
         graph_nps_obs->SetLineWidth(2); // 4
         graph_nps_obs->Draw("same E1 X0");
-
 
         legend->Draw("same");
 
@@ -390,12 +388,10 @@ namespace eft::plot {
         float x = 0.02f + settings->lmargin; // 0.12
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
-        //mylatex.SetTextFont(72);
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
         latex.DrawLatex(x, y, settings->experiment.c_str());
         latex.SetTextFont(settings->text_font); //put back the font 42
-        //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
         latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
 
         latex.SetTextSize(settings->text_size); // 0.030
