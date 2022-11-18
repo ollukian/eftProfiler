@@ -23,6 +23,7 @@ class Tester {
     using Group = std::vector<Test>;
 
 public:
+    void InitSetTests();
     void AddTest(Test test, std::string name = {""}, std::string groupname = {"common"});
     void RunTests(const std::string& groupname = {""});
     //void Report();
@@ -60,6 +61,25 @@ inline std::unique_ptr<Tester>& Tester::Get()
     void Test##namethis();
 #endif
 
+#ifndef EFT_IMPLEMENT_TESTFILE
+#define EFT_IMPLEMENT_TESTFILE(namethis) \
+    void Test##namethis()
+#endif
+
+#ifndef EFT_END_IMPLEMENT_TESTFILE
+#define EFT_END_IMPLEMENT_TESTFILE(namethis)
+
+#endif
+
+#define EFT_RUN_TESTS()             \
+    while (false)   {               \
+    Tester::Get()->InitSetTests();  \
+    Tester::Get()->RunTests();      \
+}
+
+
+
 EFT_ADD_TESTFILE(FileSystem);
+EFT_ADD_TESTFILE(StringUtils);
 
 #endif //EFTPROFILER_TESTER_H

@@ -22,3 +22,8 @@ void Tester::RunTests(const std::string& groupname)
         }
     }
 }
+
+void Tester::InitSetTests() {
+    TestFileSystem();
+    TestStringUtils();
+}

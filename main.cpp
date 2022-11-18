@@ -101,9 +101,7 @@ int main(int argc, char* argv[]) {
     }
 
     if (task == "run_tests") {
-        Tester::Get()->RunTests();
-        //TestStringUtils();
-        //TestFileSystemUtils();
+        EFT_RUN_TESTS();
     }
     else if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");

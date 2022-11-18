@@ -219,8 +219,8 @@ void TestSplit()
     }
 }
 
-void TestStringUtils()
-{
+
+EFT_IMPLEMENT_TESTFILE(StringUtils) {
     EFT_ADD_TEST(TestJoin, "StringUtils");
     EFT_ADD_TEST(TestStrip, "StringUtils");
     EFT_ADD_TEST(TestRemovePrefix, "StringUtils");
@@ -235,3 +235,4 @@ void TestStringUtils()
     // RUN_TEST(tr, TestReplace);
     // RUN_TEST(tr, TestSplit);
 }
+EFT_END_IMPLEMENT_TESTFILE();
