@@ -68,6 +68,8 @@ private:
     static inline std::string ReplaceStringsCopy(std::string s, const std::vector<Replacement>& replacements);
 
     static std::vector<Replacement> ParseReplacements(const std::vector<std::string>& replacements);
+
+    static std::vector<std::string> ReadNpNamesFromFile(const std::string& path);
 public:
     std::unique_ptr<RankingPlotterSettings> np_ranking_settings;
 };

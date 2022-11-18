@@ -153,10 +153,10 @@ namespace eft::plot {
 
         EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
 
-        EFT_PROF_DEBUG("impacts before sorting:");
-        for (const auto& res : res_for_plot_after_selector) {
-            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
-        }
+//        EFT_PROF_DEBUG("impacts before sorting:");
+//        for (const auto& res : res_for_plot_after_selector) {
+//            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
+//        }
 
         std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
                   [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
@@ -701,14 +701,14 @@ void NpRankingPlotter::ReplaceStrings(std::string& s, const std::vector<Replacem
 void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
 {
     for (const auto& prefix : prefixes) {
-        EFT_PROF_DEBUG("Remove prefix: {:10} from {:10}");
+        EFT_PROF_DEBUG("Remove prefix: {:10} from {:10}", prefix, s);
         StringUtils::RemovePrefix(s, prefix);
     }
 }
 void NpRankingPlotter::RemoveSuffix(string& s, const vector<string>& suffixes)
 {
     for (const auto& suffix : suffixes) {
-        EFT_PROF_DEBUG("Remove suffix: {:10} from {:10}");
+        EFT_PROF_DEBUG("Remove suffix: {:10} from {:10}", suffix, s);
         StringUtils::RemoveSuffix(s, suffix);
     }
 }
