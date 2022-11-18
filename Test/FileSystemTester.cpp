@@ -15,7 +15,7 @@ void TestReadLines()
 
     {
         const filesystem::path test_path {"__tmp_test_file.txt"};
-        fstream fs(test_path, ios_base::in | ios_base::out);
+        fstream fs(test_path, fstream::in | fstream::out);
         ASSERT(fs.is_open());
 
         fs << "first line" << endl;
@@ -30,7 +30,7 @@ void TestReadLines()
     }
     {
         const filesystem::path test_path {"__tmp_test_file.txt"};
-        fstream fs(test_path, ios_base::in | ios_base::out);
+        fstream fs(test_path, fstream::in | fstream::out);
         ASSERT(fs.is_open());
 
         const std::string line {"one line with a lot of things here even if they take a looooot of space such that you cannot even imagine it for yourself"};
@@ -44,7 +44,7 @@ void TestReadLines()
     }
     {
         const std::string test_path ("__tmp_test_file.txt");
-        fstream fs(test_path, ios_base::in | ios_base::out);
+        fstream fs(test_path, fstream::in | fstream::out);
         ASSERT(fs.is_open());
 
         const std::string line {"one line with a lot of things here even if they take a looooot of space such that you cannot even imagine it for yourself"};
