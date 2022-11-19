@@ -80,7 +80,7 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
 
 Colour Colour::CreateFromStringRGBA(std::string_view s)
 {
-    EFT_PROF_TRACE("Redirect to create colour from RGB string");
+    EFT_PROF_TRACE("Redirect to create colour from RGBA string");
     const auto components = ::eft::StringUtils::Strip(s);
     // RGB(r, g, b, a)
     // or
@@ -101,24 +101,31 @@ Colour Colour::CreateFromStringRGBA(std::string_view s)
         ss >> r;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading r component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read r:    [{:5}]", s, r);
         ss >> del1;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading del1 component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read del1: [{:5}]", s, del1);
         ss >> g;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading g component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read g:    [{:5}]", s, r);
         ss >> del2;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading del2 component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read del2: [{:5}]", s, del2);
         ss >> b;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading b component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read b:    [{:5}]", s, b);
         ss >> del3;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading del3 component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read del3: [{:5}]", s, del3);
         ss >> a;
         if (ss.bad())
             throw std::logic_error(fmt::format("Error reading a component from {}", s));
+        EFT_PROF_INFO("from [{:15}] read a:    [{:5}]", s, a);
     }
     catch (std::exception& e) {
         EFT_PROF_CRITICAL("Problem in colour parsing: {}", e.what());
