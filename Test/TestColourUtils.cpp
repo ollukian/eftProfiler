@@ -279,6 +279,7 @@ EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestNotCorrectSeparators,                  "ColourUtils");
         EFT_ADD_TEST(TestGetters,                               "ColourUtils");
         EFT_ADD_TEST(TestColourCtorFromInts,                    "ColourUtils");
+        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         EFT_ADD_TEST(TestRegisterColourBasic,                   "ColourUtils");
         EFT_ADD_TEST(TestRegisterColourAlreadyPresent,          "ColourUtils");
 }
