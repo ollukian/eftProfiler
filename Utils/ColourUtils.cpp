@@ -195,13 +195,12 @@ bool Colour::AssertRange() const noexcept
 
 
 size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
-    size_t new_idx = TColor::GetFreeColorIndex();
-
     if (registered_colours_rgba_.find(c) != registered_colours_rgba_.end()) {
         EFT_PROF_WARN("Colour: {} alreagdy registered", c);
         throw std::logic_error("");
     }
 
+    size_t new_idx = TColor::GetFreeColorIndex();
     unique_ptr<TColor> colour = make_unique<TColor>(new_idx,
                                                     c.r_as_fraction(),
                                                     c.g_as_fraction(),
