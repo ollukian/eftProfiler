@@ -79,6 +79,30 @@ void TestColourCreationRGBANormalConstructor()
     }
 }
 
+void TestNotCorrectSeparators()
+{
+    {
+        istringstream is{"RGB(300* 200, 200)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGB(300* 200^ 200__)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGB(*300* 200 200)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGB(300 200 200 200)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGB(300, 200, 200, 200)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+}
+
 void TestColourCreationRGBAThrowConstructor() {
 
     {
@@ -155,5 +179,7 @@ EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestColourCreationRGBAThrowConstructor,    "ColourUtils");
         EFT_ADD_TEST(TestNoRGB,                                 "ColourUtils");
         EFT_ADD_TEST(TestNotEnoughVals,                         "ColourUtils");
+        EFT_ADD_TEST(TestNotCorrectSeparators,                  "ColourUtils");
+        EFT_ADD_TEST(TestGetters,                               "ColourUtils");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
