@@ -25,7 +25,7 @@ void TestColourCreationRGBNormalConstructor()
         const auto color = Colour::CreateFromString(is.str());
         ASSERT_EQUAL(color.r(), 104);
         ASSERT_EQUAL(color.g(), 104);
-        ASSERT_EQUAL(color.b(), 104);
+        ASSERT_EQUAL(color.b(), 101);
         ASSERT_EQUAL(color.a(), 255);
     }
     {
@@ -33,7 +33,7 @@ void TestColourCreationRGBNormalConstructor()
         const auto color = Colour::CreateFromString(is.str());
         ASSERT_EQUAL(color.r(), 104);
         ASSERT_EQUAL(color.g(), 104);
-        ASSERT_EQUAL(color.b(), 104);
+        ASSERT_EQUAL(color.b(), 101);
         ASSERT_EQUAL(color.a(), 255);
     }
 }
@@ -41,12 +41,10 @@ void TestColourCreationRGBNormalConstructor()
 void TestColourCreationRGBThrowConstructor() {
     {
         istringstream is{"RGB(300, 200, 200)"};
-        const auto color = Colour::CreateFromString(is.str());
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
     {
         istringstream is{"RGB(0, 0)"};
-        const auto color = Colour::CreateFromString(is.str());
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
 }
@@ -82,7 +80,6 @@ void TestColourCreationRGBANormalConstructor()
 void TestColourCreationRGBAThrowConstructor() {
     {
         istringstream is{"RGBA(300, 200, 200, 300)"};
-        const auto color = Colour::CreateFromString(is.str());
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
     {

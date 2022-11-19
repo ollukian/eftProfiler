@@ -38,4 +38,39 @@ namespace eft::stats {
         logger_->flush_on(spdlog::level::trace);
     }
 
+
+    /*
+     *  You can disable logging with set_level():
+
+        auto my_logger = spdlog::basic_logger_mt("basic_logger", "logs/basic.txt");
+
+        #if defined(PRODUCTION)
+            my_logger->set_level(spdlog::level::off);
+        #else
+            my_logger->set_level(spdlog::level::trace);
+        #endif
+
+spdlog::register_logger(my_logger);
+     *
+     *
+     *
+     *
+     *
+     *  https://github.com/gabime/spdlog/blob/v1.x/include/spdlog/spdlog.h :
+     *
+     * //
+        // enable/disable log calls at compile time according to global level.
+        //
+        // define SPDLOG_ACTIVE_LEVEL to one of those (before including spdlog.h):
+        // SPDLOG_LEVEL_TRACE,
+        // SPDLOG_LEVEL_DEBUG,
+        // SPDLOG_LEVEL_INFO,
+        // SPDLOG_LEVEL_WARN,
+        // SPDLOG_LEVEL_ERROR,
+        // SPDLOG_LEVEL_CRITICAL,
+        // SPDLOG_LEVEL_OFF
+//
+     *
+     * */
+
 } // namespace eft::stats

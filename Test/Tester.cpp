@@ -12,6 +12,9 @@ void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 
 void Tester::RunTests(const std::string& groupname)
 {
+
+    eft::stats::Logger::GetLogger()->set_level(spdlog::level::info);
+
     EFT_PROF_INFO("Run all tests");
     for (const auto& [groupname_, tests] : tests_)
     {
