@@ -238,6 +238,7 @@ void TestRegisterColourBasic()
         ASSERT_NO_THROW(ColourUtils::GetColourByIdx(idx_color_2));
     }
     {
+        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         Colour c1(1, 2, 3, 4);
         Colour c2(10, 20, 30, 40);
         auto idx_color_1 = ColourUtils::RegisterColour(c1);
@@ -250,6 +251,7 @@ void TestRegisterColourBasic()
 
 void TestRegisterColourAlreadyPresent(){
     {
+        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         Colour c1(1, 2, 3, 4);
         Colour c2(1, 2, 3, 4);
         ColourUtils::RegisterColour(c1);
@@ -279,7 +281,6 @@ EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestNotCorrectSeparators,                  "ColourUtils");
         EFT_ADD_TEST(TestGetters,                               "ColourUtils");
         EFT_ADD_TEST(TestColourCtorFromInts,                    "ColourUtils");
-        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         EFT_ADD_TEST(TestRegisterColourBasic,                   "ColourUtils");
         EFT_ADD_TEST(TestRegisterColourAlreadyPresent,          "ColourUtils");
 }
