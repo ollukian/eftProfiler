@@ -22,9 +22,15 @@ void Tester::RunTests(const std::string& groupname)
         EFT_PROF_INFO("Running test group: {:10}", groupname_);
         for (const auto& [name, function] : tests)
         {
-            std::cerr << fmt::format("{:<15} ==> ", name);
+            std::cerr << fmt::format("{:25} ==> ", name);
+            eft::stats::Logger::SetSilent();
             tr_.RunTest(function, name);
+            eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         }
+    }
+    size_t fail_count = tr_.GetFailCount();
+    if (fail_count == 0) {
+        EFT_PROF_INFO("All tests ran successfully");
     }
 }
 
