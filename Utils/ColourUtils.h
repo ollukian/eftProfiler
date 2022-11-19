@@ -42,13 +42,13 @@ public:
     //size_t GetColourIdx(const std::string& name)    const noexcept;
 
 private:
-    static std::set<std::unique_ptr<TColor>>   registry_colours_;
-    static std::set<size_t>                    registered_colours_idx_;
-    static std::set<Colour>                    registered_colours_rgba_;
-    static std::map<Colour, size_t>            idx_of_colour_;
-    static std::map<size_t, Colour>            colour_of_idx_;
+    static inline std::set<std::unique_ptr<TColor>>   registry_colours_;
+    static inline std::set<size_t>                    registered_colours_idx_;
+    static inline std::set<Colour>                    registered_colours_rgba_;
+    static inline std::map<Colour, size_t>            idx_of_colour_;
+    static inline std::map<size_t, Colour>            colour_of_idx_;
 
-    static std::map<std::string, size_t> named_colours_;
+    static inline std::map<std::string, size_t> named_colours_;
 private:
     ColourUtils() = default;
 };
