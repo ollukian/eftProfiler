@@ -31,7 +31,6 @@ Colour Colour::CreateFromString(std::string_view s) {
 
 Colour Colour::CreateFromStringRGB(std::string_view s)
 {
-    eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
     EFT_PROF_TRACE("Redirect to create colour from RGB string");
     const auto components = ::eft::StringUtils::Strip(s);
     // RGB(r, g, b)
@@ -81,7 +80,6 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
 
 Colour Colour::CreateFromStringRGBA(std::string_view s)
 {
-    eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
     EFT_PROF_TRACE("Redirect to create colour from RGB string");
     const auto components = ::eft::StringUtils::Strip(s);
     // RGB(r, g, b, a)
