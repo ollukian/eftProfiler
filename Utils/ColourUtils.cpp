@@ -196,6 +196,12 @@ bool Colour::AssertRange() const noexcept
 
 size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
     size_t new_idx = TColor::GetFreeColorIndex();
+
+    if (registered_colours_rgba_.find(c) != registered_colours_rgba_.end()) {
+        EFT_PROF_WARN("Colour: {} alreagdy registered", c);
+        throw std::logic_error("");
+    }
+
     unique_ptr<TColor> colour = make_unique<TColor>(new_idx,
                                                     c.r_as_fraction(),
                                                     c.g_as_fraction(),
@@ -203,15 +209,51 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
                                                     name.c_str(),
                                                     c.a_as_fraction());
 
-    EFT_PROF_INFO("Registry new colour: ({}{}{}{}) with idx: {}",
+    EFT_PROF_INFO("Registry new colour: ({:3}{:3}{:3}{:3}) with idx: {}",
                   c.r(),
                   c.g(),
                   c.b(),
                   c.a(),
                   new_idx);
+    registered_colours_rgba_.insert(c);
     registry_colours_.insert(std::move(colour));
     registered_colours_idx_.insert(new_idx);
+    idx_of_colour_[c] = new_idx;
+    colour_of_idx_[new_idx] = c;
     return new_idx;
+}
+
+size_t ColourUtils::RegisterColourFromString(std::string_view s) {
+    try {
+        auto colour = Colour::CreateFromString(s);
+        return RegisterColour(colour);
+    } catch (std::logic_error& e) {
+        EFT_PROF_ERROR("Cannot register colour from string: {} due to {}",
+                       s,
+                       e.what());
+        throw std::logic_error(e);
+    }
+}
+
+size_t ColourUtils::GetColourIdx(const Colour& c) noexcept {
+    if (idx_of_colour_.find(c) != idx_of_colour_.end())
+        return idx_of_colour_.at(c);
+    EFT_PROF_WARN("Colour: {}{}{}{} is not registered, register it first",
+                  c.r(),
+                  c.g(),
+                  c.b(),
+                  c.a());
+    return RegisterColour(c);
+}
+
+Colour& ColourUtils::GetColourByIdx(size_t idx)  {
+    if (registered_colours_idx_.find(idx) != registered_colours_idx_.end())
+        return colour_of_idx_.at(idx);
+    throw std::logic_error(fmt::format("colour idx: {} is not registered", idx));
+}
+
+ostream& operator << (ostream& os, const Colour& c) noexcept {
+    return os << fmt::format("RGBA({:3}, {:3}, {:3}, {:3})", c.r(), c.g(), c.b(), c.a()) << endl;
 }
 
 

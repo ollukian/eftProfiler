@@ -138,7 +138,6 @@ void TestNoRGB()
 void TestNotEnoughVals()
 {
     {
-        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         istringstream is{"RGB(200, 200)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
@@ -181,6 +180,95 @@ void TestGetters()
     }
 }
 
+void TestColourCtorFromInts()
+{
+    {
+        Colour c(1, 2, 3, 4);
+        ASSERT_EQUAL(c.r(), 1);
+        ASSERT_EQUAL(c.g(), 2);
+        ASSERT_EQUAL(c.b(), 3);
+        ASSERT_EQUAL(c.a(), 4);
+    }
+    {
+        Colour c(1, 2, 3);
+        ASSERT_EQUAL(c.r(), 1);
+        ASSERT_EQUAL(c.g(), 2);
+        ASSERT_EQUAL(c.b(), 3);
+        ASSERT_EQUAL(c.a(), 255);
+    }
+    {
+        ASSERT_NO_THROW(Colour(255, 255, 255, 255));
+
+        ASSERT_THROW(Colour(256, 0, 0, 0), std::logic_error);
+        ASSERT_THROW(Colour(0, 256, 0, 0), std::logic_error);
+        ASSERT_THROW(Colour(0, 0, 256, 0), std::logic_error);
+        ASSERT_THROW(Colour(0, 0, 0, 256), std::logic_error);
+        ASSERT_THROW(Colour(256, 256, 256, 256), std::logic_error);
+        ASSERT_THROW(Colour(-2, 0, 0, 0), std::logic_error);
+        ASSERT_THROW(Colour(0, -2, 0, 0), std::logic_error);
+        ASSERT_THROW(Colour(0, 0, -2, 0), std::logic_error);
+        ASSERT_THROW(Colour(0, 0, 0, -2), std::logic_error);
+    }
+}
+
+void TestRegisterColourBasic()
+{
+    {
+        Colour c(1, 2, 3, 4);
+        ASSERT_NO_THROW( ColourUtils::RegisterColour(c) );
+    }
+    {
+        Colour c(1, 2, 3, 4);
+        auto idx_color = ColourUtils::RegisterColour(c);
+        const auto reg = ColourUtils::GetRegistryColourIdx();
+        ASSERT(reg.find(idx_color) != reg.end() );
+    }
+    {
+        Colour c(1, 2, 3, 4);
+        auto idx_color = ColourUtils::RegisterColour(c);
+        ASSERT_EQUAL(ColourUtils::GetColourByIdx(idx_color), c);
+    }
+    {
+        Colour c1(1, 2, 3, 4);
+        Colour c2(10, 20, 30, 40);
+        auto idx_color_1 = ColourUtils::RegisterColour(c1);
+        auto idx_color_2 = ColourUtils::RegisterColour(c2);
+        ASSERT_NOT_EQUAL(idx_color_1, idx_color_2);
+        ASSERT_NO_THROW(ColourUtils::GetColourByIdx(idx_color_1));
+        ASSERT_NO_THROW(ColourUtils::GetColourByIdx(idx_color_2));
+    }
+    {
+        Colour c1(1, 2, 3, 4);
+        Colour c2(10, 20, 30, 40);
+        auto idx_color_1 = ColourUtils::RegisterColour(c1);
+        auto idx_color_2 = ColourUtils::RegisterColour(c2);
+        ASSERT_NOT_EQUAL(idx_color_1, idx_color_2);
+        ASSERT_EQUAL(idx_color_1, ColourUtils::GetColourIdx(c1));
+        ASSERT_EQUAL(idx_color_2, ColourUtils::GetColourIdx(c2));
+    }
+}
+
+void TestRegisterColourAlreadyPresent(){
+    {
+        Colour c1(1, 2, 3, 4);
+        Colour c2(1, 2, 3, 4);
+        ColourUtils::RegisterColour(c1);
+        ASSERT_THROW(ColourUtils::RegisterColour(c2), std::logic_error);
+    }
+    {
+        Colour c1(1, 2, 3 );
+        Colour c2(1, 2, 3, 255);
+        ColourUtils::RegisterColour(c1);
+        ASSERT_THROW(ColourUtils::RegisterColour(c2), std::logic_error);
+    }
+    {
+        Colour c1;
+        Colour c2;
+        ColourUtils::RegisterColour(c1);
+        ASSERT_THROW(ColourUtils::RegisterColour(c2), std::logic_error);
+    }
+}
+
 EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestColourCreationRGBNormalConstructor,    "ColourUtils");
         EFT_ADD_TEST(TestColourCreationRGBThrowConstructor,     "ColourUtils");
@@ -190,5 +278,8 @@ EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestNotEnoughVals,                         "ColourUtils");
         EFT_ADD_TEST(TestNotCorrectSeparators,                  "ColourUtils");
         EFT_ADD_TEST(TestGetters,                               "ColourUtils");
+        EFT_ADD_TEST(TestColourCtorFromInts,                    "ColourUtils");
+        EFT_ADD_TEST(TestRegisterColourBasic,                   "ColourUtils");
+        EFT_ADD_TEST(TestRegisterColourAlreadyPresent,          "ColourUtils");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
