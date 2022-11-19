@@ -25,6 +25,9 @@ namespace eft::stats {
         static void Init(size_t worker_id = 0);
 
         static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept { return logger_; }
+        static inline void SetSilent() noexcept { logger_->set_level(spdlog::level::off); }
+        static inline void SetActive() noexcept { logger_->set_level(spdlog::level::trace); }
+        static inline void SetLevel(spdlog::level::level_enum level) noexcept { logger_->set_level(level); }
 
     private:
         static std::shared_ptr<spdlog::logger> logger_;
