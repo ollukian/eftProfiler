@@ -104,18 +104,46 @@ private:
     int fail_count = 0;
 };
 
-#define ASSERT_EQUAL(x, y) {            \
-  std::ostringstream os;                \
-  os << #x << " != " << #y << ", "      \
-    << __FILE__ << ":" << __LINE__;     \
-  AssertEqual(x, y, os.str());          \
+#define ASSERT_EQUAL(x, y) {                \
+  std::ostringstream __os;                  \
+  __os << #x << " != " << #y << ", "        \
+    << __FILE__ << ":" << __LINE__;         \
+  AssertEqual(x, y, __os.str());            \
 }
 
-#define ASSERT(x) {                     \
-  ostringstream os;                     \
-  os << #x << " is false, "             \
-    << __FILE__ << ":" << __LINE__;     \
-  Assert(x, os.str());                  \
+#define ASSERT(x) {                         \
+  ostringstream __os;                       \
+  __os << #x << " is false, "               \
+    << __FILE__ << ":" << __LINE__;         \
+  Assert(x, __os.str());                    \
+}
+
+#define ASSERT_THROW(expression, exceptionType) {\
+    try {                                       \
+        expression;                             \
+        ostringstream __os;                     \
+        __os << #expression << " didn't throw " \
+            << #exceptionType << ", at: "       \
+            << __FILE__ << ':' << __LINE__;     \
+        Assert(false, __os.str());              \
+    } catch (const exceptionType& e) {          \
+    } catch (std::exception& e) {               \
+        ostringstream __os;                     \
+        __os << #expression                     \
+            << " throw std::exception: "        \
+            << e.what() << " instead of: "      \
+            << #exceptionType << ", at: "       \
+            << __FILE__ << ':' << __LINE__;     \
+        Assert(false, __os.str());              \
+    } catch(...) {                              \
+          ostringstream __os;                   \
+        __os << #expression                     \
+            << " throw an unknown exception: "  \
+            << " instead of: "                  \
+            << #exceptionType << ", at: "       \
+            << __FILE__ << ':' << __LINE__;     \
+        Assert(false, __os.str());              \
+    }                                           \
 }
 
 #define RUN_TEST(tr, func) \
