@@ -16,6 +16,8 @@
 
 #include "TColor.h"
 
+#include "../Core/Logger.h"
+
 namespace eft::utils {
 
 
