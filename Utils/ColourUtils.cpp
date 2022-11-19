@@ -257,7 +257,7 @@ Colour& ColourUtils::GetColourByIdx(size_t idx)  {
 }
 
 ostream& operator << (ostream& os, const Colour& c) noexcept {
-    return os << fmt::format("RGBA({:3}, {:3}, {:3}, {:3})", c.r(), c.g(), c.b(), c.a()) << endl;
+    return os << fmt::format("RGBA({:3}, {:3}, {:3}, {:3})", c.r(), c.g(), c.b(), c.a());
 }
 
 

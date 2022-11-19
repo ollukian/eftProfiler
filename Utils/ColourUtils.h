@@ -136,6 +136,11 @@ inline bool Colour::operator < (const Colour& other) const noexcept
 }
 
 bool Colour::operator==(const Colour& other) const noexcept {
+    bool res = (r_ == other.r_
+                && g_ == other.g_
+                && b_ == other.b_
+                && a_ == other.a_);
+    EFT_PROF_INFO("Colour::operator== compare {} & {} ==> {}", *this, other, res);
     return (r_ == other.r_
         && g_ == other.g_
         && b_ == other.b_
