@@ -58,10 +58,6 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
             throw std::logic_error("");
         ss >> b;
     }
-    //catch (std::logic_error& e) {
-    //    EFT_PROF_CRITICAL("Problem: {} in colour parsing of: {}", e.what(), s);
-    //    throw std::logic_error("colour parsing problem");
-    //}
     catch (std::exception& e) {
         EFT_PROF_CRITICAL("Problem in colour parsing: {}", e.what());
         throw std::logic_error(fmt::format("colour parsing problem: {}", e.what()));
@@ -155,6 +151,26 @@ bool Colour::AssertRange() const noexcept
 //    return {r, g, b};
 //}
 
+
+
+size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
+    size_t new_idx = TColor::GetFreeColorIndex();
+    unique_ptr<TColor> colour = make_unique<TColor>(new_idx,
+                                                    c.r_as_fraction(),
+                                                    c.g_as_fraction(),
+                                                    c.b_as_fraction(),
+                                                    name.c_str(),
+                                                    c.a_as_fraction());
+
+    EFT_PROF_INFO("Registry new colour: ({}{}{}{}) with idx: {}",
+                  c.r(),
+                  c.g(),
+                  c.b(),
+                  c.a(),
+                  new_idx);
+    registry_colours_.insert(std::move(colour));
+    registered_colours_idx_.insert(new_idx);
+}
 
 
 }

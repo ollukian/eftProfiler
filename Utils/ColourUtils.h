@@ -30,13 +30,14 @@ public:
     ColourUtils& operator = (const ColourUtils&) = delete;
     ColourUtils& operator = (ColourUtils&&) = delete;
 
+    size_t RegisterColourFromString(std::string_view s);
     size_t RegisterColour(const Colour& c, const std::string& name = "");
-    size_t GetColourIdx(const Colour& c) const noexcept;
-    size_t GetColourIdx(const std::string& name) const noexcept;
+    size_t GetColourIdx(const Colour& c)            const noexcept;
+    size_t GetColourIdx(const std::string& name)    const noexcept;
 
 private:
-    std::set<std::unique_ptr<TColor>> registry_colours_;
-    std::set<size_t> registered_colours_idx_;
+    std::set<std::unique_ptr<TColor>>   registry_colours_;
+    std::set<size_t>                    registered_colours_idx_;
 
     std::map<std::string, size_t> named_colours_;
 private:
@@ -50,6 +51,11 @@ public:
     [[nodiscard]] inline size_t g() const noexcept { return g_;}
     [[nodiscard]] inline size_t b() const noexcept { return b_;}
     [[nodiscard]] inline size_t a() const noexcept { return a_;}
+
+    [[nodiscard]] inline float r_as_fraction() const noexcept { return static_cast<float>(r_) / 256.f; }
+    [[nodiscard]] inline float g_as_fraction() const noexcept { return static_cast<float>(g_) / 256.f; }
+    [[nodiscard]] inline float b_as_fraction() const noexcept { return static_cast<float>(b_) / 256.f; }
+    [[nodiscard]] inline float a_as_fraction() const noexcept { return static_cast<float>(a_) / 256.f; }
 
     static Colour CreateFromString(std::string_view s);
 private:
