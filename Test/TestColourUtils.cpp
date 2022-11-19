@@ -4,6 +4,7 @@
 
 #include "Tester.h"
 #include "../Utils/ColourUtils.h"
+#include "../Core/Logger.h"
 
 #include <sstream>
 
@@ -39,13 +40,16 @@ void TestColourCreationRGBNormalConstructor()
 }
 
 void TestColourCreationRGBThrowConstructor() {
+
     {
         istringstream is{"RGB(300, 200, 200)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
     {
+        eft::stats::Logger::GetLogger()->set_level(spdlog::level::trace);
         istringstream is{"RGB(0, 0)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+        eft::stats::Logger::GetLogger()->set_level(spdlog::level::off);
     }
 }
 
@@ -110,11 +114,13 @@ void TestNotEnoughVals()
 }
 
 EFT_IMPLEMENT_TESTFILE(ColourUtils) {
+        eft::stats::Logger::GetLogger()->set_level(spdlog::level::off);
         EFT_ADD_TEST(TestColourCreationRGBNormalConstructor,    "ColourUtils");
         EFT_ADD_TEST(TestColourCreationRGBThrowConstructor,     "ColourUtils");
         EFT_ADD_TEST(TestColourCreationRGBANormalConstructor,   "ColourUtils");
         EFT_ADD_TEST(TestColourCreationRGBAThrowConstructor,    "ColourUtils");
         EFT_ADD_TEST(TestNoRGB,                                 "ColourUtils");
         EFT_ADD_TEST(TestNotEnoughVals,                         "ColourUtils");
+        eft::stats::Logger::GetLogger()->set_level(spdlog::level::info);
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
