@@ -44,13 +44,18 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
     EFT_PROF_DEBUG("s after removing prefix = [{}]", s);
 
     istringstream ss {string(s)};
+    ss.exceptions(std::stringstream::badbit);
 
     size_t r, g, b;
     char del1, del2;
 
     try {
         ss >> r >> del1;
+        if (ss.bad())
+            throw std::logic_error("");
         ss >> g >> del2;
+        if (ss.bad())
+            throw std::logic_error("");
         ss >> b;
     }
     catch (std::exception& e) {
