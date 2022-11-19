@@ -29,4 +29,5 @@ void Tester::InitSetTests() {
     EFT_PROF_DEBUG("Init set tests");
     EFT_RUN_TESTFILE(FileSystem);
     EFT_RUN_TESTFILE(StringUtils);
+    EFT_RUN_TESTFILE(ColourUtils);
 }

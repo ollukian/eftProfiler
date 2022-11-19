@@ -87,5 +87,6 @@ inline std::unique_ptr<Tester>& Tester::Get()
 
 EFT_ADD_TESTFILE(FileSystem);
 EFT_ADD_TESTFILE(StringUtils);
+EFT_ADD_TESTFILE(ColourUtils);
 
 #endif //EFTPROFILER_TESTER_H

@@ -12,18 +12,22 @@
 #include <iostream>
 #include <algorithm>
 #include <iterator>
+#include <string_view>
 
 namespace eft {
 
 template <typename Iterator>
 class IteratorRange;
 
+// TODO: adapt for c++17 => string_view
     // c++14 only, so no std::string_view
 class StringUtils {
 public:
     //static inline std::vector<std::string> ParseText(const std::string& s) noexcept;
     static inline std::string              Strip(const std::string& s);
     static inline std::vector<std::string> Split(const std::string& s, char sep = ' ');
+    static inline std::string_view              Strip(std::string_view s);
+    static inline std::vector<std::string_view> SplitBy(std::string_view s, char sep = ' ');
 
     static inline void          Ltrim(std::string &s);
     static inline void          Rtrim(std::string &s);
@@ -172,6 +176,29 @@ std::string StringUtils::Strip(const std::string& s) {
         return s.substr(idx_first_not_space, idx_last_not_space - idx_first_not_space + 1);
     else
         return "";
+}
+
+std::string_view StringUtils::Strip(std::string_view s) {
+    while (!s.empty() && isspace(s.front())) {
+        s.remove_prefix(1);
+    }
+    while (!s.empty() && isspace(s.back())) {
+        s.remove_suffix(1);
+    }
+    return s;
+}
+
+std::vector<std::string_view> StringUtils::SplitBy(std::string_view s, char sep) {
+    std::vector<std::string_view> result;
+    while (!s.empty()) {
+        size_t pos = s.find(sep);
+        result.push_back(s.substr(0, pos));
+        s.remove_prefix(pos != std::string_view::npos
+            ? pos + 1
+            : s.size()
+            );
+    }
+    return result;
 }
 
 std::vector<std::string> StringUtils::Split(const std::string& s, char sep) {
