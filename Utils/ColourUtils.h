@@ -53,7 +53,7 @@ public:
 
     static Colour CreateFromString(std::string_view s);
 private:
-    Colour(size_t r, size_t g, size_t b, size_t a = 1.0)
+    Colour(size_t r, size_t g, size_t b, size_t a = 255)
         : r_(r)
         , g_(g)
         , b_(b)
