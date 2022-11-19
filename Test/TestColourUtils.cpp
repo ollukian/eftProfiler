@@ -214,21 +214,25 @@ void TestColourCtorFromInts()
 void TestRegisterColourBasic()
 {
     {
+        ColourUtils::ClearRegistry();
         Colour c(1, 2, 3, 4);
         ASSERT_NO_THROW( ColourUtils::RegisterColour(c) );
     }
     {
+        ColourUtils::ClearRegistry();
         Colour c(1, 2, 3, 4);
         auto idx_color = ColourUtils::RegisterColour(c);
         const auto reg = ColourUtils::GetRegistryColourIdx();
         ASSERT(reg.find(idx_color) != reg.end() );
     }
     {
+        ColourUtils::ClearRegistry();
         Colour c(1, 2, 3, 4);
         auto idx_color = ColourUtils::RegisterColour(c);
         ASSERT_EQUAL(ColourUtils::GetColourByIdx(idx_color), c);
     }
     {
+        ColourUtils::ClearRegistry();
         Colour c1(1, 2, 3, 4);
         Colour c2(10, 20, 30, 40);
         auto idx_color_1 = ColourUtils::RegisterColour(c1);
@@ -238,6 +242,7 @@ void TestRegisterColourBasic()
         ASSERT_NO_THROW(ColourUtils::GetColourByIdx(idx_color_2));
     }
     {
+        ColourUtils::ClearRegistry();
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         Colour c1(1, 2, 3, 4);
         Colour c2(10, 20, 30, 40);
@@ -254,16 +259,19 @@ void TestRegisterColourAlreadyPresent(){
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         Colour c1(1, 2, 3, 4);
         Colour c2(1, 2, 3, 4);
+        ColourUtils::ClearRegistry();
         ColourUtils::RegisterColour(c1);
         ASSERT_THROW(ColourUtils::RegisterColour(c2), std::logic_error);
     }
     {
         Colour c1(1, 2, 3 );
         Colour c2(1, 2, 3, 255);
+        ColourUtils::ClearRegistry();
         ColourUtils::RegisterColour(c1);
         ASSERT_THROW(ColourUtils::RegisterColour(c2), std::logic_error);
     }
     {
+        ColourUtils::ClearRegistry();
         Colour c1;
         Colour c2;
         ColourUtils::RegisterColour(c1);

@@ -31,6 +31,8 @@ public:
     ColourUtils& operator = (const ColourUtils&) = delete;
     ColourUtils& operator = (ColourUtils&&) = delete;
 
+    static inline void ClearRegistry() noexcept;
+
     static size_t RegisterColourFromString(std::string_view s);
     static size_t RegisterColour(const Colour& c, const std::string& name = "");
     static size_t GetColourIdx(const Colour& c) noexcept;
@@ -109,6 +111,15 @@ private:
 };
 
 std::ostream& operator << (std::ostream& os, const Colour& c) noexcept;
+
+inline void ColourUtils::ClearRegistry() noexcept {
+    registry_colours_.clear();
+    registered_colours_idx_.clear();
+    registered_colours_rgba_.clear();
+    idx_of_colour_.clear();
+    colour_of_idx_.clear();
+    named_colours_.clear();
+}
 
 inline bool Colour::operator < (const Colour& other) const noexcept
 {
