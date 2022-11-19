@@ -13,6 +13,15 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
     eft::stats::Logger::Init();
+
+    if (argc >= 2 && string(argv[1]) == "--test") {
+        eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
+        EFT_RUN_TESTS();
+        return 0;
+    }
+    else if (argc >= 2 && string(argv[1]) == "--silent") {
+        eft::stats::Logger::SetSilent();
+    }
     CommandLineArgs commandLineArgs(argc, argv);
 
     if (commandLineArgs.HasKey("h") || commandLineArgs.HasKey("help"))
@@ -104,10 +113,6 @@ int main(int argc, char* argv[]) {
     string task;
     if (commandLineArgs.SetValIfArgExists("task", task)) {
         EFT_PROF_INFO("Set task: {}", task);
-    }
-
-    if (task == "run_tests") {
-        EFT_RUN_TESTS();
     }
     else if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
