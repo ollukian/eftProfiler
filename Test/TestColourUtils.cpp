@@ -113,6 +113,14 @@ void TestColourCreationRGBAThrowConstructor() {
         istringstream is{"RGBA(0, 0)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
+    {
+        istringstream is{"RGBA(*, 0)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGBA(* * * * *)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
 }
 
 void TestNoRGB()
@@ -148,9 +156,7 @@ void TestNotEnoughVals()
     }
     {
         istringstream is{"RGBA(200, 200, 250,)"};
-        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
-        eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
     }
     {
         istringstream is{"RGBA(200, 200)"};
