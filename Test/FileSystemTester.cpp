@@ -70,7 +70,7 @@ void TestReadLines()
 
 EFT_IMPLEMENT_TESTFILE(FileSystem)
 {
-    EFT_ADD_TEST(TestReadLines, "filesystem");
+    EFT_ADD_TEST(TestReadLines, "FileSystem");
 }
 EFT_END_IMPLEMENT_TESTFILE(FileSystem);
 
