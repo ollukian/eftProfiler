@@ -90,12 +90,6 @@ public:
 
     // todo: rewrite in terms of io operators
     //friend std::ostream& operator >> (std::ostream& os, Colour& c);
-    inline bool operator <  (const Colour& other) const noexcept;
-    inline bool operator <= (const Colour& other) const noexcept;
-    inline bool operator == (const Colour& other) const noexcept;
-    inline bool operator != (const Colour& other) const noexcept;
-    inline bool operator >  (const Colour& other) const noexcept;
-    inline bool operator >= (const Colour& other) const noexcept;
 
     static Colour CreateFromString(std::string_view s);
 private:
@@ -112,6 +106,13 @@ private:
     size_t a_ = 255;
 };
 
+inline bool operator <  (const Colour& l, const Colour& r) noexcept;
+inline bool operator <= (const Colour& l, const Colour& r) noexcept;
+inline bool operator == (const Colour& l, const Colour& r) noexcept;
+inline bool operator != (const Colour& l, const Colour& r) noexcept;
+inline bool operator >  (const Colour& l, const Colour& r) noexcept;
+inline bool operator >= (const Colour& l, const Colour& r) noexcept;
+
 std::ostream& operator << (std::ostream& os, const Colour& c) noexcept;
 
 inline void ColourUtils::ClearRegistry() noexcept {
@@ -123,80 +124,86 @@ inline void ColourUtils::ClearRegistry() noexcept {
     named_colours_.clear();
 }
 
-inline bool Colour::operator < (const Colour& other) const noexcept
+inline bool operator < (const Colour& l, const Colour& r) noexcept
 {
-    if (r_ < other.r_)
+    if (l.r() < r.r())
         return true;
-    if (r_ > other.r_)
+    if (l.r() > r.r())
         return false;
 
-    if (g_ < other.g_)
+    if (l.g() < r.g())
         return true;
-    if (g_ > other.g_)
+    if (l.g() > r.g())
         return false;
 
-    if (b_ < other.b_)
+    if (l.b() < r.b())
         return true;
-    if (b_ > other.b_)
+    if (l.b() > r.b())
         return false;
 
-    if (a_ < other.a_)
+    if (l.a() < r.a())
         return true;
-    if (a_ > other.a_)
+    if (l.a() > r.a())
         return false;
 
     return true;
 }
 
-bool Colour::operator==(const Colour& other) const noexcept {
-    bool res = (r_ == other.r_
-                && g_ == other.g_
-                && b_ == other.b_
-                && a_ == other.a_);
-    EFT_PROF_INFO("Colour::operator== compare {} & {} ==> {}", *this, other, res);
-    return (r_ == other.r_
-        && g_ == other.g_
-        && b_ == other.b_
-        && a_ == other.a_);
+bool operator==(const Colour& l, const Colour& r)  noexcept {
+    bool res = (l.r() == r.r()
+                && l.g() == r.g()
+                && l.b() == r.b()
+                && l.a() == r.a());
+    EFT_PROF_INFO("Colour::operator== compare {} & {} ==> {}", l, r, res);
+    return (l.r() == r.r()
+            && l.g() == r.g()
+            && l.b() == r.b()
+            && l.a() == r.a());
 }
 
-bool Colour::operator!=(const Colour& other) const noexcept {
-    return ! (*this == other);
+bool operator!=(const Colour& l, const Colour& r)  noexcept {
+    bool res = !(l == r);
+    EFT_PROF_INFO("Colour::operator!= compare {} & {} ==> {}", l, r, res);
+    return ! (l == r);
 }
 
-inline bool Colour::operator > (const Colour& other) const noexcept
+inline bool operator > (const Colour& l, const Colour& r)  noexcept
 {
-    if (r_ > other.r_)
+    if (l.r() > r.r())
         return true;
-    if (r_ < other.r_)
+    if (l.r() < r.r())
         return false;
 
-    if (g_ > other.g_)
+    if (l.g() > r.g())
         return true;
-    if (g_ < other.g_)
+    if (l.g() < r.g())
         return false;
 
-    if (b_ > other.b_)
+    if (l.b() > r.b())
         return true;
-    if (b_ < other.b_)
+    if (l.b() < r.b())
         return false;
 
-    if (a_ > other.a_)
+    if (l.a() > r.a())
         return true;
-    if (a_ < other.a_)
+    if (l.a() < r.a())
         return false;
 
     return true;
 }
 
-inline bool  Colour::operator <= (const Colour& other) const noexcept
+inline bool  operator <= (const Colour& l, const Colour& r)  noexcept
 {
-    return ! (*this > other);
+    bool res = !(l > r);
+    EFT_PROF_INFO("Colour::operator<= compare {} & {} ==> {}", l, r, res);
+    return ! (l > r);
 }
 
-inline bool  Colour::operator >= (const Colour& other) const noexcept
+inline bool  operator >= (const Colour& l, const Colour& r)  noexcept
 {
-    return ! (*this < other);
+    bool res = !(l < r);
+    EFT_PROF_INFO("Colour::operator>= compare {} & {} ==> {}", l, r, res);
+    return ! (l < r);
 }
 
 
