@@ -6,7 +6,7 @@
 
 void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 {
-    EFT_PROF_DEBUG("Add test: {:15} to the group: {:15}", name, groupname);
+    EFT_PROF_DEBUG("Add test: {:35} to the group: {:15}", name, groupname);
     tests_[std::move(groupname)].push_back({name, test});
 }
 
