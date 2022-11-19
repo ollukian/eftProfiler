@@ -12,6 +12,7 @@
 #include <set>
 
 #include <memory>
+#include <iostream>
 
 #include "TColor.h"
 
@@ -56,6 +57,10 @@ public:
     [[nodiscard]] inline float g_as_fraction() const noexcept { return static_cast<float>(g_) / 256.f; }
     [[nodiscard]] inline float b_as_fraction() const noexcept { return static_cast<float>(b_) / 256.f; }
     [[nodiscard]] inline float a_as_fraction() const noexcept { return static_cast<float>(a_) / 256.f; }
+
+    // todo: rewrite in terms of io operators
+    //friend std::ostream& operator >> (std::ostream& os, Colour& c);
+    //friend std::istream& operator << (std::istream& os, const Colour& c);
 
     static Colour CreateFromString(std::string_view s);
 private:

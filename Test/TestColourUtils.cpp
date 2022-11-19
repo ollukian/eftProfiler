@@ -130,6 +130,7 @@ void TestNoRGB()
 void TestNotEnoughVals()
 {
     {
+        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         istringstream is{"RGB(200, 200)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }

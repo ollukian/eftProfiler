@@ -31,6 +31,7 @@ Colour Colour::CreateFromString(std::string_view s) {
 
 Colour Colour::CreateFromStringRGB(std::string_view s)
 {
+    eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
     EFT_PROF_TRACE("Redirect to create colour from RGB string");
     const auto components = ::eft::StringUtils::Strip(s);
     // RGB(r, g, b)
@@ -50,15 +51,22 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
     char del1, del2;
 
     try {
-        ss >> r >> del1;
+
+        ss >> r;
         if (ss.bad())
-            throw std::logic_error("");
-        ss >> g >> del2;
+            throw std::logic_error(fmt::format("Error reading r component from {}", s));
+        ss >> del1;
         if (ss.bad())
-            throw std::logic_error("");
-        ss >> b;
+            throw std::logic_error(fmt::format("Error reading del1 component from {}", s));
+        ss >> g;
         if (ss.bad())
-            throw std::logic_error("");
+            throw std::logic_error(fmt::format("Error reading g component from {}", s));
+        ss >> del2;
+        if (ss.bad())
+            throw std::logic_error(fmt::format("Error reading del2 component from {}", s));
+        ss >> g;
+        if (ss.bad())
+            throw std::logic_error(fmt::format("Error reading b component from {}", s));
     }
     catch (std::exception& e) {
         EFT_PROF_CRITICAL("Problem in colour parsing: {}", e.what());
