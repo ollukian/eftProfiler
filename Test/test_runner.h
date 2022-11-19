@@ -148,6 +148,20 @@ private:
     }                                           \
 }
 
+
+#define ASSERT_NO_THROW(expression) {               \
+    try {                                           \
+        expression;                                 \
+    } catch(...) {                                  \
+        ostringstream __os;                         \
+        __os << #expression                         \
+            << " which should not throw, "          \
+            << " throws an exception at:"           \
+            << __FILE__ << ':' << __LINE__;         \
+       throw std::logic_error(__os.str());          \
+    }                                               \
+}
+
 #define RUN_TEST(tr, func) \
   tr.RunTest(func, #func)
 #endif //EFTPROFILER_TEST_RUNNER_H
