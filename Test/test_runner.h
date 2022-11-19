@@ -120,32 +120,33 @@ private:
   Assert(x, __os.str());                    \
 }
 
-#define ASSERT_THROW(expression, exceptionType) {\
+#define ASSERT_THROW(expression, exceptionType) { \
+    bool __eft__is_passes = false;              \
+    std::ostringstream __os;                    \
     try {                                       \
         expression;                             \
-        ostringstream __os;                     \
         __os << #expression << " didn't throw " \
             << #exceptionType << ", at: "       \
             << __FILE__ << ':' << __LINE__;     \
-        Assert(false, __os.str());              \
+        __eft__is_passes = false;               \
     } catch (const exceptionType& e) {          \
+        __eft__is_passes = true;                \
     } catch (std::exception& e) {               \
-        ostringstream __os;                     \
         __os << #expression                     \
             << " throw std::exception: "        \
             << e.what() << " instead of: "      \
             << #exceptionType << ", at: "       \
             << __FILE__ << ':' << __LINE__;     \
-        Assert(false, __os.str());              \
     } catch(...) {                              \
-          ostringstream __os;                   \
         __os << #expression                     \
             << " throw an unknown exception: "  \
             << " instead of: "                  \
             << #exceptionType << ", at: "       \
             << __FILE__ << ':' << __LINE__;     \
-        Assert(false, __os.str());              \
     }                                           \
+   if ( !__eft__is_passes ) {                   \
+      throw std::runtime_error(__os.str());     \
+   }                                            \
 }
 
 
@@ -153,12 +154,12 @@ private:
     try {                                           \
         expression;                                 \
     } catch(...) {                                  \
-        ostringstream __os;                         \
+        std::ostringstream __os;                    \
         __os << #expression                         \
             << " which should not throw, "          \
             << " throws an exception at:"           \
             << __FILE__ << ':' << __LINE__;         \
-       throw std::logic_error(__os.str());          \
+       throw std::runtime_error(__os.str());        \
     }                                               \
 }
 
