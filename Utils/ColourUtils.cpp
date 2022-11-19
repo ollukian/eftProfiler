@@ -57,6 +57,8 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
         if (ss.bad())
             throw std::logic_error("");
         ss >> b;
+        if (ss.bad())
+            throw std::logic_error("");
     }
     catch (std::exception& e) {
         EFT_PROF_CRITICAL("Problem in colour parsing: {}", e.what());
@@ -90,9 +92,17 @@ Colour Colour::CreateFromStringRGBA(std::string_view s)
 
     try {
         ss >> r >> del1;
+        if (ss.bad())
+            throw std::logic_error("");
         ss >> g >> del2;
+        if (ss.bad())
+            throw std::logic_error("");
         ss >> b >> del3;
+        if (ss.bad())
+            throw std::logic_error("");
         ss >> a;
+        if (ss.bad())
+            throw std::logic_error("");
     }
     catch (std::exception& e) {
         EFT_PROF_CRITICAL("Problem in colour parsing: {}", e.what());
@@ -170,6 +180,7 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
                   new_idx);
     registry_colours_.insert(std::move(colour));
     registered_colours_idx_.insert(new_idx);
+    return new_idx;
 }
 
 
