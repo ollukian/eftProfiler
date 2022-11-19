@@ -162,8 +162,8 @@ inline bool operator < (const Colour& l, const Colour& r) noexcept
         return false;
     }
 
-    EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {} they are equal", l, r, true);
-    return true;
+    EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {} they are equal", l, r, false);
+    return false;
 }
 
 bool operator==(const Colour& l, const Colour& r)  noexcept {
@@ -221,8 +221,8 @@ inline bool operator > (const Colour& l, const Colour& r)  noexcept
         EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, false);
         return false;
     }
-    EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {} they are equal", l, r, true);
-    return true;
+    EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {} they are equal", l, r, false);
+    return false;
 }
 
 inline bool  operator <= (const Colour& l, const Colour& r)  noexcept
