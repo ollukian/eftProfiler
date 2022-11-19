@@ -243,7 +243,6 @@ void TestRegisterColourBasic()
     }
     {
         ColourUtils::ClearRegistry();
-        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         Colour c1(1, 2, 3, 4);
         Colour c2(10, 20, 30, 40);
         auto idx_color_1 = ColourUtils::RegisterColour(c1);
@@ -256,7 +255,6 @@ void TestRegisterColourBasic()
 
 void TestRegisterColourAlreadyPresent(){
     {
-        eft::stats::Logger::SetLevel(spdlog::level::level_enum::trace);
         Colour c1(1, 2, 3, 4);
         Colour c2(1, 2, 3, 4);
         ColourUtils::ClearRegistry();

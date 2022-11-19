@@ -18,11 +18,10 @@ void Tester::RunTests(const std::string& groupname)
     EFT_PROF_INFO("Run all tests");
     for (const auto& [groupname_, tests] : tests_)
     {
-        // TODO: redirect output to a stream, which can be "silent"
         EFT_PROF_INFO("Running test group: {:10}", groupname_);
         for (const auto& [name, function] : tests)
         {
-            std::cerr << fmt::format("{:25} ==> ", name);
+            std::cerr << fmt::format("| {:45} | ==> ", name);
             eft::stats::Logger::SetSilent();
             tr_.RunTest(function, name);
             eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
