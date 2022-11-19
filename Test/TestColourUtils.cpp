@@ -46,10 +46,8 @@ void TestColourCreationRGBThrowConstructor() {
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
     {
-        eft::stats::Logger::GetLogger()->set_level(spdlog::level::trace);
         istringstream is{"RGB(0, 0)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
-        eft::stats::Logger::GetLogger()->set_level(spdlog::level::off);
     }
 }
 
