@@ -136,7 +136,10 @@ inline bool Colour::operator < (const Colour& other) const noexcept
 }
 
 bool Colour::operator==(const Colour& other) const noexcept {
-    return (r_ == other.r_ && g_ == other.g_ && b_ == other.b_ && a_ == other.a_);
+    return (r_ == other.r_
+        && g_ == other.g_
+        && b_ == other.b_
+        && a_ == other.a_);
 }
 
 bool Colour::operator!=(const Colour& other) const noexcept {

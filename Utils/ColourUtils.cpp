@@ -196,8 +196,13 @@ bool Colour::AssertRange() const noexcept
 
 size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
     if (registered_colours_rgba_.find(c) != registered_colours_rgba_.end()) {
-        EFT_PROF_WARN("Colour: {} alreagdy registered", c);
+        EFT_PROF_WARN("Colour: {} already registered", c);
         throw std::logic_error("");
+    }
+
+    EFT_PROF_DEBUG("ColourUtils: registered colours:");
+    for (const auto& colour : registered_colours_rgba_) {
+        EFT_PROF_DEBUG(colour);
     }
 
     size_t new_idx = TColor::GetFreeColorIndex();
@@ -208,17 +213,19 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
                                                     name.c_str(),
                                                     c.a_as_fraction());
 
-    EFT_PROF_INFO("Registry new colour: ({:3}{:3}{:3}{:3}) with idx: {}",
-                  c.r(),
-                  c.g(),
-                  c.b(),
-                  c.a(),
+    EFT_PROF_INFO("Registered new colour: ({}) with idx: {}",
+                  c,
                   new_idx);
     registered_colours_rgba_.insert(c);
     registry_colours_.insert(std::move(colour));
     registered_colours_idx_.insert(new_idx);
     idx_of_colour_[c] = new_idx;
     colour_of_idx_[new_idx] = c;
+
+    EFT_PROF_DEBUG("ColourUtils: after registering {}, registered colours:", c);
+    for (const auto& reg_colour : registered_colours_rgba_) {
+        EFT_PROF_DEBUG(reg_colour);
+    }
     return new_idx;
 }
 
@@ -235,13 +242,11 @@ size_t ColourUtils::RegisterColourFromString(std::string_view s) {
 }
 
 size_t ColourUtils::GetColourIdx(const Colour& c) noexcept {
+    EFT_PROF_TRACE("GetColourIdx: {}", c);
     if (idx_of_colour_.find(c) != idx_of_colour_.end())
         return idx_of_colour_.at(c);
-    EFT_PROF_WARN("Colour: {}{}{}{} is not registered, register it first",
-                  c.r(),
-                  c.g(),
-                  c.b(),
-                  c.a());
+    EFT_PROF_WARN("Colour: {} is not registered, register it first",
+                  c);
     return RegisterColour(c);
 }
 
