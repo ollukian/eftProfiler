@@ -68,7 +68,7 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
     }
     catch (...) {
         EFT_PROF_CRITICAL("caught unknown exception in CreateFromStringRGB for: {}", s);
-        throw std::logic_error(fmt::format("colour parsing problem: {}", e.what()));
+        throw std::logic_error(fmt::format("colour parsing problem of: {}", s));
     }
     return {r, g, b};
 }
