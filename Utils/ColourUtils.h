@@ -126,26 +126,43 @@ inline void ColourUtils::ClearRegistry() noexcept {
 
 inline bool operator < (const Colour& l, const Colour& r) noexcept
 {
-    if (l.r() < r.r())
+    if (l.r() < r.r()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.r() > r.r())
+    }
+    if (l.r() > r.r()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
-    if (l.g() < r.g())
+    if (l.g() < r.g()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.g() > r.g())
+    }
+    if (l.g() > r.g()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
-    if (l.b() < r.b())
+    if (l.b() < r.b()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.b() > r.b())
+    }
+    if (l.b() > r.b()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
-    if (l.a() < r.a())
+    if (l.a() < r.a()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.a() > r.a())
+    }
+    if (l.a() > r.a()){
+        EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
+    EFT_PROF_INFO("Colour::operator< compare {} & {} ==> {} they are equal", l, r, true);
     return true;
 }
 
@@ -169,26 +186,42 @@ bool operator!=(const Colour& l, const Colour& r)  noexcept {
 
 inline bool operator > (const Colour& l, const Colour& r)  noexcept
 {
-    if (l.r() > r.r())
+    if (l.r() > r.r()) {
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.r() < r.r())
+    }
+    if (l.r() < r.r()){
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
-    if (l.g() > r.g())
+    if (l.g() > r.g()) {
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.g() < r.g())
+    }
+    if (l.g() < r.g()){
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
-    if (l.b() > r.b())
+    if (l.b() > r.b()){
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.b() < r.b())
+    }
+    if (l.b() < r.b()){
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, false);
         return false;
+    }
 
-    if (l.a() > r.a())
+    if (l.a() > r.a()){
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, true);
         return true;
-    if (l.a() < r.a())
+    }
+    if (l.a() < r.a()){
+        EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {}", l, r, false);
         return false;
-
+    }
+    EFT_PROF_INFO("Colour::operator> compare {} & {} ==> {} they are equal", l, r, true);
     return true;
 }
 
