@@ -109,6 +109,43 @@ void TestNotEnoughVals()
         istringstream is{"RGB(200, 200)"};
         ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
     }
+    {
+        istringstream is{"RGB(200)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGB()"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGBA(200, 200, 250)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGBA(200, 200, 250,)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+    {
+        istringstream is{"RGBA(200, 200)"};
+        ASSERT_THROW(Colour::CreateFromString(is.str()), std::logic_error);
+    }
+}
+
+void TestGetters()
+{
+    {
+        istringstream  is {"RGBA(1, 2, 3, 4)"};
+        ASSERT_NO_THROW(Colour::CreateFromString(is.str()));
+        const auto colour = Colour::CreateFromString(is.str());
+        ASSERT_EQUAL(colour.r(), 1);
+        ASSERT_EQUAL(colour.g(), 2);
+        ASSERT_EQUAL(colour.b(), 3);
+        ASSERT_EQUAL(colour.a(), 4);
+        ASSERT_EQUAL(colour.r_as_fraction(), 1.f / 256.f);
+        ASSERT_EQUAL(colour.g_as_fraction(), 2.f / 256.f);
+        ASSERT_EQUAL(colour.b_as_fraction(), 3.f / 256.f);
+        ASSERT_EQUAL(colour.a_as_fraction(), 4.f / 256.f);
+    }
 }
 
 EFT_IMPLEMENT_TESTFILE(ColourUtils) {
