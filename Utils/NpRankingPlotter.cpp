@@ -274,19 +274,19 @@ namespace eft::plot {
         histo_neg->SetLineWidth(3);
 
         //histo_minus_one_var->SetFillColorAlpha(kGreen, 0.5); // used to be green
-        histo_minus_one_var->SetLineColor(kGreen);
+        histo_minus_one_var->SetLineColor(settings->color_prefit_minus); // kGreen
         histo_minus_one_var->SetLineWidth(2);
 
         //histo_plus_one_var->SetFillColorAlpha(kBlue, 0.5); // used to be magenta
-        histo_plus_one_var->SetLineColor(kBlue);
+        histo_plus_one_var->SetLineColor(settings->color_prefit_plus); // kBlue
         histo_plus_one_var->SetLineWidth(2);
 
-        histo_plus_sigma_var->SetFillColorAlpha(kBlue, 0.6); // used to be red
-        histo_plus_sigma_var->SetLineColor(kBlue);
+        histo_plus_sigma_var->SetFillColorAlpha(settings->color_postfit_plus, 0.6); // used to be red
+        histo_plus_sigma_var->SetLineColor(settings->color_postfit_plus); // kBlue
         histo_plus_sigma_var->SetLineWidth(1);
 
-        histo_minus_sigma_var->SetFillColorAlpha(kGreen, 0.6); // used to be violet
-        histo_minus_sigma_var->SetLineColor(kGreen);
+        histo_minus_sigma_var->SetFillColorAlpha(settings->color_postfit_minus, 0.6); // used to be violet
+        histo_minus_sigma_var->SetLineColor(settings->color_postfit_minus); // kGreen
         histo_minus_sigma_var->SetLineWidth(1);
 
 
