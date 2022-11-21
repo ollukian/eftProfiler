@@ -325,6 +325,7 @@ void TestROOTcoloursRecognition()
 
 void TestROOTcoloursParseSpaces()
 {
+    eft::stats::Logger::SetActive();
     {
         ColourUtils::ClearRegistry();
         string_view s_red {"  kRed"};
@@ -341,6 +342,7 @@ void TestROOTcoloursParseSpaces()
         size_t idx = ColourUtils::CheckIfROOTcolour(s_red).value();
         ASSERT_EQUAL(idx, EColor::kRed);
     }
+    eft::stats::Logger::SetSilent();
 }
 
 void TestROOTcoloursTryNotExistent()
@@ -362,6 +364,7 @@ void TestROOTcoloursTryNotExistent()
 
 void TestROOTcolourFromRegisterFromString()
 {
+    eft::stats::Logger::SetActive();
     {
         ColourUtils::ClearRegistry();
         string_view s_red {"  kRed"};
@@ -376,6 +379,7 @@ void TestROOTcolourFromRegisterFromString()
         size_t idx = ColourUtils::RegisterColourFromString(s_red);
         ASSERT_EQUAL(idx, EColorPalette::kDeepSea);
     }
+    eft::stats::Logger::SetSilent();
 }
 
 EFT_IMPLEMENT_TESTFILE(ColourUtils) {
