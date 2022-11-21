@@ -32,6 +32,8 @@ public:
     CommandLineArgs& operator = (CommandLineArgs&&)      = delete;
 
     CommandLineArgs(int argc, char* argv[]);
+    //explicit CommandLineArgs(std::istringstream& is);
+    //explicit CommandLineArgs(const std::vector<std::string>& args);
 
     [[nodiscard]]
     std::optional<Vals> GetVals(const Key& option) const;

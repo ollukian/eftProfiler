@@ -15,12 +15,17 @@
 #include <vector>
 #include <functional>
 #include <memory>
+#include <sstream>
+#include <random>
 
 
 class Tester {
 
-    using Test = std::function<void()>;
-    using Group = std::vector<std::pair<std::string, Test>>;
+    using Test      = std::function<void()>;
+    using TestName  = std::string;
+    using GroupName = std::string;
+
+    using Group = std::vector<std::pair<TestName, Test>>;
 
 public:
     void InitSetTests();
@@ -39,7 +44,10 @@ public:
 private:
     static inline TestRunner tr_;
     static inline std::unique_ptr<Tester> tester_ {};
-    std::map<std::string, Group> tests_;
+    //std::vector<std::pair<GroupName, Group>> tests_;
+    std::map<GroupName, Group> tests_;
+
+    std::map<GroupName, size_t> nb_of_group_;
 private:
     Tester() = default;
 };
@@ -88,5 +96,6 @@ inline std::unique_ptr<Tester>& Tester::Get()
 EFT_ADD_TESTFILE(FileSystem);
 EFT_ADD_TESTFILE(StringUtils);
 EFT_ADD_TESTFILE(ColourUtils);
+EFT_ADD_TESTFILE(CommandLineArguments);
 
 #endif //EFTPROFILER_TESTER_H

@@ -7,6 +7,7 @@
 #include <iomanip>
 #include <spdlog/fmt/bundled/format.h>
 #include <string_view>
+//#include "../Utils/StringUtils.h"
 
 using namespace std;
 
@@ -179,3 +180,9 @@ void CommandLineArgs::ReportStatus() const noexcept
     EFT_PROF_DEBUG("CommandLine: code checked {} keys", _requested_keys.size());
 
 }
+
+//CommandLineArgs::CommandLineArgs(const vector<string>& args) {
+//    string joined = eft::StringUtils::Join(' ', args);
+//    istringstream is{joined};
+//    CommandLineArgs(is);
+//}
