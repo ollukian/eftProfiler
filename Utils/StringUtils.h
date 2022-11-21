@@ -104,8 +104,10 @@ inline std::string StringUtils::RemovePrefixCopy(std::string s, const std::strin
     return s;
 }
 inline void StringUtils::RemoveSuffix(std::string& s, const std::string& suffix) {
+    // might be simple done just with inverse() and ::RemovePrefix,
+    // but I wouldn't like to inverse it to prevent memory allocation
     auto pos_suffix = s.rfind(suffix);
-    if (pos_suffix == std::string::npos)
+    if (pos_suffix != s.size() - suffix.length())
         return;
     s = s.substr(0, pos_suffix);
 }
