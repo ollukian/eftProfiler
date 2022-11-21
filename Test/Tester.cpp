@@ -6,12 +6,9 @@
 
 void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 {
-    EFT_PROF_INFO("Add test: {:35} to the group: {:15}", name, groupname);
-
     if (nb_of_group_.find(groupname) == nb_of_group_.end()) {
         nb_of_group_[groupname] = nb_of_group_.size();
     }
-
     tests_[std::move(groupname)].push_back({std::move(name), std::move(test)});
 }
 
@@ -34,10 +31,10 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         } // tests in this group
         if (tr_.GetFailCount() == 0) {
-            EFT_PROF_INFO("Tests Group: {:30} all test have been successfully passed");
+            EFT_PROF_INFO("Tests Group: {:30} all test have been successfully passed", groupname_);
         }
         else {
-            EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", tr_.GetFailCount());
+            EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", groupname_, tr_.GetFailCount());
             return;
         }
     } // groups
