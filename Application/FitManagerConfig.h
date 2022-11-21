@@ -36,8 +36,11 @@ struct FitManagerConfig {
     bool                        save_prelim         {false};
     // PLOTTING
     bool                        vertical            {false};     // <== to add
-    std::string                 color_prefit;   // <== to add
-    std::string                 color_postfit;  // <== to add
+    std::string                 color_prefit_plus   {"kBlue"};
+    std::string                 color_prefit_minus  {"kGreen"};
+    std::string                 color_postfit_plus  {"kBlue"};
+    std::string                 color_postfit_minus {"kGreen"};
+
     std::string                 color_np;  // <== to add
     float                       rmargin             {0.10};
     float                       lmargin             {0.10};

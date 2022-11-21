@@ -633,7 +633,6 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
      }
 
 #endif
-
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, res_path);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, worker_id);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi);
@@ -647,8 +646,10 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, snapshot);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit_plus);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit_minus);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit_plus);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit_minus);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmul);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmuh);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_scale);

@@ -17,8 +17,10 @@ struct RankingPlotterSettings {
     std::string                 out_dir {};
     std::string                 output  {};
     bool                        vertical;       // <== to add
-    std::string                 color_prefit;   // <== to add
-    std::string                 color_postfit;  // <== to add
+    size_t                      color_prefit_plus  ; // <= not read direclty, but processed
+    size_t                      color_prefit_minus ; // using ColourUtils::RegisterColour
+    size_t                      color_postfit_plus ;
+    size_t                      color_postfit_minus;
     std::string                 color_np;       // <== to add
     float                       rmargin;
     float                       lmargin;
