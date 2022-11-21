@@ -29,12 +29,12 @@ void ConvertToArgcAgv(istringstream& s, int& argc, char** argv)
 
         //argv[idx] = components[idx].data();
         EFT_PROF_DEBUG(" try initiate argv[{}] = {} ==> done", idx, components[idx]);
-        EFT_PROF_DEBUG("argv[{}] = [{}]", idx, components[idx]);
+        EFT_PROF_DEBUG("argv[{}] = [{}]", idx, argv[idx]);
     }
     EFT_PROF_DEBUG("ConvertToArgcAgv is done, we're still in the funcrtion, let's see argv:");
     EFT_PROF_INFO("argv:");
-    for (size_t idx {1}; idx != argc; ++idx) {
-        EFT_PROF_INFO("token: [{}]", string(argv[idx]));
+    for (size_t idx {0}; idx != argc; ++idx) {
+        EFT_PROF_INFO("token: [{}]", argv[idx]);
     }
 }
 
@@ -53,9 +53,9 @@ void TestBasicArgParsing() {
         char** argv = nullptr;
         ConvertToArgcAgv(arguments, argc, argv);
 
-        EFT_PROF_INFO("argv:");
-        for (size_t idx {1}; idx != argc; ++idx) {
-            EFT_PROF_INFO("token: {}", string(argv[idx]));
+        EFT_PROF_INFO("after function: argv:");
+        for (size_t idx {0}; idx != argc; ++idx) {
+            EFT_PROF_INFO("token: {}", argv[idx]);
         }
 
         ASSERT_NO_THROW(CommandLineArgs(argc, argv));
