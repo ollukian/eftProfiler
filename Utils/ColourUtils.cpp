@@ -40,8 +40,6 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
 
     size_t pos_rgb = s.find("RGB(");
     s.remove_prefix(pos_rgb + 4);
-    EFT_PROF_DEBUG("pos_rbg = {}", pos_rgb);
-    EFT_PROF_DEBUG("s after removing prefix = [{}]", s);
 
     istringstream ss {string(s)};
     //ss.exceptions(std::stringstream::badbit);
@@ -91,8 +89,6 @@ Colour Colour::CreateFromStringRGBA(std::string_view s)
 
     size_t pos_rgba = s.find("RGBA(");
     s.remove_prefix(pos_rgba + 5);
-    EFT_PROF_DEBUG("pos_rbga = {}", pos_rgba);
-    EFT_PROF_DEBUG("s after removing prefix = [{}]", s);
 
     istringstream ss {string(s)};
 
@@ -200,10 +196,10 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
         throw std::logic_error("");
     }
 
-    EFT_PROF_DEBUG("ColourUtils: registered colours:");
-    for (const auto& colour : registered_colours_rgba_) {
-        EFT_PROF_DEBUG(colour);
-    }
+    //EFT_PROF_DEBUG("ColourUtils: registered colours:");
+    //for (const auto& colour : registered_colours_rgba_) {
+    //    EFT_PROF_DEBUG(colour);
+    //}
 
     size_t new_idx = TColor::GetFreeColorIndex();
     unique_ptr<TColor> colour = make_unique<TColor>(new_idx,
@@ -222,10 +218,10 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
     idx_of_colour_[c] = new_idx;
     colour_of_idx_[new_idx] = c;
 
-    EFT_PROF_DEBUG("ColourUtils: after registering {}, registered colours:", c);
-    for (const auto& reg_colour : registered_colours_rgba_) {
-        EFT_PROF_DEBUG(reg_colour);
-    }
+    //EFT_PROF_DEBUG("ColourUtils: after registering {}, registered colours:", c);
+    //for (const auto& reg_colour : registered_colours_rgba_) {
+    //    EFT_PROF_DEBUG(reg_colour);
+    //}
     return new_idx;
 }
 
