@@ -388,10 +388,18 @@ void TestColourRandomRegistering() {
 
     ColourUtils::ClearRegistry();
     for (size_t idx {0}; idx < NB_TESTS; ++idx) {
-        ColourUtils::GetColourFromString(fmt::format("RGB({}, {}, {})", dist256(rng), dist256(rng), dist256(rng)));
+        ColourUtils::GetColourFromString(fmt::format("RGB({}, {}, {})",
+                                                     dist256(rng),
+                                                     dist256(rng),
+                                                     dist256(rng)));
     }
     for (size_t idx {0}; idx < NB_TESTS; ++idx) {
-        ColourUtils::GetColourFromString(fmt::format("RGBA({}, {}, {})", dist256(rng), dist256(rng), dist256(rng)));
+        ColourUtils::GetColourFromString(fmt::format("RGBA({}, {}, {}, {})",
+                                                     dist256(rng),
+                                                     dist256(rng),
+                                                     dist256(rng),
+                                                     dist256(rng)
+                                                     ));
     }
 }
 
