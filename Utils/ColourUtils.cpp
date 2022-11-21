@@ -269,11 +269,11 @@ std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcep
 
     EFT_PROF_TRACE("Check if [{}] is a ROOT colour", s);
 
-    StringUtils::StripCopy(s);
+    StringUtils::Strip(s);
     if (s.empty())
         return {};
     if (s[0] != 'k') {
-        EFT_PROF_TRACE("{} doesn't start with {}", s, "k");
+        EFT_PROF_TRACE("[{}] doesn't start with {}, but with: {}", s, "k", s[0]);
         return {};
     }
 
