@@ -569,7 +569,8 @@ namespace eft::plot {
 #undef EFT_GET_FROM_CONFIG
 #endif
 
-        np_ranking_settings->replacements = ParseReplacements(config.replace);
+
+        np_ranking_settings->replacements = eft::utils::PlotterUtils::ParseReplacements(config.replace);
 
 #ifndef EFT_PROCESS_COLOUR
 #define EFT_PROCESS_COLOUR(cfg, settings, colour_str) \
