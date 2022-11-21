@@ -10,6 +10,7 @@
 #include "../Application/FitManager.h"
 #include "../Utils/FileSystemUtils.h"
 #include "../Utils/ColourUtils.h"
+#include "../Utils/PlotterUtils.h"
 
 #include <iostream>
 #include <fstream>
@@ -191,12 +192,15 @@ namespace eft::plot {
         if (nb_systematics > res_for_plot_after_selector.size())
             nb_systematics = res_for_plot_after_selector.size();
 
-        auto histo = MakeHisto1D("histo", nb_systematics);
-        auto histo_neg = MakeHisto1D("h_neg", nb_systematics);
-        auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", nb_systematics);
-        auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", nb_systematics);
-        auto histo_minus_one_var = MakeHisto1D("h_-1_var", nb_systematics);
-        auto histo_plus_one_var = MakeHisto1D("h_+1_var", nb_systematics);
+
+        using eft::utils::PlotterUtils;
+
+        auto histo                  = PlotterUtils::MakeHisto1D("histo", nb_systematics);
+        auto histo_neg              = PlotterUtils::MakeHisto1D("h_neg", nb_systematics);
+        auto histo_plus_sigma_var   = PlotterUtils::MakeHisto1D("h_1sigma_var", nb_systematics);
+        auto histo_minus_sigma_var  = PlotterUtils::MakeHisto1D("h_-1sigma_var", nb_systematics);
+        auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_systematics);
+        auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_systematics);
 
         if ( ! settings->np_names.empty() ) {
             if (settings->np_names.size() != nb_systematics) {
@@ -431,46 +435,7 @@ namespace eft::plot {
             latex.DrawLatex(x, y - 3 * dy, settings->mu_latex.c_str());
 
 
-        string ignore_part;
-        string select_part;
-
-        if ( ! settings->ignore_name.empty() )
-        {
-            string ignore_in_one_string = fmt::format("Ignore_{}_patterns__", settings->ignore_name.size());
-            for (const auto& patter : settings->ignore_name)
-                ignore_in_one_string += patter + "__";
-
-            ignore_part = "__" + ignore_in_one_string.substr(0, ignore_in_one_string.size() - 2);
-            //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
-            //                   res_for_plot_after_selector[0].poi,
-            //                   settings->top,
-            //                   ignore_in_one_string);
-        }
-
-        if ( ! settings->match_names.empty() )
-        {
-            string matches_in_one_string = fmt::format("Select_{}_patterns__", settings->match_names.size());
-            for (const auto& patter : settings->match_names)
-                matches_in_one_string += patter + "__";
-
-            select_part = "__" + matches_in_one_string.substr(0, matches_in_one_string.size() - 2);
-            //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
-            //                   res_for_plot_after_selector[0].poi,
-            //                   settings->top,
-            //                   matches_in_one_string);
-        }
-
-        std::string stem_name;
-        if (settings->output.empty())
-            stem_name = fmt::format("Impact_{}_{}_nps{}{}",
-                                    settings->poi,
-                                    settings->top,
-                                    select_part,
-                                    ignore_part);
-        else
-            stem_name = settings->output;
-
-
+        const string stem_name = eft::utils::PlotterUtils::FormName(settings);
         for (const std::string& fileformat : settings->fileformat) {
             string name = stem_name + '.' + fileformat;
 
@@ -561,14 +526,6 @@ namespace eft::plot {
 
 
         return info;
-    }
-
-    std::shared_ptr<TH1D> NpRankingPlotter::MakeHisto1D(const string& name, size_t nb_bins) noexcept {
-        return std::make_shared<TH1D>(name.c_str(), name.c_str(),
-                                      nb_bins,
-                                      0,
-                                      nb_bins
-        );
     }
 
     void NpRankingPlotter::ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs) {
@@ -693,64 +650,12 @@ namespace eft::plot {
 
     }
 
-
-std::vector<NpRankingPlotter::Replacement>
-NpRankingPlotter::ParseReplacements(const std::vector<std::string>& replacements)
-{
-    // convert vector of "key:val" to vector of pairs: <key, val>
-    EFT_PROF_TRACE("ParseReplacements for {} objects", replacements.size());
-    vector<Replacement> res;
-    res.reserve(replacements.size());
-    for (const auto& raw : replacements)
-    {
-        EFT_PROF_DEBUG("Extract replacement from: {}", raw);
-        auto pos_separator = raw.find(':');
-        if (pos_separator == std::string::npos) {
-            throw std::logic_error(fmt::format("Cannot parse replacement string {}, {}",
-                                               raw,
-                                               ". Must have format: 'key1:val1, key2:val2, ...'"));
-
-        }
-
-        std::string key = raw.substr(0, pos_separator);
-        std::string val = raw.substr(pos_separator + 1, raw.length());
-        res.emplace_back(std::move(key), std::move(val));
-    }
-
-    for (const auto& key_val : res) {
-        EFT_PROF_DEBUG("Add replacing: {:10} ==> {:10}", key_val.first, key_val.second);
-    }
-
-    return res;
-}
-
-void NpRankingPlotter::ReplaceStrings(std::string& s, const std::vector<Replacement>& replacements)
-{
-    for (const auto& replacement : replacements) {
-        EFT_PROF_DEBUG("Replace {} using {:10} -> {:10} replacement", s, replacement.first, replacement.second);
-        StringUtils::Replace(s, replacement.first, replacement.second);
-    }
-}
-
-void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
-{
-    for (const auto& prefix : prefixes) {
-        EFT_PROF_DEBUG("Remove prefix: {:10} from {:10}", prefix, s);
-        StringUtils::RemovePrefix(s, prefix);
-    }
-}
-void NpRankingPlotter::RemoveSuffix(string& s, const vector<string>& suffixes)
-{
-    for (const auto& suffix : suffixes) {
-        EFT_PROF_DEBUG("Remove suffix: {:10} from {:10}", suffix, s);
-        StringUtils::RemoveSuffix(s, suffix);
-    }
-}
-
 void NpRankingPlotter::ReadNpNamesFromFile(const std::string& path) const
 {
     EFT_PROF_INFO("Read np names from: {}", path);
     np_ranking_settings->np_names = utils::FileSystemUtils::ReadLines(path).value();
 }
+
+
 
 }

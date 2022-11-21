@@ -97,5 +97,6 @@ EFT_ADD_TESTFILE(FileSystem);
 EFT_ADD_TESTFILE(StringUtils);
 EFT_ADD_TESTFILE(ColourUtils);
 EFT_ADD_TESTFILE(CommandLineArguments);
+EFT_ADD_TESTFILE(PlotterUtils);
 
 #endif //EFTPROFILER_TESTER_H
