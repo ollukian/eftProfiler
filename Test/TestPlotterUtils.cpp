@@ -79,7 +79,6 @@ void TestGetLabelNothingSet()
 void TestGetLabelRemovePrefix()
 {
     {
-        eft::stats::Logger::SetActive();
         auto setting = make_unique<eft::plot::RankingPlotterSettings>();
         setting->poi = "mu";
         setting->top = 2;
@@ -167,7 +166,6 @@ void TestGetLabelRemovePrefix()
 void TestGetLabelRemoveSuffix()
 {
     {
-        eft::stats::Logger::SetActive();
         auto setting = make_unique<eft::plot::RankingPlotterSettings>();
         setting->poi = "mu";
         setting->top = 2;
