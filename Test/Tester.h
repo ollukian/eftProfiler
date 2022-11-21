@@ -46,7 +46,7 @@ private:
     static inline std::unique_ptr<Tester> tester_ {};
     //std::vector<std::pair<GroupName, Group>> tests_;
     std::map<GroupName, Group> tests_;
-
+    std::vector<GroupName> group_nb_;
     std::map<GroupName, size_t> nb_of_group_;
 private:
     Tester() = default;
