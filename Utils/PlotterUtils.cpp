@@ -71,6 +71,7 @@ string PlotterUtils::GetLabel(const PlotterUtils::PlotSettings& settings,
     else {
         bin_label = settings->np_names.at(idx);
     }
+    return bin_label;
 }
 
 std::vector<PlotterUtils::Replacement>

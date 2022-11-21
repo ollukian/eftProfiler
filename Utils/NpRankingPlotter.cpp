@@ -219,19 +219,9 @@ namespace eft::plot {
                            res_for_plot_after_selector[idx_syst].name,
                            res_for_plot_after_selector[idx_syst].impact);
 
-            string bin_label;
-            if (settings->np_names.empty()) {
-                bin_label = res_for_plot_after_selector[ idx_syst ].name;
-                if(!settings->replacements.empty())
-                    ReplaceStrings(bin_label, settings->replacements);
-                if(!settings->remove_prefix.empty())
-                    RemovePrefix(bin_label, settings->remove_prefix);
-                if(!settings->remove_suffix.empty())
-                    RemoveSuffix(bin_label, settings->remove_suffix);
-            }
-            else {
-                bin_label = settings->np_names.at(idx_syst);
-            }
+            string bin_label = PlotterUtils::GetLabel(settings,
+                                                      idx_syst,
+                                                      res_for_plot_after_selector[idx_syst].name);
 
             histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
 
