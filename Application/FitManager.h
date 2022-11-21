@@ -25,6 +25,8 @@ public:
     void Init(FitManagerConfig&& config);
     static void ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept;
 
+    void ProcessGetCommand(const FitManagerConfig& config);
+
     void DoGlobalFit() override;
     void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) override;
     void DoFitAllNpFloat(NpRankingStudySettings settings) override;

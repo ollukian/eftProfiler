@@ -48,6 +48,11 @@ public:
 
     template <typename Container>
     static inline std::string    Join(char c, const Container& cont);
+
+    static inline void          ToLowCase(std::string& s) noexcept;
+    static inline void          ToUpperCase(std::string& s) noexcept;
+    static inline std::string          ToLowCaseCopy(std::string s) noexcept;
+    static inline std::string          ToUpperCaseCopy(std::string s) noexcept;
 };
 
 template <typename Iterator>
@@ -219,6 +224,21 @@ std::vector<std::string> StringUtils::Split(const std::string& s, char sep) {
         //s.remove_prefix(pos != s.npos ? pos + 1 : s.size());
     }
     return result;
+}
+
+inline void StringUtils::ToLowCase(std::string& s) noexcept {
+    std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+}
+inline void StringUtils::ToUpperCase(std::string& s) noexcept {
+    std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+}
+inline std::string StringUtils::ToLowCaseCopy(std::string s) noexcept {
+    ToUpperCase(s);
+    return s;
+}
+inline std::string StringUtils::ToUpperCaseCopy(std::string s) noexcept {
+    ToLowCase(s);
+    return s;
 }
 
 } // eft

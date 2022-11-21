@@ -66,10 +66,10 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
                 {"vector<string>",  "match_names",      "",             "Patterns in the names of systematics to be matched (not regex yet), just string.find()"},
                 {"bool",            "vertical",         "false",        "x Orientation of the impact plot: whether to be vertical or standard (horizontal)"},
-                {"string",          "color_prefit_plus", "kBlue",       "Colour for + variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
-                {"string",          "color_prefit_minus", "kGreen",     "Colour for + variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
-                {"string",          "color_postfit_plus", "kBlue",      "Colour for - variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
-                {"string",          "color_postfit_minus","kGreen",     "Colour for - variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
+                {"string",          "color_prefit_plus", "kBlue",       "Colour for +1     variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
+                {"string",          "color_prefit_minus", "kGreen",     "Colour for -1     variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
+                {"string",          "color_postfit_plus", "kBlue",      "Colour for +sigma variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
+                {"string",          "color_postfit_minus","kGreen",     "Colour for -sigma variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
                 {"string",          "color_np",         "kBlack",        "x Colour for NP graph.    Formats: kBlue | RGB(x, y, z) | RGBA(x, y, z, a) || x in [0..255]"},
                 {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
                 {"float",           "rmul",             "-0.002",       "LOW  value for the POI axis on the ranking plot"},
@@ -97,6 +97,8 @@ int main(int argc, char* argv[]) {
                 {"float",           "dy",               "0.03",         R"(Distance between text lines)"},
                 {"vector<string>",  "add_text",         "",             R"(x [x y text [size][font]] to be added. Ex: "2 4 abc" or: "1 2 xyz 27 34")"},
                 {"vector<string>",  "add_text_ndc",     "",             R"(x [x y text [size][font]] to be added. (X, Y) - in NDC. Example: "0.1 0.4 WriteTextInNDC")"},
+                {"bool",            "silent",           "false",        R"(x MUST me FIRST option. To prevent any output, except demanded: to use as wrapper around wc.)"},
+                {"string",          "get",              "",             R"(MUST be with --silent option. [POI][NPS][GLOBS][CATS][NO_GAMMA_NPS][PAIRED_NPS] <== prints them to stdout)"},
         })
         {
             cout << fmt::format("|{:^20} | {:<20} | {:^15} | {:<60}|", options[0], options[1], options[2], options[3]) << endl;

@@ -6,6 +6,7 @@
 #include "../Fitter/IFitter.h"
 #include "../Fitter/Fitter.h"
 #include "../Utils/FitUtils.h"
+#include "../Utils/StringUtils.h"
 
 #include "../Core/Logger.h"
 
@@ -614,6 +615,11 @@ void FitManager::Init(FitManagerConfig&& config)
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;
     ExtractNotGammaNps();
 
+    if ( !config.get.empty() ) {
+        ProcessGetCommand(config);
+        return;
+    }
+
     EFT_PROF_INFO("[FitManager] INIT DONE");
 }
 
@@ -676,6 +682,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_size);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_font);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dy);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, get);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
@@ -693,6 +700,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, fit_single_poi);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, vertical);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, reuse_nll);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, silent);
 #undef EFT_ADD_BOOL_OPTIONS
 
     // vectors
@@ -839,6 +847,37 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
             }
         }
     }
+
+}
+
+void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
+    string get_demand = config.get;
+    eft::StringUtils::Trim(get_demand);
+    eft::StringUtils::ToLowCase(get_demand);
+    if (get_demand == "poi") {
+        for (const auto& poi : pois_) {
+            std::cout << poi << std::endl;
+        }
+        return;
+    }
+
+    // TODO: finish printing results by "get" demand
+//    RooArgSet* argSet = nullptr;
+//
+//    if (get_demand == "np" || get_demand == "nps") {
+//        argSet = args_["np_all"];
+//    }
+//    else if (get_demand == "globs" ) {
+//        argSet = args_["globObs"];
+//    }
+//    else if (get_demand == "globs" ) {
+//        argSet = args_["globObs"];
+//    }
+//
+//    auto* pdf = funcs_["pdf_total"];
+//    auto* ds = data_["ds_total"];
+//    auto* globObs = (args_["globObs"]);
+//    auto* np = (args_["np"]);
 
 }
 
