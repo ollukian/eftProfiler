@@ -116,7 +116,8 @@ int main(int argc, char* argv[]) {
     if (commandLineArgs.SetValIfArgExists("task", task)) {
         EFT_PROF_INFO("Set task: {}", task);
     }
-    else if (task == "compute_ranking") {
+
+    if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
 
         auto manager = make_unique<eft::stats::FitManager>();
