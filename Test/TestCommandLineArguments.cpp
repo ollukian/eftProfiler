@@ -21,7 +21,7 @@ void ConvertToArgcAgv(istringstream& s, int& argc, char** argv)
     argv = new char* [argc];
     for (size_t idx {}; static_cast<int>(idx) < argc; ++idx) {
         EFT_PROF_DEBUG(" try initiate argv[{}] = {}", idx, components[idx]);
-        argv[idx] = new char [components[idx].size()];
+        argv[idx] = new char [components[idx].size() - 1];
         for (size_t idx_inner {0}; idx_inner < components[idx].size() - 1; ++idx_inner) {
             argv[idx][idx_inner] = components[idx][idx_inner];
         }
