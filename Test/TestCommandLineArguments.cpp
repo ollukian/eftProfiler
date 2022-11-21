@@ -22,13 +22,13 @@ void ConvertToArgcAgv(istringstream& s, int& argc, char** argv)
     for (size_t idx {}; static_cast<int>(idx) < argc; ++idx) {
         EFT_PROF_DEBUG(" try initiate argv[{}] = {}", idx, components[idx]);
         argv[idx] = new char [components[idx].size()];
-        //for (size_t idx_inner {0}; idx_inner < components[idx].size(); ++idx_inner) {
-        //    argv[idx][idx_inner] = components[idx][idx_inner];
-        //}
-        memcpy(argv[idx], components[idx].data(), components[idx].size());
+        for (size_t idx_inner {0}; idx_inner < components[idx].size(); ++idx_inner) {
+            argv[idx][idx_inner] = components[idx][idx_inner];
+        }
+        //memcpy(argv[idx], components[idx].data(), components[idx].size());
 
         //argv[idx] = components[idx].data();
-        EFT_PROF_DEBUG(" try initiate argv[{}] = {} ==> done", idx, components[idx]);
+        //EFT_PROF_DEBUG(" try initiate argv[{}] = {} ==> done", idx, components[idx]);
         EFT_PROF_DEBUG("argv[{}] = [{}]", idx, argv[idx]);
     }
     EFT_PROF_DEBUG("ConvertToArgcAgv is done, we're still in the funcrtion, let's see argv:");
