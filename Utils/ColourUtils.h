@@ -36,6 +36,7 @@ public:
 
     static inline void ClearRegistry() noexcept;
 
+    static size_t GetColourFromString(std::string_view s) noexcept;
     static size_t RegisterColourFromString(std::string_view s);
     static size_t RegisterColour(const Colour& c, const std::string& name = "");
     static size_t GetColourIdx(const Colour& c) noexcept;

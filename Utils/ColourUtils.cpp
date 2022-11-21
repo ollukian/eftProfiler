@@ -13,7 +13,7 @@ using namespace std;
 namespace eft::utils {
 
 Colour Colour::CreateFromString(std::string_view s) {
-    EFT_PROF_TRACE("Create colour from: {}", s);
+    EFT_PROF_INFO("Create colour from: {}", s);
     if (s.find("RGBA") != std::string_view::npos)
         return CreateFromStringRGBA(s);
     else if (s.find("RGB") != std::string_view::npos)
@@ -230,10 +230,6 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
 }
 
 size_t ColourUtils::RegisterColourFromString(std::string_view s) {
-
-    if (auto res = CheckIfROOTcolour(s); res.has_value()) {
-        return res.value();
-    }
     try {
         auto colour = Colour::CreateFromString(s);
         return RegisterColour(colour);
@@ -369,6 +365,23 @@ std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcep
     EFT_PROF_CRITICAL("{} starts with [k] but is not present in the palette");
     EFT_PROF_CRITICAL("If you are sure, it should be, check eft_ROOT_ColourNames in Utils/ColourUtils.cpp at line ~{}", __LINE__);
     return {};
+}
+
+size_t ColourUtils::GetColourFromString(std::string_view s) noexcept {
+    EFT_PROF_TRACE("Get colour from [{}]", s);
+
+    if (auto res = CheckIfROOTcolour(s); res.has_value()) {
+        EFT_PROF_DEBUG("[{}] is a ROOT colour: [{}]", s, res.value());
+        return res.value();
+    }
+
+    auto colour = Colour::CreateFromString(s);
+    if (idx_of_colour_.find(colour) != idx_of_colour_.end()) {
+        auto idx = idx_of_colour_.at(colour);
+        EFT_PROF_TRACE("Colour {} is already present, return its idx: {}", colour, idx);
+        return idx;
+    }
+    return RegisterColour(colour);
 }
 
 

@@ -618,7 +618,7 @@ namespace eft::plot {
 
 #ifndef EFT_PROCESS_COLOUR
 #define EFT_PROCESS_COLOUR(cfg, settings, colour_str) \
-    settings->colour_str = utils::ColourUtils::RegisterColourFromString(config.colour_str);
+    settings->colour_str = utils::ColourUtils::GetColourFromString(config.colour_str);
 
         EFT_PROCESS_COLOUR(config, np_ranking_settings, color_prefit_minus );
         EFT_PROCESS_COLOUR(config, np_ranking_settings, color_prefit_plus );
