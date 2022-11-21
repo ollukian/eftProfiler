@@ -264,7 +264,7 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
 
         if (settings->vertical) {
-            histo->GetYaxis()->LabelsOption("v");
+            histo->GetYaxis()->LabelsOption("h");
         }
 
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
