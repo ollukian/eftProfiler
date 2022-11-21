@@ -9,6 +9,7 @@
 #include "NpRankingPlotter.h"
 #include "../Application/FitManager.h"
 #include "../Utils/FileSystemUtils.h"
+#include "../Utils/ColourUtils.h"
 
 #include <iostream>
 #include <fstream>
@@ -579,8 +580,6 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, ignore_name);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, match_names);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, poi);
-        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_prefit);
-        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_postfit);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_np);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, lmargin);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmargin);
@@ -616,6 +615,18 @@ namespace eft::plot {
 #endif
 
         np_ranking_settings->replacements = ParseReplacements(config.replace);
+
+#ifndef EFT_PROCESS_COLOUR
+#define EFT_PROCESS_COLOUR(cfg, settings, colour_str) \
+    settings->colour_str = utils::ColourUtils::RegisterColourFromString(config.colour_str);
+
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_prefit_minus );
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_prefit_plus );
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_postfit_minus );
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_postfit_plus );
+#endif
+#undef EFT_PROCESS_COLOUR
+
 
         if (np_ranking_settings->np_names.size() == 1) {
             const string& np_names_string = np_ranking_settings->np_names.at(0);

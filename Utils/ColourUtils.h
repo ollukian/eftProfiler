@@ -13,6 +13,7 @@
 
 #include <memory>
 #include <iostream>
+#include <optional>
 
 #include "TColor.h"
 
@@ -38,6 +39,8 @@ public:
     static size_t RegisterColourFromString(std::string_view s);
     static size_t RegisterColour(const Colour& c, const std::string& name = "");
     static size_t GetColourIdx(const Colour& c) noexcept;
+
+    static std::optional<size_t> CheckIfROOTcolour(std::string_view s) noexcept;
 
     static inline std::set<size_t>& GetRegistryColourIdx() noexcept     { return registered_colours_idx_; }
     static inline std::map<Colour, size_t>& GetMapColourIdx() noexcept  { return idx_of_colour_; }
@@ -124,7 +127,7 @@ inline void ColourUtils::ClearRegistry() noexcept {
     named_colours_.clear();
 }
 
-inline bool operator < (const Colour& l, const Colour& r) noexcept
+    inline bool operator < (const Colour& l, const Colour& r) noexcept
 {
     if (l.r() < r.r()){
         return true;
