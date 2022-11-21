@@ -133,6 +133,7 @@ namespace eft::plot {
                       settings->top);
 
         vector<stats::NpInfoForPlot> res_for_plot_after_selector;
+        res_for_plot_after_selector.reserve(res_for_plot_.size());
 
         // TODO: wrap by "GetSelected"
         std::copy_if(res_for_plot_.begin(),
@@ -148,6 +149,8 @@ namespace eft::plot {
                          return res;
                      }
         );
+
+        res_for_plot_after_selector.shrink_to_fit();
 
         EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, plot {} out of them",
                       res_for_plot_after_selector.size(),
@@ -259,6 +262,11 @@ namespace eft::plot {
 
 
         histo->GetXaxis()->LabelsOption("v");
+
+        if (settings->vertical) {
+            histo->GetYaxis()->LabelsOption("v");
+        }
+
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
         histo->GetYaxis()->SetTitleOffset(settings->mu_offset); // 1.4
