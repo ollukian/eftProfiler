@@ -32,7 +32,7 @@ Colour Colour::CreateFromString(std::string_view s) {
 Colour Colour::CreateFromStringRGB(std::string_view s)
 {
     EFT_PROF_TRACE("Redirect to create colour from RGB string");
-    const auto components = ::eft::StringUtils::Strip(s);
+    const auto components = ::eft::StringUtils::StripCopy(s);
     // RGB(r, g, b)
     // or
     // RGB(r g b)
@@ -83,7 +83,7 @@ Colour Colour::CreateFromStringRGB(std::string_view s)
 Colour Colour::CreateFromStringRGBA(std::string_view s)
 {
     EFT_PROF_TRACE("Redirect to create colour from RGBA string");
-    const auto components = ::eft::StringUtils::Strip(s);
+    const auto components = ::eft::StringUtils::StripCopy(s);
     // RGB(r, g, b, a)
     // or
     // RGB(r g b a) <= not supported now
@@ -267,9 +267,9 @@ ostream& operator << (ostream& os, const Colour& c) noexcept {
 
 std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcept {
 
-    EFT_PROF_TRACE("Check if {} is a ROOT colour", s);
+    EFT_PROF_TRACE("Check if [{}] is a ROOT colour", s);
 
-    StringUtils::Strip(s);
+    StringUtils::StripCopy(s);
     if (s.empty())
         return {};
     if (s[0] != 'k') {

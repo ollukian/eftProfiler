@@ -80,6 +80,22 @@ void TestStrip()
         ASSERT_EQUAL(s3_stripped, s3_res);
     }
 }
+
+void TestStripCopy()
+{
+    {
+        std::string_view s {" no_copy"};
+        auto s_copied_stripped = SU::StripCopy(s);
+        ASSERT_EQUAL(s_copied_stripped, "no_copy");
+        ASSERT_EQUAL(s,                 " no_copy");
+    }
+    {
+        std::string_view s {" no_copy"};
+        SU::Strip(s);
+        ASSERT_EQUAL(s, "no_copy");
+    }
+}
+
 void TestRemovePrefix()
 {
 
@@ -221,12 +237,13 @@ void TestSplit()
 
 
 EFT_IMPLEMENT_TESTFILE(StringUtils) {
-    EFT_ADD_TEST(TestJoin, "StringUtils");
-    EFT_ADD_TEST(TestStrip, "StringUtils");
-    EFT_ADD_TEST(TestRemovePrefix, "StringUtils");
-    EFT_ADD_TEST(TestRemoveSuffix, "StringUtils");
-    EFT_ADD_TEST(TestReplace, "StringUtils");
-    EFT_ADD_TEST(TestSplit, "StringUtils");
+    EFT_ADD_TEST(TestJoin,          "StringUtils");
+    EFT_ADD_TEST(TestStrip,         "StringUtils");
+    EFT_ADD_TEST(TestStripCopy,     "StringUtils");
+    EFT_ADD_TEST(TestRemovePrefix,  "StringUtils");
+    EFT_ADD_TEST(TestRemoveSuffix,  "StringUtils");
+    EFT_ADD_TEST(TestReplace,       "StringUtils");
+    EFT_ADD_TEST(TestSplit,         "StringUtils");
     // TestRunner tr;
     // RUN_TEST(tr, TestJoin);
     // RUN_TEST(tr, TestStrip);

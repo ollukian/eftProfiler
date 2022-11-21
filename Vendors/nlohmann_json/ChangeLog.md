@@ -445,7 +445,7 @@ All notable changes to this project will be documented in this file. This projec
 - Automatic ordered JSON [\#424](https://github.com/nlohmann/json/issues/424)
 - Support for comments. [\#376](https://github.com/nlohmann/json/issues/376)
 - Optional comment support. [\#363](https://github.com/nlohmann/json/issues/363)
-- Strip comments / Minify [\#294](https://github.com/nlohmann/json/issues/294)
+- StripCopy comments / Minify [\#294](https://github.com/nlohmann/json/issues/294)
 - maintaining order of keys during iteration [\#106](https://github.com/nlohmann/json/issues/106)
 
 - Update documentation [\#2312](https://github.com/nlohmann/json/pull/2312) ([nlohmann](https://github.com/nlohmann))

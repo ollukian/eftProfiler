@@ -25,8 +25,10 @@ class StringUtils {
 public:
     //static inline std::vector<std::string> ParseText(const std::string& s) noexcept;
     static inline std::string              Strip(const std::string& s);
+    static inline std::string_view         StripCopy(std::string_view s);
+    static inline void                     Strip(std::string_view& s);
+
     static inline std::vector<std::string> Split(const std::string& s, char sep = ' ');
-    static inline std::string_view              Strip(std::string_view s);
     static inline std::vector<std::string_view> SplitBy(std::string_view s, char sep = ' ');
 
     static inline void          Ltrim(std::string &s);
@@ -178,14 +180,17 @@ std::string StringUtils::Strip(const std::string& s) {
         return "";
 }
 
-std::string_view StringUtils::Strip(std::string_view s) {
+std::string_view StringUtils::StripCopy(std::string_view s) {
+    Strip(s);
+    return s;
+}
+void StringUtils::Strip(std::string_view& s) {
     while (!s.empty() && isspace(s.front())) {
         s.remove_prefix(1);
     }
     while (!s.empty() && isspace(s.back())) {
         s.remove_suffix(1);
     }
-    return s;
 }
 
 std::vector<std::string_view> StringUtils::SplitBy(std::string_view s, char sep) {
