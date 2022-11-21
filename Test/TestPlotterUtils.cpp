@@ -26,7 +26,7 @@ void TestFormName() {
         setting->replacements = {{"this", "that"}};
         setting->ignore_name = {"privet"};
         setting->match_names = {"privit"};
-        const string expected {"Impact_mu_2_nps__Select_1_patterns__privit__Ignore_1_patterns__privet__"};
+        const string expected {"Impact_mu_2_nps__Select_1_patterns__privit__Ignore_1_patterns__privet"};
         ASSERT_NO_THROW( PlotterUtils::FormName(setting) );
         auto res = PlotterUtils::FormName(setting);
         ASSERT_EQUAL(res, expected);
@@ -79,6 +79,7 @@ void TestGetLabelNothingSet()
 void TestGetLabelRemovePrefix()
 {
     {
+        eft::stats::Logger::SetActive();
         auto setting = make_unique<eft::plot::RankingPlotterSettings>();
         setting->poi = "mu";
         setting->top = 2;
@@ -166,6 +167,7 @@ void TestGetLabelRemovePrefix()
 void TestGetLabelRemoveSuffix()
 {
     {
+        eft::stats::Logger::SetActive();
         auto setting = make_unique<eft::plot::RankingPlotterSettings>();
         setting->poi = "mu";
         setting->top = 2;
