@@ -12,19 +12,30 @@ using namespace std;
 void ConvertToArgcAgv(istringstream& s, int& argc, char** argv)
 {
     string as_string{s.str()};
+    as_string = "Test_to_emulate_executable_name " + as_string;
     EFT_PROF_INFO("convert {} to argc, argv", as_string);
     auto components = eft::StringUtils::Split(as_string, ' ');
     EFT_PROF_DEBUG("received {} components", components);
     argc = components.size();
     EFT_PROF_DEBUG("argc: {}", argc);
     argv = new char* [argc];
-    for (size_t idx {}; static_cast<int>(idx) < argc - 1; ++idx) {
+    for (size_t idx {}; static_cast<int>(idx) < argc; ++idx) {
         EFT_PROF_DEBUG(" try initiate argv[{}] = {}", idx, components[idx]);
-        argv[idx] = components[idx].data();
+        argv[idx] = new char [components[idx].size()];
+        //for (size_t idx_inner {0}; idx_inner < components[idx].size(); ++idx_inner) {
+        //    argv[idx][idx_inner] = components[idx][idx_inner];
+        //}
+        memcpy(argv[idx], components[idx].data(), components[idx].size());
+
+        //argv[idx] = components[idx].data();
         EFT_PROF_DEBUG(" try initiate argv[{}] = {} ==> done", idx, components[idx]);
         EFT_PROF_DEBUG("argv[{}] = [{}]", idx, components[idx]);
     }
-    EFT_PROF_DEBUG("ConvertToArgcAgv is done");
+    EFT_PROF_DEBUG("ConvertToArgcAgv is done, we're still in the funcrtion, let's see argv:");
+    EFT_PROF_INFO("argv:");
+    for (size_t idx {1}; idx != argc; ++idx) {
+        EFT_PROF_INFO("token: [{}]", string(argv[idx]));
+    }
 }
 
 void ConvertToArgcAgv(const vector<string>& s, int& argc, char** argv)
@@ -35,11 +46,18 @@ void ConvertToArgcAgv(const vector<string>& s, int& argc, char** argv)
 }
 
 void TestBasicArgParsing() {
+    eft::stats::Logger::SetActive();
     {
         istringstream arguments {"--one_key one_value"};
         int argc {0};
         char** argv = nullptr;
         ConvertToArgcAgv(arguments, argc, argv);
+
+        EFT_PROF_INFO("argv:");
+        for (size_t idx {1}; idx != argc; ++idx) {
+            EFT_PROF_INFO("token: {}", string(argv[idx]));
+        }
+
         ASSERT_NO_THROW(CommandLineArgs(argc, argv));
         CommandLineArgs cmd(argc, argv);
         ASSERT(cmd.HasKey("one_key"));
