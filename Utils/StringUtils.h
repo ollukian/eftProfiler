@@ -91,8 +91,9 @@ inline void StringUtils::Replace(std::string& s, const std::string& what, const 
 
  inline void StringUtils::RemovePrefix(std::string& s, const std::string& prefix)
  {
+     Trim(s);
     auto pos_prefix = s.find(prefix);
-    if (pos_prefix == std::string::npos) {
+    if ( pos_prefix != 0) {
         return;
     }
     s = s.substr(pos_prefix +prefix.length(), s.length());
