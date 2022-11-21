@@ -6,23 +6,23 @@
 
 void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 {
-    EFT_PROF_DEBUG("Add test: {:35} to the group: {:15}", name, groupname);
+    EFT_PROF_INFO("Add test: {:35} to the group: {:15}", name, groupname);
 
-    if (nb_of_group_.find(groupname) != nb_of_group_.end()) {
+    if (nb_of_group_.find(groupname) == nb_of_group_.end()) {
         nb_of_group_[groupname] = nb_of_group_.size();
     }
 
     tests_[std::move(groupname)].push_back({std::move(name), std::move(test)});
 }
 
-void Tester::RunTests(const std::string& groupname)
+void Tester::RunTests(const std::string& groupname_to_run_only)
 {
 
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::info);
 
     EFT_PROF_INFO("Run all tests");
     for (const auto& [groupname_, idx] : nb_of_group_) {
-        const auto& tests = tests_.at(groupname);
+        const auto& tests = tests_.at(groupname_);
     //for (const auto& [groupname_, tests] : tests_)
     //{
         EFT_PROF_INFO("Running test group: {:10}", groupname_);

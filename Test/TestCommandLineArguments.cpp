@@ -11,11 +11,12 @@ using namespace std;
 // helpers to emulate argc & argv passed to the command line
 void ConvertToArgcAgv(istringstream& s, int& argc, char** argv)
 {
+    //EFT_PROF_INFO("convert {} to argc, argv");
     string as_string{s.str()};
     auto components = eft::StringUtils::Split(as_string, ' ');
     argc = components.size();
     argv = new char* [argc];
-    for (size_t idx {}; static_cast<int>(idx) < argc; ++idx) {
+    for (size_t idx {}; static_cast<int>(idx) < argc - 1; ++idx) {
         argv[idx] = components[idx].data();
         EFT_PROF_DEBUG("argv[{}] = [{}]", idx, components[idx]);
     }
