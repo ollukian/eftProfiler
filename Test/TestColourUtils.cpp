@@ -5,6 +5,7 @@
 #include "Tester.h"
 #include "../Utils/ColourUtils.h"
 #include "../Core/Logger.h"
+#include <random>
 
 #include <sstream>
 
@@ -365,16 +366,32 @@ void TestROOTcolourFromRegisterFromString()
     {
         ColourUtils::ClearRegistry();
         string_view s_red {"  kRed"};
-        ASSERT_NO_THROW(ColourUtils::RegisterColourFromString(s_red));
-        size_t idx = ColourUtils::RegisterColourFromString(s_red);
+        ASSERT_NO_THROW(ColourUtils::GetColourFromString(s_red));
+        size_t idx = ColourUtils::GetColourFromString(s_red);
         ASSERT_EQUAL(idx, EColor::kRed);
     }
     {
         ColourUtils::ClearRegistry();
         string_view s_red {"  kDeepSea"};
-        ASSERT_NO_THROW(ColourUtils::RegisterColourFromString(s_red));
-        size_t idx = ColourUtils::RegisterColourFromString(s_red);
+        ASSERT_NO_THROW(ColourUtils::GetColourFromString(s_red));
+        size_t idx = ColourUtils::GetColourFromString(s_red);
         ASSERT_EQUAL(idx, EColorPalette::kDeepSea);
+    }
+}
+
+void TestColourRandomRegistering() {
+    std::random_device rd;
+    std::mt19937 rng(rd());
+    std::uniform_int_distribution<std::mt19937::result_type> dist256(0, 255);
+
+    constexpr static size_t NB_TESTS = 1E4;
+
+    ColourUtils::ClearRegistry();
+    for (size_t idx {0}; idx < NB_TESTS; ++idx) {
+        ColourUtils::RegisterColourFromString(fmt::format("RGB({}, {}, {})", dist256(rng), dist256(rng), dist256(rng)));
+    }
+    for (size_t idx {0}; idx < NB_TESTS; ++idx) {
+        ColourUtils::RegisterColourFromString(fmt::format("RGBA({}, {}, {})", dist256(rng), dist256(rng), dist256(rng)));
     }
 }
 
@@ -395,5 +412,6 @@ EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestROOTcoloursParseSpaces,                "ColourUtils");
         EFT_ADD_TEST(TestROOTcoloursTryNotExistent,             "ColourUtils");
         EFT_ADD_TEST(TestROOTcolourFromRegisterFromString,      "ColourUtils");
+        EFT_ADD_TEST(TestColourRandomRegistering,               "ColourUtils");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
