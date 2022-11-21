@@ -139,6 +139,13 @@ private:
   Assert(x, __os.str());                    \
 }
 
+#define ASSERT_NOT(x) {                    \
+  ostringstream __os;                      \
+  __os << #x << " is true, "               \
+    << __FILE__ << ":" << __LINE__;        \
+  Assert(!(x), __os.str());                \
+}
+
 #define ASSERT_THROW(expression, exceptionType) { \
     bool __eft__is_passes = false;              \
     std::ostringstream __os;                    \

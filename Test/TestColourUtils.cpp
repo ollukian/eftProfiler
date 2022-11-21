@@ -211,6 +211,23 @@ void TestColourCtorFromInts()
     }
 }
 
+void TestColourOperators()
+{
+    {
+        ColourUtils::ClearRegistry();
+        Colour c1(1, 2, 3, 4);
+        Colour c2(1, 2, 3, 4);
+        ASSERT_EQUAL( c1, c2 );
+    }
+    {
+        ColourUtils::ClearRegistry();
+        Colour c1(1, 2, 3, 4);
+        Colour c2(2, 2, 3, 4);
+        ASSERT_NOT_EQUAL(c1, c2);
+        ASSERT(c1 < c2);
+    }
+}
+
 void TestRegisterColourBasic()
 {
     {
@@ -277,6 +294,90 @@ void TestRegisterColourAlreadyPresent(){
     }
 }
 
+void TestROOTcoloursRecognition()
+{
+    {
+        // presence of basic colours from RTypes
+        ColourUtils::ClearRegistry();
+        ASSERT_NO_THROW(ColourUtils::CheckIfROOTcolour("kBlue"));
+        ASSERT(ColourUtils::CheckIfROOTcolour("kBlue").has_value());
+        size_t idx = ColourUtils::CheckIfROOTcolour("kBlue").value();
+        ASSERT_EQUAL(idx, EColor::kBlue);
+    }
+    {
+        // presence of other colours
+        ColourUtils::ClearRegistry();
+        ASSERT(ColourUtils::CheckIfROOTcolour("kBlue").has_value());
+        ASSERT(ColourUtils::CheckIfROOTcolour("kRed").has_value());
+        ASSERT(ColourUtils::CheckIfROOTcolour("kDeepSea").has_value());
+
+
+        size_t idx_blue     = ColourUtils::CheckIfROOTcolour("kBlue").value();
+        size_t idx_red      = ColourUtils::CheckIfROOTcolour("kRed").value();
+        size_t idx_deep_sea = ColourUtils::CheckIfROOTcolour("kDeepSea").value();
+
+
+        ASSERT_EQUAL(idx_blue, EColor::kBlue);
+        ASSERT_EQUAL(idx_red, EColor::kRed);
+        ASSERT_EQUAL(idx_deep_sea, EColorPalette::kDeepSea);
+    }
+}
+
+void TestROOTcoloursParseSpaces()
+{
+    {
+        ColourUtils::ClearRegistry();
+        string_view s_red {"  kRed"};
+        ASSERT_NO_THROW(ColourUtils::CheckIfROOTcolour(s_red));
+        ASSERT(ColourUtils::CheckIfROOTcolour(s_red).has_value());
+        size_t idx = ColourUtils::CheckIfROOTcolour(s_red).value();
+        ASSERT_EQUAL(idx, EColor::kRed);
+    }
+    {
+        ColourUtils::ClearRegistry();
+        string_view s_red {"  kRed "};
+        ASSERT_NO_THROW(ColourUtils::CheckIfROOTcolour(s_red));
+        ASSERT(ColourUtils::CheckIfROOTcolour(s_red).has_value());
+        size_t idx = ColourUtils::CheckIfROOTcolour(s_red).value();
+        ASSERT_EQUAL(idx, EColor::kRed);
+    }
+}
+
+void TestROOTcoloursTryNotExistent()
+{
+
+    {
+        ColourUtils::ClearRegistry();
+        string_view s_not_existent {"kFakeColourNotInROOTforSure"};
+        ASSERT_NO_THROW( ColourUtils::CheckIfROOTcolour(s_not_existent) );
+        ASSERT_NOT(ColourUtils::CheckIfROOTcolour(s_not_existent).has_value());
+    }
+    {
+        ColourUtils::ClearRegistry();
+        string_view s_not_existent {"nameNotStartingFromK"};
+        ASSERT_NO_THROW( ColourUtils::CheckIfROOTcolour(s_not_existent) );
+        ASSERT_NOT(ColourUtils::CheckIfROOTcolour(s_not_existent).has_value());
+    }
+}
+
+void TestROOTcolourFromRegisterFromString()
+{
+    {
+        ColourUtils::ClearRegistry();
+        string_view s_red {"  kRed"};
+        ASSERT_NO_THROW(ColourUtils::RegisterColourFromString(s_red));
+        size_t idx = ColourUtils::RegisterColourFromString(s_red);
+        ASSERT_EQUAL(idx, EColor::kRed);
+    }
+    {
+        ColourUtils::ClearRegistry();
+        string_view s_red {"  kDeepSea"};
+        ASSERT_NO_THROW(ColourUtils::RegisterColourFromString(s_red));
+        size_t idx = ColourUtils::RegisterColourFromString(s_red);
+        ASSERT_EQUAL(idx, EColorPalette::kDeepSea);
+    }
+}
+
 EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestColourCreationRGBNormalConstructor,    "ColourUtils");
         EFT_ADD_TEST(TestColourCreationRGBThrowConstructor,     "ColourUtils");
@@ -287,7 +388,12 @@ EFT_IMPLEMENT_TESTFILE(ColourUtils) {
         EFT_ADD_TEST(TestNotCorrectSeparators,                  "ColourUtils");
         EFT_ADD_TEST(TestGetters,                               "ColourUtils");
         EFT_ADD_TEST(TestColourCtorFromInts,                    "ColourUtils");
+        EFT_ADD_TEST(TestColourOperators,                       "ColourUtils");
         EFT_ADD_TEST(TestRegisterColourBasic,                   "ColourUtils");
         EFT_ADD_TEST(TestRegisterColourAlreadyPresent,          "ColourUtils");
+        EFT_ADD_TEST(TestROOTcoloursRecognition,                "ColourUtils");
+        EFT_ADD_TEST(TestROOTcoloursParseSpaces,                "ColourUtils");
+        EFT_ADD_TEST(TestROOTcoloursTryNotExistent,             "ColourUtils");
+        EFT_ADD_TEST(TestROOTcolourFromRegisterFromString,      "ColourUtils");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
