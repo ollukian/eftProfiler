@@ -317,13 +317,24 @@ namespace eft::plot {
 
         histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
-        histo->Draw("H same");
-        histo_neg->Draw("H same");
+        if (settings->vertical) {
+            histo->Draw("HBAR same");
+            histo_neg->Draw("HBAR same");
 
-        histo_plus_one_var->Draw("H same");
-        histo_minus_one_var->Draw("H same");
-        histo_plus_sigma_var->Draw("H same");
-        histo_minus_sigma_var->Draw("H same");
+            histo_plus_one_var->Draw("HBAR same");
+            histo_minus_one_var->Draw("HBAR same");
+            histo_plus_sigma_var->Draw("HBAR same");
+            histo_minus_sigma_var->Draw("HBAR same");
+        }
+        else {
+            histo->Draw("H same");
+            histo_neg->Draw("H same");
+
+            histo_plus_one_var->Draw("H same");
+            histo_minus_one_var->Draw("H same");
+            histo_plus_sigma_var->Draw("H same");
+            histo_minus_sigma_var->Draw("H same");
+        }
 
 
         // lines to show full 1 sigma error
