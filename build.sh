@@ -1,5 +1,5 @@
 echo "[INFO] create build directory if it doesn't exist and cd there.. "
-mkdir -p build && cd build || echo "[ERROR] in cd build "; exit 1
+mkdir -p build && cd build || echo "[ERROR] in cd build "; exit #1
 echo "[INFO] Current path: $PWD "
 echo "[INFO] cmake $PWD.."
 cmake .. || echo "[ERROR] in cmake "; exit #1
