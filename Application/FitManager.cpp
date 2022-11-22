@@ -884,11 +884,13 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     if (argSet) {
         EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
         for (const auto& arg : *argSet) {
-            EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
+            //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
             cout << arg->GetTitle() << endl;
             return;
         }
     }
+
+    // counts
 
     if (get_demand == "pdf") {
         funcs_[ "pdf_total" ]->Print();
