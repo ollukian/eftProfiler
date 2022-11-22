@@ -136,7 +136,7 @@ inline void FitManager::ExtractNP()      noexcept
     //args_["np"]     = (RooArgSet *) ws_->GetNp();
     EFT_PROF_DEBUG("Extracted {} NP:", args_["np_all"]->size());
     for (const auto& np : *args_["np_all"]) {
-        EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(np));
+        EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(np));
     }
 //    assert(ws_ != nullptr);
 //    args_["np_all"] = (RooArgSet *) ws_->GetNp();
@@ -176,7 +176,7 @@ inline void FitManager::ExtractGlobObs()     noexcept
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
     EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]:", args_["globObs"]->size());
     for (const auto& globObs : *args_["globObs"]) {
-        EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(globObs));
+        EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(globObs));
     }
 }
 inline void FitManager::ExtractCats() noexcept

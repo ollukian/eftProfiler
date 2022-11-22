@@ -883,6 +883,7 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     }
     if (argSet) {
         for (const auto& arg : *argSet) {
+            EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
             cout << arg->GetTitle() << endl;
             return;
         }
