@@ -91,6 +91,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         //auto* globObs = GetListAsArgSet("paired_globs");
         //auto* nps = GetListAsArgSet("paired_nps");
         SetAllGlobObsTo(0, 0); // to find values for np preferred by data
+        if (settings.studyType == StudyType::OBSERVED)
+            SetAllPoisTo(settings.poi_init_val, 0);
         auto args = new RooArgSet();
         args->add(*globObs);
         args->add(*nps);
@@ -346,12 +348,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", " * ", res.np_val, res.np_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
-    //EFT_PROF_DEBUG("current path: {}", std::filesystem::current_path().string());
-
-    //std::filesystem::path path_res = std::filesystem::current_path();
-    //if ( !settings.path_to_save_res.empty() )
-    // /   path_res /= settings.path_to_save_res;
-    //EFT_PROF_INFO("Save res to {}", path_res.string());
     std::filesystem::path path_res = settings.path_to_save_res;
 
     if ( !std::filesystem::exists(path_res) ) {
