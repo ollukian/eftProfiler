@@ -1,10 +1,13 @@
-echo "[INFO] update script: build & test"
-#echo "[INFO] update..."
-#git pull || echo "[ERROR] in git pull"; exit;
+echo "[INFO] update script: update from git & test"
+echo "[INFO] check if update is required..."
 
-echo "[INFO] build..."
-sh build.sh || echo "[ERROR] in building" exit #1;
-echo "[INFO] test..."
-sh run.sh --test || echo "[ERROR] running tests" exit #1;
-echo "[INFO] successfully updated"
-exit #0;
+changed=0
+git remote update && git status -uno | grep -q 'Your branch is behind' && changed=1
+if [ $changed = 1 ]; then
+    echo "[INFO] update is required, update..."
+    git pull
+    echo "[INFO] build...";
+    sh sh build_and_test.sh || echo "[ERROR] in build&test"; exit #1;
+else
+    echo "[INFO] update is NOT required"
+fi
