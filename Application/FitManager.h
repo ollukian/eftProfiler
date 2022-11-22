@@ -283,13 +283,12 @@ inline void FitManager::SetAllGlobObsFloat() noexcept
 }
 inline void FitManager::SetAllGlobObsTo(float val) noexcept
 {
-    EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {}", val);
+    EFT_PROF_INFO("SetAllGlobObsTo {}", val);
     for (auto& globObs : *lists_["paired_globs"]) {
         const std::string name = {globObs->GetTitle()};
 
-        if (name.find("gamma") != std::string::npos)
-        {
-            EFT_PROF_INFO("[FitManager][SetAllGlobObsTo] {:60} is GAMMA - skip it", name);
+        if (name.find("gamma") != std::string::npos) {
+            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] {:60} is GAMMA - skip it", name);
             continue;
         }
         dynamic_cast<RooRealVar *>(globObs)->setVal(val);
@@ -297,20 +296,20 @@ inline void FitManager::SetAllGlobObsTo(float val) noexcept
 }
 
 inline void FitManager::SetAllPoisTo(float val, float err) noexcept {
-    EFT_PROF_DEBUG("Set all pois to {} +- {}", val, err);
+    EFT_PROF_INFO("Set all pois to {} +- {}", val, err);
     for (const auto& poi : pois_) {
         ws()->SetVarVal(poi, val);
         ws()->SetVarErr(poi, err);
     }
 }
 inline void FitManager::SetAllPoisTo(float val) noexcept {
-    EFT_PROF_DEBUG("Set all pois to {}", val);
+    EFT_PROF_INFO("Set all pois to {}", val);
     for (const auto& poi : pois_) {
         ws()->SetVarVal(poi, val);
     }
 }
 inline void FitManager::SetAllPoisErrorsTo(float err) noexcept {
-    EFT_PROF_DEBUG("Set all pois errs to {}", err);
+    EFT_PROF_INFO("Set all pois errs to {}", err);
     for (const auto& poi : pois_) {
         ws()->SetVarErr(poi, err);
     }
@@ -325,7 +324,7 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
         const std::string name = {globObs->GetTitle()};
         if (name.find("gamma") != std::string::npos)
         {
-            EFT_PROF_INFO("[FitManager][SetAllGlobObsErrorsTo] {:60} is GAMMA - skip it", name);
+            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsErrorsTo] {:60} is GAMMA - skip it", name);
             continue;
         }
         dynamic_cast<RooRealVar *>(globObs)->setError(err);
@@ -334,13 +333,13 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
 
 inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
 {
-    //EFT_PROF_TRACE("[FitManager]SetAllGlobObsTo {} +- {}", val, err);
+    EFT_PROF_INFO("SetAllGlobObsTo {} +- {}", val, err);
     SetAllGlobObsTo(val);
     SetAllGlobObsErrorsTo(err);
 }
 inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
 {
-    //EFT_PROF_TRACE("[FitManager]SetAllNuisanceParamsTo {} +- {}", val, err);
+    EFT_PROF_INFO("[SetAllNuisanceParamsTo {} +- {}", val, err);
     SetAllNuisanceParamsToValue(val);
     SetAllNuisanceParamsErrorsTo(err);
 }
