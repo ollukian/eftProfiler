@@ -341,7 +341,7 @@ inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
             continue;
         }
         ws()->SetVarVal(name, val);
-        ws()->SetVarVal(name, err);
+        ws()->SetVarErr(name, err);
         //dynamic_cast<RooRealVar *>(globObs)->setVal(val);
         //dynamic_cast<RooRealVar *>(globObs)->setError(err);
     }
