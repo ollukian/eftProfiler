@@ -26,7 +26,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 {
     vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
-        EFT_PROF_INFO(" CommandLineArgs::ParseInput token: {}", string(argv[idx]));
+        EFT_PROF_DEBUG(" CommandLineArgs::ParseInput token: {}", string(argv[idx]));
         tokens.emplace_back(argv[idx]);
     }
     string key = tokens.front();
