@@ -15,6 +15,8 @@
 
 #include <spdlog/fmt/fmt.h>
 
+#include <filesystem>
+
 #include "TFile.h"
 #include "RooStats/ModelConfig.h"
 #include "RooWorkspace.h"
@@ -137,6 +139,11 @@ inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
 }
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
+    if (! std::filesystem::exists(path) ) {
+        EFT_PROF_CRITICAL("Ws under {} doesn't exist", path);
+        return false;
+    }
+
     TFile* f_ = TFile::Open(std::move(path).c_str());
     if (f_) {
         ws_ = std::make_unique<RooWorkspace>(
@@ -211,8 +218,13 @@ inline RooAbsPdf* WorkspaceWrapper::GetPdfSigGivenCategory(const std::string& ca
 
 inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
 {
+    auto _mc = ws_->obj( name.c_str() );
+    if (! _mc) {
+        EFT_PROF_CRITICAL("Model Config with name {} is not present in the WS", name);
+        throw std::logic_error("Wrong Model Config name");
+    }
     modelConfig_.reset( dynamic_cast<RooStats::ModelConfig*> (
-             ws_->obj(name.c_str() )
+             _mc
             ))
             ;
     return modelConfig_.get();

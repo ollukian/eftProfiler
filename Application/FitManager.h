@@ -192,8 +192,10 @@ inline void FitManager::SetWS(std::string path, std::string name)
     EFT_PROF_INFO("[FitManager] set ws: {} from {}", name, path);
     if (ws_->SetWS(std::move(path), std::move(name)))
         EFT_PROF_INFO("[FitManager] successfully set ws: {} from {}", name, path);
-    else
-        EFT_PROF_INFO("[FitManager] ERROR setting ws: {} from {}", name, path);
+    else {
+        EFT_PROF_INFO("[FitManager] ERROR setting ws");
+        throw std::logic_error("specified ws doesn't exist");
+    }
 }
 inline void FitManager::SetModelConfig(std::string name)
 {
