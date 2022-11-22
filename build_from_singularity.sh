@@ -1,4 +1,5 @@
 echo "[INFO] build from singularity"
-sh wrap_by_singularity.sh sh build.sh || echo "[ERROR] building from singularity"; exit
+sh wrap_by_singularity.sh sh build.sh || echo "[ERROR] building from singularity"; exit 1;
 
 echo "[INFO] successfully built from singularity"
+exit 0
