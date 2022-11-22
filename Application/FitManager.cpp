@@ -887,9 +887,17 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
 
     RooArgList* list = nullptr;
     if (get_demand == "paired_nps" ) {
+        if (lists_.find("paired_nps") == lists_.end()) {
+            EFT_PROF_CRITICAL("list: {} does not exist", "paired_nps");
+            throw std::logic_error("");
+        }
         list = lists_["paired_nps"];
     }
     else if (get_demand == "non_gamma_nps" ) {
+        if (lists_.find("non_gamma_nps") == lists_.end()) {
+            EFT_PROF_CRITICAL("list: {} does not exist", "non_gamma_nps");
+            throw std::logic_error("");
+        }
         list = lists_["non_gamma_nps"];
     }
     if (list) {
