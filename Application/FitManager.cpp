@@ -580,6 +580,20 @@ void FitManager::ExtractPOIs() noexcept
 
 void FitManager::Init(FitManagerConfig&& config)
 {
+
+    if (config.ws_name.empty()) {
+        EFT_PROF_CRITICAL("ws_name is empty");
+        throw std::logic_error("no ws_name set");
+    }
+    if (config.ws_path.empty()) {
+        EFT_PROF_CRITICAL("ws_path is empty");
+        throw std::logic_error("no ws_path set");
+    }
+    if (config.model_config.empty()) {
+        EFT_PROF_CRITICAL("model_config is empty");
+        throw std::logic_error("no model_config set");
+    }
+
     EFT_PROF_INFO("[FitManager] init from config: path to ws: {}, name: {},model_config: {}",
                   config.ws_path, config.ws_name, config.model_config);
     SetWsWrapper();

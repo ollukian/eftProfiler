@@ -14,7 +14,7 @@
 namespace eft::stats {
 
 struct FitManagerConfig {
-    std::string                 ws_path;
+    std::string                 ws_path             {"/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root"};
     std::string                 ws_name             {"combWS"};
     std::string                 model_config        {"ModelConfig"};
     std::string                 comb_pdf            {"combPdf"};
