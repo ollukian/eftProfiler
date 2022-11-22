@@ -875,6 +875,12 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     else if (get_demand == "paired_globs" ) {
         argSet = args_["paired_globs"];
     }
+    else if (get_demand == "paired_nps"
+            || get_demand == "paired_globs"
+            || get_demand == "non_gamma_nps") {
+        argSet = GetListAsArgSet(get_demand);
+    }
+
 
     if (argSet) {
         EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
@@ -884,33 +890,12 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
             return;
         }
     }
-
-    RooArgList* list = nullptr;
-    if (get_demand == "paired_nps" ) {
-        if (lists_.find("paired_nps") == lists_.end()) {
-            EFT_PROF_CRITICAL("list: {} does not exist", "paired_nps");
-            throw std::logic_error("");
-        }
-        list = lists_["paired_nps"];
-    }
-    else if (get_demand == "non_gamma_nps" ) {
-        if (lists_.find("non_gamma_nps") == lists_.end()) {
-            EFT_PROF_CRITICAL("list: {} does not exist", "non_gamma_nps");
-            throw std::logic_error("");
-        }
-        list = lists_["non_gamma_nps"];
-    }
-    if (list) {
-        EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
-        for (const auto& arg : *list) {
-            //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
-            cout << arg->GetTitle() << endl;
-            return;
-        }
-    }
+    else {
+        EFT_PROF_CRITICAL("Argset for demand [{}] is empty", get_demand);
+        throw std::logic_error("");
+    } // if argset is empte even though the name is known
 
     // counts
-
     if (get_demand == "pdf") {
         funcs_[ "pdf_total" ]->Print();
         return;

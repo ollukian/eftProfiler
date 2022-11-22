@@ -1,6 +1,11 @@
 cmake_minimum_required(VERSION 3.13)
 project(eftProfiler)
 
+set(${PROJECT_NAME}_VERSION_MAJOR  0)
+set(${PROJECT_NAME}_VERSION_MINOR  9)
+set(${PROJECT_NAME}_VERSION_PATCH  0)
+set(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -12,32 +17,21 @@ endif()
 message(STATUS C++ standard:    [${CMAKE_CXX_STANDARD}])
 message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
 
+#add_compile_options(-D__ROOFIT_NOBANNER=1)
+
 # Enable address sanitizer (gcc/clang only)
-function(eft_check_warnings target_name)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-        message(STATUS "Address sanitizer enabled")
-        target_compile_options(eftProfiler PRIVATE -fsanitize=address,undefined)
-        target_compile_options(eftProfiler PRIVATE -fno-sanitize=signed-integer-overflow)
-        target_compile_options(eftProfiler PRIVATE -fno-sanitize-recover=all)
-        target_compile_options(eftProfiler PRIVATE -fno-omit-frame-pointer)
-        target_link_libraries(eftProfiler PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
-    endif()
-endfunction()
+#function(eft_check_warnings target_name)
+#    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+#        message(STATUS "Address sanitizer enabled")
+#        target_compile_options(${target_name} PRIVATE -fsanitize=address,undefined)
+#        target_compile_options(${target_name} PRIVATE -fno-sanitize=signed-integer-overflow)
+#        target_compile_options(${target_name} PRIVATE -fno-sanitize-recover=all)
+#        target_compile_options(${target_name} PRIVATE -fno-omit-frame-pointer)
+#        target_link_libraries(${target_name}  PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
+#    endif()
+#endfunction()
 
 message(STATUS "Compile in the ${CMAKE_BUILD_TYPE} mode")
-
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    message(STATUS "Adding compiler flags for debugging")
-    eft_check_warnings(eftProfiler)
-    if (MSVC)
-        add_compile_options(/W3)
-    else()
-        add_compile_options(-Wall -Wextra -pedantic -Werror -Wformat=2 -Wformat-truncation
-                -fstack-usage
-                -ffunction-sections -fdata-sections
-                )
-    endif()
-endif()
 
 #########################################################
 # 3rd-party libraries                                   #
@@ -61,19 +55,39 @@ include_directories(Core)
 include_directories(Utils)
 include_directories(Fitter)
 include_directories(Application)
+include_directories(Test)
 
 add_subdirectory(Core)
 add_subdirectory(Utils)
 add_subdirectory(Fitter)
 add_subdirectory(Application)
+add_subdirectory(Test)
 
 add_executable(eftProfiler main.cpp Test/TestRooFit.cpp Test/TestStringUtils.cpp Test/test_runner.h Test/Tester.h Test/FileSystemTester.cpp Test/Tester.cpp Test/EftTests.h Test/TestColourUtils.cpp Test/TestCommandLineArguments.cpp Test/TestPlotterUtils.cpp)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+message(STATUS "Adding compiler flags for debugging")
+message(STATUS "Address sanitizer enabled")
+target_compile_options(eftProfiler PRIVATE -fsanitize=address,undefined)
+target_compile_options(eftProfiler PRIVATE -fno-sanitize=signed-integer-overflow)
+target_compile_options(eftProfiler PRIVATE -fno-sanitize-recover=all)
+target_compile_options(eftProfiler PRIVATE -fno-omit-frame-pointer)
+target_link_libraries(eftProfiler  PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
+if (MSVC)
+    add_compile_options(/W3)
+else()
+    add_compile_options(-Wall -Wextra -pedantic -Werror -Wformat=2 -Wformat-truncation
+            -fstack-usage
+            -ffunction-sections -fdata-sections
+            )
+endif()
+endif()
 
 # target ROOT
 target_link_libraries( eftProfiler PUBLIC ${ROOT_LIBRARIES} )
 target_link_libraries(eftProfiler PRIVATE nlohmann_json::nlohmann_json)
 
-target_link_libraries(eftProfiler PUBLIC core fitter utils app)
+target_link_libraries(eftProfiler PUBLIC core fitter utils app tester)
 
 
 #install(TARGETS eftProfiler LIBRARY DESTINATION lib)

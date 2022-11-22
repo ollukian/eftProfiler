@@ -8,9 +8,13 @@
 #include "Test/Tester.h"
 #include "Core/Logger.h"
 
+#include "TError.h"
+
 using namespace std;
 
 int main(int argc, char* argv[]) {
+
+    gErrorIgnoreLevel = kWarning;
 
     eft::stats::Logger::Init();
 
