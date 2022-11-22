@@ -536,30 +536,11 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissFloat]");
-
-//    args_["np"]->Print("");
-//    for (const auto& np : *args_["np"]) {
-//        const string name = {np->GetTitle()};
-//        cout << fmt::format("dealing with: {} ...", name) << endl;
-//        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
-//        if (name.substr(0, 5) == "ATLAS") {
-//            cout << fmt::format("dealing with: {:40} OK", name) << endl;
-//            dynamic_cast<RooRealVar *>(np)->setConstant(false);
-//        }
-//        else {
-//            cout << fmt::format("dealing with: {:40} DO NOT set to float", name) << endl;
-//        }
-//    }
-
-    //args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        EFT_PROF_DEBUG("Set {} to float", name);
+        EFT_PROF_DEBUG("Set {} to float ==> {}", name, *dynamic_cast<RooRealVar *>(np));
         dynamic_cast<RooRealVar *>(np)->setConstant(false);
     }
-
-    //cout << "status after:" << endl;
-    //args_["np"]->Print("v");
 }
 
 void FitManager::ExtractPOIs() noexcept
@@ -879,22 +860,43 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     }
 
     // TODO: finish printing results by "get" demand
-//    RooArgSet* argSet = nullptr;
-//
-//    if (get_demand == "np" || get_demand == "nps") {
-//        argSet = args_["np_all"];
-//    }
-//    else if (get_demand == "globs" ) {
-//        argSet = args_["globObs"];
-//    }
-//    else if (get_demand == "globs" ) {
-//        argSet = args_["globObs"];
-//    }
-//
-//    auto* pdf = funcs_["pdf_total"];
-//    auto* ds = data_["ds_total"];
-//    auto* globObs = (args_["globObs"]);
-//    auto* np = (args_["np"]);
+    RooArgSet* argSet = nullptr;
+
+    if (get_demand == "np" || get_demand == "nps") {
+        argSet = args_["np_all"];
+    }
+    else if (get_demand == "obs" ) {
+        argSet = args_["obs"];
+    }
+    else if (get_demand == "globs" ) {
+        argSet = args_["globObs"];
+    }
+    else if (get_demand == "paired_globs" ) {
+        argSet = args_["paired_globs"];
+    }
+    else if (get_demand == "paired_nps" ) {
+        argSet = args_["paired_nps"];
+    }
+    else if (get_demand == "non_gamma_nps" ) {
+        argSet = args_["non_gamma_nps"];
+    }
+    if (argSet) {
+        for (const auto& arg : *argSet) {
+            cout << arg->GetTitle() << endl;
+            return;
+        }
+    }
+
+    if (get_demand == "pdf") {
+        funcs_[ "pdf_total" ]->Print();
+        return;
+    }
+    else if (get_demand == "ds_total"){
+        data_[ "ds_total" ]->Print();
+        return;
+    }
+
+    throw std::logic_error(fmt::format("--get {} is now known. Use: np, poi, globs, obs, paired_globs, paired_nps, non_gamma_nps"));
 
 }
 

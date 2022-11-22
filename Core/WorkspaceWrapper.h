@@ -295,6 +295,14 @@ inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_s
     SetVarVal(par, val + err * nb_sigma);
 }
 
+template<typename OStream>
+OStream& operator<<(OStream& os, const RooRealVar& var) {
+    std::string constness = "const";
+    if (! var.isConstant() )
+        constness = "float";
+    return os << fmt::format("{:.4} +- {:.4} ({})", var.getVal(), var.getError(), std::move(constness));
+}
+
 //inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)
 //{
 //    const std::vector<std::string> pois_{pois};

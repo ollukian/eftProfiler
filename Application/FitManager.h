@@ -134,9 +134,9 @@ inline void FitManager::ExtractNP()      noexcept
     assert(ws_ != nullptr);
     args_["np_all"] = (RooArgSet *) ws_->GetNp();
     //args_["np"]     = (RooArgSet *) ws_->GetNp();
-    EFT_PROF_DEBUG("Extracted NP:");
+    EFT_PROF_DEBUG("Extracted {} NP:", args_["np_all"]->size());
     for (const auto& np : *args_["np_all"]) {
-        np->Print();
+        EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(np));
     }
 //    assert(ws_ != nullptr);
 //    args_["np_all"] = (RooArgSet *) ws_->GetNp();
@@ -165,15 +165,18 @@ inline void FitManager::ExtractObs() noexcept
 {
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
-    EFT_PROF_INFO("[FitManager] Extracted {} obs to args[obs]", args_["obs"]->size());
+    EFT_PROF_DEBUG("Extracted {} Observables:", args_["obs"]->size());
+    for (const auto& obs : *args_["obs"]) {
+        EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(obs));
+    }
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
     assert(ws_ != nullptr);
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
     EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]:", args_["globObs"]->size());
-    for (const auto& glob : *args_["globObs"]) {
-        glob->Print();
+    for (const auto& globObs : *args_["globObs"]) {
+        EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(globObs));
     }
 }
 inline void FitManager::ExtractCats() noexcept
@@ -194,16 +197,13 @@ inline void FitManager::SetWS(std::string path, std::string name)
         EFT_PROF_INFO("[FitManager] successfully set ws: {} from {}", name, path);
     else {
         EFT_PROF_INFO("[FitManager] ERROR setting ws");
-        throw std::logic_error("specified ws doesn't exist");
+        throw std::logic_error("specified ws doesn't exist, use --ws_path my_path");
     }
 }
 inline void FitManager::SetModelConfig(std::string name)
 {
-    std::cout << "set model config" << std::endl;
-    if (ws_->SetModelConfig(std::move(name)))
-        std::cout << "set model config DONE" << std::endl;
-    else
-        std::cout << fmt::format("[FitManager] error setting model config") << std::endl;
+    EFT_PROF_INFO("[FitManager] set model config from {}", name);
+    ws_->SetModelConfig(std::move(name));
 }
 
 inline void FitManager::ExtractDataTotal(std::string name)
