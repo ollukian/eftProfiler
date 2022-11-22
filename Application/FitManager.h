@@ -351,7 +351,7 @@ inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
 //        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] err is set for {} ", name);
 //        //dynamic_cast<RooRealVar *>(globObs)->setVal(val);
 //        //dynamic_cast<RooRealVar *>(globObs)->setError(err);
-    }
+ //   }
 }
 inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
 {
