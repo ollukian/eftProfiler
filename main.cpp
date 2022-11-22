@@ -112,6 +112,14 @@ int main(int argc, char* argv[]) {
         EFT_PROF_INFO("Set task: {}", task);
     }
 
+    if (commandLineArgs.HasKey("get")) {
+        eft::stats::FitManagerConfig config;
+        auto manager = make_unique<eft::stats::FitManager>();
+        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+        manager->Init(std::move(config));
+        return 0;
+    }
+
     if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
 
