@@ -68,7 +68,7 @@ private:
 template<typename T>
 bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 {
-    EFT_PROF_INFO("[CommandLineArgs] try to get value for key: {}", key);
+    EFT_PROF_DEBUG("[CommandLineArgs] try to get value for key: {}", key);
 
     _requested_keys.insert(key); // to show that this key has been checked
 
@@ -76,23 +76,23 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
     if (val_opt.has_value()) {
         if constexpr(std::is_same_v<std::string, T>) {
             val = val_opt.value();
-            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_same_v<std::vector<std::string>, T>) {
-            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
             val = GetVals(key).value();
             // TODO: to do the same with arrays and other containers. decay_type ?
             // TODO: add unfolding of a vector by looping over it and extracting components
         }
         else if constexpr(std::is_floating_point_v<T>) {
             val = stod(val_opt.value());
-            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_integral_v<T>) {
             val = stoi(val_opt.value());
-            EFT_PROF_DEBUG("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
         else {
