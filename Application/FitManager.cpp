@@ -875,15 +875,8 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     else if (get_demand == "paired_globs" ) {
         argSet = args_["paired_globs"];
     }
-    else if (get_demand == "paired_nps" ) {
-        argSet = args_["paired_nps"];
-    }
-    else if (get_demand == "non_gamma_nps" ) {
-        argSet = args_["non_gamma_nps"];
-    }
+
     if (argSet) {
-        cout << "key: " << get_demand << endl;
-        cout << "argset size: " << argSet->size() << endl;
         EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
         for (const auto& arg : *argSet) {
             //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
@@ -891,6 +884,23 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
             return;
         }
     }
+
+    RooArgList* list = nullptr;
+    if (get_demand == "paired_nps" ) {
+        list = lists_["paired_nps"];
+    }
+    else if (get_demand == "non_gamma_nps" ) {
+        list = lists_["non_gamma_nps"];
+    }
+    if (list) {
+        EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
+        for (const auto& arg : *list) {
+            //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
+            cout << arg->GetTitle() << endl;
+            return;
+        }
+    }
+
     // counts
 
     if (get_demand == "pdf") {
