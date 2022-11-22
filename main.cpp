@@ -107,13 +107,6 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    // TODO: add help printing:
-    //  available options for each task - use a macro?
-
-    //size_t worker_id {0};
-    //commandLineArgs.SetValIfArgExists("worker_id", worker_id);
-    //eft::stats::Logger::Init(worker_id);
-
     string task;
     if (commandLineArgs.SetValIfArgExists("task", task)) {
         EFT_PROF_INFO("Set task: {}", task);

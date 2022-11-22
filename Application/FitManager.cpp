@@ -851,10 +851,13 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
 }
 
 void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
+    EFT_PROF_DEBUG("Process get command: {}", config.get);
     string get_demand = config.get;
     eft::StringUtils::Trim(get_demand);
     eft::StringUtils::ToLowCase(get_demand);
+    EFT_PROF_DEBUG("after trimming and lowering: {}", get_demand);
     if (get_demand == "poi") {
+        EFT_PROF_DEBUG("dispatch to POI, there are {} available", pois_.size());
         for (const auto& poi : pois_) {
             std::cout << poi << std::endl;
         }
