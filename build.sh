@@ -1,9 +1,8 @@
 echo "[INFO] create build directory if it doesn't exist and cd there.. "
-mkdir -p build && cd build # || echo "[ERROR] in cd build "; #exit # 1
+mkdir -p build && cd build || echo "[ERROR] in cd build "; exit
 echo "[INFO] Current path: $PWD "
 echo "[INFO] cmake $PWD.."
-cmake .. || echo "[ERROR] in cmake "; exit #1
+cmake .. || echo "[ERROR] in cmake "; exit
 echo "[INFO] make -j"
-make -j ||  echo "[ERROR] in make "; exit #1
+make -j ||  echo "[ERROR] in make "; exit
 echo "[INFO] binary has been successfully built"
-#exit 0
