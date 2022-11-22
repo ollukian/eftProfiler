@@ -556,7 +556,7 @@ void FitManager::ExtractPOIs() noexcept
         pois_.push_back(std::move(name));
     }
     EFT_PROF_DEBUG("[FitManager] list of POIs in string format:");
-    for (const auto& poi : pois_) { EFT_PROF_INFO("[{}]", poi); }
+    for (const auto& poi : pois_) { EFT_PROF_DEBUG("[{}]", poi); }
 }
 
 void FitManager::Init(FitManagerConfig&& config)
@@ -882,6 +882,7 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
         argSet = args_["non_gamma_nps"];
     }
     if (argSet) {
+        EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
         for (const auto& arg : *argSet) {
             EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
             cout << arg->GetTitle() << endl;
