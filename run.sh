@@ -6,4 +6,4 @@ cd build  || echo "[ERROR] cannot cd to the build directory, we're at: {$PWD}" e
 #rm -f core.*
 #cd ..
 echo "[INFO] run has successfully finished {$@} "
-exit 0
+#exit 0
