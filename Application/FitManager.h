@@ -334,20 +334,23 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
 inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
 {
     EFT_PROF_INFO("SetAllGlobObsTo {} +- {}", val, err);
-    for (auto& globObs : *lists_["paired_globs"]) {
-        const std::string name = {globObs->GetTitle()};
-        if (name.find("gamma") != std::string::npos) {
-            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] {:60} is GAMMA - skip it", name);
-            continue;
-        }
-        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] deal with {} ", name);
-        ws()->SetVarVal(name, val);
-        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] val is set for {} ", name);
-        dynamic_cast<RooRealVar *>(globObs)->setError(err);
-        //ws()->SetVarErr(name, err);
-        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] err is set for {} ", name);
-        //dynamic_cast<RooRealVar *>(globObs)->setVal(val);
-        //dynamic_cast<RooRealVar *>(globObs)->setError(err);
+    SetAllGlobObsTo(0);
+    SetAllGlobObsErrorsTo(0);
+//    EFT_PROF_INFO("SetAllGlobObsTo {} +- {}", val, err);
+//    for (auto& globObs : *lists_["paired_globs"]) {
+//        const std::string name = {globObs->GetTitle()};
+//        if (name.find("gamma") != std::string::npos) {
+//            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] {:60} is GAMMA - skip it", name);
+//            continue;
+//        }
+//        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] deal with {} ", name);
+//        ws()->SetVarVal(name, val);
+//        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] val is set for {} ", name);
+//        dynamic_cast<RooRealVar *>(globObs)->setError(err);
+//        //ws()->SetVarErr(name, err);
+//        EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] err is set for {} ", name);
+//        //dynamic_cast<RooRealVar *>(globObs)->setVal(val);
+//        //dynamic_cast<RooRealVar *>(globObs)->setError(err);
     }
 }
 inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
