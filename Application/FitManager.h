@@ -334,8 +334,17 @@ inline void FitManager::SetAllGlobObsErrorsTo(float err) noexcept
 inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
 {
     EFT_PROF_INFO("SetAllGlobObsTo {} +- {}", val, err);
-    SetAllGlobObsTo(val);
-    SetAllGlobObsErrorsTo(err);
+    for (auto& globObs : *lists_["paired_globs"]) {
+        const std::string name = {globObs->GetTitle()};
+        if (name.find("gamma") != std::string::npos) {
+            EFT_PROF_DEBUG("[FitManager][SetAllGlobObsTo] {:60} is GAMMA - skip it", name);
+            continue;
+        }
+        ws()->SetVarVal(name, val);
+        ws()->SetVarVal(name, err);
+        //dynamic_cast<RooRealVar *>(globObs)->setVal(val);
+        //dynamic_cast<RooRealVar *>(globObs)->setError(err);
+    }
 }
 inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
 {
@@ -346,42 +355,20 @@ inline void FitManager::SetAllNuisanceParamsTo(float val, float err) noexcept
 
 inline void FitManager::SetAllNuisanceParamsErrorsTo(float err) noexcept
 {
-    EFT_PROF_TRACE("[FitManager] SetAllNuisanceParamsErrorsTo {}", err);
-    //for (const auto& globObs : *args_["globObs"]) {
+    EFT_PROF_INFO("[FitManager] SetAllNuisanceParamsErrorsTo {}", err);
     assert(lists_["paired_nps"]->size() != 0);
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
-//        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} before: {} +- {}  (const? ==> {})",
-//                       name,
-//                       dynamic_cast<RooRealVar *>(np)->getVal(),
-//                       dynamic_cast<RooRealVar *>(np)->getError(),
-//                       dynamic_cast<RooRealVar *>(np)->isConstant());
         dynamic_cast<RooRealVar *>(np)->setError(err);
-//        EFT_PROF_DEBUG("[FitManager][SetAllNuisanceParamsErrorsTo] status of {:30} after: {} +- {}  (const? ==> {})",
-//                       name,
-//                       dynamic_cast<RooRealVar *>(np)->getVal(),
-//                       dynamic_cast<RooRealVar *>(np)->getError(),
-//                       dynamic_cast<RooRealVar *>(np)->isConstant());
     }
 }
 
 inline void FitManager::SetAllNuisanceParamsToValue(float val) noexcept
 {
     EFT_PROF_TRACE("[FitManager] SetAllNPto {}", val);
-    //for (const auto& globObs : *args_["np"]) {
     for (const auto& np : *lists_["paired_nps"]) {
         const std::string name = {np->GetTitle()};
-//        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} before: {} +- {}  (const? ==> {})",
-//                       name,
-//                       dynamic_cast<RooRealVar *>(np)->getVal(),
-//                       dynamic_cast<RooRealVar *>(np)->getError(),
-//                       dynamic_cast<RooRealVar *>(np)->isConstant());
         dynamic_cast<RooRealVar *>(np)->setVal(val);
-//        EFT_PROF_DEBUG("[FitManager][SetAllNPto] status of {:30} after: {} +- {}  (const? ==> {})",
-//                       name,
-//                       dynamic_cast<RooRealVar *>(np)->getVal(),
-//                       dynamic_cast<RooRealVar *>(np)->getError(),
-//                       dynamic_cast<RooRealVar *>(np)->isConstant());
     }
 }
 

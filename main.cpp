@@ -14,7 +14,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-    gErrorIgnoreLevel = kWarning;
+    //gErrorIgnoreLevel = kWarning;
 
     eft::stats::Logger::Init();
 

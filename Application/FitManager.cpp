@@ -90,9 +90,14 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     {
         //auto* globObs = GetListAsArgSet("paired_globs");
         //auto* nps = GetListAsArgSet("paired_nps");
-        SetAllGlobObsTo(0, 0); // to find values for np preferred by data
-        //if (settings.studyType == StudyType::OBSERVED)
-        SetAllPoisTo(settings.poi_init_val, 0);
+        if (settings.prePostFit != PrePostFit::POSTFIT) {
+            EFT_PROF_INFO("For study type set pois to init values and globs to 0");
+            SetAllPoisTo(settings.poi_init_val, 0);
+            SetAllGlobObsTo(0, 0); // to find values for np preferred by data
+        }
+        else {
+            EFT_PROF_INFO("For study type [potsfit] no need to set pois to init values and globs to 0");
+        }
         auto args = new RooArgSet();
         args->add(*globObs);
         args->add(*nps);

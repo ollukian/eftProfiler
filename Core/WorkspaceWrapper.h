@@ -156,7 +156,7 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
-    EFT_PROF_DEBUG("[WorkspaceWrapper::FixValConst {} const", poi);
+    EFT_PROF_DEBUG("Set {:30} const", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FixValConst variable {} is not present in the WS", poi);
         return;
@@ -173,11 +173,12 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
-    EFT_PROF_TRACE("[WorkspaceWrapper]::FloatVal {}", poi);
-    //EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} before", poi);
+    EFT_PROF_DEBUG("Set {:30} float", poi);
+    if (ws_->var(poi.c_str()) == nullptr) {
+        EFT_PROF_CRITICAL("WorkspaceWrapper::FloatVal variable {} is not present in the WS", poi);
+        return;
+    }
     ws_->var( poi.c_str() )->setConstant(false);
-    //EFT_PROF_DEBUG("[WorkspaceWrapper]::FloatVal status of: {} after", poi);
-    //ws_->var( poi.c_str() )->Print();
 }
 
 inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
@@ -189,12 +190,12 @@ inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
 {
-    EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:20} to {}", name, val);
+    EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:30} to {}", name, val);
     ws_->var( name.c_str() )->setVal(val);
 }
 inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 {
-    EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:20} to {}", name, err);
+    EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:30} to {}", name, err);
     ws_->var( name.c_str() )->setError(err);
 }
 
