@@ -91,8 +91,8 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
         //auto* globObs = GetListAsArgSet("paired_globs");
         //auto* nps = GetListAsArgSet("paired_nps");
         SetAllGlobObsTo(0, 0); // to find values for np preferred by data
-        if (settings.studyType == StudyType::OBSERVED)
-            SetAllPoisTo(settings.poi_init_val, 0);
+        //if (settings.studyType == StudyType::OBSERVED)
+        SetAllPoisTo(settings.poi_init_val, 0);
         auto args = new RooArgSet();
         args->add(*globObs);
         args->add(*nps);

@@ -63,7 +63,7 @@ add_subdirectory(Fitter)
 add_subdirectory(Application)
 add_subdirectory(Test)
 
-add_executable(eftProfiler main.cpp Test/TestRooFit.cpp Test/TestStringUtils.cpp Test/test_runner.h Test/Tester.h Test/FileSystemTester.cpp Test/Tester.cpp Test/EftTests.h Test/TestColourUtils.cpp Test/TestCommandLineArguments.cpp Test/TestPlotterUtils.cpp)
+add_executable(eftProfiler main.cpp Test/Tester.cpp)
 
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
 message(STATUS "Adding compiler flags for debugging")
