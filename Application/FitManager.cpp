@@ -882,6 +882,8 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
         argSet = args_["non_gamma_nps"];
     }
     if (argSet) {
+        cout << "key: " << get_demand << endl;
+        cout << "argset size: " << argSet->size() << endl;
         EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
         for (const auto& arg : *argSet) {
             //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
