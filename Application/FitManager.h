@@ -166,9 +166,9 @@ inline void FitManager::ExtractObs() noexcept
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
     EFT_PROF_DEBUG("Extracted {} Observables:", args_["obs"]->size());
-    for (const auto& obs : *args_["obs"]) {
-        EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(obs));
-    }
+    //for (const auto& obs : *args_["obs"]) {
+    //    EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(obs));
+    //}
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
@@ -182,7 +182,7 @@ inline void FitManager::ExtractGlobObs()     noexcept
 inline void FitManager::ExtractCats() noexcept
 {
     assert(ws_ != nullptr);
-    std::cout << "ERROR NOT IMPLEMENTED" << std::endl;
+    EFT_PROF_CRITICAL("ERROR NOT IMPLEMENTED");
 }
 
 inline void FitManager::SetWsWrapper() noexcept

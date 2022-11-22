@@ -300,7 +300,16 @@ OStream& operator<<(OStream& os, const RooRealVar& var) {
     std::string constness = "const";
     if (! var.isConstant() )
         constness = "float";
-    return os << fmt::format("{:.4} +- {:.4} ({})", var.getVal(), var.getError(), std::move(constness));
+
+    EFT_PROF_CRITICAL("operator<<(OStream& os, const RooRealVar& var): name: {}", var.GetName());
+    EFT_PROF_CRITICAL("operator<<(OStream& os, const RooRealVar& var): val: {}", var.getVal());
+    EFT_PROF_CRITICAL("operator<<(OStream& os, const RooRealVar& var): err: {}", var.getError());
+    EFT_PROF_CRITICAL("operator<<(OStream& os, const RooRealVar& var): const: {}", constness);
+    return os << fmt::format("{:30} [{:.4} +- {:.4} ({})]",
+                             var.GetName(),
+                             var.getVal(),
+                             var.getError(),
+                             std::move(constness));
 }
 
 //inline void WorkspaceWrapper::FixValConst(std::initializer_list<std::vector<std::string>> pois)

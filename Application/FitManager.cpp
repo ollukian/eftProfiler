@@ -798,7 +798,8 @@ void FitManager::ExtractNotGammaNps() noexcept
     {
         EFT_PROF_CRITICAL("FitManager::ExtractNotGammaNps the lists_[paired_nps] is empty.");
         EFT_PROF_CRITICAL("FitManager::ExtractNotGammaNps extract them before");
-        throw std::runtime_error("no paired nps extracted");
+        return;
+        //throw std::runtime_error("no paired nps extracted");
     }
     assert( lists_[ "paired_nps"   ]->size() != 0);
 
