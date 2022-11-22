@@ -166,9 +166,6 @@ inline void FitManager::ExtractObs() noexcept
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
     EFT_PROF_DEBUG("Extracted {} Observables:", args_["obs"]->size());
-    //for (const auto& obs : *args_["obs"]) {
-    //    EFT_PROF_DEBUG(*dynamic_cast<RooRealVar*>(obs));
-    //}
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {

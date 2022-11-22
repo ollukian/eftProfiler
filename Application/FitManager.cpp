@@ -889,7 +889,6 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
             return;
         }
     }
-
     // counts
 
     if (get_demand == "pdf") {
