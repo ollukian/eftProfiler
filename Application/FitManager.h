@@ -343,7 +343,8 @@ inline void FitManager::SetAllGlobObsTo(float val, float err) noexcept
         EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] deal with {} ", name);
         ws()->SetVarVal(name, val);
         EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] val is set for {} ", name);
-        ws()->SetVarErr(name, err);
+        dynamic_cast<RooRealVar *>(globObs)->setError(err);
+        //ws()->SetVarErr(name, err);
         EFT_PROF_TRACE("[FitManager][SetAllGlobObsTo] err is set for {} ", name);
         //dynamic_cast<RooRealVar *>(globObs)->setVal(val);
         //dynamic_cast<RooRealVar *>(globObs)->setError(err);
