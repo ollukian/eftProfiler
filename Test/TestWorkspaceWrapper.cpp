@@ -70,14 +70,22 @@ RooWorkspace * CreateWS(const string& filename)
     ws->defineSet("poi","sigma"); //parameters of interest
     ws->defineSet("np","nuisance_b,nuisance_lumi,nuisance_acc"); //nuisance parameters
 
+    auto pdf = ws->pdf("model");
+    auto n = ws->var("n");
+    RooDataSet* data = pdf->generate(*n);  // will generate accordint to total S+B events
+    data->SetName("test_data");
+    //EFT_PROF_DEBUG("import data");
+    ws->import(*data);
+
     //
     mc.SetNuisanceParameters("nuisance_b,nuisance_lumi,nuisance_acc");
     mc.SetPdf("model");
     mc.SetObservables("n");
     mc.SetParametersOfInterest("sigma");
+    mc.SetProtoData("test_data");
 
-    RooDataSet data("data", "data", *ws->set("obs"));
-    data.add(*ws->set("obs")); //actually add the data
+    // RooDataSet data("data", "data", *ws->set("obs"));
+    // data.add(*ws->set("obs")); //actually add the data
 
    /*
     _combWS->defineSet("Observables", Observables);
@@ -125,11 +133,16 @@ void TestWSreading() {
     ASSERT_NO_THROW(ws_->raw()->obj("ModelConfig"));
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
     ws_->raw()->Print("v");
+    EFT_PROF_INFO("pois:");
     ws_->GetPOIs()->Print();
+    EFT_PROF_INFO("nps:");
     ws_->GetNp()->Print();
+    EFT_PROF_INFO("obs:");
     ws_->GetObs()->Print();
+    EFT_PROF_INFO("pdf:");
     ws_->GetCombinedPdf("model");
-    ws_->GetData("data");
+    EFT_PROF_INFO("data:");
+    ws_->GetData("test_data");
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
