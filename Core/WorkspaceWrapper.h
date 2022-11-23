@@ -14,6 +14,7 @@
 #include <memory>
 
 #include <spdlog/fmt/fmt.h>
+#include "spdlog/fmt/ostr.h"
 
 #include <filesystem>
 
