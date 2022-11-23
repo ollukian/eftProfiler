@@ -87,7 +87,7 @@ RooWorkspace* CreateWS(const string& filename)
 
     // signal
     EFT_PROF_INFO("Create signal term");
-    ws->factory("PROD::S('mu*s_nom*lumi',mu[1,-5,5],s_nom[50])") ;
+    ws->factory("expr::S('mu*s_nom*lumi',mu[1,-5,5],s_nom[50])") ;
     EFT_PROF_INFO("Create signal term DONE");
     ws->Print("");
     // (s + b) model
