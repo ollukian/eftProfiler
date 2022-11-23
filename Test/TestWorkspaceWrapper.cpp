@@ -127,7 +127,7 @@ RooWorkspace* CreateWS(const string& filename)
     //
 
     EFT_PROF_INFO("after setting up the model, pdf [model]:");
-    ws->pdf("model")->Print("v");
+    ws->pdf("model")->Print("");
     EFT_PROF_INFO("after setting up the model, poi [sigma]:");
     ws->var("sigma")->Print("v");
     EFT_PROF_INFO("after setting up the model, obs [n]:");
