@@ -71,8 +71,15 @@ void Finalise(const std::string& filename) {
 }
 
 void TestWSreading() {
+    const string path {"__temp_ws_for_eftTests"};
+    const string ws_name {"ws_test"};
     auto ws_ = std::make_unique<WorkspaceWrapper>();
-    ASSERT_NO_THROW(ws_->SetWS("__temp_ws_for_eftTests", "ws_test"));
+    ASSERT(ws_.get());
+
+    std::system("ls -lthr");
+    ASSERT(std::filesystem::exists(path));
+
+    ASSERT_NO_THROW(ws_->SetWS(path, ws_name));
     ASSERT(ws_->SetWS("__temp_ws_for_eftTests", "ws_test"));
     ASSERT_NO_THROW(ws_->raw()->var("nsig")->getVal());
     ASSERT_NO_THROW(ws_->raw()->var("nbkg")->getVal());
