@@ -11,7 +11,7 @@ using namespace eft::utils;
 using namespace eft::stats;
 using namespace std;
 
-namespace eft::inner::tests {
+//namespace eft::inner::tests {
 
 std::unique_ptr<RooWorkspace> CreateWS(const string& filename)
 {
@@ -81,4 +81,4 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
 
-}
+//}

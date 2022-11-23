@@ -49,7 +49,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
 }
 
 void Tester::InitSetTests() {
-    using namespace eft::inner::tests;
+    //using namespace eft::inner::tests;
 
 
     EFT_PROF_DEBUG("Init set tests");
