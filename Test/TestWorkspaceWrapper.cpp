@@ -117,7 +117,7 @@ RooWorkspace* CreateWS(const string& filename)
     mc.SetPdf("model");
     mc.SetObservables("n");
     mc.SetParametersOfInterest("sigma");
-    mc.SetProtoData("test_data");
+    mc.SetProtoData("data");
 
     // RooDataSet data("data", "data", *ws->set("obs"));
     // data.add(*ws->set("obs")); //actually add the data
@@ -177,7 +177,7 @@ void TestWSreading() {
     EFT_PROF_INFO("pdf:");
     ws_->GetCombinedPdf("model");
     EFT_PROF_INFO("data:");
-    ws_->GetData("test_data");
+    ws_->GetData("data");
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {

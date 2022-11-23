@@ -62,8 +62,9 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
     minim.optimizeConst( 2 );
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
-    minim.setMaxFunctionCalls(5000 * settings.pdf->getVariables()->getSize());
-    EFT_PROF_INFO("[Minimizer] max function calls: {}", 5000 * settings.pdf->getVariables()->getSize());
+    size_t max_function_calls = 5000 * settings.pdf->getVariables()->getSize();
+    minim.setMaxFunctionCalls(max_function_calls);
+    EFT_PROF_INFO("[Minimizer] max function calls: {}", max_function_calls);
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
