@@ -144,11 +144,12 @@ RooWorkspace* CreateWS(const string& filename)
     //mc.SetPdf("model");
     //mc.SetObservables("n");
     //mc.SetParametersOfInterest("sigma");
-    //auto obs = ws->var("n");
-    //auto data_ = ws->pdf("model")->generate(*obs, 1000);
+    auto obs = ws->var("n");
+    auto data_generated = ws->pdf("model")->generate(*obs, 1000);
 
     // RooDataSet data("data", "data", *ws->set("obs"));
     // data.add(*ws->set("obs")); //actually add the data
+    //ws->import(*data_generated);
 
    /*
     _combWS->defineSet("Observables", Observables);
@@ -205,11 +206,10 @@ void TestWSreading() {
     ws_->GetNp()->Print();
     EFT_PROF_INFO("obs:");
     ws_->GetObs()->Print();
-    EFT_PROF_INFO("pdf:");
-    ws_->GetCombinedPdf("model");
-    EFT_PROF_INFO("data:");
-    ws_->GetData("data");
-
+    //EFT_PROF_INFO("pdf:");
+    //ws_->GetCombinedPdf("model");
+    //EFT_PROF_INFO("data:");
+    //ws_->GetData("data");
 }
 
 void Initiate() {
