@@ -90,7 +90,8 @@ RooWorkspace* CreateWS(const string& filename)
     RooFitResult* res = ws->pdf("model")->fitTo(data,
                                                 RooFit::Minos(ws->set("poi")),
                                                 RooFit::Save(),
-                                                RooFit::Hesse(false));
+                                                RooFit::Hesse(false),
+                                                RooFit::PrintLevel(1));
 
     if(res->status()==0) {
         ws->var("sigma")->Print();
@@ -118,8 +119,6 @@ RooWorkspace* CreateWS(const string& filename)
     mc.SetPdf("model");
     mc.SetObservables("n");
     mc.SetParametersOfInterest("sigma");
-    mc.SetProtoData("data");
-
     //auto obs = ws->var("n");
     //auto data_ = ws->pdf("model")->generate(*obs, 1000);
 
@@ -142,7 +141,6 @@ RooWorkspace* CreateWS(const string& filename)
     ws->writeToFile(filename.c_str(), true);
     EFT_PROF_DEBUG("ws is written to: {}", filename);
     return ws;
-   // auto data = ws.
 }
 
 bool DeleteWS(const std::string& path) {
@@ -155,6 +153,7 @@ void Finalise() {
         EFT_PROF_CRITICAL("cannot delete ws: {}", path);
         throw std::runtime_error("deleting ws is not possible");
     }
+    eft::stats::Logger::SetSilent();
 }
 
 void TestWSreading() {
@@ -184,17 +183,18 @@ void TestWSreading() {
     ws_->GetData("data");
 }
 
-EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
+void Initiate() {
     eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
-    TestWSreading();
+}
 
+EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
+    EFT_ADD_TEST(Initiate,      "WorkSpaceWrapper")
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
     EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
 
     //Finalise(filename);
-    eft::stats::Logger::SetSilent();
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
 
