@@ -13,13 +13,14 @@ using namespace std;
 
 //namespace eft::inner::tests {
 
-std::unique_ptr<RooWorkspace> CreateWS(const string& filename)
+RooWorkspace * CreateWS(const string& filename)
 {
 
     using RooStats::ModelConfig;
     using WS = RooWorkspace;
 
-    auto ws = make_unique<RooWorkspace>("ws_test");
+    auto ws = new RooWorkspace("ws_test");
+    //auto ws = make_unique<RooWorkspace>("ws_test");
 
     // from:
     // https://twiki.cern.ch/twiki/bin/view/RooStats/RooStatsTutorialsAugust2012
@@ -43,7 +44,7 @@ std::unique_ptr<RooWorkspace> CreateWS(const string& filename)
     EFT_PROF_DEBUG("import data");
     ws->import(*data);
 
-    ModelConfig mc("ModelConfig", ws.get());
+    ModelConfig mc("ModelConfig", ws);
     mc.SetPdf(*pdf);
     mc.SetParametersOfInterest(*ws->var("nsig"));
     mc.SetObservables(*ws->var("x"));
