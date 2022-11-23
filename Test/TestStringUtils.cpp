@@ -294,9 +294,14 @@ void TestToUpperCase() {
         ASSERT_EQUAL(s, "SIMPLEWITHLETTERS");
     }
     {
+        Sentence s {"with spaces here"};
+        SU::ToUpperCase(s);
+        ASSERT_EQUAL(s, "WITH SPACES HERE");
+    }
+    {
         Sentence s {"WITH SPACES HERE"};
         SU::ToUpperCase(s);
-        ASSERT_EQUAL(s, "with spaces here");
+        ASSERT_EQUAL(s, "WITH SPACES HERE");
     }
     {
         Sentence s {"   RANDOM    SPACES  "};
