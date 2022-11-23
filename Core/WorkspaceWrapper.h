@@ -116,11 +116,13 @@ public:
     bool LoadSnapshot(std::string name)  override;
 #endif // if 0 to screen
 private:
-    std::unique_ptr<RooWorkspace> ws_{};
-    std::unique_ptr<RooStats::ModelConfig> modelConfig_{};
-    std::unique_ptr<RooCategory> channelList_{};
-    mutable Categories categories_{};
+    std::unique_ptr<RooWorkspace>           ws_             {};
+    std::unique_ptr<RooStats::ModelConfig>  modelConfig_    {};
+    std::unique_ptr<RooCategory>            channelList_    {};
+    mutable Categories                      categories_     {};
 
+
+    // deprecated
     mutable std::string pdf_model_sufix_{};
     mutable std::string pdf_model_prefix_{};
     mutable std::string pdf_sb_sufix_{};

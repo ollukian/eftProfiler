@@ -73,7 +73,7 @@ void FitManager::DoGlobalFit()
     res->Print("v");
 }
 
-void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) {
+void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) {
     NpRankingStudyRes res;
     res.poi_name = settings.poi;
     res.statType = settings.statType;
@@ -386,7 +386,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     }
 }
 
-void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
+void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetUpGlobObs(settings.prePostFit);

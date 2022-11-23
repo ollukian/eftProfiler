@@ -4,7 +4,7 @@ set(tester_source_files
         TestCommandLineArguments.cpp
         TestPlotterUtils.cpp
         TestRooFit.cpp
-        TestStringUtils.cpp)
+        TestStringUtils.cpp TestWorkspaceWrapper.cpp)
 
 add_library(tester ${tester_source_files})
 #target_link_libraries(core modules)

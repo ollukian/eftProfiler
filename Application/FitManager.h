@@ -6,6 +6,8 @@
 #define EFTPROFILER_FITMANAGER_H
 
 #include <CommandLineArgs.h>
+
+#include <memory>
 #include "IFitManager.h"
 #include "FitManagerConfig.h"
 #include "WorkspaceWrapper.h"
@@ -28,8 +30,8 @@ public:
     void ProcessGetCommand(const FitManagerConfig& config);
 
     void DoGlobalFit() override;
-    void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) override;
-    void DoFitAllNpFloat(NpRankingStudySettings settings) override;
+    void ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) override;
+    void DoFitAllNpFloat(const NpRankingStudySettings& settings) override;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;
@@ -98,7 +100,7 @@ public:
 
     inline const std::vector<std::string>& GetListPOIs() const noexcept override;
 
-    inline IWorkspaceWrapper* ws() override { return ws_; }
+    inline IWorkspaceWrapper* ws() override { return ws_.get(); }
 private:
     DataClosure data_{};
     FuncClosure funcs_{};
@@ -108,7 +110,8 @@ private:
 
     std::vector<std::string> pois_;
 
-    IWorkspaceWrapper* ws_ = nullptr;
+    std::unique_ptr<IWorkspaceWrapper> ws_ {};
+    //IWorkspaceWrapper* ws_ = nullptr;
 
     mutable std::string np_names{};
     mutable std::string obs_names{};
@@ -188,7 +191,7 @@ inline void FitManager::ExtractCats() noexcept
 
 inline void FitManager::SetWsWrapper() noexcept
 {
-    ws_ = new WorkspaceWrapper();
+    ws_ = std::make_unique<WorkspaceWrapper>();
 }
 
 inline void FitManager::SetWS(std::string path, std::string name)

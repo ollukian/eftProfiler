@@ -49,10 +49,14 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
 }
 
 void Tester::InitSetTests() {
+    using namespace eft::inner::tests;
+
+
     EFT_PROF_DEBUG("Init set tests");
     EFT_RUN_TESTFILE(FileSystem);
     EFT_RUN_TESTFILE(StringUtils);
     EFT_RUN_TESTFILE(ColourUtils);
     EFT_RUN_TESTFILE(PlotterUtils);
+    EFT_RUN_TESTFILE(WorkSpaceWrapper);
     //EFT_RUN_TESTFILE(CommandLineArguments); // problems with vec<string> ==> argv convertion
 }

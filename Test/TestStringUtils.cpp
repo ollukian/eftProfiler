@@ -266,9 +266,57 @@ void TestToLowCase() {
         ASSERT_EQUAL(s, "with spaces here");
     }
     {
-        Sentence s {"With Spaces HERE"};
+        Sentence s {"   raNDom    spaces  "};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "   random    spaces  ");
+    }
+    {
+        Sentence s {"all low"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "all low");
+    }
+    {
+        Sentence s {""};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "");
+    }
+}
+
+void TestToUpperCase() {
+    {
+        Sentence s {"Simple"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "SIMPLE");
+    }
+    {
+        Sentence s {"SimPleWithLEtTERS"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "SIMPLEWITHLETTERS");
+    }
+    {
+        Sentence s {"WITH SPACES HERE"};
         SU::ToLowCase(s);
         ASSERT_EQUAL(s, "with spaces here");
+    }
+    {
+        Sentence s {"   RANDOM    SPACES  "};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "   random    spaces  ");
+    }
+    {
+        Sentence s {"all low"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "ALL LOW");
+    }
+    {
+        Sentence s {""};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "");
+    }
+    {
+        Sentence s {"ALL UP"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "ALL UP");
     }
 }
 
@@ -283,6 +331,7 @@ EFT_IMPLEMENT_TESTFILE(StringUtils) {
     EFT_ADD_TEST(TestReplace,       "StringUtils");
     EFT_ADD_TEST(TestSplit,         "StringUtils");
     EFT_ADD_TEST(TestToLowCase,     "StringUtils");
+    EFT_ADD_TEST(TestToUpperCase,   "StringUtils");
     // TestRunner tr;
     // RUN_TEST(tr, TestJoin);
     // RUN_TEST(tr, TestStrip);
