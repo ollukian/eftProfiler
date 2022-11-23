@@ -78,7 +78,9 @@ RooWorkspace* CreateWS(const string& filename)
                Gaussian::constraint_lumi(nuisance_lumi,lumi0[5.0,0,10],0.195) \
                ))");
 
-    ws->defineSet("obs","n"); //observables
+    ws->pdf("model")->expectedEvents(ws->set("obs"));
+
+    //ws->defineSet("obs",""); //observables
     ws->defineSet("poi","sigma"); //parameters of interest
     ws->defineSet("np","nuisance_b,nuisance_lumi,nuisance_acc"); //nuisance parameters
 
@@ -119,6 +121,8 @@ RooWorkspace* CreateWS(const string& filename)
     ws->import(data);
 
     RooFitResult* res = ws->pdf("model")->fitTo(data,
+                                                RooFit::Constrain(*ws->set("np")),
+                                                RooFit::GlobalObservables(*globalObs),
                                                 RooFit::Minos(ws->set("poi")),
                                                 RooFit::Save(),
                                                 RooFit::Hesse(false),
