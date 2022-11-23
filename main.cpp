@@ -145,8 +145,7 @@ int main(int argc, char* argv[]) {
         else if (postFit == "observed")
             settings.prePostFit = eft::stats::PrePostFit::OBSERVED;
         else {
-            EFT_PROF_CRITICAL("Prepostfit: {} is not known. Use: prefit, postfit, observed", postFit);
-            EFT_PROF_CRITICAL("use OBSERVED");
+            EFT_PROF_WARN("Prepostfit: is not set known. Use OBSERVED by default (options: prefit, postfit, observed");
             settings.prePostFit = eft::stats::PrePostFit::OBSERVED;
            // throw std::runtime_error("wrong --study_type flag option");
         }
@@ -239,7 +238,11 @@ int main(int argc, char* argv[]) {
         settings.eps                = config.eps;
         settings.retry = config.retry;
         settings.strategy = config.strategy;
-        EFT_PROF_CRITICAL("save res to: {}", settings.path_to_save_res);
+        if (config.res_path.empty())
+            EFT_PROF_WARN("save res to default (in the root folder)");
+        else
+            EFT_PROF_INFO("save res to: {}", config.res_path);
+
 
         auto worker_id = config.worker_id;
 

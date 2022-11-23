@@ -249,6 +249,29 @@ void TestSplit()
     }
 }
 
+void TestToLowCase() {
+    {
+        Sentence s {"Simple"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "simple");
+    }
+    {
+        Sentence s {"SimPleWithLEtTERS"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "simplewithletters");
+    }
+    {
+        Sentence s {"With Spaces HERE"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "with spaces here");
+    }
+    {
+        Sentence s {"With Spaces HERE"};
+        SU::ToLowCase(s);
+        ASSERT_EQUAL(s, "with spaces here");
+    }
+}
+
 // TODO: test tolowcase and touppercse
 
 EFT_IMPLEMENT_TESTFILE(StringUtils) {
@@ -259,6 +282,7 @@ EFT_IMPLEMENT_TESTFILE(StringUtils) {
     EFT_ADD_TEST(TestRemoveSuffix,  "StringUtils");
     EFT_ADD_TEST(TestReplace,       "StringUtils");
     EFT_ADD_TEST(TestSplit,         "StringUtils");
+    EFT_ADD_TEST(TestToLowCase,     "StringUtils");
     // TestRunner tr;
     // RUN_TEST(tr, TestJoin);
     // RUN_TEST(tr, TestStrip);

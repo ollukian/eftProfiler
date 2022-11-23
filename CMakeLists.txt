@@ -14,6 +14,7 @@ if(CMAKE_CXX_STANDARD LESS 17)
 endif()
 
 
+message("${PROJECT_NAME} version: ${${PROJECT_NAME}_VERSION}")
 message(STATUS C++ standard:    [${CMAKE_CXX_STANDARD}])
 message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
 
