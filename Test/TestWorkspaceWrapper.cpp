@@ -124,6 +124,7 @@ void TestWSreading() {
     // try to get Model Config
     ASSERT_NO_THROW(ws_->raw()->obj("ModelConfig"));
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
+    ws_->raw()->Print("v");
     ws_->GetPOIs()->Print();
     ws_->GetNp()->Print();
     ws_->GetObs()->Print();
