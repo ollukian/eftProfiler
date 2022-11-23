@@ -46,6 +46,14 @@ RooWorkspace* CreateWS(const string& filename)
     ws->Print("");
     //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
 
+    EFT_PROF_INFO("Create lumi block..");
+    ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
+    ws->factory( "lumi_kappa[1.045]" );
+    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
+    ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
+    ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
+    EFT_PROF_INFO("Create lumi block DONE");
+
 //    // lumi
 //    EFT_PROF_INFO("Create lumi block..");
 //    EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] try");
