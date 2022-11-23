@@ -23,20 +23,24 @@ std::unique_ptr<RooWorkspace> CreateWS(const string& filename)
 
     // from:
     // https://twiki.cern.ch/twiki/bin/view/RooStats/RooStatsTutorialsAugust2012
+    EFT_PROF_DEBUG("Initiate factories...");
     ws->factory("Exponential:bkg_pdf(x[0,10], a[-0.5,-1000,0])");
     ws->factory("Gaussian:sig_pdf(x, mass[2], sigma[0.5])");
     ws->factory("SUM:model(nsig[0,1000]*sig_pdf, nbkg[0,1000000]*bkg_pdf)");  // for extended model
 
+    EFT_PROF_DEBUG("create pdf and variable");
     RooAbsPdf* pdf = ws->pdf("model");
     RooRealVar* x = ws->var("x");  // the observable
 
     // generate the data (nsig = 30, nbkg=1000)
+    EFT_PROF_DEBUG("generate the data (nsig = 30, nbkg=1000)");
     ws->var("nsig")->setVal(30);
     ws->var("nbkg")->setVal(1000);
     // use fixed random numbers for reproducibility
     RooRandom::randomGenerator()->SetSeed(111);
     RooDataSet* data = pdf->generate( *x);  // will generate accordint to total S+B events
     data->SetName("test_data");
+    EFT_PROF_DEBUG("import data");
     ws->import(*data);
 
     ModelConfig mc("ModelConfig", ws.get());
@@ -50,12 +54,20 @@ std::unique_ptr<RooWorkspace> CreateWS(const string& filename)
 
     ws->import(mc);
     ws->writeToFile(filename.c_str(), true);
+    EFT_PROF_DEBUG("ws is written to: {}", filename);
     return ws;
    // auto data = ws.
 }
 
 bool DeleteWS(const std::string& path) {
     return std::filesystem::remove(path);
+}
+
+void Finalise(const std::string& filename) {
+    if ( ! DeleteWS(filename) ) {
+        EFT_PROF_CRITICAL("cannot delete ws: {}", filename);
+        throw std::runtime_error("deleting ws is not possible");
+    }
 }
 
 void TestWSreading() {
@@ -69,15 +81,15 @@ void TestWSreading() {
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
+    eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
 
+
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
 
-    if ( ! DeleteWS(filename) ) {
-        EFT_PROF_CRITICAL("cannot delete ws: {}", filename);
-        throw std::runtime_error("deleting ws is not possible");
-    }
+    Finalise(filename);
+    eft::stats::Logger::SetSilent();
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
 
