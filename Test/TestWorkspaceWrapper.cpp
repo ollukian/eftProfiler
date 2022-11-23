@@ -74,7 +74,7 @@ void Finalise(const std::string& filename) {
 }
 
 void TestWSreading() {
-    const string path {"__temp_ws_for_eftTests"};
+    const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = std::make_unique<WorkspaceWrapper>();
     ASSERT(ws_.get());
@@ -101,7 +101,7 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
 
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
 
-    Finalise(filename);
+    //Finalise(filename);
     eft::stats::Logger::SetSilent();
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
