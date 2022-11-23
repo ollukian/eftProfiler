@@ -7,8 +7,6 @@
 
 // Same as in the eftModules project
 
-#include <memory>
-
 #ifdef _MSVC
 #pragma warning(push, 0)
 #endif
@@ -18,6 +16,16 @@
 #pragma warning(pop)
 #endif
 
+#include <memory>
+
+#include <set>
+#include <map>
+#include <vector>
+#include <string>
+#include <deque>
+#include <list>
+
+
 namespace eft::stats {
 
     class Logger {
@@ -25,8 +33,10 @@ namespace eft::stats {
         static void Init(size_t worker_id = 0);
 
         static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept { return logger_; }
-        static inline void SetSilent() noexcept { logger_->set_level(spdlog::level::off); }
-        static inline void SetActive() noexcept { logger_->set_level(spdlog::level::trace); }
+        static inline void SetSilent()       noexcept { logger_->set_level(spdlog::level::off); }
+        static inline void SetFullPrinting() noexcept { logger_->set_level(spdlog::level::trace); }
+        static inline void SetRelease()      noexcept { logger_->set_level(spdlog::level::info); }
+        static inline void SetDebug()        noexcept { logger_->set_level(spdlog::level::debug); }
         static inline void SetLevel(spdlog::level::level_enum level) noexcept { logger_->set_level(level); }
 
     private:
@@ -40,6 +50,77 @@ namespace eft::stats {
 #define EFT_PROF_ERROR(...)      ::eft::stats::Logger::GetLogger()->error(__VA_ARGS__)
 #define EFT_PROF_CRITICAL(...)   ::eft::stats::Logger::GetLogger()->critical(__VA_ARGS__)
 #define EFT_PROF_DEBUG(...)      ::eft::stats::Logger::GetLogger()->debug(__VA_ARGS__)
+
+
+template<typename OStream, class T>
+OStream& operator << (OStream& os, const std::vector<T>& vec) {
+    os << '{';
+    bool first = true;
+    for (const auto& x : vec) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << x;
+    }
+    return os << '}';
+}
+
+template<typename OStream, class T>
+OStream& operator << (OStream& os, const std::deque<T>& vec) {
+    os << '{';
+    bool first = true;
+    for (const auto& x : vec) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << x;
+    }
+    return os << '}';
+}
+
+template<typename OStream, class T>
+OStream& operator << (OStream& os, const std::list<T>& vec) {
+    os << '{';
+    bool first = true;
+    for (const auto& x : vec) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << x;
+    }
+    return os << '}';
+}
+
+template<typename OStream, class T>
+OStream& operator << (OStream& os, const std::set<T>& s) {
+    os << '{';
+    bool first = true;
+    for (const auto& x : s) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << x;
+    }
+    return os << '}';
+}
+
+template<typename OStream, class K, class V>
+OStream& operator << (OStream& os, const std::map<K, V>& m) {
+    os << '{';
+    bool first = true;
+    for (const auto& kv : m) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << kv.first << ": " << kv.second;
+    }
+    return os << '}';
+}
 
 
 #endif //EFTPROFILER_LOGGER_H
