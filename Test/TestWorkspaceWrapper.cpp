@@ -6,6 +6,12 @@
 #include "../Utils/ColourUtils.h"
 #include "../Core/WorkspaceWrapper.h"
 #include "RooRandom.h"
+#include "RooFitResult.h"
+#include "RooFormulaVar.h"
+#include "RooPlot.h"
+#include "TLine.h"
+#include "RooProfileLL.h"
+#include "TCanvas.h"
 
 
 using namespace eft::utils;
@@ -14,7 +20,7 @@ using namespace std;
 
 //namespace eft::inner::tests {
 
-RooWorkspace * CreateWS(const string& filename)
+RooWorkspace* CreateWS(const string& filename)
 {
 
     using RooStats::ModelConfig;
@@ -70,13 +76,42 @@ RooWorkspace * CreateWS(const string& filename)
     ws->defineSet("poi","sigma"); //parameters of interest
     ws->defineSet("np","nuisance_b,nuisance_lumi,nuisance_acc"); //nuisance parameters
 
-    auto pdf = ws->pdf("model");
-    auto n = ws->var("n");
-    RooDataSet* data = pdf->generate(*n);  // will generate accordint to total S+B events
-    data->SetName("test_data");
-    //EFT_PROF_DEBUG("import data");
-    ws->import(*data);
+//    auto pdf = ws->pdf("model");
+//    auto n = ws->var("n");
+//    RooDataSet* data = pdf->generate(*n);  // will generate accordint to total S+B events
+//    data->SetName("test_data");
+//    //EFT_PROF_DEBUG("import data");
+//    ws->import(*data);
 
+    RooDataSet data("data", "data", *ws->set("obs"));
+    data.add(*ws->set("obs")); //actually add the data
+
+    RooFitResult* res = ws->pdf("model")->fitTo(data,
+                                                RooFit::Minos(ws->set("poi")),
+                                                RooFit::Save(),
+                                                RooFit::Hesse(false));
+
+    if(res->status()==0) {
+        ws->var("sigma")->Print();
+    } else {
+        cout << "Likelihood maximization failed" << endl;
+    }
+
+    RooAbsReal* nll = ws->pdf("model")->createNLL(data);
+    auto pll = dynamic_cast<RooProfileLL*>(nll->createProfile(*ws->set("poi")));
+
+    RooFormulaVar p_mu("p_mu","p_{#mu} using asymptotic formulae","TMath::Prob(2*@0,1.)",RooArgList(*pll));
+
+    TCanvas c("c", "c", 1200, 800);
+
+    RooPlot* frame = ws->var("sigma")->frame(RooFit::Range(0,30));
+    p_mu.plotOn(frame,RooFit::LineColor(kGreen));
+    frame->Draw();
+
+    TLine l;
+    l.SetLineStyle(2);
+    l.DrawLine(0,0.05,30,0.05);
+    c.SaveAs("test_draw.png");
     //
     mc.SetNuisanceParameters("nuisance_b,nuisance_lumi,nuisance_acc");
     mc.SetPdf("model");
