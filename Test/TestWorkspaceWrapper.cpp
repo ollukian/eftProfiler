@@ -70,21 +70,42 @@ RooWorkspace* CreateWS(const string& filename)
 //                "Gaussian::constraint_lumi(nuisance_lumi,5.0,0.195)"
 //                "))");
 
+    ws->factory("expr::mean('sigma*nuisance_lumi*nuisance_acc+nuisance_b', \
+                  sigma[0,100], nuisance_lumi[5.0,0.0,10.0],nuisance_acc[0.71,0,1],nuisance_b[41.7,0,100])");
 
-    ws->factory("Gaussian::constraint_b(nuisance_b[41.7,0,100],41.7,4.6)"); //constrained b to be positive - "truncated gaussian"
-    ws->factory("Gaussian::constraint_acc(nuisance_acc[0.71,0,1],0.71,0.09)"); //constrained acc in range 0-1
-    ws->factory("Gaussian::constraint_lumi(nuisance_lumi[5.0,0.0,10.0],5.0,0.195)"); //constrained lumi from 0 to 10.0
-    ws->factory("prod::s(sigma[0,100],nuisance_lumi,nuisance_acc)"); //constructs a function
-    ws->factory("sum::mean(s,nuisance_b)"); //another function
-    ws->factory("Poisson::pois(n[61,0,100],mean)"); //a pdf (special function)
-    ws->factory("PROD::model(pois,constraint_b,constraint_lumi,constraint_acc)"); //another pdf
+    ws->factory("SUM::model(mean*PROD::constraints(Gaussian::constraint_b(nuisance_b,b0[41.7,0,100],4.6), \
+               Gaussian::constraint_acc(nuisance_acc,acc0[0.71,0,1],0.09), \
+               Gaussian::constraint_lumi(nuisance_lumi,lumi0[5.0,0,10],0.195) \
+               ))");
 
-    ws->var("n")->setVal(65);
-
-    //define RooArgSets for convenience
     ws->defineSet("obs","n"); //observables
     ws->defineSet("poi","sigma"); //parameters of interest
     ws->defineSet("np","nuisance_b,nuisance_lumi,nuisance_acc"); //nuisance parameters
+
+
+    RooArgSet* globalObs = ws->pdf("model")
+            ->getParameters(RooArgSet(RooArgSet(
+                                                *ws->set("obs"),
+                                                *ws->set("np")),
+                                                *ws->set("poi")
+                                                )
+                                                );
+
+
+//    ws->factory("Gaussian::constraint_b(nuisance_b[41.7,0,100],41.7,4.6)"); //constrained b to be positive - "truncated gaussian"
+//    ws->factory("Gaussian::constraint_acc(nuisance_acc[0.71,0,1],0.71,0.09)"); //constrained acc in range 0-1
+//    ws->factory("Gaussian::constraint_lumi(nuisance_lumi[5.0,0.0,10.0],5.0,0.195)"); //constrained lumi from 0 to 10.0
+//    ws->factory("prod::s(sigma[0,100],nuisance_lumi,nuisance_acc)"); //constructs a function
+//    ws->factory("sum::mean(s,nuisance_b)"); //another function
+//    ws->factory("Poisson::pois(n[61,0,100],mean)"); //a pdf (special function)
+//    ws->factory("PROD::model(pois,constraint_b,constraint_lumi,constraint_acc)"); //another pdf
+
+    //ws->var("n")->setVal(65);
+
+    //define RooArgSets for convenience
+    //ws->defineSet("obs","n"); //observables
+    //ws->defineSet("poi","sigma"); //parameters of interest
+    //ws->defineSet("np","nuisance_b,nuisance_lumi,nuisance_acc"); //nuisance parameters
 
 //    auto pdf = ws->pdf("model");
 //    auto n = ws->var("n");
@@ -129,18 +150,19 @@ RooWorkspace* CreateWS(const string& filename)
     EFT_PROF_INFO("after setting up the model, pdf [model]:");
     ws->pdf("model")->Print("");
     EFT_PROF_INFO("after setting up the model, poi [sigma]:");
-    ws->var("sigma")->Print("v");
+    ws->var("sigma")->Print("");
     EFT_PROF_INFO("after setting up the model, obs [n]:");
-    ws->var("n")->Print("v");
+    ws->var("n")->Print("");
     EFT_PROF_INFO("after setting up the model, nps [nuisance_b,nuisance_lumi,nuisance_acc]:");
-    ws->var("nuisance_b")->Print("v");
-    ws->var("nuisance_lumi")->Print("v");
-    ws->var("nuisance_acc")->Print("v");
+    ws->var("nuisance_b")->Print("");
+    ws->var("nuisance_lumi")->Print("");
+    ws->var("nuisance_acc")->Print("");
 
     mc.SetPdf(*ws->pdf("model"));
     mc.SetParametersOfInterest(*ws->var("sigma"));
     mc.SetObservables(*ws->var("n"));
     mc.SetNuisanceParameters("nuisance_b,nuisance_lumi,nuisance_acc");
+    mc.SetGlobalObservables(*globalObs);
     //mc.SetPdf("model");
     //mc.SetObservables("n");
     //mc.SetParametersOfInterest("sigma");
