@@ -61,13 +61,23 @@ RooWorkspace* CreateWS(const string& filename)
 
     // from:
     // https://twiki.cern.ch/twiki/bin/view/Main/LearningRoostats
-    ws->factory("Gaussian::constraint_b(nuisance_b[41.7,0,100],41.7,4.6)"); //constrained b to be positive - "truncated gaussian"
-    ws->factory("Gaussian::constraint_acc(nuisance_acc[0.71,0,1],0.71,0.09)"); //constrained acc in range 0-1
-    ws->factory("Gaussian::constraint_lumi(nuisance_lumi[5.0,0.0,10.0],5.0,0.195)"); //constrained lumi from 0 to 10.0
-    ws->factory("prod::s(sigma[0,100],nuisance_lumi,nuisance_acc)"); //constructs a function
-    ws->factory("sum::mean(s,nuisance_b)"); //another function
-    ws->factory("Poisson::pois(n[61,0,100],mean)"); //a pdf (special function)
-    ws->factory("PROD::model(pois,constraint_b,constraint_lumi,constraint_acc)"); //another pdf
+
+    ws->factory("expr::mean('sigma*nuisance_lumi*nuisance_acc+nuisance_b',"
+              "sigma[0,100], nuisance_lumi[5.0,0.0,10.0],nuisance_acc[0.71,0,1],nuisance_b[41.7,0,100])");
+
+    ws->factory("SUM::model(mean*PROD::constraints(Gaussian::constraint_b(nuisance_b,41.7,4.6),"
+                "Gaussian::constraint_acc(nuisance_acc,0.71,0.09),"
+                "Gaussian::constraint_lumi(nuisance_lumi,5.0,0.195)"
+                "))");
+
+
+    //ws->factory("Gaussian::constraint_b(nuisance_b[41.7,0,100],41.7,4.6)"); //constrained b to be positive - "truncated gaussian"
+    //ws->factory("Gaussian::constraint_acc(nuisance_acc[0.71,0,1],0.71,0.09)"); //constrained acc in range 0-1
+    //ws->factory("Gaussian::constraint_lumi(nuisance_lumi[5.0,0.0,10.0],5.0,0.195)"); //constrained lumi from 0 to 10.0
+    //ws->factory("prod::s(sigma[0,100],nuisance_lumi,nuisance_acc)"); //constructs a function
+    //ws->factory("sum::mean(s,nuisance_b)"); //another function
+    //ws->factory("Poisson::pois(n[61,0,100],mean)"); //a pdf (special function)
+    //ws->factory("PROD::model(pois,constraint_b,constraint_lumi,constraint_acc)"); //another pdf
 
     ws->var("n")->setVal(65);
 
@@ -161,6 +171,7 @@ void Finalise() {
 }
 
 void TestWSreading() {
+    eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = std::make_shared<WorkspaceWrapper>();
@@ -187,6 +198,7 @@ void TestWSreading() {
     ws_->GetCombinedPdf("model");
     EFT_PROF_INFO("data:");
     ws_->GetData("data");
+
 }
 
 void Initiate() {
