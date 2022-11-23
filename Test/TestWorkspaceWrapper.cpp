@@ -55,6 +55,8 @@ std::unique_ptr<RooWorkspace> CreateWS(const string& filename)
     ws->import(mc);
     ws->writeToFile(filename.c_str(), true);
     EFT_PROF_DEBUG("ws is written to: {}", filename);
+    EFT_PROF_DEBUG("ls -tlhr");
+    std::system("ls -ltrh");
     return ws;
    // auto data = ws.
 }
