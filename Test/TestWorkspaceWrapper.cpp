@@ -126,6 +126,17 @@ RooWorkspace* CreateWS(const string& filename)
     c.SaveAs("test_draw.png");
     //
 
+    EFT_PROF_INFO("after setting up the model, pdf [model]:");
+    ws->pdf("model")->Print("v");
+    EFT_PROF_INFO("after setting up the model, poi [sigma]:");
+    ws->var("sigma")->Print("v");
+    EFT_PROF_INFO("after setting up the model, obs [n]:");
+    ws->var("n")->Print("v");
+    EFT_PROF_INFO("after setting up the model, nps [nuisance_b,nuisance_lumi,nuisance_acc]:");
+    ws->var("nuisance_b")->Print("v");
+    ws->var("nuisance_lumi")->Print("v");
+    ws->var("nuisance_acc")->Print("v");
+
     mc.SetPdf(*ws->pdf("model"));
     mc.SetParametersOfInterest(*ws->var("sigma"));
     mc.SetObservables(*ws->var("n"));
@@ -150,7 +161,7 @@ RooWorkspace* CreateWS(const string& filename)
     _mConfig->SetGlobalObservables(*_combWS->set("globalObservables"));
     */
 
-
+    EFT_PROF_INFO("import mc", true);
     ws->import(mc);
     ws->writeToFile(filename.c_str(), true);
     EFT_PROF_DEBUG("ws is written to: {}", filename);
