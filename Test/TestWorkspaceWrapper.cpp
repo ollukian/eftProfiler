@@ -116,9 +116,9 @@ RooWorkspace* CreateWS(const string& filename)
     c.SaveAs("test_draw.png");
     //
     mc.SetNuisanceParameters("nuisance_b,nuisance_lumi,nuisance_acc");
-    mc.SetPdf("model");
-    mc.SetObservables("n");
-    mc.SetParametersOfInterest("sigma");
+    //mc.SetPdf("model");
+    //mc.SetObservables("n");
+    //mc.SetParametersOfInterest("sigma");
     //auto obs = ws->var("n");
     //auto data_ = ws->pdf("model")->generate(*obs, 1000);
 
@@ -170,6 +170,7 @@ void TestWSreading() {
     // try to get Model Config
     ASSERT_NO_THROW(ws_->raw()->obj("ModelConfig"));
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
+    EFT_PROF_INFO("model config is set");
     ws_->raw()->Print("v");
     EFT_PROF_INFO("pois:");
     ws_->GetPOIs()->Print();
