@@ -104,7 +104,7 @@ RooWorkspace* CreateWS(const string& filename)
 
     TCanvas c("c", "c", 1200, 800);
 
-    RooPlot* frame = ws->var("sigma")->frame(RooFit::Range(0,30));
+    RooPlot* frame = ws->var("sigma")->frame(RooFit::Range(0.f,30.f));
     p_mu.plotOn(frame,RooFit::LineColor(kGreen));
     frame->Draw();
 
