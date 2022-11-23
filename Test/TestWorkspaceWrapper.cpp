@@ -92,9 +92,15 @@ RooWorkspace* CreateWS(const string& filename)
     ws->Print("");
     // (s + b) model
     EFT_PROF_INFO("Create (s+b) model");
+    EFT_PROF_INFO("PROD::model_sig(S, pdf_sig)");
     ws->factory("PROD::model_sig(S, pdf_sig)");
+
+    EFT_PROF_INFO("PROD::model_bkg(n_bkg[10, 1000], pdf_bkg)");
     ws->factory("PROD::model_bkg(n_bkg[10, 1000], pdf_bkg)");
+
+    EFT_PROF_INFO("SUM::model_s_b(model_sig, model_bkg)");
     ws->factory("SUM::model_s_b(model_sig, model_bkg)");
+
     EFT_PROF_INFO("Create (s+b) model DONE");
     ws->Print("");
 
