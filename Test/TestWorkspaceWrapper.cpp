@@ -85,6 +85,7 @@ RooWorkspace* CreateWS(const string& filename)
 
     RooDataSet data("data", "data", *ws->set("obs"));
     data.add(*ws->set("obs")); //actually add the data
+    ws->import(data);
 
     RooFitResult* res = ws->pdf("model")->fitTo(data,
                                                 RooFit::Minos(ws->set("poi")),
@@ -118,6 +119,9 @@ RooWorkspace* CreateWS(const string& filename)
     mc.SetObservables("n");
     mc.SetParametersOfInterest("sigma");
     mc.SetProtoData("data");
+
+    //auto obs = ws->var("n");
+    //auto data_ = ws->pdf("model")->generate(*obs, 1000);
 
     // RooDataSet data("data", "data", *ws->set("obs"));
     // data.add(*ws->set("obs")); //actually add the data
