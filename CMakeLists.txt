@@ -37,7 +37,6 @@ message(STATUS "Compile in the ${CMAKE_BUILD_TYPE} mode")
 #########################################################
 # 3rd-party libraries                                   #
 #########################################################
-# bind root packages - it's required only to open TFiles with TH1D to extract cross-section
 list(APPEND CMAKE_PREFIX_PATH $ENV{ROOTSYS})
 find_package( ROOT REQUIRED COMPONENTS RIO Hist RooFit RooStats RooFitCore)
 include(${ROOT_USE_FILE})
