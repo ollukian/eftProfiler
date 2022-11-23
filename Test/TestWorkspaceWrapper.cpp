@@ -71,10 +71,10 @@ RooWorkspace * CreateWS(const string& filename)
     ws->defineSet("np","nuisance_b,nuisance_lumi,nuisance_acc"); //nuisance parameters
 
     //
-    mc.SetNuisanceParameters("np");
+    mc.SetNuisanceParameters("nuisance_b,nuisance_lumi,nuisance_acc");
     mc.SetPdf("model");
-    mc.SetObservables("obs");
-    mc.SetParametersOfInterest("poi");
+    mc.SetObservables("n");
+    mc.SetParametersOfInterest("sigma");
 
     RooDataSet data("data", "data", *ws->set("obs"));
     data.add(*ws->set("obs")); //actually add the data
