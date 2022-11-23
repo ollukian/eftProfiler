@@ -56,8 +56,6 @@ RooWorkspace * CreateWS(const string& filename)
     ws->import(mc);
     ws->writeToFile(filename.c_str(), true);
     EFT_PROF_DEBUG("ws is written to: {}", filename);
-    EFT_PROF_DEBUG("ls -tlhr");
-    std::system("ls -ltrh");
     return ws;
    // auto data = ws.
 }
@@ -66,9 +64,10 @@ bool DeleteWS(const std::string& path) {
     return std::filesystem::remove(path);
 }
 
-void Finalise(const std::string& filename) {
-    if ( ! DeleteWS(filename) ) {
-        EFT_PROF_CRITICAL("cannot delete ws: {}", filename);
+void Finalise() {
+    const string path {"__temp_ws_for_eftTests.root"};
+    if ( ! DeleteWS(path) ) {
+        EFT_PROF_CRITICAL("cannot delete ws: {}", path);
         throw std::runtime_error("deleting ws is not possible");
     }
 }
@@ -78,8 +77,6 @@ void TestWSreading() {
     const string ws_name {"ws_test"};
     auto ws_ = std::make_unique<WorkspaceWrapper>();
     ASSERT(ws_.get());
-
-    std::system("ls -lthr");
     ASSERT(std::filesystem::exists(path));
 
     ASSERT_NO_THROW(ws_->SetWS(path, ws_name));
@@ -94,12 +91,10 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
-    EFT_PROF_DEBUG("after createws({})", filename);
-    std::system("ls -lthr");
-    EFT_PROF_DEBUG("try launching: {}", "TestWSreading");
     TestWSreading();
 
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
+    EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
 
     //Finalise(filename);
     eft::stats::Logger::SetSilent();
