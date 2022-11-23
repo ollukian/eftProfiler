@@ -83,7 +83,7 @@ void TestWSreading() {
     ASSERT(std::filesystem::exists(path));
 
     ASSERT_NO_THROW(ws_->SetWS(path, ws_name));
-    ASSERT(ws_->SetWS("__temp_ws_for_eftTests", "ws_test"));
+    ASSERT(ws_->SetWS(path, ws_name));
     ASSERT_NO_THROW(ws_->raw()->var("nsig")->getVal());
     ASSERT_NO_THROW(ws_->raw()->var("nbkg")->getVal());
     ASSERT_EQUAL(ws_->raw()->var("nsig")->getVal(), 30);
