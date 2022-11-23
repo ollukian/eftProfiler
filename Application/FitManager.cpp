@@ -908,9 +908,9 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
         EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
         for (const auto& arg : *argSet) {
             //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
-            cout << arg->GetName() << endl;
-            return;
+            cout << arg->GetTitle() << endl;
         }
+        return;
     }
     else {
         EFT_PROF_CRITICAL("Argset for demand [{}] is empty", get_demand);
