@@ -46,25 +46,25 @@ RooWorkspace* CreateWS(const string& filename)
     ws->Print("");
     //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
 
-    // lumi
-    EFT_PROF_INFO("Create lumi block..");
-    EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] try");
-    ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
-    //EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] DONE:"); ws->Print("");
-
-    EFT_PROF_INFO("lumi_kappa[1.045] try");
-    ws->factory( "lumi_kappa[1.045]" );
-
-    EFT_PROF_INFO("cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5]) try");
-    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
-
-    EFT_PROF_INFO("PROD::lumi(lumi_nom,alpha_lumi) try");
-    ws->factory( "PROD::lumi(lumi_nom,alpha_lumi)" );
-
-    EFT_PROF_INFO("Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1) try");
-    ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
-    EFT_PROF_INFO("Create lumi block DONE");
-    ws->Print("");
+//    // lumi
+//    EFT_PROF_INFO("Create lumi block..");
+//    EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] try");
+//    ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
+//    //EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] DONE:"); ws->Print("");
+//
+//    EFT_PROF_INFO("lumi_kappa[1.045] try");
+//    ws->factory( "lumi_kappa[1.045]" );
+//
+//    EFT_PROF_INFO("cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5]) try");
+//    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
+//
+//    EFT_PROF_INFO("PROD::lumi(lumi_nom,alpha_lumi) try");
+//    ws->factory( "PROD::lumi(lumi_nom,alpha_lumi)" );
+//
+//    EFT_PROF_INFO("Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1) try");
+//    ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
+//    EFT_PROF_INFO("Create lumi block DONE");
+//    ws->Print("");
 
     // efficience
     EFT_PROF_INFO("Create efficiency block..");
