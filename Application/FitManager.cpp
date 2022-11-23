@@ -7,10 +7,11 @@
 #include "../Fitter/Fitter.h"
 #include "../Utils/FitUtils.h"
 #include "../Utils/StringUtils.h"
-
 #include "../Core/Logger.h"
+#include "../Test/test_runner.h"
 
 #include "../Vendors/spdlog/fmt/fmt.h"
+#include "spdlog/fmt/ostr.h"
 
 #include "NpRankingStudyRes.h"
 #include "Ranking/OneNpManager.h"
@@ -678,7 +679,6 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_size);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_font);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dy);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, get);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
@@ -717,6 +717,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_VEC_OPTION(commandLineArgs, config, np_names);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text_ndc);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, get);
 #undef EFT_ADD_VEC_OPTION
 
 
@@ -849,7 +850,18 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
 
 void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     EFT_PROF_DEBUG("Process get command: {}", config.get);
-    string get_demand = config.get;
+    ASSERT_NOT(config.get.empty());
+    string get_demand = config.get[0];
+    bool get_count = false;
+    if (config.get.size() > 1) {
+        string count_candidate = config.get[1];
+        eft::StringUtils::Trim(count_candidate);
+        eft::StringUtils::ToLowCase(count_candidate);
+        if (count_candidate == "count") {
+            EFT_PROF_DEBUG("In the count mode");
+            get_count = true;
+        }
+    }
     eft::StringUtils::Trim(get_demand);
     eft::StringUtils::ToLowCase(get_demand);
     EFT_PROF_DEBUG("after trimming and lowering: {}", get_demand);
@@ -884,6 +896,11 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
 
 
     if (argSet) {
+        if (get_count) {
+            cout << argSet->size() << endl;
+            return;
+        }
+
         EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
         for (const auto& arg : *argSet) {
             //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
