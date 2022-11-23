@@ -866,6 +866,10 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
     eft::StringUtils::ToLowCase(get_demand);
     EFT_PROF_DEBUG("after trimming and lowering: {}", get_demand);
     if (get_demand == "poi") {
+        if (get_count) {
+            cout << pois_.size() << endl;
+            return;
+        }
         EFT_PROF_DEBUG("dispatch to POI, there are {} available", pois_.size());
         for (const auto& poi : pois_) {
             std::cout << poi << std::endl;
