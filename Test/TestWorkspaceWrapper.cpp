@@ -12,6 +12,7 @@
 #include "TLine.h"
 #include "RooProfileLL.h"
 #include "TCanvas.h"
+#include "RooGaussian.h"
 
 
 using namespace eft::utils;
@@ -28,6 +29,89 @@ RooWorkspace* CreateWS(const string& filename)
 
     auto ws = new RooWorkspace("ws_test");
     //auto ws = make_unique<RooWorkspace>("ws_test");
+    //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
+    //RooRealVar mH("mH", "mH", 125.09);
+    //RooRealVar width("width", "width", 2);
+
+
+    //RooGaussian pdf_bkg("bkg_pdf", "bkg_pdf", myy, mH, width);
+
+
+    EFT_PROF_INFO("Create pdfs for sig and bkg...");
+    ws->factory("Gaussian::pdf_sig(myy[125, 105, 160], mH[125.09], width[2])");
+    ws->factory("Exponential::pdf_bkg(myy, alpha[-0.01,-10,0])");
+    EFT_PROF_INFO("Create pdfs for sig and bkg DONE");
+    ws->Print("");
+    //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
+
+    // lumi
+    EFT_PROF_INFO("Create lumi block..");
+    ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
+    ws->factory( "lumi_kappa[1.045]" );
+    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
+    ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
+    ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
+    EFT_PROF_INFO("Create lumi block DONE");
+    ws->Print("");
+
+    // efficience
+    EFT_PROF_INFO("Create efficiency block..");
+    ws->factory( "efficiency_nom[0.1, 0.05, 0.15]" );
+    ws->factory( "efficiency_kappa[1.10]" );
+    ws->factory( "cexpr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
+    ws->factory( "prod::efficiency(efficiency_nom,alpha_efficiency)" );
+    ws->factory( "Gaussian::constr_efficiency(beta_efficiency,glob_efficiency[0,-5,5],1)" );
+    EFT_PROF_INFO("Create efficiency block DONE");
+    ws->Print("");
+
+
+    // signal
+    EFT_PROF_INFO("Create signal term");
+    ws->factory("expr::S('mu*s_nom*lumi)',mu[1,-5,5],s_nom[50])") ;
+    EFT_PROF_INFO("Create signal term DONE");
+    ws->Print("");
+    // (s + b) model
+    EFT_PROF_INFO("Create (s+b) model");
+    ws->factory("PROD::model_sig(S, pdf_sig)");
+    ws->factory("PROD::model_bkg(n_bkg[10, 1000], pdf_bkg)");
+    ws->factory("SUM::model_s_b(model_sig, model_bkg)");
+    EFT_PROF_INFO("Create (s+b) model DONE");
+    ws->Print("");
+
+    EFT_PROF_INFO("Create full model");
+    // full model: (s+b) * constrains
+    ws->factory("PROD::model(model_s_b, constr_lumi, constr_efficiency)");
+    EFT_PROF_INFO("Create full model done");
+    ws->Print("");
+
+    EFT_PROF_INFO("write to file");
+    ws->writeToFile(filename.c_str(), true);
+    EFT_PROF_INFO("DONE");
+    return ws;
+
+
+    //ws->factory("PROD::model_s_b_lumi(model_s_b, constr_lumi))");
+    //ws->factory("PROD::sig(S)")
+    //ws->factory("exper::lumi(lumi_nominal*nuissance_lumi)")
+
+    /*
+     *  ws->factory("expr::mean('sigma*nuisance_lumi*nuisance_acc+nuisance_b', \
+                  sigma[0,100], nuisance_lumi[5.0,0.0,10.0],nuisance_acc[0.71,0,1],nuisance_b[41.7,0,100])");
+
+    ws->factory("SUM::model(mean*PROD::constraints(Gaussian::constraint_b(nuisance_b,b0[41.7,0,100],4.6), \
+               Gaussian::constraint_acc(nuisance_acc,acc0[0.71,0,1],0.09), \
+               Gaussian::constraint_lumi(nuisance_lumi,lumi0[5.0,0,10],0.195) \
+               ))");
+     *
+     *
+     * */
+
+    RooRealVar n_sig("n_sig", "n_sig", 10, -100, 100);
+    RooRealVar n_bkg("n_bkg", "n_bkg", 10, -100, 100);
+    RooRealVar mu("mu", "mu", 1, -5, 5);
+
+    ws->factory("expr::mean('sigma*nuisance_lumi*nuisance_acc+nuisance_b',"
+             "sigma[0,100], nuisance_lumi[5.0,0.0,10.0],nuisance_acc[0.71,0,1],nuisance_b[41.7,0,100])");
 
     // from:
     // https://twiki.cern.ch/twiki/bin/view/RooStats/RooStatsTutorialsAugust2012
@@ -69,6 +153,8 @@ RooWorkspace* CreateWS(const string& filename)
 //                "Gaussian::constraint_acc(nuisance_acc,0.71,0.09),"
 //                "Gaussian::constraint_lumi(nuisance_lumi,5.0,0.195)"
 //                "))");
+
+
 
     ws->factory("expr::mean('sigma*nuisance_lumi*nuisance_acc+nuisance_b', \
                   sigma[0,100], nuisance_lumi[5.0,0.0,10.0],nuisance_acc[0.71,0,1],nuisance_b[41.7,0,100])");
