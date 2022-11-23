@@ -306,7 +306,7 @@ void TestToUpperCase() {
     {
         Sentence s {"   RANDOM    SPACES  "};
         SU::ToUpperCase(s);
-        ASSERT_EQUAL(s, "   random    spaces  ");
+        ASSERT_EQUAL(s, "   RANDOM    SPACES  ");
     }
     {
         Sentence s {"all low"};
