@@ -140,10 +140,10 @@ inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
 }
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
-    //if (! std::filesystem::exists(path) ) {
-    //    EFT_PROF_CRITICAL("Ws under {} doesn't exist", path);
-    //    return false;
-    //}
+    if (! std::filesystem::exists(path) ) {
+        EFT_PROF_CRITICAL("Ws under [{}] doesn't exist", path);
+        return false;
+    }
 
     TFile* f_ = TFile::Open(std::move(path).c_str());
     if (f_) {

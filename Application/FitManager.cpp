@@ -577,7 +577,7 @@ void FitManager::Init(FitManagerConfig&& config)
         throw std::logic_error("no model_config set");
     }
 
-    EFT_PROF_INFO("[FitManager] init from config: path to ws: {}, name: {},model_config: {}",
+    EFT_PROF_INFO("[FitManager] init from config: path to ws: [{}], name: [{}], model_config: [{}]",
                   config.ws_path, config.ws_name, config.model_config);
     SetWsWrapper();
     SetWS(std::move(config.ws_path),
