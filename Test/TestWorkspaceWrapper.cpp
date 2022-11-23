@@ -94,7 +94,9 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
-
+    EFT_PROF_DEBUG("after createws({})", filename);
+    std::system("ls -lthr");
+    EFT_PROF_DEBUG("try launching: {}", "TestWSreading");
 
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
 
