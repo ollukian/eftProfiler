@@ -116,9 +116,9 @@ RooWorkspace* CreateWS(const string& filename)
     c.SaveAs("test_draw.png");
     //
     mc.SetNuisanceParameters("nuisance_b,nuisance_lumi,nuisance_acc");
-    //mc.SetPdf("model");
-    //mc.SetObservables("n");
-    //mc.SetParametersOfInterest("sigma");
+    mc.SetPdf("model");
+    mc.SetObservables("obs");
+    mc.SetParametersOfInterest("sigma");
     //auto obs = ws->var("n");
     //auto data_ = ws->pdf("model")->generate(*obs, 1000);
 
