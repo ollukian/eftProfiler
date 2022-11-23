@@ -97,6 +97,7 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     EFT_PROF_DEBUG("after createws({})", filename);
     std::system("ls -lthr");
     EFT_PROF_DEBUG("try launching: {}", "TestWSreading");
+    TestWSreading();
 
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
 
