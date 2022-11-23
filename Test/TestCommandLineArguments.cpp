@@ -48,7 +48,7 @@ void ConvertToArgcAgv(const vector<string>& s, int& argc, char** argv)
 }
 
 void TestBasicArgParsing() {
-    eft::stats::Logger::SetActive();
+    eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--one_key one_value"};
         int argc {0};

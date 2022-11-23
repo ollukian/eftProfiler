@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "add_text",         "",             R"(x [x y text [size][font]] to be added. Ex: "2 4 abc" or: "1 2 xyz 27 34")"},
                 {"vector<string>",  "add_text_ndc",     "",             R"(x [x y text [size][font]] to be added. (X, Y) - in NDC. Example: "0.1 0.4 WriteTextInNDC")"},
                 {"bool",            "silent",           "false",        R"(x MUST me FIRST option. To prevent any output, except demanded: to use as wrapper around wc.)"},
-                {"string",          "get",              "",             R"(MUST be with --silent option. [POI][NPS][GLOBS][CATS][NO_GAMMA_NPS][PAIRED_NPS] <== prints them to stdout)"},
+                {"string",          "get",              "",             R"(MUST be with --silent option. POI | NPS | GLOBS | CATS | + [COUNT] <== prints them to stdout)"},
         })
         {
             cout << fmt::format("|{:^20} | {:<20} | {:^15} | {:<60}|", options[0], options[1], options[2], options[3]) << endl;
@@ -130,7 +130,6 @@ int main(int argc, char* argv[]) {
         auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
-        config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
         eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
@@ -263,10 +262,6 @@ int main(int argc, char* argv[]) {
         auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
-        config.ws_name = "combWS";
-        config.ws_path = "/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root";
-        config.model_config = "ModelConfig";
-
         eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
@@ -276,7 +271,8 @@ int main(int argc, char* argv[]) {
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else {
-        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking] or [compute_unconstrained]", task);
+        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);
+        return 0;
     }
 
     EFT_PROF_INFO("[Application] execution successfully finished");
