@@ -13,7 +13,9 @@
 #include "RooProfileLL.h"
 #include "TCanvas.h"
 #include "RooGaussian.h"
-
+#include "RooProdPdf.h"
+#include "RooAddPdf.h"
+#include "RooConstVar.h"
 
 using namespace eft::utils;
 using namespace eft::stats;
@@ -46,10 +48,20 @@ RooWorkspace* CreateWS(const string& filename)
 
     // lumi
     EFT_PROF_INFO("Create lumi block..");
+    EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] try");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
+    //EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] DONE:"); ws->Print("");
+
+    EFT_PROF_INFO("lumi_kappa[1.045] try");
     ws->factory( "lumi_kappa[1.045]" );
+
+    EFT_PROF_INFO("cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5]) try");
     ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
+
+    EFT_PROF_INFO("PROD::lumi(lumi_nom,alpha_lumi) try");
     ws->factory( "PROD::lumi(lumi_nom,alpha_lumi)" );
+
+    EFT_PROF_INFO("Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1) try");
     ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
     EFT_PROF_INFO("Create lumi block DONE");
     ws->Print("");
