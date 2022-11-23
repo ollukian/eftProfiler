@@ -285,37 +285,37 @@ void TestToLowCase() {
 void TestToUpperCase() {
     {
         Sentence s {"Simple"};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "SIMPLE");
     }
     {
         Sentence s {"SimPleWithLEtTERS"};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "SIMPLEWITHLETTERS");
     }
     {
         Sentence s {"WITH SPACES HERE"};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "with spaces here");
     }
     {
         Sentence s {"   RANDOM    SPACES  "};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "   random    spaces  ");
     }
     {
         Sentence s {"all low"};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "ALL LOW");
     }
     {
         Sentence s {""};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "");
     }
     {
         Sentence s {"ALL UP"};
-        SU::ToLowCase(s);
+        SU::ToUpperCase(s);
         ASSERT_EQUAL(s, "ALL UP");
     }
 }
