@@ -163,7 +163,8 @@ void Finalise() {
 void TestWSreading() {
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
-    auto ws_ = std::make_unique<WorkspaceWrapper>();
+    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    //auto ws_ = std::make_unique<WorkspaceWrapper>();
     ASSERT(ws_.get());
     ASSERT(std::filesystem::exists(path));
 
