@@ -39,7 +39,7 @@ RooWorkspace* CreateWS(const string& filename)
 
     EFT_PROF_INFO("Create pdfs for sig and bkg...");
     ws->factory("Gaussian::pdf_sig(myy[125, 105, 160], mH[125.09], width[2])");
-    ws->factory("Exponential::pdf_bkg(myy, alpha[-0.01,-10,0])");
+    ws->factory("Exponential::pdf_bkg(myy, bkg_slope[-0.01,-10,0])");
     EFT_PROF_INFO("Create pdfs for sig and bkg DONE");
     ws->Print("");
     //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
@@ -49,7 +49,7 @@ RooWorkspace* CreateWS(const string& filename)
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
     ws->factory( "lumi_kappa[1.045]" );
     ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
-    ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
+    ws->factory( "PROD::lumi(lumi_nom,alpha_lumi)" );
     ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
     EFT_PROF_INFO("Create lumi block DONE");
     ws->Print("");
