@@ -21,7 +21,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
 
     Logger::GetLogger()->set_level(spdlog::level::info);
     EFT_PROF_INFO("Run all tests");
-    EFT_PROF_INFO("| {:-45} | {:-10} |", "", "");
+    EFT_PROF_INFO("| {:-<45} | {:-<10} |", "", "");
     EFT_PROF_INFO("| {:^45} | {:10} |", "Test Name", "Status");
     EFT_PROF_INFO("| {:-45} | {:-10} |", "", "");
 
