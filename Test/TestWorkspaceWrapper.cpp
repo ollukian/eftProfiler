@@ -29,8 +29,8 @@ void CreateWS(const string& filename)
     using RooStats::ModelConfig;
     using WS = RooWorkspace;
 
-    //auto ws = new RooWorkspace("ws_test");
-    auto ws = new RooWorkspace();
+    auto ws = new RooWorkspace("ws_test");
+    //auto ws = new RooWorkspace();
     //auto ws = make_shared<RooWorkspace>("ws_test");
     //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
     //RooRealVar mH("mH", "mH", 125.09);
