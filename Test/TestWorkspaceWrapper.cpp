@@ -551,7 +551,7 @@ void TestLoading() {
     ASSERT(LoadWS()->raw());
 }
 
-void TestGetters() {
+void TestWSGetters() {
     eft::stats::Logger::SetFullPrinting();
     using namespace eft::utils::internal;
     auto ws = LoadWS();
@@ -584,7 +584,7 @@ void TestGetters() {
     ASSERT_EQUAL(ws->GetModelConfig().GetName(), "ModelConfig");
 }
 
-void TestSetters() {
+void TestWSSetters() {
     eft::stats::Logger::SetFullPrinting();
     using namespace eft::utils::internal;
     auto ws = LoadWS();
@@ -624,8 +624,8 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     EFT_ADD_TEST(Initiate,      "WorkSpaceWrapper")
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
     EFT_ADD_TEST(TestLoading,   "WorkSpaceWrapper");
-    EFT_ADD_TEST(TestGetters,   "WorkSpaceWrapper");
-    EFT_ADD_TEST(TestSetters,   "WorkSpaceWrapper");
+    EFT_ADD_TEST(TestWSGetters,   "WorkSpaceWrapper");
+    EFT_ADD_TEST(TestWSSetters,   "WorkSpaceWrapper");
     EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
