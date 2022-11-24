@@ -30,7 +30,8 @@ void CreateWS(const string& filename)
     using WS = RooWorkspace;
 
     //auto ws = new RooWorkspace("ws_test");
-    auto ws = make_shared<RooWorkspace>("ws_test");
+    auto ws = new RooWorkspace();
+    //auto ws = make_shared<RooWorkspace>("ws_test");
     //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
     //RooRealVar mH("mH", "mH", 125.09);
     //RooRealVar width("width", "width", 2);
@@ -107,9 +108,9 @@ void CreateWS(const string& filename)
     obs.add(*n);
 
     n->setVal(11);
-    auto data = new RooDataSet("data", "data", obs);
-    data->add( *n );
-    ws->import(*data);
+    //auto data = new RooDataSet("data", "data", obs);
+    //data->add( *n );
+    //ws->import(*data, RooFit::Silence());
 
     // define glob obs
     static const set<string> _test_globs_names_ {
@@ -479,11 +480,13 @@ void CreateWS(const string& filename)
 }
 
 [[nodiscard]]
-std::shared_ptr<WorkspaceWrapper> LoadWS() {
+//std::shared_ptr<WorkspaceWrapper> LoadWS() {
+WorkspaceWrapper* LoadWS() {
     RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
     static const string path {"__temp_ws_for_eftTests.root"};
     static const string ws_name {"ws_test"};
-    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    auto ws_ = new WorkspaceWrapper();
+    //auto ws_ = std::make_shared<WorkspaceWrapper>();
     ws_->SetWS(path, ws_name);
     ws_->SetModelConfig("ModelConfig");
     return ws_;
@@ -506,9 +509,10 @@ void TestWSreading() {
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
-    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    auto ws_ = new WorkspaceWrapper();
     //auto ws_ = std::make_shared<WorkspaceWrapper>();
-    ASSERT(ws_.get());
+    //auto ws_ = std::make_shared<WorkspaceWrapper>();
+    ASSERT(ws_);
     ASSERT(std::filesystem::exists(path));
 
     bool is_set = false;
