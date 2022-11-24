@@ -153,8 +153,8 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
         ws_ = std::make_unique<RooWorkspace>(
                 *dynamic_cast<RooWorkspace*>( f_->Get( std::move(name).c_str() ) )
                 );
-        return true;
         f_->Close();
+        return true;
     }
     return false;
 }
