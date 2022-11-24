@@ -78,7 +78,7 @@ void CreateWS(const string& filename)
     //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
     */
 
-
+    Logger::SetLevel(spdlog::level::level_enum::info);
     EFT_PROF_INFO("Create lumi block..");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
     ws->factory( "lumi_kappa[1.045]" );
@@ -98,6 +98,7 @@ void CreateWS(const string& filename)
     //ws->Print("");
 
     // bkg with syst
+    EFT_PROF_INFO("Create background block..");
     ws->factory( "nbkg_nom[10.0, 5.0, 15.0]" );
     ws->factory( "nbkg_kappa[1.10]" );
     ws->factory( "cexpr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
@@ -125,7 +126,7 @@ void CreateWS(const string& filename)
 
     //EFT_PROF_INFO("core model (+ lumi):");
     //ws->Print();
-
+    EFT_PROF_INFO("Create final model: Poisson core + lumi + efficienty + bkg systematics");
     ws->factory( "PROD::model(model_core,constr_lumi,constr_efficiency, constr_nbkg)" );
     //EFT_PROF_INFO("Full model");
     //ws->Print();
@@ -237,7 +238,8 @@ void CreateWS(const string& filename)
     //ws->Print();
     ws->writeToFile(filename.c_str(), true);
     //gDirectory->Add(ws);
-    EFT_PROF_INFO("DONE");
+    EFT_PROF_INFO("Creation is done, the next steps should take less time");
+    Logger::SetSilent();
     return;// ws;
 #if 0
     // signal
@@ -611,6 +613,10 @@ void TestWSSetters() {
 }
 
 void Initiate() {
+    EFT_PROF_WARN("{} {} {}",
+                  "Running tests of the Workspace wrapper. First stage may take some non-negligible time"
+                  "due to creation of a toy RooWorkspace, requiring compiling of functions for a few test",
+                  "systematics: luminosity and efficiency");
     RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::FATAL);
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
