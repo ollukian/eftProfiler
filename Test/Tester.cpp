@@ -4,11 +4,6 @@
 
 #include "Tester.h"
 #include "spdlog/fmt/bundled/color.h"
-#include <spdlog/fmt/core.h>
-#include <spdlog/fmt/format.h>
-#include <spdlog/fmt/time.h>
-#include <spdlog/fmt/color.h>
-#include <spdlog/fmt/printf.h>
 
 using namespace std;
 using eft::stats::Logger;
@@ -62,7 +57,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             }
             else {
                 group_ok = false;
-                fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} |\n", name, res);
+                fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} |\n", name, test_res);
                 //EFT_PROF_ERROR("| {:45} | {:10} |", name, test_res);
                 //fmt::print(cerr, "| {:45} | {:10} |\n", name, std::move(test_res));
             }
