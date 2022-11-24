@@ -555,6 +555,7 @@ void TestLoading() {
 void TestWSGetters() {
     using namespace eft::utils::internal;
     auto ws = LoadWS();
+    Logger::SetFullPrinting();
 
     for (const string& glob_name : _test_globs_names_) {
         ASSERT(ws->GetVar(glob_name)->isConstant());
@@ -581,6 +582,7 @@ void TestWSGetters() {
     }
 
     ASSERT_NO_THROW(ws->GetModelConfig());
+    EFT_PROF_INFO("mc name: {}", ws->GetModelConfig().GetName());
     ASSERT_EQUAL(ws->GetModelConfig().GetName(), "ModelConfig");
 }
 
