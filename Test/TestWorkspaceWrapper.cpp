@@ -30,7 +30,7 @@ void CreateWS(const string& filename)
     using WS = RooWorkspace;
 
     //auto ws = new RooWorkspace("ws_test");
-    auto ws = make_unique<RooWorkspace>("ws_test");
+    auto ws = make_shared<RooWorkspace>("ws_test");
     //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
     //RooRealVar mH("mH", "mH", 125.09);
     //RooRealVar width("width", "width", 2);
@@ -479,11 +479,11 @@ void CreateWS(const string& filename)
 }
 
 [[nodiscard]]
-std::unique_ptr<WorkspaceWrapper> LoadWS() {
+std::shared_ptr<WorkspaceWrapper> LoadWS() {
     RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
     static const string path {"__temp_ws_for_eftTests.root"};
     static const string ws_name {"ws_test"};
-    auto ws_ = std::make_unique<WorkspaceWrapper>();
+    auto ws_ = std::make_shared<WorkspaceWrapper>();
     ws_->SetWS(path, ws_name);
     ws_->SetModelConfig("ModelConfig");
     return ws_;
@@ -506,8 +506,8 @@ void TestWSreading() {
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
-    auto ws_ = std::make_unique<WorkspaceWrapper>();
-    //auto ws_ = std::make_unique<WorkspaceWrapper>();
+    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    //auto ws_ = std::make_shared<WorkspaceWrapper>();
     ASSERT(ws_.get());
     ASSERT(std::filesystem::exists(path));
 
