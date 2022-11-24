@@ -102,60 +102,101 @@ void CreateWS(const string& filename)
     EFT_PROF_INFO("Full model");
     ws->Print();
 
-    EFT_PROF_INFO("extract mu");
     RooRealVar* n = ws->var("n");
     RooArgSet obs("observables");
-    EFT_PROF_INFO("add mu to obs");
     obs.add(*n);
 
     n->setVal(11);
-    EFT_PROF_INFO("set n to 1");
     auto data = new RooDataSet("data", "data", obs);
-    EFT_PROF_INFO("add n to data");
     data->add( *n );
-    EFT_PROF_INFO("import data");
     ws->import(*data);
 
-    EFT_PROF_INFO("fix globs");
     // define glob obs
-    ws->var("glob_lumi")->setConstant(true);
-    ws->var("glob_efficiency")->setConstant(true);
-    ws->var("glob_nbkg")->setConstant(true);
-    EFT_PROF_INFO("add globs");
-    RooArgSet globalObs("global_obs");
-    globalObs.add( *ws->var("glob_lumi") );
-    globalObs.add( *ws->var("glob_efficiency") );
-    globalObs.add( *ws->var("glob_nbkg") );
-    // create set of parameters of interest (POI)
-    EFT_PROF_INFO("add poi");
-    RooArgSet poi("poi");
-    poi.add( *ws->var("xsec") );
+    static const set<string> _test_globs_names_ {
+            "glob_lumi",
+            "glob_efficiency",
+            "glob_nbkg"
+    };
 
-    EFT_PROF_INFO("add nuis");
-    // create set of nuisance parameters
+    static const set<string> _test_np_names_ {
+            "beta_lumi",
+            "beta_efficiency",
+            "beta_nbkg"
+    };
+
+    static const set<string> _test_fixed_names_ {
+            "lumi_nom",
+            "efficiency_nom",
+            "nbkg_nom",
+            "lumi_kappa",
+            "efficiency_kappa",
+            "nbkg_kappa"
+    };
+
+    static const set<string> _test_poi_names_ {
+        "xsec"
+    };
+
+    RooArgSet globalObs("global_obs");
+    for (const auto& glob_name : _test_globs_names_) {
+        ws->var(glob_name.c_str())->setConstant(true);
+        globalObs.add( *ws->var(glob_name.c_str()) );
+    }
+
+    RooArgSet poi("poi");
+    for (const auto& poi_name : _test_poi_names_) {
+        poi.add(*ws->var(poi_name.c_str()));
+    }
+    //poi.add( *ws->var("xsec") );
+
     RooArgSet nuis("nuis");
-    nuis.add( *ws->var("beta_lumi") );
-    nuis.add( *ws->var("beta_efficiency") );
-    nuis.add( *ws->var("beta_nbkg") );
+    for (const auto& np_name : _test_np_names_) {
+        nuis.add(*ws->var(np_name.c_str()));
+    }
+
+    RooArgSet fixed("fixed");
+    for (const auto& fixed_name : _test_fixed_names_) {
+        ws->var(fixed_name.c_str())->setConstant(true);
+        fixed.add(*ws->var(fixed_name.c_str()));
+    }
+
+//    ws->var("glob_lumi")->setConstant(true);
+//    ws->var("glob_efficiency")->setConstant(true);
+//    ws->var("glob_nbkg")->setConstant(true);
+//    globalObs.add( *ws->var("glob_lumi") );
+//    globalObs.add( *ws->var("glob_efficiency") );
+//    globalObs.add( *ws->var("glob_nbkg") );
+    // create set of parameters of interest (POI)
+
+
+    // create set of nuisance parameters
+
+
+
+    //nuis.add( *ws->var("beta_lumi") );
+    //nuis.add( *ws->var("beta_efficiency") );
+    //nuis.add( *ws->var("beta_nbkg") );
 
     // fix all other variables in model:
     // everything except observables, POI, and
     //nuisance parameters
     // must be constant
-    EFT_PROF_INFO("fix other");
-    ws->var("lumi_nom")->setConstant(true);
-    ws->var("efficiency_nom")->setConstant(true);
-    ws->var("nbkg_nom")->setConstant(true);
-    ws->var("lumi_kappa")->setConstant(true);
-    ws->var("efficiency_kappa")->setConstant(true);
-    ws->var("nbkg_kappa")->setConstant(true);
-    RooArgSet fixed("fixed");
-    fixed.add( *ws->var("lumi_nom") );
-    fixed.add( *ws->var("efficiency_nom") );
-    fixed.add( *ws->var("nbkg_nom") );
-    fixed.add( *ws->var("lumi_kappa") );
-    fixed.add( *ws->var("efficiency_kappa") );
-    fixed.add( *ws->var("nbkg_kappa") );
+
+
+
+//    ws->var("lumi_nom")->setConstant(true);
+//    ws->var("efficiency_nom")->setConstant(true);
+//    ws->var("nbkg_nom")->setConstant(true);
+//    ws->var("lumi_kappa")->setConstant(true);
+//    ws->var("efficiency_kappa")->setConstant(true);
+//    ws->var("nbkg_kappa")->setConstant(true);
+
+//    fixed.add( *ws->var("lumi_nom") );
+//    fixed.add( *ws->var("efficiency_nom") );
+//    fixed.add( *ws->var("nbkg_nom") );
+//    fixed.add( *ws->var("lumi_kappa") );
+//    fixed.add( *ws->var("efficiency_kappa") );
+//    fixed.add( *ws->var("nbkg_kappa") );
     // create signal+background Model Config
     RooStats::ModelConfig modelConfig("ModelConfig");
     modelConfig.SetWorkspace( *ws );
@@ -164,12 +205,24 @@ void CreateWS(const string& filename)
     modelConfig.SetGlobalObservables( globalObs );
     modelConfig.SetParametersOfInterest( poi );
     modelConfig.SetNuisanceParameters( nuis );
-    EFT_PROF_INFO("set prior pdf to mc");
     // this is optional, for Bayesian analysis
     modelConfig.SetPriorPdf( *ws->pdf("prior") );
     // import ModelConfig into workspace
-    EFT_PROF_INFO("import mc");
     ws->import( modelConfig );
+
+    EFT_PROF_INFO("print all vars:");
+
+    for (const auto container : {&_test_globs_names_,
+                                 &_test_np_names_,
+                                 &_test_fixed_names_,
+                                 &_test_poi_names_})
+    {
+        EFT_PROF_INFO("change container");
+        for (const auto& elem_name : *container) {
+            ws->var(elem_name.c_str())->Print();
+        }
+    }
+
 
     //EFT_PROF_INFO("create nll");
     //RooAbsReal* nll = ws->pdf("model")->createNLL(*data);
@@ -425,6 +478,16 @@ void CreateWS(const string& filename)
 #endif
 }
 
+[[nodiscard]]
+std::unique_ptr<WorkspaceWrapper> LoadWS() {
+    static const string path {"__temp_ws_for_eftTests.root"};
+    static const string ws_name {"ws_test"};
+    auto ws_ = std::make_unique<WorkspaceWrapper>();
+    ws_->SetWS(path, ws_name);
+    ws_->SetModelConfig("ModelConfig");
+    return ws_;
+}
+
 bool DeleteWS(const std::string& path) {
     return std::filesystem::remove(path);
 }
@@ -462,10 +525,21 @@ void TestWSreading() {
     ws_->GetNp()->Print();
     EFT_PROF_INFO("obs:");
     ws_->GetObs()->Print();
+    EFT_PROF_INFO("test ws reading is done");
     //EFT_PROF_INFO("pdf:");
     //ws_->GetCombinedPdf("model");
     //EFT_PROF_INFO("data:");
     //ws_->GetData("data");
+}
+
+void TestLoading() {
+    ASSERT_NO_THROW(LoadWS());
+    ASSERT(LoadWS()->raw());
+}
+
+void TestSetters() {
+    eft::stats::Logger::SetFullPrinting();
+    auto ws = LoadWS();
 }
 
 void Initiate() {
@@ -477,6 +551,8 @@ void Initiate() {
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     EFT_ADD_TEST(Initiate,      "WorkSpaceWrapper")
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
+    EFT_ADD_TEST(TestLoading,   "WorkSpaceWrapper");
+    EFT_ADD_TEST(TestSetters,   "WorkSpaceWrapper");
     EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
