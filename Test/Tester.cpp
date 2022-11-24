@@ -21,22 +21,22 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
 
     Logger::GetLogger()->set_level(spdlog::level::info);
     EFT_PROF_INFO("Run all tests");
-    EFT_PROF_INFO("| {:-<45} | {:-<10} |", "", "");
+    EFT_PROF_INFO("=={:=<45}==={:=<10}==", "", "");
     EFT_PROF_INFO("| {:^45} | {:10} |", "Test Name", "Status");
-    EFT_PROF_INFO("| {:-<45} | {:-<10} |", "", "");
+    EFT_PROF_INFO("=={:=<45}==={:=<10}==", "", "");
 
     bool first = true;
 
     for (const auto& groupname : group_nb_) {
         const auto& tests = tests_.at(groupname);
-        if (!first) {
-            EFT_PROF_INFO("+{:-<45} | {:-<10} +", "", "");
-        }
-        else {
-            first = false;
-        }
+        //if (!first) {
+        //    EFT_PROF_INFO("+{:-<45} | {:-<10} +", "", "");
+       // }
+        //else {
+        //    first = false;
+        //}
         EFT_PROF_INFO("| {:^58} |", groupname);
-        EFT_PROF_INFO("+{:-<45} + {:-<10} +", "", "");
+        EFT_PROF_INFO("+{:-<45}=+={:-<10}=+", "", "");
         for (const auto& [name, function] : tests)
         {
             //cerr << fmt::format("| {:45} | ==> ", name);
@@ -47,7 +47,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             Logger::SetLevel(spdlog::level::level_enum::info);
         } // tests in this group
         if (tr_.GetFailCount() == 0) {
-            EFT_PROF_INFO("+{:-<45} + {:-<10} +", "-", "-");
+            EFT_PROF_INFO("+{:-<45}=+={:-<10}=+", "-", "-");
             //EFT_PROF_INFO("Tests Group: {:30} all test have been successfully passed", groupname);
         }
         else {
