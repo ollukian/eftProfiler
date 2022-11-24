@@ -507,6 +507,7 @@ void Finalise() {
 }
 
 void TestWSreading() {
+    EFT_PROF_INFO("Start test ws reading");
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
@@ -556,9 +557,11 @@ void TestSetters() {
 }
 
 void Initiate() {
+    EFT_PROF_INFO("start initiate");
     eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
+    EFT_PROF_INFO("finish initiate");
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
