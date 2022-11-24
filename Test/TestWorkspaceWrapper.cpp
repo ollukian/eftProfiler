@@ -595,13 +595,13 @@ void TestWSSetters() {
     }
     { // set values and errors of a value
         ASSERT_NOT(ws->GetVar(one_np_name)->isConstant());
-        ws->SetVarVal(one_np_name, 1.3);
-        ws->SetVarErr(one_np_name, 2.4);
+        ws->SetVarVal(one_np_name, 1.2);
+        ws->SetVarErr(one_np_name, 3.4);
         ASSERT_NOT(ws->GetVar(one_np_name)->isConstant());
         ASSERT_EQUAL(ws->GetVar(one_np_name)->getVal(), 1.2);
-        ASSERT_EQUAL(ws->GetVar(one_np_name)->getError(), 2.5);
+        ASSERT_EQUAL(ws->GetVar(one_np_name)->getError(), 3.4);
         ASSERT_EQUAL(ws->GetParVal(one_np_name), 1.2);
-        ASSERT_EQUAL(ws->GetParErr(one_np_name), 2.4);
+        ASSERT_EQUAL(ws->GetParErr(one_np_name), 3.4);
     }
     {
         ASSERT_NOT(ws->GetVar(one_np_name)->isConstant());
