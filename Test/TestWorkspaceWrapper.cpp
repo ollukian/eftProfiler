@@ -480,6 +480,7 @@ void CreateWS(const string& filename)
 
 [[nodiscard]]
 std::unique_ptr<WorkspaceWrapper> LoadWS() {
+    RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
     static const string path {"__temp_ws_for_eftTests.root"};
     static const string ws_name {"ws_test"};
     auto ws_ = std::make_unique<WorkspaceWrapper>();
@@ -505,7 +506,7 @@ void TestWSreading() {
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
-    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    auto ws_ = std::make_unique<WorkspaceWrapper>();
     //auto ws_ = std::make_unique<WorkspaceWrapper>();
     ASSERT(ws_.get());
     ASSERT(std::filesystem::exists(path));
@@ -533,7 +534,7 @@ void TestWSreading() {
 }
 
 void TestLoading() {
-    ASSERT_NO_THROW(LoadWS());
+    ASSERT_NO_THROW(std::ignore = LoadWS()); // std::ignore to prevent warnings about [[nodiscard]]
     ASSERT(LoadWS()->raw());
 }
 
