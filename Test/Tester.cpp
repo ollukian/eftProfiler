@@ -36,7 +36,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
         //    first = false;
         //}
         EFT_PROF_INFO("| {:^58} |", groupname);
-        EFT_PROF_INFO("+{:-<45}-+--{:-<10}-+", "", "");
+        EFT_PROF_INFO("+{:-<45}--+-{:-<10}--+", "", "");
         for (const auto& [name, function] : tests)
         {
             //cerr << fmt::format("| {:45} | ==> ", name);
