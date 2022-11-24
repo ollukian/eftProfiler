@@ -68,7 +68,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             Logger::SetLevel(spdlog::level::level_enum::info);
         } // tests in this group
         if (tr_.GetFailCount() == 0) {
-            fmt::print(cout, "+{:-<45}--+-{:-<10}}--+-{:-<10}-+\n", "-", "-", "");
+            fmt::print(cout, "+{:-<45}--+-{:-<10}--+-{:-<10}-+\n", "-", "-", "");
             //EFT_PROF_INFO("+{:-<45}--+-{:-<10}-+", "-", "-");
             //EFT_PROF_INFO("Tests Group: {:30} all test have been successfully passed", groupname);
         }
