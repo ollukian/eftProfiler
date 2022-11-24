@@ -96,8 +96,9 @@ struct TestRes {
     std::string name;
     std::string res;
 
-    inline std::string PrettyDuration() const noexcept {return {""}};
+    std::string PrettyDuration() const noexcept;
 };
+
 
 class TestRunner {
 public:
@@ -143,6 +144,26 @@ private:
     int fail_count = 0;
 };
 
+std::string TestRes::PrettyDuration() const noexcept {
+    std::string units {" mcs"};
+    long long duration_mcs = duration.count();
+    if (duration_mcs > 1000) {
+        units = " ms";
+        duration_mcs /= 1000;
+    }
+    else {
+        return std::to_string(duration_mcs) + units;
+    }
+
+    if (duration_mcs > 1000) {
+        units = " s";
+        duration_mcs /= 1000;
+    }
+    else {
+        return std::to_string(duration_mcs) + units;
+    }
+    return std::to_string(duration_mcs) + units;
+}
 
 
 #define ASSERT_EQUAL(x, y) {                \
