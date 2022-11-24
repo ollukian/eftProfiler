@@ -556,8 +556,8 @@ void Initiate() {
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     EFT_ADD_TEST(Initiate,      "WorkSpaceWrapper")
-    EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
     EFT_ADD_TEST(TestLoading,   "WorkSpaceWrapper");
+    EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
     EFT_ADD_TEST(TestSetters,   "WorkSpaceWrapper");
     EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
 }
