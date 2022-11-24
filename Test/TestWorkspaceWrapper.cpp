@@ -16,6 +16,7 @@
 #include "RooProdPdf.h"
 #include "RooAddPdf.h"
 #include "RooConstVar.h"
+#include "RooSimultaneous.h"
 
 using namespace eft::utils;
 using namespace eft::stats;
@@ -534,7 +535,7 @@ void TestWSreading() {
     const RooArgSet* nps   = ws_->GetNp();
     const RooArgSet* globs = ws_->GetGlobObs();
     const RooArgSet* obs   = ws_->GetObs();
-    const RooSimultaneous* pdf =  ws_->GetCombinedPdf("model");
+    //const RooSimultaneous* pdf =  ws_->GetCombinedPdf("model");
 
     ASSERT(ws_->raw()->pdf("model"));
 
@@ -542,7 +543,7 @@ void TestWSreading() {
     ASSERT(nps);
     ASSERT(globs);
     ASSERT(obs);
-    ASSERT(pdf);
+    //ASSERT(pdf);
 
     ASSERT_EQUAL(pois->getSize(),   1);
     ASSERT_EQUAL(nps->getSize(),    3);

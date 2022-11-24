@@ -59,7 +59,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             else {
                 group_ok = false;
                 ////fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} | {:10} |\n", name, test_res.res, test_res.duration.count());
-                fmt::print(fmt::fg(fmt::color::red), "| {:45} | fail | {:10} |\n", name,  test_res.PrettyDuration());
+                fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} | {:10} |\n", name, "Fail", test_res.PrettyDuration());
                 fmt::print(fmt::fg(fmt::color::red), "| {}", test_res.res);
                 //EFT_PROF_ERROR("| {:45} | {:10} |", name, test_res);
                 //fmt::print(cerr, "| {:45} | {:10} |\n", name, std::move(test_res));
