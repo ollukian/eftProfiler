@@ -23,28 +23,33 @@ using namespace std;
 
 //namespace eft::inner::tests {
 
-RooWorkspace* CreateWS(const string& filename)
+void CreateWS(const string& filename)
 {
 
     using RooStats::ModelConfig;
     using WS = RooWorkspace;
 
-    auto ws = new RooWorkspace("ws_test");
-    //auto ws = make_unique<RooWorkspace>("ws_test");
+    //auto ws = new RooWorkspace("ws_test");
+    auto ws = make_unique<RooWorkspace>("ws_test");
     //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
     //RooRealVar mH("mH", "mH", 125.09);
     //RooRealVar width("width", "width", 2);
 
+    // WS creating is inspired by:
+    // https://indico.in2p3.fr/event/6315/contributions/37810/attachments/30394/37380/sos-lista-app.pdf
 
     //RooGaussian pdf_bkg("bkg_pdf", "bkg_pdf", myy, mH, width);
 
 
+    /*
     EFT_PROF_INFO("Create pdfs for sig and bkg...");
     ws->factory("Gaussian::pdf_sig(myy[125, 105, 160], mH[125.09], width[2])");
     ws->factory("Exponential::pdf_bkg(myy, bkg_slope[-0.01,-10,0])");
     EFT_PROF_INFO("Create pdfs for sig and bkg DONE");
     ws->Print("");
     //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
+    */
+
 
     EFT_PROF_INFO("Create lumi block..");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
@@ -53,26 +58,6 @@ RooWorkspace* CreateWS(const string& filename)
     ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
     ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
     EFT_PROF_INFO("Create lumi block DONE");
-
-//    // lumi
-//    EFT_PROF_INFO("Create lumi block..");
-//    EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] try");
-//    ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
-//    //EFT_PROF_INFO("lumi_nom[5000.0, 4000.0, 6000.0] DONE:"); ws->Print("");
-//
-//    EFT_PROF_INFO("lumi_kappa[1.045] try");
-//    ws->factory( "lumi_kappa[1.045]" );
-//
-//    EFT_PROF_INFO("cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5]) try");
-//    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
-//
-//    EFT_PROF_INFO("PROD::lumi(lumi_nom,alpha_lumi) try");
-//    ws->factory( "PROD::lumi(lumi_nom,alpha_lumi)" );
-//
-//    EFT_PROF_INFO("Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1) try");
-//    ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
-//    EFT_PROF_INFO("Create lumi block DONE");
-//    ws->Print("");
 
     // efficience
     EFT_PROF_INFO("Create efficiency block..");
@@ -84,7 +69,117 @@ RooWorkspace* CreateWS(const string& filename)
     EFT_PROF_INFO("Create efficiency block DONE");
     ws->Print("");
 
+    // bkg with syst
+    ws->factory( "nbkg_nom[10.0, 5.0, 15.0]" );
+    ws->factory( "nbkg_kappa[1.10]" );
+    ws->factory( "cexpr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
+    ws->factory( "prod::nbkg(nbkg_nom,alpha_lumi,alpha_nbkg)" );
+    ws->factory( "Gaussian::constr_nbkg(beta_nbkg,glob_nbkg[0,-5,5],1)" );
 
+
+    // cross section - parameter of interest
+    ws->factory( "xsec[0,0,0.1]" );
+    // selection efficiency * acceptance
+    // signal yield
+    ws->factory( "prod::nsig(lumi,xsec,efficiency)" );
+    //ws->factory( "nbkg_nom[10]" );
+    //ws->factory( "prod::nbkg(nbkg_nom,alpha_lumi)" );
+
+    ws->factory( "n[0]" );
+    // signal yield
+    // background yield
+    // full event yield
+    ws->factory( "sum::yield(nsig,nbkg)" );
+    ws->factory( "Uniform::prior(xsec)" );
+    // NOTE: lower-case "sum" create a function. Upper-case "SUM" would create a PDF
+    // Core model: Poisson probability with mean signal+bkg
+    ws->factory( "Poisson::model_core(n,yield)" );
+
+    EFT_PROF_INFO("core model (+ lumi):");
+    ws->Print();
+
+    ws->factory( "PROD::model(model_core,constr_lumi,constr_efficiency, constr_nbkg)" );
+    EFT_PROF_INFO("Full model");
+    ws->Print();
+
+    EFT_PROF_INFO("extract mu");
+    RooRealVar* n = ws->var("n");
+    RooArgSet obs("observables");
+    EFT_PROF_INFO("add mu to obs");
+    obs.add(*n);
+
+    n->setVal(11);
+    EFT_PROF_INFO("set n to 1");
+    auto data = new RooDataSet("data", "data", obs);
+    EFT_PROF_INFO("add n to data");
+    data->add( *n );
+    EFT_PROF_INFO("import data");
+    ws->import(*data);
+
+    EFT_PROF_INFO("fix globs");
+    // define glob obs
+    ws->var("glob_lumi")->setConstant(true);
+    ws->var("glob_efficiency")->setConstant(true);
+    ws->var("glob_nbkg")->setConstant(true);
+    EFT_PROF_INFO("add globs");
+    RooArgSet globalObs("global_obs");
+    globalObs.add( *ws->var("glob_lumi") );
+    globalObs.add( *ws->var("glob_efficiency") );
+    globalObs.add( *ws->var("glob_nbkg") );
+    // create set of parameters of interest (POI)
+    EFT_PROF_INFO("add poi");
+    RooArgSet poi("poi");
+    poi.add( *ws->var("xsec") );
+
+    EFT_PROF_INFO("add nuis");
+    // create set of nuisance parameters
+    RooArgSet nuis("nuis");
+    nuis.add( *ws->var("beta_lumi") );
+    nuis.add( *ws->var("beta_efficiency") );
+    nuis.add( *ws->var("beta_nbkg") );
+
+    // fix all other variables in model:
+    // everything except observables, POI, and
+    //nuisance parameters
+    // must be constant
+    EFT_PROF_INFO("fix other");
+    ws->var("lumi_nom")->setConstant(true);
+    ws->var("efficiency_nom")->setConstant(true);
+    ws->var("nbkg_nom")->setConstant(true);
+    ws->var("lumi_kappa")->setConstant(true);
+    ws->var("efficiency_kappa")->setConstant(true);
+    ws->var("nbkg_kappa")->setConstant(true);
+    RooArgSet fixed("fixed");
+    fixed.add( *ws->var("lumi_nom") );
+    fixed.add( *ws->var("efficiency_nom") );
+    fixed.add( *ws->var("nbkg_nom") );
+    fixed.add( *ws->var("lumi_kappa") );
+    fixed.add( *ws->var("efficiency_kappa") );
+    fixed.add( *ws->var("nbkg_kappa") );
+    // create signal+background Model Config
+    RooStats::ModelConfig modelConfig("ModelConfig");
+    modelConfig.SetWorkspace( *ws );
+    modelConfig.SetPdf( *ws->pdf("model") );
+    modelConfig.SetObservables( obs );
+    modelConfig.SetGlobalObservables( globalObs );
+    modelConfig.SetParametersOfInterest( poi );
+    modelConfig.SetNuisanceParameters( nuis );
+    EFT_PROF_INFO("set prior pdf to mc");
+    // this is optional, for Bayesian analysis
+    modelConfig.SetPriorPdf( *ws->pdf("prior") );
+    // import ModelConfig into workspace
+    EFT_PROF_INFO("import mc");
+    ws->import( modelConfig );
+
+    //EFT_PROF_INFO("create nll");
+    //RooAbsReal* nll = ws->pdf("model")->createNLL(*data);
+
+    EFT_PROF_INFO("write to file:");
+    ws->Print();
+    ws->writeToFile(filename.c_str(), true);
+    EFT_PROF_INFO("DONE");
+    return;// ws;
+#if 0
     // signal
     EFT_PROF_INFO("Create signal term");
     ws->factory("expr::S('mu*s_nom*lumi',mu[1,-5,5],s_nom[50], lumi)") ;
@@ -92,30 +187,52 @@ RooWorkspace* CreateWS(const string& filename)
     ws->Print("");
     // (s + b) model
     EFT_PROF_INFO("Create (s+b) model");
-    EFT_PROF_INFO("PROD::model_sig(S, pdf_sig)");
-    ws->factory("PROD::model_sig(S, pdf_sig)");
+    EFT_PROF_INFO("prod::model_sig(S, pdf_sig)");
+    ws->factory("prod::model_sig(S, pdf_sig)");
+    ws->Print("");
 
-    EFT_PROF_INFO("PROD::model_bkg(n_bkg[10, 1000], pdf_bkg)");
-    ws->factory("PROD::model_bkg(n_bkg[10, 1000], pdf_bkg)");
+    EFT_PROF_INFO("prod::model_bkg(n_bkg[10, 1000], pdf_bkg)");
+    ws->factory("prod::model_bkg(n_bkg[10, 1000], pdf_bkg)");
+    ws->Print("");
 
-    EFT_PROF_INFO("SUM::model_s_b(model_sig, model_bkg)");
-    ws->factory("SUM::model_s_b(model_sig, model_bkg)");
+    EFT_PROF_INFO("sum::model_s_b(model_sig, model_bkg)");
+    ws->factory("sum::model_s_b(model_sig, model_bkg)");
+    ws->Print("");
 
     EFT_PROF_INFO("Create (s+b) model DONE");
     ws->Print("");
 
     EFT_PROF_INFO("Create full model");
     // full model: (s+b) * constrains
-    ws->factory("PROD::model(model_s_b, constr_lumi, constr_efficiency)");
+    ws->factory("prod::model(model_s_b, constr_lumi, constr_efficiency)");
     EFT_PROF_INFO("Create full model done");
     ws->Print("");
+
+    EFT_PROF_INFO("extract mu");
+    RooRealVar* mu = ws->var("mu");
+    RooArgSet obs("observables");
+    EFT_PROF_INFO("add mu to obs");
+    obs.add(*mu);
+
+    mu->setVal(1);
+    EFT_PROF_INFO("set mu to 1");
+    RooDataSet * data = new RooDataSet("data", "data", obs);
+    EFT_PROF_INFO("add mu to data");
+    data->add( *mu );
+    EFT_PROF_INFO("import data");
+    ws->import(*data);
+
+    EFT_PROF_INFO("create nll");
+    RooAbsReal* nll = ws->pdf("model")->createNLL(*data);
 
     EFT_PROF_INFO("write to file");
     ws->writeToFile(filename.c_str(), true);
     EFT_PROF_INFO("DONE");
+
     return ws;
+#endif
 
-
+#if 0
     //ws->factory("PROD::model_s_b_lumi(model_s_b, constr_lumi))");
     //ws->factory("PROD::sig(S)")
     //ws->factory("exper::lumi(lumi_nominal*nuissance_lumi)")
@@ -132,9 +249,9 @@ RooWorkspace* CreateWS(const string& filename)
      *
      * */
 
-    RooRealVar n_sig("n_sig", "n_sig", 10, -100, 100);
-    RooRealVar n_bkg("n_bkg", "n_bkg", 10, -100, 100);
-    RooRealVar mu("mu", "mu", 1, -5, 5);
+    //RooRealVar n_sig("n_sig", "n_sig", 10, -100, 100);
+    //RooRealVar n_bkg("n_bkg", "n_bkg", 10, -100, 100);
+    //RooRealVar mu("mu", "mu", 1, -5, 5);
 
     ws->factory("expr::mean('sigma*nuisance_lumi*nuisance_acc+nuisance_b',"
              "sigma[0,100], nuisance_lumi[5.0,0.0,10.0],nuisance_acc[0.71,0,1],nuisance_b[41.7,0,100])");
@@ -304,7 +421,8 @@ RooWorkspace* CreateWS(const string& filename)
     ws->import(mc);
     ws->writeToFile(filename.c_str(), true);
     EFT_PROF_DEBUG("ws is written to: {}", filename);
-    return ws;
+    return;// ws;
+#endif
 }
 
 bool DeleteWS(const std::string& path) {
@@ -332,7 +450,7 @@ void TestWSreading() {
     ASSERT_NO_THROW(ws_->SetWS(path, ws_name));
     ASSERT(ws_->SetWS(path, ws_name));
     ASSERT_NO_THROW(ws_->raw()->var("n")->getVal());
-    ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 65);
+    ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 11);
     // try to get Model Config
     ASSERT_NO_THROW(ws_->raw()->obj("ModelConfig"));
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
@@ -360,8 +478,6 @@ EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     EFT_ADD_TEST(Initiate,      "WorkSpaceWrapper")
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
     EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
-
-    //Finalise(filename);
 }
 EFT_END_IMPLEMENT_TESTFILE(WorkSpaceWrapper);
 
