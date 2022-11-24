@@ -515,6 +515,7 @@ void Finalise() {
 }
 
 void TestWSreading() {
+    Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();
@@ -535,7 +536,7 @@ void TestWSreading() {
     const RooArgSet* obs   = ws_->GetObs();
     const RooSimultaneous* pdf =  ws_->GetCombinedPdf("model");
 
-   ASSERT(ws_->raw()->pdf("model"));
+    ASSERT(ws_->raw()->pdf("model"));
 
     ASSERT(pois);
     ASSERT(nps);
