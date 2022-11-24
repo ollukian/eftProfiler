@@ -154,6 +154,7 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
                 *dynamic_cast<RooWorkspace*>( f_->Get( std::move(name).c_str() ) )
                 );
         return true;
+        f_->Close();
     }
     return false;
 }
