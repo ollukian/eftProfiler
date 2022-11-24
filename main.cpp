@@ -13,8 +13,8 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-
-    //gErrorIgnoreLevel = kWarning;
+    //
+    gErrorIgnoreLevel = kError;
 
     eft::stats::Logger::Init();
 

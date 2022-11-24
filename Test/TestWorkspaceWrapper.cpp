@@ -535,6 +535,8 @@ void TestWSreading() {
     const RooArgSet* obs   = ws_->GetObs();
     const RooSimultaneous* pdf =  ws_->GetCombinedPdf("model");
 
+   ASSERT(ws_->raw()->pdf("model"));
+
     ASSERT(pois);
     ASSERT(nps);
     ASSERT(globs);
@@ -583,7 +585,6 @@ void TestWSGetters() {
     }
 
     ASSERT_NO_THROW(ws->GetModelConfig());
-    EFT_PROF_INFO("mc name: [{}]", ws->GetModelConfig().GetName());
     ASSERT_EQUAL(string(ws->GetModelConfig().GetName()), "ModelConfig");
 }
 
