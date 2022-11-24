@@ -7,7 +7,7 @@ if [ $changed = 1 ]; then
     echo "[INFO] update is required, update..."
     can_be_pulled=0
     git pull | grep -q 'error: Your local changes to the following files would be overwritten by merge' && can_be_pulled=1
-    if [ $can_be_pulled = 1 ]; then
+    if [ $can_be_pulled = 0 ]; then
       echo "[INFO] build...";
       sh wrap_by_singularity.sh sh build_and_test.sh || echo "[ERROR] in build&test"; exit #1;
     else
