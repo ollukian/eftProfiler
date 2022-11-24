@@ -527,6 +527,10 @@ void TestWSreading() {
     EFT_PROF_INFO("obs:");
     ws_->GetObs()->Print();
     EFT_PROF_INFO("test ws reading is done");
+
+    EFT_PROF_INFO("try to delete the ws");
+    ws_.reset();
+    EFT_PROF_INFO("ws is deleted");
     //EFT_PROF_INFO("pdf:");
     //ws_->GetCombinedPdf("model");
     //EFT_PROF_INFO("data:");
