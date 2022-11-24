@@ -90,18 +90,21 @@ inline void Assert(bool b, const std::string& hint) {
 class TestRunner {
 public:
     template <class TestFunc>
-    void RunTest(TestFunc func, const std::string& test_name) {
+    std::string RunTest(TestFunc func, const std::string& test_name) {
         try {
             func();
-            std::cerr << test_name << " OK" << std::endl;
+            return "OK";
+            //std::cerr << test_name << " OK" << std::endl;
         }
         catch (std::exception& e) {
             ++fail_count;
-            std::cerr << test_name << " fail: " << e.what() << std::endl;
+            return std::string("Fail: ") + std::string(e.what());
+            //std::cerr << test_name << " fail: " << e.what() << std::endl;
         }
         catch (...) {
             ++fail_count;
-            std::cerr << "Unknown exception caught" << std::endl;
+            return "Unknown exception caught";
+            //std::cerr << "Unknown exception caught" << std::endl;
         }
     }
 
