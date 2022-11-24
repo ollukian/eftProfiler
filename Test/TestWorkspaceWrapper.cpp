@@ -231,6 +231,7 @@ void CreateWS(const string& filename)
     EFT_PROF_INFO("write to file:");
     ws->Print();
     ws->writeToFile(filename.c_str(), true);
+    gDirectory->Add(ws);
     EFT_PROF_INFO("DONE");
     return;// ws;
 #if 0
