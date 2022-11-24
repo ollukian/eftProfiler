@@ -160,7 +160,8 @@ std::string TestRes::PrettyDuration() const noexcept {
         duration_mcs /= 1000;
     }
     else {
-        return std::to_string(duration_mcs) + units;
+        float tail = duration.count() % 1000;
+        return std::to_string(duration_mcs) + std::to_string(tail).substr(0, 3) + units;
     }
     return std::to_string(duration_mcs) + units;
 }
