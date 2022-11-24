@@ -167,7 +167,7 @@ std::string TestRes::PrettyDuration() const noexcept {
     }
     int tail = (duration.count() / 1000) % 1000;
     std::string tail_str = "." + std::to_string(tail).substr(0, 3);
-    return std::to_string(duration_mcs) + units;
+    return std::to_string(duration_mcs) + tail_str + units;
 }
 
 
