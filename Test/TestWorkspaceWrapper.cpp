@@ -229,7 +229,7 @@ void CreateWS(const string& filename)
     //RooAbsReal* nll = ws->pdf("model")->createNLL(*data);
 
     EFT_PROF_INFO("write to file:");
-    ws->Print();
+    //ws->Print();
     ws->writeToFile(filename.c_str(), true);
     //gDirectory->Add(ws);
     EFT_PROF_INFO("DONE");
