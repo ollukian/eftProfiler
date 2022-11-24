@@ -95,6 +95,8 @@ struct TestRes {
     std::chrono::microseconds duration;
     std::string name;
     std::string res;
+
+    inline std::string PrettyDuration() const noexcept {return {""}};
 };
 
 class TestRunner {
