@@ -24,7 +24,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
     Logger::GetLogger()->set_level(spdlog::level::info);
     EFT_PROF_INFO("Run all tests");
     fmt::print(cout, "=={:=<45}==={:=<10}==\n", "", "");
-    fmt::print(cout, "| {:^45} | {:^10} |\n", "Test Name", "Status");
+    fmt::print(cout, "| {:^45} | {:^10} | {:10} |\n", "Test Name", "Status", "Elapsed Time");
     fmt::print(cout, "=={:=<45}==={:=<10}==\n", "", "");
     //EFT_PROF_INFO("=={:=<45}==={:=<10}==", "", "");
     //EFT_PROF_INFO("| {:^45} | {:^10} |", "Test Name", "Status");
@@ -49,16 +49,16 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
         {
             //cerr << fmt::format("| {:45} | ==> ", name);
             Logger::SetSilent(); // to ignore text from the tests
-            string test_res = tr_.RunTest(function, "");
+            auto test_res = tr_.RunTest(function, "");
             Logger::SetLevel(spdlog::level::level_enum::info);
-            if (test_res == "OK") {
+            if (test_res.res == "OK") {
                 //EFT_PROF_INFO("| {:45} | {:10} |", name, test_res);
                 //fmt::print(cout, "| {:45} | {:10} |\n", name, "Wine", "OK");
-                fmt::print(fmt::fg(fmt::color::green), "| {:45} | {:10} |\n", name, "OK");
+                fmt::print(fmt::fg(fmt::color::green), "| {:45} | {:10} | {:10} |\n", name, "OK", test_res.duration.count());
             }
             else {
                 group_ok = false;
-                fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} |\n", name, test_res);
+                fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} | {:10} |\n", name, test_res.res, test_res.duration.count());
                 //EFT_PROF_ERROR("| {:45} | {:10} |", name, test_res);
                 //fmt::print(cerr, "| {:45} | {:10} |\n", name, std::move(test_res));
             }

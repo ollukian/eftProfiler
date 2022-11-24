@@ -16,6 +16,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include "Profiler.h"
 
 template <class T>
 std::ostream& operator << (std::ostream& os, const std::vector<T>& s) {
@@ -87,23 +88,42 @@ inline void Assert(bool b, const std::string& hint) {
     AssertEqual(b, true, hint);
 }
 
+class TestRunner;
+struct TestRes;
+
+struct TestRes {
+    std::chrono::microseconds duration;
+    std::string name;
+    std::string res;
+};
+
 class TestRunner {
 public:
     template <class TestFunc>
-    std::string RunTest(TestFunc func, const std::string& test_name) {
+    TestRes RunTest(TestFunc func, const std::string& test_name) {
+        TestRes res;
         try {
-            func();
-            return "OK";
+            {
+                EFT_LOG_DURATION(test_name)
+                func();
+            }
+            res.res = "OK";
+            res.duration = eft::utils::Profiler::GetLastDuration();
+            res.name = test_name;
+            return res;
             //std::cerr << test_name << " OK" << std::endl;
         }
         catch (std::exception& e) {
             ++fail_count;
-            return std::string("Fail: ") + std::string(e.what());
+            res.res = std::string("Fail: ") + std::string(e.what());
+            return res;
+            //return std::string("Fail: ") + std::string(e.what());
             //std::cerr << test_name << " fail: " << e.what() << std::endl;
         }
         catch (...) {
             ++fail_count;
-            return "Unknown exception caught";
+            res.res = "Unknown exception caught";
+            return res;
             //std::cerr << "Unknown exception caught" << std::endl;
         }
     }
@@ -120,6 +140,8 @@ public:
 private:
     int fail_count = 0;
 };
+
+
 
 #define ASSERT_EQUAL(x, y) {                \
   std::ostringstream __os;                  \
