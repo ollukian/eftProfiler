@@ -72,7 +72,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
         }
         else {
             fmt::print(fmt::fg(fmt::color::red), "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
-            fmt::print(cerr, "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
+            //fmt::print(cerr, "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
             //EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", groupname, tr_.GetFailCount());
             return;
         }

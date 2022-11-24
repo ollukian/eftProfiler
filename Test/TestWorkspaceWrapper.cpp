@@ -79,6 +79,7 @@ void CreateWS(const string& filename)
     */
 
     Logger::SetLevel(spdlog::level::level_enum::info);
+    gErrorIgnoreLevel = kError;
     EFT_PROF_INFO("Create lumi block..");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
     ws->factory( "lumi_kappa[1.045]" );
