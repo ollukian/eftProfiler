@@ -582,8 +582,8 @@ void TestWSGetters() {
     }
 
     ASSERT_NO_THROW(ws->GetModelConfig());
-    EFT_PROF_INFO("mc name: {}", ws->GetModelConfig().GetName());
-    ASSERT_EQUAL(ws->GetModelConfig().GetName(), "ModelConfig");
+    EFT_PROF_INFO("mc name: [{}]", ws->GetModelConfig().GetName());
+    ASSERT_EQUAL(string(ws->GetModelConfig().GetName()), "ModelConfig");
 }
 
 void TestWSSetters() {
@@ -615,6 +615,7 @@ void TestWSSetters() {
 }
 
 void Initiate() {
+    Logger::SetLevel(spdlog::level::level_enum::info);
     EFT_PROF_WARN("{} {} {}",
                   "Running tests of the Workspace wrapper. First stage may take some non-negligible time"
                   "due to creation of a toy RooWorkspace, requiring compiling of functions for a few test",
