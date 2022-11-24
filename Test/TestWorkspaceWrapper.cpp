@@ -539,6 +539,7 @@ void TestWSreading() {
 }
 
 void TestLoading() {
+    EFT_PROF_INFO("start test loading");
     ASSERT_NO_THROW(std::ignore = LoadWS()); // std::ignore to prevent warnings about [[nodiscard]]
     ASSERT(LoadWS()->raw());
 }
