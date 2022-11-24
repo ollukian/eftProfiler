@@ -96,12 +96,12 @@ void CreateWS(const string& filename)
     // Core model: Poisson probability with mean signal+bkg
     ws->factory( "Poisson::model_core(n,yield)" );
 
-    EFT_PROF_INFO("core model (+ lumi):");
-    ws->Print();
+    //EFT_PROF_INFO("core model (+ lumi):");
+    //ws->Print();
 
     ws->factory( "PROD::model(model_core,constr_lumi,constr_efficiency, constr_nbkg)" );
-    EFT_PROF_INFO("Full model");
-    ws->Print();
+    //EFT_PROF_INFO("Full model");
+    //ws->Print();
 
     RooRealVar* n = ws->var("n");
     RooArgSet obs("observables");
