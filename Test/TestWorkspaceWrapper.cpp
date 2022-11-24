@@ -68,7 +68,7 @@ void CreateWS(const string& filename)
     ws->factory( "prod::efficiency(efficiency_nom,alpha_efficiency)" );
     ws->factory( "Gaussian::constr_efficiency(beta_efficiency,glob_efficiency[0,-5,5],1)" );
     EFT_PROF_INFO("Create efficiency block DONE");
-    ws->Print("");
+    //ws->Print("");
 
     // bkg with syst
     ws->factory( "nbkg_nom[10.0, 5.0, 15.0]" );
