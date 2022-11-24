@@ -160,9 +160,13 @@ std::string TestRes::PrettyDuration() const noexcept {
         duration_mcs /= 1000;
     }
     else {
-        float tail = duration.count() % 1000;
-        return std::to_string(duration_mcs) + std::to_string(tail).substr(0, 3) + units;
+        int tail = duration.count() % 1000;
+        std::string tail_str = "." + std::to_string(tail).substr(0, 3);
+        //return std::to_string(duration_mcs) + std::to_string(tail).substr(0, 3) + units;
+        return std::to_string(duration_mcs) + tail_str + units;
     }
+    int tail = (duration.count() / 1000) % 1000;
+    std::string tail_str = "." + std::to_string(tail).substr(0, 3);
     return std::to_string(duration_mcs) + units;
 }
 
