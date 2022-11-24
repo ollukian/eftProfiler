@@ -85,7 +85,7 @@ void CreateWS(const string& filename)
     ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
     ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
     ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
-    EFT_PROF_INFO("Create lumi block DONE");
+    //EFT_PROF_INFO("Create lumi block DONE");
 
     // efficience
     EFT_PROF_INFO("Create efficiency block..");
@@ -94,7 +94,7 @@ void CreateWS(const string& filename)
     ws->factory( "cexpr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
     ws->factory( "prod::efficiency(efficiency_nom,alpha_efficiency)" );
     ws->factory( "Gaussian::constr_efficiency(beta_efficiency,glob_efficiency[0,-5,5],1)" );
-    EFT_PROF_INFO("Create efficiency block DONE");
+    //EFT_PROF_INFO("Create efficiency block DONE");
     //ws->Print("");
 
     // bkg with syst
@@ -216,16 +216,16 @@ void CreateWS(const string& filename)
     // import ModelConfig into workspace
     ws->import( modelConfig );
 
-    EFT_PROF_INFO("print all vars:");
+    //EFT_PROF_INFO("print all vars:");
 
     for (const auto container : {&_test_globs_names_,
                                  &_test_np_names_,
                                  &_test_fixed_names_,
                                  &_test_poi_names_})
     {
-        EFT_PROF_INFO("change container");
+        //EFT_PROF_INFO("change container");
         for (const auto& elem_name : *container) {
-            ws->var(elem_name.c_str())->Print();
+            //ws->var(elem_name.c_str())->Print();
         }
     }
 
@@ -233,7 +233,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("create nll");
     //RooAbsReal* nll = ws->pdf("model")->createNLL(*data);
 
-    EFT_PROF_INFO("write to file:");
+    //EFT_PROF_INFO("write to file:");
     //ws->Print();
     ws->writeToFile(filename.c_str(), true);
     //gDirectory->Add(ws);
@@ -512,7 +512,6 @@ void Finalise() {
 }
 
 void TestWSreading() {
-    eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();
@@ -552,7 +551,6 @@ void TestLoading() {
 }
 
 void TestWSGetters() {
-    eft::stats::Logger::SetFullPrinting();
     using namespace eft::utils::internal;
     auto ws = LoadWS();
 
@@ -585,7 +583,6 @@ void TestWSGetters() {
 }
 
 void TestWSSetters() {
-    eft::stats::Logger::SetFullPrinting();
     using namespace eft::utils::internal;
     auto ws = LoadWS();
 
@@ -615,7 +612,6 @@ void TestWSSetters() {
 
 void Initiate() {
     RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::FATAL);
-    eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
 }
