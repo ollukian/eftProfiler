@@ -4,6 +4,7 @@
 
 #include "Tester.h"
 #include "spdlog/fmt/bundled/color.h"
+#include "spdlog/fmt/bundled/ostream.h"
 
 using namespace std;
 using eft::stats::Logger;
@@ -70,7 +71,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             //EFT_PROF_INFO("Tests Group: {:30} all test have been successfully passed", groupname);
         }
         else {
-            fmt::print(fmt::fg(fmt::color::red), "\"Tests Group: {:30}, {} tests have failed\\n\", groupname, tr_.GetFailCount()");
+            fmt::print(fmt::fg(fmt::color::red), "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
             fmt::print(cerr, "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
             //EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", groupname, tr_.GetFailCount());
             return;
