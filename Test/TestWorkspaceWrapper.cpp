@@ -21,6 +21,33 @@ using namespace eft::utils;
 using namespace eft::stats;
 using namespace std;
 
+namespace eft::utils::internal {
+    static const set<string> _test_globs_names_ {
+            "glob_lumi",
+            "glob_efficiency",
+            "glob_nbkg"
+    };
+
+    static const set<string> _test_np_names_ {
+            "beta_lumi",
+            "beta_efficiency",
+            "beta_nbkg"
+    };
+
+    static const set<string> _test_fixed_names_ {
+            "lumi_nom",
+            "efficiency_nom",
+            "nbkg_nom",
+            "lumi_kappa",
+            "efficiency_kappa",
+            "nbkg_kappa"
+    };
+
+    static const set<string> _test_poi_names_ {
+            "xsec"
+    };
+}
+
 //namespace eft::inner::tests {
 
 void CreateWS(const string& filename)
@@ -113,31 +140,9 @@ void CreateWS(const string& filename)
     //ws->import(*data, RooFit::Silence());
 
     // define glob obs
-    static const set<string> _test_globs_names_ {
-            "glob_lumi",
-            "glob_efficiency",
-            "glob_nbkg"
-    };
 
-    static const set<string> _test_np_names_ {
-            "beta_lumi",
-            "beta_efficiency",
-            "beta_nbkg"
-    };
-
-    static const set<string> _test_fixed_names_ {
-            "lumi_nom",
-            "efficiency_nom",
-            "nbkg_nom",
-            "lumi_kappa",
-            "efficiency_kappa",
-            "nbkg_kappa"
-    };
-
-    static const set<string> _test_poi_names_ {
-        "xsec"
-    };
-
+    using namespace eft::utils::internal;
+    
     RooArgSet globalObs("global_obs");
     for (const auto& glob_name : _test_globs_names_) {
         ws->var(glob_name.c_str())->setConstant(true);
@@ -507,12 +512,10 @@ void Finalise() {
 }
 
 void TestWSreading() {
-    EFT_PROF_INFO("Start test ws reading");
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();
-    //auto ws_ = std::make_shared<WorkspaceWrapper>();
     //auto ws_ = std::make_shared<WorkspaceWrapper>();
     ASSERT(ws_);
     ASSERT(std::filesystem::exists(path));
@@ -520,29 +523,26 @@ void TestWSreading() {
     bool is_set = false;
     ASSERT_NO_THROW(is_set = ws_->SetWS(path, ws_name));
     ASSERT(is_set);
-    //ASSERT_NO_THROW(ws_->raw()->var("n")->getVal());
     ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 11);
-    // try to get Model Config
-    //ASSERT_NOT_EQUAL(ws_->raw()->obj("ModelConfig"), nullptr);
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
     EFT_PROF_INFO("model config is set");
 
-    ws_->raw()->Print("v");
-    EFT_PROF_INFO("pois:");
-    ws_->GetPOIs()->Print();
-    EFT_PROF_INFO("nps:");
-    ws_->GetNp()->Print();
-    EFT_PROF_INFO("obs:");
-    ws_->GetObs()->Print();
-    EFT_PROF_INFO("test ws reading is done");
+    const RooArgSet* pois  = ws_->GetPOIs();
+    const RooArgSet* nps   = ws_->GetNp();
+    const RooArgSet* globs = ws_->GetGlobObs();
+    const RooArgSet* obs   = ws_->GetObs();
+    const RooSimultaneous* pdf =  ws_->GetCombinedPdf("model");
 
-    //EFT_PROF_INFO("try to delete the ws");
-    //ws_.reset();
-    //EFT_PROF_INFO("ws is deleted");
-    //EFT_PROF_INFO("pdf:");
-    //ws_->GetCombinedPdf("model");
-    //EFT_PROF_INFO("data:");
-    //ws_->GetData("data");
+    ASSERT(pois);
+    ASSERT(nps);
+    ASSERT(globs);
+    ASSERT(obs);
+    ASSERT(pdf);
+
+    ASSERT_EQUAL(pois->getSize(),   1);
+    ASSERT_EQUAL(nps->getSize(),    3);
+    ASSERT_EQUAL(globs->getSize(),  3);
+    ASSERT_EQUAL(obs->getSize(),    1);
 }
 
 void TestLoading() {
@@ -551,23 +551,80 @@ void TestLoading() {
     ASSERT(LoadWS()->raw());
 }
 
+void TestGetters() {
+    eft::stats::Logger::SetFullPrinting();
+    using namespace eft::utils::internal;
+    auto ws = LoadWS();
+
+    for (const string& glob_name : _test_globs_names_) {
+        ASSERT(ws->GetVar(glob_name)->isConstant());
+        ASSERT_EQUAL(ws->GetVar(glob_name)->getVal(), ws->GetParVal(glob_name));
+        ASSERT_EQUAL(ws->GetVar(glob_name)->getError(), ws->GetParErr(glob_name));
+    }
+
+    for (const string& fixed_name : _test_fixed_names_) {
+        ASSERT(ws->GetVar(fixed_name)->isConstant());
+        ASSERT_EQUAL(ws->GetVar(fixed_name)->getVal(), ws->GetParVal(fixed_name));
+        ASSERT_EQUAL(ws->GetVar(fixed_name)->getError(), ws->GetParErr(fixed_name));
+    }
+
+    for (const string& poi_name : _test_poi_names_) {
+        ASSERT(ws->GetVar(poi_name)); // check that exists
+        ASSERT_EQUAL(ws->GetVar(poi_name)->getVal(), ws->GetParVal(poi_name));
+        ASSERT_EQUAL(ws->GetVar(poi_name)->getError(), ws->GetParErr(poi_name));
+    }
+
+    for (const string& fixedNames : _test_fixed_names_) {
+        ASSERT(ws->GetVar(fixedNames)); // check that exists
+        ASSERT_EQUAL(ws->GetVar(fixedNames)->getVal(), ws->GetParVal(fixedNames));
+        ASSERT_EQUAL(ws->GetVar(fixedNames)->getError(), ws->GetParErr(fixedNames));
+    }
+
+    ASSERT_NO_THROW(ws->GetModelConfig());
+    ASSERT_EQUAL(ws->GetModelConfig().GetName(), "ModelConfig");
+}
+
 void TestSetters() {
     eft::stats::Logger::SetFullPrinting();
+    using namespace eft::utils::internal;
     auto ws = LoadWS();
+
+    const string poi_name = *_test_poi_names_.begin();
+    const string one_np_name = *_test_np_names_.begin();
+    { // set const
+        ASSERT_NOT(ws->GetVar(poi_name)->isConstant());
+        ws->FixValConst(poi_name);
+        ASSERT(ws->GetVar(poi_name)->isConstant());
+    }
+    { // set values and errors of a value
+        ASSERT_NOT(ws->GetVar(one_np_name)->isConstant());
+        ws->SetVarVal(one_np_name, 1.3);
+        ws->SetVarErr(one_np_name, 2.4);
+        ASSERT_NOT(ws->GetVar(one_np_name)->isConstant());
+        ASSERT_EQUAL(ws->GetVar(one_np_name)->getVal(), 1.2);
+        ASSERT_EQUAL(ws->GetVar(one_np_name)->getError(), 2.5);
+        ASSERT_EQUAL(ws->GetParVal(one_np_name), 1.2);
+        ASSERT_EQUAL(ws->GetParErr(one_np_name), 2.4);
+    }
+    {
+        ASSERT_NOT(ws->GetVar(one_np_name)->isConstant());
+        ws->FixValConst(one_np_name);
+        ASSERT(ws->GetVar(one_np_name)->isConstant());
+    }
 }
 
 void Initiate() {
-    EFT_PROF_INFO("start initiate");
+    RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::FATAL);
     eft::stats::Logger::SetFullPrinting();
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
-    EFT_PROF_INFO("finish initiate");
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
     EFT_ADD_TEST(Initiate,      "WorkSpaceWrapper")
     EFT_ADD_TEST(TestWSreading, "WorkSpaceWrapper");
     EFT_ADD_TEST(TestLoading,   "WorkSpaceWrapper");
+    EFT_ADD_TEST(TestGetters,   "WorkSpaceWrapper");
     EFT_ADD_TEST(TestSetters,   "WorkSpaceWrapper");
     EFT_ADD_TEST(Finalise,      "WorkSpaceWrapper");
 }
