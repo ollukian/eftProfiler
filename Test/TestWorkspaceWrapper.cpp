@@ -511,12 +511,13 @@ void TestWSreading() {
     ASSERT(ws_.get());
     ASSERT(std::filesystem::exists(path));
 
-    ASSERT_NO_THROW(ws_->SetWS(path, ws_name));
-    ASSERT(ws_->SetWS(path, ws_name));
+    bool is_set = false;
+    ASSERT_NO_THROW(is_set = ws_->SetWS(path, ws_name));
+    ASSERT(is_set);
     ASSERT_NO_THROW(ws_->raw()->var("n")->getVal());
     ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 11);
     // try to get Model Config
-    ASSERT_NO_THROW(ws_->raw()->obj("ModelConfig"));
+    ASSERT_NOT_EQUAL(ws_->raw()->obj("ModelConfig"), nullptr);
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
     EFT_PROF_INFO("model config is set");
     ws_->raw()->Print("v");
