@@ -96,7 +96,7 @@ struct TestRes {
     std::string name;
     std::string res;
 
-    std::string PrettyDuration() const noexcept;
+    inline std::string PrettyDuration() const noexcept;
 };
 
 
