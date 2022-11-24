@@ -3,6 +3,12 @@
 //
 
 #include "Tester.h"
+#include "spdlog/fmt/bundled/color.h"
+#include <spdlog/fmt/core.h>
+#include <spdlog/fmt/format.h>
+#include <spdlog/fmt/time.h>
+#include <spdlog/fmt/color.h>
+#include <spdlog/fmt/printf.h>
 
 using namespace std;
 using eft::stats::Logger;
@@ -50,13 +56,15 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             string test_res = tr_.RunTest(function, "");
             Logger::SetLevel(spdlog::level::level_enum::info);
             if (test_res == "OK") {
-                EFT_PROF_INFO("| {:45} | {:10} |", name, test_res);
-                fmt::print(cout, "| {:45} | {:10} |\n", name, std::move(test_res));
+                //EFT_PROF_INFO("| {:45} | {:10} |", name, test_res);
+                //fmt::print(cout, "| {:45} | {:10} |\n", name, "Wine", "OK");
+                fmt::print(fmt::fg(fmt::color::green), "| {:45} | {:10} |\n", name, "OK");
             }
             else {
                 group_ok = false;
-                EFT_PROF_ERROR("| {:45} | {:10} |", name, test_res);
-                fmt::print(cerr, "| {:45} | {:10} |\n", name, std::move(test_res));
+                fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} |\n", name, res);
+                //EFT_PROF_ERROR("| {:45} | {:10} |", name, test_res);
+                //fmt::print(cerr, "| {:45} | {:10} |\n", name, std::move(test_res));
             }
             //EFT_PROF_INFO("| {:45} | {:10} |", name, std::move(test_res));
             Logger::SetLevel(spdlog::level::level_enum::info);
@@ -68,7 +76,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
         }
         else {
             fmt::print(cerr, "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
-            EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", groupname, tr_.GetFailCount());
+            //EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", groupname, tr_.GetFailCount());
             return;
         }
     } // groups
