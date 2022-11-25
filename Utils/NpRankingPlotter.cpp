@@ -482,8 +482,8 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical) {
-            latex.DrawLatex(x, y + 0.15, settings->res_status.c_str());
-            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y);
+            latex.DrawLatex(x, y + 0.05, settings->res_status.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.05);
         }
         else {
             latex.DrawLatex(x += 0.10, y, settings->res_status.c_str());
@@ -504,7 +504,19 @@ namespace eft::plot {
                                                  settings->energy,
                                                  settings->lumi);
 
-        latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+        if (is_vertical) {
+            text_ds_energy_lumi = fmt::format("{}", settings->ds_title);
+            latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, ds; at {}, {}", x, y);
+            text_ds_energy_lumi = fmt::format("#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+                                              settings->energy,
+                                              settings->lumi);
+            latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, energy,lumi; at {}, {}", x, y);
+        }
+        else {
+            latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+        }
 
         string selection_info = "All nuissance parameters";
         if ( ! settings->match_names.empty() ) {
