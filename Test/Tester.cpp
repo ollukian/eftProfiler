@@ -28,7 +28,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
     fmt::print(cout, "=={:=<45}==={:=<10}==={:=<10}==\n", "", "", "");
     for (const auto& groupname : group_nb_) {
         const auto& tests = tests_.at(groupname);
-        fmt::print(cout, "| {:^72} |\n", groupname);
+        fmt::print(cout, "| {:^71} |\n", groupname);
         fmt::print(cout, "+{:-<45}--+-{:-<10}-+-{:-<10}-+\n", "", "", "");
         for (const auto& [name, function] : tests)
         {
