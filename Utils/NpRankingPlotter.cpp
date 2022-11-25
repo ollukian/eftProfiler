@@ -129,12 +129,14 @@ namespace eft::plot {
         gStyle->SetOptStat(0000000);
 
         EFT_PROF_TRACE("[NpRankingPlotter]{Plot}");
-        EFT_PROF_INFO("[NpRankingPlotter] before selector available {} NP, plot {} out of them",
+        EFT_PROF_INFO("[NpRankingPlotter] before selector available {} NP, try to plot {} out of them",
                       res_for_plot_.size(),
                       settings->top);
 
         vector<stats::NpInfoForPlot> res_for_plot_after_selector;
         res_for_plot_after_selector.reserve(res_for_plot_.size());
+
+        size_t total_nb_systematics_in_folder = res_for_plot_.size();
 
         // TODO: wrap by "GetSelected"
         std::copy_if(res_for_plot_.begin(),
@@ -142,8 +144,9 @@ namespace eft::plot {
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
                          bool res = callback_(info);
-                         EFT_PROF_INFO("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
+                         EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
                                        "overall",
+                                       "",
                                        info.poi,
                                        info.name,
                                        res);
@@ -153,7 +156,7 @@ namespace eft::plot {
 
         res_for_plot_after_selector.shrink_to_fit();
 
-        EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, plot {} out of them",
+        EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, try to plot {} out of them",
                       res_for_plot_after_selector.size(),
                       settings->top);
 
@@ -162,12 +165,7 @@ namespace eft::plot {
             return;
         }
 
-        EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
-
-//        EFT_PROF_DEBUG("impacts before sorting:");
-//        for (const auto& res : res_for_plot_after_selector) {
-//            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
-//        }
+        EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact (quadratic sum of post-fit impacts)");
 
         std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
                   [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
@@ -183,10 +181,10 @@ namespace eft::plot {
                   }
         );
 
-        EFT_PROF_DEBUG("impacts after sorting:");
-        for (const auto& res : res_for_plot_after_selector) {
-            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
-        }
+//        EFT_PROF_DEBUG("impacts after sorting:");
+//        for (const auto& res : res_for_plot_after_selector) {
+//            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
+//        }
 
         size_t nb_systematics = settings->top;
         if (nb_systematics > res_for_plot_after_selector.size())
