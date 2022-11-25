@@ -28,6 +28,10 @@ int main(int argc, char* argv[]) {
     }
     CommandLineArgs commandLineArgs(argc, argv);
 
+    if (commandLineArgs.HasKey("release")) {
+        eft::stats::Logger::SetRelease();
+    }
+
     if (commandLineArgs.HasKey("h") || commandLineArgs.HasKey("help"))
     {
         cout << "for task, use one of the following:" << endl;
