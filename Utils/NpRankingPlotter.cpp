@@ -487,17 +487,9 @@ namespace eft::plot {
         float dx = 0;
 
         if (is_vertical) {
-             //std::swap(x, y);
-             //std::swap(dx, dy);
-
-             //x = 1 - settings->rmargin - 0.05;
              y = settings->bmargin + 0.02;
-             //if (dx == 0.03)
              dx = -0.01;
              dy = 0.f;
-
-
-             //dx = -dx;
         }
 
         latex.SetNDC();
@@ -557,6 +549,29 @@ namespace eft::plot {
             for (const string& match : settings->match_names) {
                 selection_info += match + " ";
             }
+        }
+
+
+        TBox marker_prefit_plus  {0.020, scaling,  0.025, 1.03 * scaling};
+        TBox marker_prefit_minus {0.020, scaling + 0.05,  0.025, 1.03 * scaling + 0.05};
+
+        marker_prefit_plus.SetFillColorAlpha(settings->color_prefit_plus,
+                     utils::ColourUtils::GetColourByIdx(
+                                settings->color_postfit_minus)
+                                .a_as_fraction()
+                                );
+
+        marker_prefit_minus.SetFillColorAlpha(settings->color_prefit_minus,
+                                             utils::ColourUtils::GetColourByIdx(
+                                                     settings->color_prefit_minus)
+                                                     .a_as_fraction()
+        );
+
+
+        // draw pseudo-legend
+        if (is_vertical) {
+            marker_prefit_plus.Draw();
+            marker_prefit_minus.Draw();
         }
 
         EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", 0.35, y);
