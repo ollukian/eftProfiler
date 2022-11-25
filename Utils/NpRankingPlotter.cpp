@@ -457,7 +457,7 @@ namespace eft::plot {
              std::swap(x, y);
              std::swap(dx, dy);
 
-             x = 1 - settings->rmargin + 0.05;
+             x = 1 - settings->rmargin - 0.10;
              y = settings->bmargin;
 
              dx = -dx;
@@ -467,6 +467,10 @@ namespace eft::plot {
         latex.SetTextSize(0.040); //0.045 is std
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
+
+        if (is_vertical)
+            latex.SetTextSize(0.025); //0.045 is std
+
         if (is_vertical)
             latex.SetTextAngle(90);
         EFT_PROF_WARN("latex.DrawLatex(x, y, settings->experiment.c_str()); at {},{}", x, y);
