@@ -11,6 +11,9 @@
 
 using namespace std;
 
+static vector<vector<char>> vstrings;
+static vector<const char*>  cstrings;
+
 // helpers to emulate argc & argv passed to the command line
 vector<vector<char>> ConvertToArgcAgv(istringstream& s)
 {
@@ -48,8 +51,8 @@ vector<vector<char>> ConvertToArgcAgv(const vector<string>& s)
 }
 
 void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char** argv) {
-    static vector<vector<char>> vstrings;
-    static vector<const char*>  cstrings;
+    //static vector<vector<char>> vstrings;
+    //static vector<const char*>  cstrings;
 
     vstrings.clear();
     cstrings.clear();
