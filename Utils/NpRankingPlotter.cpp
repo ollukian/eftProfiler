@@ -474,7 +474,7 @@ namespace eft::plot {
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
 
-        TBox box {0.f, settings->rmul, 1.98f, settings->rmuh};
+        TBox box {0.03f, 0.99 * settings->rmul, 1.97f, 0.99 * settings->rmuh};
         box.SetFillColor(kWhite);
 
         if (is_vertical)
