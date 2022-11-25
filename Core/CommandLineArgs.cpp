@@ -136,7 +136,8 @@ optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Ke
         EFT_PROF_INFO("n such key found");
         return nullopt;
     }
-    EFT_PROF_INFO("found: {} elems", ops.size());
+    EFT_PROF_INFO("found: {} elems for key {}:", ops.at(option).size(), option);
+
     if ( ! ops.at(option).empty() )
         return ops.at(option)[0];
     return "";
