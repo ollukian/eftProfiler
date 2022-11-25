@@ -59,7 +59,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
     }
     EFT_PROF_INFO("Statistics for function calls:");
     const auto& durations = eft::utils::Profiler::GetDurations();
-    const auto& avg_durations = eft::utils::Profiler::GetAvgDurations());
+    const auto& avg_durations = eft::utils::Profiler::GetAvgDurations();
     for (const auto& [name, duration] : durations) {
         fmt::print(cout, "| {:-^30} | {:-<10} | {:-<15} |\n", "Function", "Duration", "Avg duration");
         fmt::print(fmt::fg(fmt::color::light_green), "| {:^30} | {:10} | {:10} | \n",
