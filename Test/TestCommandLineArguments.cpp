@@ -264,6 +264,7 @@ void TestSetValIfArgExistsString()
 
 void TestSetValIfArgExistsChar() {
     {
+        eft::stats::Logger::SetFullPrinting();
         istringstream arguments {"--key_for_char c --key2 r"};
         int argc {0};
         char** argv = nullptr;
@@ -320,6 +321,7 @@ void TestSetValIfArgExistsVector()
 }
 
 void TestSetValIfArgExistsPointer() {
+    eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--key1 1 --key2"};
         int argc {0};
