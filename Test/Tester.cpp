@@ -11,6 +11,7 @@ using eft::stats::Logger;
 
 void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 {
+    EFT_PROFILE_FN();
     if (nb_of_group_.find(groupname) == nb_of_group_.end()) {
         nb_of_group_[groupname] = nb_of_group_.size();
         group_nb_.push_back(groupname);
@@ -20,7 +21,7 @@ void Tester::AddTest(Tester::Test test, std::string name, std::string groupname)
 
 void Tester::RunTests(const std::string& groupname_to_run_only)
 {
-
+    EFT_PROFILE_FN();
     Logger::GetLogger()->set_level(spdlog::level::info);
     EFT_PROF_INFO("Run all tests");
     fmt::print(cout, "=={:=<45}==={:=<10}==={:=<10}==\n", "", "", "");
@@ -40,7 +41,7 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
             }
             else {
                 fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} | {:10} |\n", name, "Fail", test_res.PrettyDuration());
-                fmt::print(fmt::fg(fmt::color::red), "| {}", test_res.res);
+                fmt::print(fmt::fg(fmt::color::red), "| {} \n", test_res.res);
             }
             Logger::SetLevel(spdlog::level::level_enum::info);
         } // tests in this group
@@ -56,9 +57,16 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
     if (fail_count == 0) {
         EFT_PROF_INFO("All tests ran successfully");
     }
+    EFT_PROF_INFO("Statistics for function calls:");
+    const auto& durations = eft::utils::Profiler::GetDurations();
+    for (const auto& [name, duration] : durations) {
+        fmt::print(cout, "| {:-^30} | {:-<10} |\n", "", "");
+        fmt::print(fmt::fg(fmt::color::light_green), "| {:^30} | {:10} |\n", name, duration.count());
+    }
 }
 
 void Tester::InitSetTests() {
+    EFT_PROFILE_FN();
     //using namespace eft::inner::tests;
     EFT_PROF_DEBUG("Init set tests");
     EFT_RUN_TESTFILE(FileSystem);

@@ -145,6 +145,7 @@ private:
 };
 
 std::string TestRes::PrettyDuration() const noexcept {
+    EFT_PROFILE_FN();
     std::string units {" mcs"};
     long long duration_mcs = duration.count();
     if (duration_mcs > 1000) {
