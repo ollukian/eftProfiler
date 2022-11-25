@@ -125,7 +125,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 
     auto val_opt = GetVal(key);
     if (val_opt.has_value()) {
-        if constexpr (std::is_pointer_v<std::remove_cv<T>>) {
+        if constexpr (std::is_pointer_v<std::remove_cv_t<T>>) {
             EFT_PROF_INFO("is a pointer, loop again, removing pointer");
             return SetValIfArgExists(key, *val);
         }
@@ -133,13 +133,13 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             EFT_PROF_INFO("Is a smart pointer, extract the pointed value");
             return SetValIfArgExists(key, *val);
         }
-        else if constexpr(std::is_same_v<std::string, std::remove_cv<T>>) {
+        else if constexpr(std::is_same_v<std::string, std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("is a string");
             val = val_opt.value();
             EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
         }
-        else if constexpr(std::is_same_v<std::vector<char>, std::remove_cv<T>>) {
+        else if constexpr(std::is_same_v<std::vector<char>, std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("is a vector[chars]");
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
             std::vector<std::string> tmp = GetVals(key).value();
@@ -160,7 +160,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             }
             return true;
         }
-        else if constexpr(std::is_same_v<std::vector<std::string>, std::remove_cv<T>>) {
+        else if constexpr(std::is_same_v<std::vector<std::string>, std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("is a vector[string]");
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
             val = GetVals(key).value();
@@ -168,19 +168,19 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             // TODO: to do the same with arrays and other containers. decay_type ?
             // TODO: add unfolding of a vector by looping over it and extracting components
         }
-        else if constexpr(std::is_floating_point_v<std::remove_cv<T>>) {
+        else if constexpr(std::is_floating_point_v<std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("is a float");
             val = stod(val_opt.value());
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
             return true;
         }
-        else if constexpr(std::is_integral_v<std::remove_cv<T>>) {
+        else if constexpr(std::is_integral_v<std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("is an int");
             val = stoi(val_opt.value());
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
-        if constexpr(std::is_same_v<char, std::remove_cv<T>>) {
+        if constexpr(std::is_same_v<char, std::remove_cv_t<T>>) {
             EFT_PROF_INFO("requested value is a char");
             std::string tmp = val_opt.value();
             EFT_PROF_INFO("this char: [{}] with size: {}", tmp, tmp.size());
