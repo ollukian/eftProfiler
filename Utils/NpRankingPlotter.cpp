@@ -27,6 +27,7 @@
 #include "TLine.h"
 #include "TGraphErrors.h"
 #include "TGaxis.h"
+#include "TBox.h"
 
 
 using namespace std;
@@ -472,6 +473,12 @@ namespace eft::plot {
         axis_nps->SetTitleOffset(settings->np_offset); // 1.0
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
+
+        TBox box {0.f, -scaling, 1.99f, scaling};
+        box.SetFillColor(kWhite);
+
+        if (is_vertical)
+            box.Draw();
 
         TLatex latex;
         float y = 1.f - settings->tmargin - 0.04f;
