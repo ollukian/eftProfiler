@@ -457,7 +457,7 @@ namespace eft::plot {
              std::swap(x, y);
              std::swap(dx, dy);
 
-             x = 1 - settings->rmargin - 0.10;
+             x = 1 - settings->rmargin - 0.05;
              y = settings->bmargin + 0.02;
 
              //if (dx == 0.03)
@@ -499,7 +499,7 @@ namespace eft::plot {
         latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
         EFT_PROF_WARN("latex.DrawLatex(x, y, SMEFT; at {}, {}", x, y);
 
-        string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+        string text_ds_energy_lumi = fmt::format("{}\n (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
                                                  settings->ds_title,
                                                  settings->energy,
                                                  settings->lumi);
