@@ -458,7 +458,11 @@ namespace eft::plot {
              std::swap(dx, dy);
 
              x = 1 - settings->rmargin - 0.10;
-             y = settings->bmargin;
+             y = settings->bmargin + 0.02;
+
+             if (dx == 0.03)
+                 dx = 0.01;
+
 
              dx = -dx;
         }
@@ -487,6 +491,10 @@ namespace eft::plot {
         }
 
         latex.SetTextSize(settings->text_size); // 0.030
+
+        if (is_vertical)
+            latex.SetTextSize(0.020); //0.045 is std
+
         //latex.SetTextSize(0.030); // 0.030
         latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
         EFT_PROF_WARN("latex.DrawLatex(x, y, SMEFT; at {}, {}", x, y);
