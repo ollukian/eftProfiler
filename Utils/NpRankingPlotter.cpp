@@ -115,7 +115,7 @@ namespace eft::plot {
             EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {:10}, np: {:30} => skip not constrained", res.poi_name, res.np_name);
         }
 
-        EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {:10}, np: {:30}", res.poi_name, res.np_name);
+        EFT_PROF_DEBUG("[ReadValueOneFile] read res for poi: {:10}, np: {:30}", res.poi_name, res.np_name);
         //cout << setw(4) << j << endl;
         np_study_res_[res.np_name] = res;
         return res;
@@ -144,7 +144,7 @@ namespace eft::plot {
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
                          bool res = callback_(info);
-                         EFT_PROF_INFO("Does np: {:40} for poi: {:15} passes name selection ==> result: {}",
+                         EFT_PROF_INFO("Does np: {:40} for poi: {} pass name selection ==> result: {}",
                                        info.name,
                                        info.poi,
                                        res);
@@ -555,7 +555,7 @@ namespace eft::plot {
         info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_fixed_np_val;
         info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
 
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, np val: {:10} ==> np error: {:10}",
+        EFT_PROF_TRACE("name: {:30}, fixed: {:10}, np val: {:10} ==> np error: {:10}",
                        res.np_name,
                        res.poi_fixed_np_val,
                        res.np_val,

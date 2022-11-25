@@ -111,7 +111,7 @@ template<typename T>
 bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 {
     EFT_PROFILE_FN();
-    EFT_PROF_DEBUG("[CommandLineArgs] try to get value for key: {}", key);
+    //EFT_PROF_DEBUG("[CommandLineArgs] try to get value for key: {}", key);
 
     _requested_keys.insert(key); // to show that this key has been checked
 
@@ -128,28 +128,24 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
     auto val_opt = GetVal(key);
     if (val_opt.has_value()) {
         if constexpr (std::is_pointer_v<std::remove_cv_t<T>>) {
-            EFT_PROF_INFO("is a pointer, loop again, removing pointer");
+            EFT_PROF_DEBUG("is a pointer, loop again, removing pointer");
             return SetValIfArgExists(key, *val);
         }
         else if constexpr(is_smart_pointer<T>::value) {
-            EFT_PROF_INFO("Is a smart pointer, extract the pointed value");
+            EFT_PROF_DEBUG("Is a smart pointer, extract the pointed value");
             return SetValIfArgExists(key, *val);
         }
         else if constexpr(std::is_same_v<std::string, std::remove_cv_t<T>>) {
-            EFT_PROF_DEBUG("is a string");
             val = val_opt.value();
-            EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_same_v<std::vector<char>, std::remove_cv_t<T>>) {
-            EFT_PROF_DEBUG("is a vector[chars]");
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> as vector<char>", key);
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
             std::vector<std::string> tmp = GetVals(key).value();
-            EFT_PROF_INFO("exctacted {} elems: [{}]", tmp.size(), tmp);
             val.clear();
             val.reserve(tmp.size());
             for (const auto& elem : tmp) {
-                EFT_PROF_INFO("handle: [{}]", elem);
                 if (elem.size() != 1) {
                     throw std::logic_error(fmt::format("{} [{}] as array of chars: {} [{}] {}",
                                                        "Cannot parse obj for the key",
@@ -160,27 +156,23 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
                 }
                 val.emplace_back(elem[0]);
             }
-            EFT_PROF_INFO("written {} elems: [{}]", val.size(), val);
             return true;
         }
         else if constexpr(std::is_same_v<std::vector<std::string>, std::remove_cv_t<T>>) {
-            EFT_PROF_DEBUG("is a vector[string]");
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
             val = GetVals(key).value();
             return true;
             // TODO: to do the same with arrays and other containers. decay_type ?
             // TODO: add unfolding of a vector by looping over it and extracting components
         }
         else if constexpr(std::is_floating_point_v<std::remove_cv_t<T>>) {
-            EFT_PROF_DEBUG("is a float");
             val = stod(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as float", key, val_opt.value());
             return true;
         }
         if constexpr(std::is_same_v<char, std::remove_cv_t<T>>) {
-            EFT_PROF_INFO("requested value is a char");
             std::string tmp = val_opt.value();
-            EFT_PROF_INFO("this char: [{}] with size: {}", tmp, tmp.size());
+            EFT_PROF_DEBUG("this char: [{}] with size: {}", tmp, tmp.size());
             if (tmp.size() != 1) {
                 throw std::logic_error(fmt::format("{}: [{}] as a char: [{}] {}",
                                                    "Cannot parse char for the key",
@@ -189,19 +181,19 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
                                                    "is not a char"));
             }
             val = tmp[0];
-            EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as char", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as char", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_integral_v<std::remove_cv_t<T>>) {
-            EFT_PROF_DEBUG("is an int");
+            //EFT_PROF_DEBUG("is an int");
             val = stoi(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_array_v<std::decay_t<T>>) {
-            EFT_PROF_DEBUG("is an array");
+            //EFT_PROF_DEBUG("is an array");
             val = GetVals(key).value();
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as array", key, val_opt.value());
+            EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
         }
         else {
