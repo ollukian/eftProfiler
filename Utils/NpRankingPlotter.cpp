@@ -417,13 +417,17 @@ namespace eft::plot {
         );
         //auto graph_nps_obs = make_shared<TGraphErrors>(settings->top);
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
+            size_t idx_bin = idx_syst;
+            if (is_vertical) {
+                idx_bin += 2;
+            }
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
                            scaling * res_for_plot_after_selector.at(idx_syst).obs_value,
                            scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
-            graph_nps_obs->SetBinContent(idx_syst + 1,res_for_plot_after_selector.at(idx_syst).obs_value);
-            graph_nps_obs->SetBinError(idx_syst   + 1,  res_for_plot_after_selector.at(idx_syst).obs_error);
+            graph_nps_obs->SetBinContent(idx_bin + 1,res_for_plot_after_selector.at(idx_syst).obs_value);
+            graph_nps_obs->SetBinError(idx_bin   + 1,  res_for_plot_after_selector.at(idx_syst).obs_error);
         }
 
         graph_nps_obs->Scale(scaling);
@@ -436,13 +440,18 @@ namespace eft::plot {
         graph_nps_obs->SetLineWidth(2); // 4
         graph_nps_obs->Draw("same E1 X0");
 
-        legend->Draw("same");
+        if ( ! is_vertical )
+            legend->Draw("same");
+
+        nb_bins = nb_systematics;
+        if (is_vertical)
+            nb_bins += 2;
 
         // draw second axes for nps
         auto axis_nps = make_unique<TGaxis>(
-                                        nb_systematics,
+                                    nb_bins,
                                         - 1 * scaling,
-                                        nb_systematics,
+                                        nb_bins,
                                         1 * scaling,
                                         -1.f,
                                         1.f,
