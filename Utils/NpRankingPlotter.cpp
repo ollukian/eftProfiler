@@ -310,11 +310,6 @@ namespace eft::plot {
                                                                 settings->plt_size[0],
                                                                 settings->plt_size[1]); // 1200 x 800
 
-        canvas->SetRightMargin  (settings->rmargin); // 0.10
-        canvas->SetLeftMargin   (settings->lmargin); // 0.10
-        canvas->SetTopMargin    (settings->tmargin); // 0.05
-        canvas->SetBottomMargin (settings->bmargin); // 0.4
-
         bool is_vertical = settings->vertical;
 
         if (is_vertical) {
@@ -327,6 +322,12 @@ namespace eft::plot {
             //canvas->SetTopMargin(settings->rmargin);
             //canvas->SetBottomMargin(settings->lmargin);
         }
+
+        canvas->SetRightMargin  (settings->rmargin); // 0.10
+        canvas->SetLeftMargin   (settings->lmargin); // 0.10
+        canvas->SetTopMargin    (settings->tmargin); // 0.05
+        canvas->SetBottomMargin (settings->bmargin); // 0.4
+
 
         float legend_x_low  = 1.f - settings->rmargin - 0.2f;
         float legend_y_low  = 1.f - settings->tmargin - 0.1f;
