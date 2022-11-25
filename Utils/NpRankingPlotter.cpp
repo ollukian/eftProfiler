@@ -191,12 +191,17 @@ namespace eft::plot {
 
         using eft::utils::PlotterUtils;
 
-        auto histo                  = PlotterUtils::MakeHisto1D("histo", nb_systematics);
-        auto histo_neg              = PlotterUtils::MakeHisto1D("h_neg", nb_systematics);
-        auto histo_plus_sigma_var   = PlotterUtils::MakeHisto1D("h_1sigma_var", nb_systematics);
-        auto histo_minus_sigma_var  = PlotterUtils::MakeHisto1D("h_-1sigma_var", nb_systematics);
-        auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_systematics);
-        auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_systematics);
+        bool is_vertical = settings->vertical;
+        size_t nb_bins = nb_systematics;
+        if (is_vertical)
+            nb_bins += 2;
+
+        auto histo                  = PlotterUtils::MakeHisto1D("histo", nb_bins);
+        auto histo_neg              = PlotterUtils::MakeHisto1D("h_neg", nb_bins);
+        auto histo_plus_sigma_var   = PlotterUtils::MakeHisto1D("h_1sigma_var", nb_bins);
+        auto histo_minus_sigma_var  = PlotterUtils::MakeHisto1D("h_-1sigma_var", nb_bins);
+        auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_bins);
+        auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_bins);
 
         if ( ! settings->np_names.empty() ) {
             if (settings->np_names.size() != nb_systematics) {
@@ -215,18 +220,25 @@ namespace eft::plot {
                            res_for_plot_after_selector[idx_syst].name,
                            res_for_plot_after_selector[idx_syst].impact);
 
+            // for vertical plot, a few bins are to be emtpy
+            // to save space for labels
+            size_t idx_bin = idx_syst;
+            if (is_vertical) {
+                idx_bin += 2;
+            }
+
             string bin_label = PlotterUtils::GetLabel(settings,
                                                       idx_syst,
                                                       res_for_plot_after_selector[idx_syst].name);
 
             histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
 
-            histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
-            histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
-            histo_plus_sigma_var ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
-            histo_minus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
-            histo_plus_one_var   ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
-            histo_minus_one_var  ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
+            histo->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact);
+            histo_neg->SetBinContent(idx_bin + 1, - res_for_plot_after_selector[idx_syst].impact);
+            histo_plus_sigma_var ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
+            histo_minus_sigma_var->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
+            histo_plus_one_var   ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
+            histo_minus_one_var  ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
             //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
         }
 
@@ -310,7 +322,7 @@ namespace eft::plot {
                                                                 settings->plt_size[0],
                                                                 settings->plt_size[1]); // 1200 x 800
 
-        bool is_vertical = settings->vertical;
+
 
         if (is_vertical) {
             //if (settings->rmargin == 0.10f) // if they are default
