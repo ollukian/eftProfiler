@@ -487,6 +487,7 @@ namespace eft::plot {
              y = settings->bmargin + 0.02;
              //if (dx == 0.03)
              dx = -0.01;
+             dy = 0.f;
 
 
              //dx = -dx;
