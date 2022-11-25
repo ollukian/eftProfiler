@@ -321,12 +321,12 @@ namespace eft::plot {
 
         bool is_vertical = settings->vertical;
 
-        if (is_vertical) {
-            canvas->SetRightMargin(settings->bmargin);
-            canvas->SetLeftMargin(settings->tmargin);
-            canvas->SetTopMargin(settings->rmargin);
-            canvas->SetBottomMargin(settings->lmargin);
-        }
+//        if (is_vertical) {
+//            canvas->SetRightMargin(settings->bmargin);
+//            canvas->SetLeftMargin(settings->tmargin);
+//            canvas->SetTopMargin(settings->rmargin);
+//            canvas->SetBottomMargin(settings->lmargin);
+//        }
 
         float legend_x_low  = 1.f - settings->rmargin - 0.2f;
         float legend_y_low  = 1.f - settings->tmargin - 0.1f;
