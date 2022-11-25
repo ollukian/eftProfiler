@@ -15,24 +15,34 @@ void ConvertToArgcAgv(istringstream& s, int& argc, char** argv)
     as_string = "Test_to_emulate_executable_name " + as_string;
     EFT_PROF_INFO("convert {} to argc, argv", as_string);
     auto components = eft::StringUtils::Split(as_string, ' ');
+    vector<vector<char>> vstrings;
+    vector<char*>        cstrings;
+
+    vstrings.reserve(components.size());
+    cstrings.reserve(components.size());
+
     EFT_PROF_DEBUG("received {} components", components);
     argc = components.size();
     EFT_PROF_DEBUG("argc: {}", argc);
     argv = new char* [argc];
     for (size_t idx {}; static_cast<int>(idx) < argc; ++idx) {
         EFT_PROF_DEBUG(" try initiate argv[{}] = {}", idx, components[idx]);
-        argv[idx] = new char [components[idx].size()];
-        for (size_t idx_inner {0}; idx_inner < components[idx].size(); ++idx_inner) {
-            EFT_PROF_INFO("assign to argv[{}][{}] = {}", idx, idx_inner, components[idx][idx_inner]);
-            argv[idx][idx_inner] = components[idx][idx_inner];
-            //argv[idx][idx_inner] = static_cast<char>(components[idx][idx_inner]); //components[idx][idx_inner];
-        }
+        vstrings.emplace_back(components[idx].begin(), components[idx].end());
+        vstrings.back().push_back('\0');
+        cstrings.push_back(vstrings.back().data());
+        //argv[idx] = new char [components[idx].size()];
+        //for (size_t idx_inner {0}; idx_inner < components[idx].size(); ++idx_inner) {
+        //    EFT_PROF_INFO("assign to argv[{}][{}] = {}", idx, idx_inner, components[idx][idx_inner]);
+        //    argv[idx][idx_inner] = components[idx][idx_inner];
+        //    //argv[idx][idx_inner] = static_cast<char>(components[idx][idx_inner]); //components[idx][idx_inner];
+        //}
         //memcpy(argv[idx], components[idx].data(), components[idx].size());
 
         //argv[idx] = components[idx].data();
         //EFT_PROF_DEBUG(" try initiate argv[{}] = {} ==> done", idx, components[idx]);
-        EFT_PROF_DEBUG("argv[{}] = [{}]", idx, argv[idx]);
+        //EFT_PROF_DEBUG("argv[{}] = [{}]", idx, argv[idx]);
     }
+    argv = cstrings.data();
     EFT_PROF_DEBUG("ConvertToArgcAgv is done, we're still in the funcrtion, let's see argv:");
     EFT_PROF_INFO("argv:");
     for (size_t idx {0}; idx != argc; ++idx) {

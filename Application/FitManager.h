@@ -11,6 +11,7 @@
 #include "IFitManager.h"
 #include "FitManagerConfig.h"
 #include "WorkspaceWrapper.h"
+#include <fstream>
 
 #include "../Core/Logger.h"
 #include "../Core/CommandLineArgs.h"
@@ -117,6 +118,8 @@ private:
     mutable std::string obs_names{};
     mutable std::string glob_obs_names{};
     mutable std::string cat_names{};
+
+    //std::ostream& os_ {std::cout};
 };
 
 inline void FitManager::SetNpNames(std::string name) const noexcept
