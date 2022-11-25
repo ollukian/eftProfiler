@@ -65,6 +65,47 @@ private:
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
+// https://stackoverflow.com/questions/41853159/how-to-detect-if-a-type-is-shared-ptr-at-compile-time
+template<typename T, typename Enable = void>
+struct is_smart_pointer
+{
+    enum { value = false };
+};
+
+template<typename T>
+struct is_smart_pointer<T, typename std::enable_if<std::is_same<typename std::remove_cv<T>::type, std::shared_ptr<typename T::element_type>>::value>::type>
+{
+    enum { value = true };
+};
+
+template<typename T>
+struct is_smart_pointer<T, typename std::enable_if<std::is_same<typename std::remove_cv<T>::type, std::unique_ptr<typename T::element_type>>::value>::type>
+{
+    enum { value = true };
+};
+
+template<typename T>
+struct is_smart_pointer<T, typename std::enable_if<std::is_same<typename std::remove_cv<T>::type, std::weak_ptr<typename T::element_type>>::value>::type>
+{
+    enum { value = true };
+};
+
+//#template <class>
+//inline constexpr bool is_smart_pointer_v = false;
+
+//template <class _Ty, class... _Types>
+//inline constexpr bool _Is_any_of_v = // true if and only if _Ty is in _Types
+//        disjunction_v<std::is_same<_Ty, _Types>...>;
+
+//template <class T>
+//inline constexpr bool is_smart_pointer_v = _Is_any_of_v<std::shared_ptr<T>, std::unique_ptr<T>, std::weak_ptr<T>>;
+
+//template <class T>
+//inline constexpr bool is_smart_pointer_v = false;
+//
+//template <class T>
+//inline constexpr bool is_smart_pointer_v<is_smart_pointer<T>::value> = true;
+
 template<typename T>
 bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 {
@@ -88,11 +129,10 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             EFT_PROF_INFO("is a pointer, loop again, removing pointer");
             return SetValIfArgExists(key, *val);
         }
-//        if constexpr (std::is_const_v<T>) {
-//            EFT_PROF_INFO("is const, loop again, removing constness");
-//            return SetValIfArgExists(key, std::remove_const_t<>(val));
-//        }
-
+        else if constexpr(is_smart_pointer<T>::value) {
+            EFT_PROF_INFO("Is a smart pointer, extract the pointed value");
+            return SetValIfArgExists(key, *val);
+        }
         else if constexpr(std::is_same_v<std::string, T>) {
             val = val_opt.value();
             EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());

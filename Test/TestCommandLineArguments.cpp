@@ -306,6 +306,7 @@ void TestSetValIfArgExistsVector()
         ASSERT_EQUAL(my_vec_2, vector<string>({"file1.root", "file2.root"}));
     }
     {
+        eft::stats::Logger::SetFullPrinting();
         istringstream arguments {"--sequence_chars a b c d e f g h i j k l"};
         int argc {0};
         char** argv = nullptr;
