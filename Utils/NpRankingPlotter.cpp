@@ -567,17 +567,9 @@ namespace eft::plot {
         TBox marker_posfit_plus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_posfit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
 
-        marker_prefit_plus.SetFillColorAlpha(settings->color_prefit_plus,
-                     utils::ColourUtils::GetColourByIdx(
-                                settings->color_postfit_minus)
-                                .a_as_fraction()
-                                );
 
-        marker_prefit_minus.SetFillColorAlpha(settings->color_prefit_minus,
-                                             utils::ColourUtils::GetColourByIdx(
-                                                     settings->color_prefit_minus)
-                                                     .a_as_fraction()
-        );
+        marker_prefit_plus.SetLineColor(settings->color_prefit_plus);
+        marker_prefit_minus.SetLineColor(settings->color_prefit_minus);
 
         marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
                                              utils::ColourUtils::GetColourByIdx(
