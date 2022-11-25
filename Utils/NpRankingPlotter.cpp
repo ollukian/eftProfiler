@@ -144,7 +144,7 @@ namespace eft::plot {
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
                          bool res = callback_(info);
-                         EFT_PROF_INFO("Does np: {:40} for poi: {} pass name selection ==> result: {}",
+                         EFT_PROF_INFO("Does np: {:60} for poi: {} pass name selection ==> result: {}",
                                        info.name,
                                        info.poi,
                                        res);

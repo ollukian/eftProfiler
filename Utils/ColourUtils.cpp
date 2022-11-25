@@ -13,7 +13,7 @@ using namespace std;
 namespace eft::utils {
 
 Colour Colour::CreateFromString(std::string_view s) {
-    EFT_PROF_INFO("Create colour from: {}", s);
+    EFT_PROF_DEBUG("Create colour from: {}", s);
     if (s.find("RGBA") != std::string_view::npos)
         return CreateFromStringRGBA(s);
     else if (s.find("RGB") != std::string_view::npos)
@@ -209,7 +209,7 @@ size_t ColourUtils::RegisterColour(const Colour& c, const string& name) {
                                                     name.c_str(),
                                                     c.a_as_fraction());
 
-    EFT_PROF_INFO("Registered new colour: ({}) with idx: {}",
+    EFT_PROF_DEBUG("Registered new colour: ({}) with idx: {}",
                   c,
                   new_idx);
     registered_colours_rgba_.insert(c);
