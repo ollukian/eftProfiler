@@ -114,7 +114,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
     _requested_keys.insert(key); // to show that this key has been checked
 
     // to handle bool - it doesn't have a key
-    if constexpr(std::is_same_v<bool, std::remove_cv<T>>) {
+    if constexpr(std::is_same_v<bool, std::remove_cv_t<T>>) {
         if (HasKey(key)) {
             val = true;
             return true;
@@ -141,7 +141,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         }
         else if constexpr(std::is_same_v<std::vector<char>, std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("is a vector[chars]");
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> as vector<char>", key);
             std::vector<std::string> tmp = GetVals(key).value();
             EFT_PROF_INFO("exctacted {} elems: [{}]", tmp.size(), tmp);
             val.clear();
