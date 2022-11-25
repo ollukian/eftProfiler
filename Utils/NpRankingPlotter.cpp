@@ -333,7 +333,7 @@ namespace eft::plot {
         histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
         if (settings->h_draw_options.empty()) {
-            if(settings->vertical) {
+            //if(settings->vertical) {
                 histo->Draw("HBAR same");
                 histo_neg->Draw("HBAR same");
 
@@ -341,7 +341,7 @@ namespace eft::plot {
                 histo_minus_one_var->Draw("HBAR same");
                 histo_plus_sigma_var->Draw("HBAR same");
                 histo_minus_sigma_var->Draw("HBAR same");
-            } else {
+            //} else {
                 histo->Draw("H same");
                 histo_neg->Draw("H same");
 
@@ -349,7 +349,7 @@ namespace eft::plot {
                 histo_minus_one_var->Draw("H same");
                 histo_plus_sigma_var->Draw("H same");
                 histo_minus_sigma_var->Draw("H same");
-            }
+            //}
         } else {
             string draw_options = StringUtils::Join(' ', settings->h_draw_options);
             draw_options += " same";
@@ -430,15 +430,28 @@ namespace eft::plot {
         float y = 1.f - settings->tmargin - 0.04f;
         float dy = settings->dy; // 0.03
         float x = 0.02f + settings->lmargin; // 0.12
+        float dx = 0;
+
+        bool is_vertical = settings->vertical;
+
+        if (is_vertical) {
+             std::swap(x, y);
+             std::swap(dx, dy);
+        }
+
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
-        if (settings->vertical)
+        if (is_vertical)
             latex.SetTextAngle(90);
         latex.DrawLatex(x, y, settings->experiment.c_str());
         latex.SetTextFont(settings->text_font); //put back the font 42
-        latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
+
+        if (is_vertical)
+            latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
+        else
+            latex.DrawLatex(x, y + 0.10, settings->res_status.c_str());
 
         latex.SetTextSize(settings->text_size); // 0.030
         //latex.SetTextSize(0.030); // 0.030
