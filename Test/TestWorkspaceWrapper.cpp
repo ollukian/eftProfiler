@@ -18,6 +18,10 @@
 #include "RooConstVar.h"
 #include "RooSimultaneous.h"
 
+#include "spdlog/fmt/bundled/color.h"
+#include "spdlog/fmt/bundled/ostream.h"
+
+
 using namespace eft::utils;
 using namespace eft::stats;
 using namespace std;
@@ -79,9 +83,9 @@ void CreateWS(const string& filename)
     //s->factory("expr::bkg('mu*s_nom',mu[1,-5,5],s_nom[50])") ;
     */
 
-    Logger::SetLevel(spdlog::level::level_enum::info);
+    //Logger::SetLevel(spdlog::level::level_enum::info);
     gErrorIgnoreLevel = kError;
-    EFT_PROF_INFO("Create lumi block..");
+    //EFT_PROF_INFO("Create lumi block..");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
     ws->factory( "lumi_kappa[1.045]" );
     ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
@@ -90,7 +94,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create lumi block DONE");
 
     // efficience
-    EFT_PROF_INFO("Create efficiency block..");
+    //EFT_PROF_INFO("Create efficiency block..");
     ws->factory( "efficiency_nom[0.1, 0.05, 0.15]" );
     ws->factory( "efficiency_kappa[1.10]" );
     ws->factory( "cexpr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
@@ -100,7 +104,7 @@ void CreateWS(const string& filename)
     //ws->Print("");
 
     // bkg with syst
-    EFT_PROF_INFO("Create background block..");
+    //EFT_PROF_INFO("Create background block..");
     ws->factory( "nbkg_nom[10.0, 5.0, 15.0]" );
     ws->factory( "nbkg_kappa[1.10]" );
     ws->factory( "cexpr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
@@ -128,7 +132,7 @@ void CreateWS(const string& filename)
 
     //EFT_PROF_INFO("core model (+ lumi):");
     //ws->Print();
-    EFT_PROF_INFO("Create final model: Poisson core + lumi + efficienty + bkg systematics");
+    //EFT_PROF_INFO("Create final model: Poisson core + lumi + efficienty + bkg systematics");
     ws->factory( "PROD::model(model_core,constr_lumi,constr_efficiency, constr_nbkg)" );
     //EFT_PROF_INFO("Full model");
     //ws->Print();
@@ -516,7 +520,6 @@ void Finalise() {
 }
 
 void TestWSreading() {
-    Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();
@@ -529,7 +532,6 @@ void TestWSreading() {
     ASSERT(is_set);
     ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 11);
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
-    EFT_PROF_INFO("model config is set");
 
     const RooArgSet* pois  = ws_->GetPOIs();
     const RooArgSet* nps   = ws_->GetNp();
@@ -552,7 +554,6 @@ void TestWSreading() {
 }
 
 void TestLoading() {
-    EFT_PROF_INFO("start test loading");
     ASSERT_NO_THROW(std::ignore = LoadWS()); // std::ignore to prevent warnings about [[nodiscard]]
     ASSERT(LoadWS()->raw());
 }
@@ -560,7 +561,6 @@ void TestLoading() {
 void TestWSGetters() {
     using namespace eft::utils::internal;
     auto ws = LoadWS();
-    Logger::SetFullPrinting();
 
     for (const string& glob_name : _test_globs_names_) {
         ASSERT(ws->GetVar(glob_name)->isConstant());
@@ -620,10 +620,17 @@ void TestWSSetters() {
 
 void Initiate() {
     Logger::SetLevel(spdlog::level::level_enum::info);
-    EFT_PROF_WARN("{} {} {}",
-                  "Running tests of the Workspace wrapper. First stage may take some non-negligible time",
-                  "due to creation of a toy RooWorkspace, requiring compiling of functions for a few test",
-                  "systematics: luminosity and efficiency");
+
+    fmt::print(fmt::fg(fmt::color::red),
+               "{} {}",
+               "Running tests of the Workspace wrapper may may take some non-negligible time ~20-30 seconds\n",
+               "It happens due to creating a toy RooWorkspace, requiring compiling of systematics functions\n"
+               );
+
+//    EFT_PROF_WARN("{} {} {}",
+//                  "Running tests of the Workspace wrapper. First stage may take some non-negligible time",
+//                  "due to creation of a toy RooWorkspace, requiring compiling of functions for a few test",
+//                  "systematics: luminosity and efficiency");
     RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::FATAL);
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
