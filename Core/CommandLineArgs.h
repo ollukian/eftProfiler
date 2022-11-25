@@ -141,9 +141,11 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         else if constexpr(std::is_same_v<std::vector<char>, T>) {
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
             std::vector<std::string> tmp = GetVals(key).value();
+            EFT_PROF_INFO("exctacted {} elems: [{}]", tmp.size(), tmp);
             val.clear();
             val.resize(tmp.size());
             for (const auto& elem : tmp) {
+                EFT_PROF_INFO("handle: [{}]", elem);
                 if (elem.size() != 1) {
                     throw std::logic_error(fmt::format("{} [{}] as array of chars: {} [{}] {}",
                                                        "Cannot parse obj for the key",
@@ -174,7 +176,9 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             return true;
         }
         if constexpr(std::is_same_v<char, T>) {
+            EFT_PROF_INFO("requested value is a char");
             std::string tmp = val_opt.value();
+            EFT_PROF_INFO("this char: [{}] with size: {}", tmp, tmp.size());
             if (tmp.size() != 1) {
                 throw std::logic_error(fmt::format("{}: [{}] as a char: [{}] {}",
                                                    "Cannot parse char for the key",
