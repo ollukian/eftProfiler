@@ -231,7 +231,7 @@ namespace eft::plot {
                                                       idx_syst,
                                                       res_for_plot_after_selector[idx_syst].name);
 
-            histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
+            histo->GetXaxis()->SetBinLabel(idx_bin + 1, bin_label.c_str());
 
             histo->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact);
             histo_neg->SetBinContent(idx_bin + 1, - res_for_plot_after_selector[idx_syst].impact);
@@ -411,9 +411,9 @@ namespace eft::plot {
         }
 
         auto graph_nps_obs = make_shared<TH1D>("h_nps_obs", "",
-                                               settings->top,
+                                               nb_bins,
                                                0,
-                                               settings->top
+                                               nb_bins
         );
         //auto graph_nps_obs = make_shared<TGraphErrors>(settings->top);
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
