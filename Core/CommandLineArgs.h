@@ -78,7 +78,6 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             val = true;
             return true;
         } else {
-            val = false;
             return false;
         }
     }

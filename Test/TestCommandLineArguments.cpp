@@ -171,10 +171,13 @@ void TestSetValIfArgExistsBOOL()
         ASSERT_NO_THROW(CommandLineArgs(argc, argv));
         CommandLineArgs cmd(argc, argv);
         bool bool_val_1 = false;
+        bool bool_val_2 = false;
         ASSERT( cmd.SetValIfArgExists("no_gamma", bool_val_1) );
         ASSERT(bool_val_1);
-        ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_1) );
+        ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_1) ); // val should not change
+        ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_2) );
         ASSERT(bool_val_1);
+        ASSERT_NOT(bool_val_2);
     }
     {
         istringstream arguments {"--b --first arg1 arg2 a --no_gamma --no_arg --n"};
@@ -262,6 +265,7 @@ void TestSetValIfArgExistsString()
 void TestSetValIfArgExistsVectorStrings()
 {
     {
+        eft::stats::Logger::SetFullPrinting();
         istringstream arguments {"--input my_cool_input --filename file1.root file2.root"};
         int argc {0};
         char** argv = nullptr;
