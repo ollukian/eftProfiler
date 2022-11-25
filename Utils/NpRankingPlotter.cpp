@@ -461,17 +461,23 @@ namespace eft::plot {
         latex.SetTextColor(kBlack);
         if (is_vertical)
             latex.SetTextAngle(90);
+        EFT_PROF_WARN("latex.DrawLatex(x, y, settings->experiment.c_str()); at {}{}", x, y);
         latex.DrawLatex(x, y, settings->experiment.c_str());
         latex.SetTextFont(settings->text_font); //put back the font 42
 
-        if (is_vertical)
+        if (is_vertical) {
             latex.DrawLatex(x, y += 0.10, settings->res_status.c_str());
-        else
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}{}", x, y);
+        }
+        else {
             latex.DrawLatex(x += 0.10, y, settings->res_status.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}{}", x, y);
+        }
 
         latex.SetTextSize(settings->text_size); // 0.030
         //latex.SetTextSize(0.030); // 0.030
         latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
+        EFT_PROF_WARN("latex.DrawLatex(x, y, SMEFT; at {}{}", x, y);
 
         string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
                                                  settings->ds_title,
