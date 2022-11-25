@@ -79,6 +79,10 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
         }
+//        else if constexpr(std::is_same_v<std::vector<char>, T>) {
+//            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
+//            val = GetVals(key).value();
+//        }
         else if constexpr(std::is_same_v<std::vector<std::string>, T>) {
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
             val = GetVals(key).value();
@@ -93,6 +97,11 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         else if constexpr(std::is_integral_v<T>) {
             val = stoi(val_opt.value());
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
+            return true;
+        }
+        else if constexpr(std::is_array_v<std::decay_t<T>>) {
+            val = GetVals(key).value();
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as array", key, val_opt.value());
             return true;
         }
         else {
