@@ -129,12 +129,17 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
 
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
+    EFT_PROF_INFO("get vals for {}", option);
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
+        EFT_PROF_INFO("n such key found");
         return nullopt;
     }
-    return ops.at(option)[0];
+    EFT_PROF_INFO("found: {} elems", ops.size());
+    if ( ! ops.at(option).empty() )
+        return ops.at(option)[0];
+    return "";
 }
 
 void CommandLineArgs::ReportStatus() const noexcept
