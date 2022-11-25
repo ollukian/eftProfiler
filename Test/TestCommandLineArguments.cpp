@@ -68,7 +68,6 @@ void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char**& ar
 }
 
 void TestBasicArgParsing() {
-    //eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--one_key one_value"};
         int argc {0};
@@ -162,7 +161,6 @@ void TestNegativeParsing() {
 
 void TestSetValIfArgExistsBOOL()
 {
-    eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--no_gamma"};
         int argc {0};
@@ -264,7 +262,6 @@ void TestSetValIfArgExistsString()
 
 void TestSetValIfArgExistsChar() {
     {
-        eft::stats::Logger::SetFullPrinting();
         istringstream arguments {"--key_for_char c --key2 r"};
         int argc {0};
         char** argv = nullptr;
@@ -290,7 +287,6 @@ void TestSetValIfArgExistsChar() {
 void TestSetValIfArgExistsVector()
 {
     {
-        eft::stats::Logger::SetFullPrinting();
         istringstream arguments {"--input my_cool_input --filename file1.root file2.root"};
         int argc {0};
         char** argv = nullptr;
@@ -306,7 +302,6 @@ void TestSetValIfArgExistsVector()
         ASSERT_EQUAL(my_vec_2, vector<string>({"file1.root", "file2.root"}));
     }
     {
-        eft::stats::Logger::SetFullPrinting();
         istringstream arguments {"--sequence_chars a b c d e f g h i j k l"};
         int argc {0};
         char** argv = nullptr;
@@ -322,7 +317,6 @@ void TestSetValIfArgExistsVector()
 }
 
 void TestSetValIfArgExistsPointer() {
-    eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--key1 1 --key2"};
         int argc {0};
