@@ -8,6 +8,7 @@
 
 #include "IWorkspaceWrapper.h"
 #include "../Core/Logger.h"
+#include "../Core/Profiler.h"
 
 #include <string>
 #include <vector>
@@ -142,6 +143,7 @@ inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
 }
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
+    EFT_PROFILE_FN();
     if (! std::filesystem::exists(path) ) {
         EFT_PROF_CRITICAL("Ws under [{}] doesn't exist", path);
         return false;
@@ -161,6 +163,7 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("Set {:30} const", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FixValConst variable {} is not present in the WS", poi);
@@ -171,6 +174,7 @@ inline void WorkspaceWrapper::FixValConst(const std::string& poi)
 
 inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 {
+    EFT_PROFILE_FN();
     for (const auto& poi : pois) {
         FixValConst(poi);
     }
@@ -178,6 +182,7 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("Set {:30} float", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FloatVal variable {} is not present in the WS", poi);
@@ -188,6 +193,7 @@ inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 
 inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
 {
+    EFT_PROFILE_FN();
     for (const auto& poi : pois) {
         FloatVal(poi);
     }
@@ -195,6 +201,7 @@ inline void WorkspaceWrapper::FloatVals(const std::vector<std::string>& pois)
 
 inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:30} to {}", name, val);
     ws_->var( name.c_str() )->setVal(val);
 }
@@ -206,24 +213,29 @@ inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 
 inline RooAbsPdf* WorkspaceWrapper::GetPdfModelGivenCategory(const std::string& cat) noexcept
 {
+    EFT_PROFILE_FN();
     return ws_->pdf(fmt::format("{}{}{}", cat, pdf_model_prefix_, pdf_model_sufix_).c_str());
     //return ws_->pdf(("_model_" + cat + "_HGam__addConstr").c_str()); };
 }
 inline RooAbsPdf* WorkspaceWrapper::GetPdfSBGivenCategory(const std::string& cat) noexcept
 {
+    EFT_PROFILE_FN();
     return ws_->pdf(fmt::format("{}{}{}", cat, pdf_sb_prefix_, pdf_sb_sufix_).c_str());
 }
 inline RooAbsPdf* WorkspaceWrapper::GetPdfBkgGivenCategory(const std::string& cat) noexcept
 {
+    EFT_PROFILE_FN();
     return ws_->pdf(fmt::format("{}{}{}", cat, pdf_bkg_prefix_, pdf_bkg_sufix_).c_str());
 }
 inline RooAbsPdf* WorkspaceWrapper::GetPdfSigGivenCategory(const std::string& cat) noexcept
 {
+    EFT_PROFILE_FN();
     return ws_->pdf(fmt::format("{}{}{}", cat, pdf_sig_prefix_, pdf_sig_sufix_).c_str());
 }
 
 inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
 {
+    EFT_PROFILE_FN();
     auto _mc = ws_->obj( name.c_str() );
     if (! _mc) {
         EFT_PROF_CRITICAL("Model Config with name {} is not present in the WS", name);
@@ -268,6 +280,7 @@ inline const WorkspaceWrapper::Categories& WorkspaceWrapper::GetCats() const
 
 inline RooDataSet*      WorkspaceWrapper::GetData(const std::string& name)
 {
+    EFT_PROFILE_FN();
     if (ws_->data(  name.c_str() ) == nullptr)
     {
         EFT_PROF_CRITICAL("WorkspaceWrapper::GetData {} no such data is present", name);
@@ -277,6 +290,7 @@ inline RooDataSet*      WorkspaceWrapper::GetData(const std::string& name)
 }
 inline RooSimultaneous* WorkspaceWrapper::GetCombinedPdf(const std::string& name)
 {
+    EFT_PROFILE_FN();
     if (ws_->pdf(  name.c_str() ) == nullptr)
     {
         EFT_PROF_CRITICAL("WorkspaceWrapper::GetCombinedPdf {} no such pdf is present", name);
@@ -293,6 +307,7 @@ inline double WorkspaceWrapper::GetParErrLo(const std::string& par) const  { ret
 
 inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept
 {
+    EFT_PROFILE_FN();
     //EFT_PROF_TRACE("WorkspaceWrapper::VaryParNbSigmas vary {} on {} sigmas", par, nb_sigma);
     const auto val = GetParVal(par);
     const auto err = GetParErr(par);

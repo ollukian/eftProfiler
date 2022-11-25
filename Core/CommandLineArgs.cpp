@@ -12,7 +12,7 @@
 using namespace std;
 
 CommandLineArgs::CommandLineArgs(int argc, char **argv) {
-
+    EFT_PROFILE_FN();
     if (argc < 2) {
         cout << fmt::format("[CommandLineArgs] no input args") << endl;
         return;
@@ -24,6 +24,7 @@ CommandLineArgs::CommandLineArgs(int argc, char **argv) {
 
 bool CommandLineArgs::ParseInput(int argc, char* argv[])
 {
+    EFT_PROFILE_FN();
     vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
         EFT_PROF_DEBUG(" CommandLineArgs::ParseInput token: {}", string(argv[idx]));
@@ -78,6 +79,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
 
 void CommandLineArgs::AddKey(CommandLineArgs::Key key)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("Add key from output: {}", key);
     //_requested_keys[key] = true;
     _parsed_keys.insert(key);
@@ -118,6 +120,7 @@ void CommandLineArgs::AddKey(CommandLineArgs::Key key)
 
 optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) const
 {
+    EFT_PROFILE_FN();
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
@@ -129,6 +132,7 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
 
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("get vals for {}", option);
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     _requested_keys.insert(option);
@@ -145,6 +149,7 @@ optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Ke
 
 void CommandLineArgs::ReportStatus() const noexcept
 {
+    EFT_PROFILE_FN();
     std::set<Key> all_keys;
     for (const auto& key: _requested_keys) {
         all_keys.insert(key);

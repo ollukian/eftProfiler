@@ -12,6 +12,7 @@
 #include <set>
 
 #include "../Core/Logger.h"
+#include "../Core/Profiler.h"
 
 // Wrapper around command line arguments
 
@@ -109,6 +110,7 @@ struct is_smart_pointer<T, typename std::enable_if<std::is_same<typename std::re
 template<typename T>
 bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("[CommandLineArgs] try to get value for key: {}", key);
 
     _requested_keys.insert(key); // to show that this key has been checked
@@ -213,6 +215,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 
 bool CommandLineArgs::HasKey(const Key& key) const noexcept
 {
+    EFT_PROFILE_FN();
     _requested_keys.insert(key);
     if (keys.find(key) != keys.end())
         return true;
@@ -221,6 +224,7 @@ bool CommandLineArgs::HasKey(const Key& key) const noexcept
 
 CommandLineArgs::Key CommandLineArgs::TrimKey(const CommandLineArgs::Key& key) noexcept
 {
+    EFT_PROFILE_FN();
     char first_symbol = key[0];
     char second_symbol = key[1];
 
