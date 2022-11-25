@@ -72,6 +72,17 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 
     _requested_keys.insert(key); // to show that this key has been checked
 
+    // to handle bool - it doesn't have a key
+    if constexpr(std::is_same_v<bool, T>) {
+        if (HasKey(key)) {
+            val = true;
+            return true;
+        } else {
+            val = false;
+            return false;
+        }
+    }
+
     auto val_opt = GetVal(key);
     if (val_opt.has_value()) {
         if constexpr(std::is_same_v<std::string, T>) {
