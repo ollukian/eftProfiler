@@ -452,6 +452,9 @@ namespace eft::plot {
              std::swap(x, y);
              std::swap(dx, dy);
 
+             x = 1 - settings->rmargin;
+             y = settings->bmargin;
+
              dx = -dx;
         }
 
