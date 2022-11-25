@@ -35,6 +35,7 @@ struct FitManagerConfig {
     bool                        reuse_nll           {true};      // <== to add
     bool                        save_prelim         {false};
     bool                        silent              {false};
+    bool                        release             {false};
     std::vector<std::string>    get                 ;
     // PLOTTING
     bool                        vertical            {false};     // <== to add

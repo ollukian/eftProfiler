@@ -185,13 +185,11 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             return true;
         }
         else if constexpr(std::is_integral_v<std::remove_cv_t<T>>) {
-            //EFT_PROF_DEBUG("is an int");
             val = stoi(val_opt.value());
             EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_array_v<std::decay_t<T>>) {
-            //EFT_PROF_DEBUG("is an array");
             val = GetVals(key).value();
             EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;

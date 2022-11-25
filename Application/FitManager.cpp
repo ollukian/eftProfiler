@@ -697,6 +697,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, vertical);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, reuse_nll);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, silent);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, release);
 #undef EFT_ADD_BOOL_OPTIONS
 
     // vectors
@@ -728,6 +729,9 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
         return;
         //hrow std::runtime_error("ERROR ^------- see the message above");
     }
+
+    if (config.release)
+        eft::stats::Logger::SetRelease();
 
     commandLineArgs.ReportStatus();
 }

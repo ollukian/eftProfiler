@@ -27,7 +27,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
     EFT_PROFILE_FN();
     vector<string> tokens;
     for (size_t idx {1}; idx != argc; ++idx) {
-        EFT_PROF_DEBUG(" CommandLineArgs::ParseInput token: {}", string(argv[idx]));
+        EFT_PROF_TRACE(" CommandLineArgs::ParseInput token: {}", string(argv[idx]));
         tokens.emplace_back(argv[idx]);
     }
     string key = tokens.front();
@@ -39,7 +39,7 @@ bool CommandLineArgs::ParseInput(int argc, char* argv[])
         if (token[0] == '-' && token[1] == '-') {
                 ops[key] = vals;
                 keys.insert(key);
-                EFT_PROF_DEBUG("register: {:20} => {:20} vals", key, vals.size());
+                EFT_PROF_TRACE("register: {:20} => {:20} vals", key, vals.size());
                 vals.clear();
             key = TrimKey(token);
             AddKey(key);
@@ -133,14 +133,14 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("get vals for {}", option);
+    EFT_PROF_TRACE("get vals for {}", option);
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
         EFT_PROF_INFO("n such key found");
         return nullopt;
     }
-    EFT_PROF_INFO("found: {} elems for key {}:", ops.at(option).size(), option);
+    EFT_PROF_TRACE("found: {} elems for key {}:", ops.at(option).size(), option);
 
     if ( ! ops.at(option).empty() )
         return ops.at(option)[0];
