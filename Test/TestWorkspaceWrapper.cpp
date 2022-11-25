@@ -244,7 +244,7 @@ void CreateWS(const string& filename)
     //ws->Print();
     ws->writeToFile(filename.c_str(), true);
     //gDirectory->Add(ws);
-    EFT_PROF_INFO("Creation is done, the next steps should take less time");
+    //EFT_PROF_INFO("Creation is done, the next steps should take less time");
     Logger::SetSilent();
     return;// ws;
 #if 0
@@ -621,8 +621,8 @@ void TestWSSetters() {
 void Initiate() {
     Logger::SetLevel(spdlog::level::level_enum::info);
 
-    fmt::print(fmt::fg(fmt::color::red),
-               "{} {}",
+    fmt::print(fmt::fg(fmt::color::yellow),
+               " {} {}",
                "Running tests of the Workspace wrapper may may take some non-negligible time ~20-30 seconds\n",
                "It happens due to creating a toy RooWorkspace, requiring compiling of systematics functions\n"
                );

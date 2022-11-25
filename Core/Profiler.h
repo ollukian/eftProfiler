@@ -21,11 +21,15 @@ class Profiler {
 public:
     using TimePoint = std::chrono::steady_clock::time_point;
     using Duration  = std::chrono::microseconds;
-    using DurationPerFunction = std::unordered_map<std::string, Duration>;
+    using DurationPerFunction   = std::unordered_map<std::string, Duration>;
+    using NpCallsPerFunction    = std::unordered_map<std::string, size_t>;
+
     using FunctionName = std::string;
 
+    static inline void ComputeAveragedDurations();
     static inline std::chrono::microseconds GetLastDuration() { return last_duration_; }
     static inline const DurationPerFunction& GetDurations()   { return durations_;}
+    static inline const DurationPerFunction& GetAvgDurations();
 
     explicit Profiler(std::string msg = "")
             : message(std::move(msg))
@@ -38,7 +42,9 @@ public:
         auto finish = std::chrono::steady_clock::now();
         elapsedTime = std::chrono::duration_cast<std::chrono::microseconds>(finish - start);
         last_duration_ = elapsedTime;
+        nb_calls_[message]++;
         durations_[message] += elapsedTime;
+        is_avg_valid = false;
         //auto dur = finish - start;
         //std::stringstream message_to_display;
         //message_to_display << "[" << message << "] done in " << elapsedTime.count()
@@ -53,8 +59,29 @@ private:
     std::chrono::microseconds             elapsedTime {};
 
     static inline std::unordered_map<FunctionName, Duration> durations_ {};
+    static inline std::unordered_map<FunctionName, Duration> avg_durations_ {};
+    static inline std::unordered_map<FunctionName, size_t>   nb_calls_ {};
+    static inline bool                                       is_avg_valid {true};
+
     static inline Duration last_duration_ {};
 };
+
+inline void Profiler::ComputeAveragedDurations() {
+    is_avg_valid = true;
+    for (const auto& [func, duration] : durations_) {
+        size_t nb_calls = nb_calls_.at(func);
+        avg_durations_[func] = duration / nb_calls;
+    }
+}
+
+inline const Profiler::DurationPerFunction& Profiler::GetAvgDurations() {
+    if (is_avg_valid)
+        return avg_durations_;
+
+    is_avg_valid = true;
+    ComputeAveragedDurations();
+    return avg_durations_;
+}
 
 // Function name wrapper
 #define EFT_PROFILE
