@@ -103,6 +103,7 @@ int main(int argc, char* argv[]) {
                 {"vector<string>",  "add_text_ndc",     "",             R"(x [x y text [size][font]] to be added. (X, Y) - in NDC. Example: "0.1 0.4 WriteTextInNDC")"},
                 {"bool",            "silent",           "false",        R"(x MUST me FIRST option. To prevent any output, except demanded: to use as wrapper around wc.)"},
                 {"string",          "get",              "",             R"(MUST be with --silent option. POI | NPS | GLOBS | CATS | + [COUNT] <== prints them to stdout)"},
+                {"vector<string>",  "h_draw_options",   "H",            R"(Options for the drawing of histograms. Note: [HBAR] is default for --vertical)"},
         })
         {
             cout << fmt::format("|{:^20} | {:<20} | {:^15} | {:<60}|", options[0], options[1], options[2], options[3]) << endl;

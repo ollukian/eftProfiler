@@ -317,24 +317,38 @@ namespace eft::plot {
 
         histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
-        if (settings->vertical) {
-            histo->Draw("HBAR same");
-            histo_neg->Draw("HBAR same");
+        if (settings->h_draw_options.empty()) {
+            if(settings->vertical) {
+                histo->Draw("HBAR same");
+                histo_neg->Draw("HBAR same");
 
-            histo_plus_one_var->Draw("HBAR same");
-            histo_minus_one_var->Draw("HBAR same");
-            histo_plus_sigma_var->Draw("HBAR same");
-            histo_minus_sigma_var->Draw("HBAR same");
-        }
-        else {
-            histo->Draw("H same");
-            histo_neg->Draw("H same");
+                histo_plus_one_var->Draw("HBAR same");
+                histo_minus_one_var->Draw("HBAR same");
+                histo_plus_sigma_var->Draw("HBAR same");
+                histo_minus_sigma_var->Draw("HBAR same");
+            } else {
+                histo->Draw("H same");
+                histo_neg->Draw("H same");
 
-            histo_plus_one_var->Draw("H same");
-            histo_minus_one_var->Draw("H same");
-            histo_plus_sigma_var->Draw("H same");
-            histo_minus_sigma_var->Draw("H same");
-        }
+                histo_plus_one_var->Draw("H same");
+                histo_minus_one_var->Draw("H same");
+                histo_plus_sigma_var->Draw("H same");
+                histo_minus_sigma_var->Draw("H same");
+            }
+        } else {
+            string draw_options = StringUtils::Join(' ', settings->h_draw_options);
+            draw_options += " same";
+
+            for (auto* h : {&histo,
+                                  &histo_neg,
+                                  &histo_plus_sigma_var,
+                                  &histo_plus_one_var,
+                                  &histo_minus_sigma_var,
+                                  &histo_minus_one_var})
+            {
+                (*h)->Draw(draw_options.c_str());
+            } // over all the histograms
+        } // if drawing options are forces
 
 
         // lines to show full 1 sigma error
@@ -577,6 +591,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text_ndc);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, dy);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, h_draw_options);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

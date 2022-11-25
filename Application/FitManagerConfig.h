@@ -77,6 +77,7 @@ struct FitManagerConfig {
     float                       dy                  {0.03};
     std::vector<std::string>    add_text            {};
     std::vector<std::string>    add_text_ndc        {};
+    std::vector<std::string>    h_draw_options      {};
 };
 
 template<typename OStream>

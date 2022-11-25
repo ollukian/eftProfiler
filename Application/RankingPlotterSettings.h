@@ -52,6 +52,7 @@ struct RankingPlotterSettings {
     float                       dy;
     std::vector<std::string>    add_text;
     std::vector<std::string>    add_text_ndc;
+    std::vector<std::string>    h_draw_options;
 };
 
 } // plot
