@@ -20,35 +20,14 @@ vector<vector<char>> ConvertToArgcAgv(istringstream& s)
     auto components = eft::StringUtils::Split(as_string, ' ');
 
     vector<vector<char>> vstrings;
-    //vector<char*>        cstrings;
 
     size_t nb_components = components.size();
     vstrings.reserve(nb_components);
-    //cstrings.reserve(components.size());
 
-    //EFT_PROF_DEBUG("received {} components", components);
-    //argc = components.size();
-    //EFT_PROF_DEBUG("argc: {}", argc);
-    //argv = new char* [argc];
     for (size_t idx {}; idx < nb_components; ++idx) {
-        //EFT_PROF_DEBUG(" try initiate argv[{}] = {}", idx, components[idx]);
         vstrings.emplace_back(components[idx].begin(), components[idx].end());
         vstrings.back().push_back('\0');
-        //cstrings.push_back(vstrings.back().data());
-        //argv[idx] = new char [components[idx].size()];
-        //for (size_t idx_inner {0}; idx_inner < components[idx].size(); ++idx_inner) {
-        //    EFT_PROF_INFO("assign to argv[{}][{}] = {}", idx, idx_inner, components[idx][idx_inner]);
-        //    argv[idx][idx_inner] = components[idx][idx_inner];
-        //    //argv[idx][idx_inner] = static_cast<char>(components[idx][idx_inner]); //components[idx][idx_inner];
-        //}
-        //memcpy(argv[idx], components[idx].data(), components[idx].size());
-
-        //argv[idx] = components[idx].data();
-        //EFT_PROF_DEBUG(" try initiate argv[{}] = {} ==> done", idx, components[idx]);
-        //EFT_PROF_DEBUG("argv[{}] = [{}]", idx, argv[idx]);
     }
-    //argv = cstrings.data();
-    //EFT_PROF_DEBUG("ConvertToArgcAgv is done, we're still in the funcrtion, let's see argv:");
     EFT_PROF_INFO("argv:");
     for (size_t idx {0}; idx != nb_components; ++idx) {
         size_t nb_chars_line {vstrings[idx].size()};
@@ -68,30 +47,40 @@ vector<vector<char>> ConvertToArgcAgv(const vector<string>& s)
     return ConvertToArgcAgv(is);
 }
 
+void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char** argv) {
+    static vector<vector<char>> vstrings;
+    static vector<const char*>  cstrings;
+
+    vstrings.clear();
+    cstrings.clear();
+
+    vstrings = ConvertToArgcAgv(arguments);
+    cstrings.reserve(vstrings.size());
+
+    for(auto& s: vstrings)
+        cstrings.push_back(s.data());
+
+    argv = const_cast<char **>(cstrings.data());
+    argc = cstrings.size();
+}
+
 void TestBasicArgParsing() {
     eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--one_key one_value"};
         int argc {0};
         char** argv = nullptr;
-        //ConvertToArgcAgv(arguments, argc, argv);
-        const auto vstring = ConvertToArgcAgv(arguments);
-
-        std::vector<const char*> cstrings;
-        cstrings.reserve(vstring.size());
-        //for(auto& s: strings)
-        //    cstrings.push_back(&s[0]);
-        for(auto& s: vstring)
-            cstrings.push_back(s.data());
-
-        argv = const_cast<char **>(cstrings.data());
-        argc = cstrings.size();
-
-        //EFT_PROF_INFO("after function: argv:");
-        //for (size_t idx {0}; idx != argc; ++idx) {
-        //    EFT_PROF_INFO("token: {}", argv[idx]);
-        //}
-
+//        const auto vstring = ConvertToArgcAgv(arguments);
+//
+//        std::vector<const char*> cstrings;
+//        cstrings.reserve(vstring.size());
+//
+//        for(auto& s: vstring)
+//            cstrings.push_back(s.data());
+//
+//        argv = const_cast<char **>(cstrings.data());
+//        argc = cstrings.size();
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
         ASSERT_NO_THROW(CommandLineArgs(argc, argv));
         CommandLineArgs cmd(argc, argv);
         ASSERT(cmd.HasKey("one_key"));
@@ -100,17 +89,17 @@ void TestBasicArgParsing() {
         ASSERT_NOT(cmd.HasKey("random_not_present_key"));
         ASSERT_NOT(cmd.GetVal("random_not_present_key").has_value());
     }
-//    {
-//        istringstream arguments {"--one_key first_value second_value"};
-//        int argc {0};
-//        char** argv = nullptr;
-//        ConvertToArgcAgv(arguments, argc, argv);
-//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-//        CommandLineArgs cmd(argc, argv);
-//        ASSERT(cmd.HasKey("one_key"));
-//        ASSERT(cmd.GetVal("one_key").has_value());
-//        ASSERT_EQUAL(cmd.GetVals("one_key").value().size(), 2);
-//    }
+    {
+        istringstream arguments {"--one_key first_value second_value"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+        ASSERT(cmd.HasKey("one_key"));
+        ASSERT(cmd.GetVal("one_key").has_value());
+        ASSERT_EQUAL(cmd.GetVals("one_key").value().size(), 2);
+    }
 //    {
 //        istringstream arguments {"--only_key"};
 //        int argc {0};
