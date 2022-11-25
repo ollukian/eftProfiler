@@ -555,8 +555,10 @@ namespace eft::plot {
         //TBox marker_prefit_plus  {0.020, scaling,  0.025, 1.03 * scaling};
         //TBox marker_prefit_minus {0.020, scaling + 0.05,  0.025, 1.03 * scaling + 0.05};
 
-        TBox marker_prefit_plus  {0.3, settings->rmuh * 0.7,  0.35, settings->rmuh * 0.73};
-        TBox marker_prefit_minus {0.3, settings->rmuh * 0.75,  0.35, settings->rmuh * 0.78};
+        TBox marker_prefit_plus  {0.3, settings->rmuh * 0.60,  0.40, settings->rmuh * 0.68};
+        TBox marker_prefit_minus {0.45, settings->rmuh * 0.60,  0.55, settings->rmuh * 0.68};
+        TBox marker_posfit_plus {0.60, settings->rmuh * 0.60,  0.70, settings->rmuh * 0.68};
+        TBox marker_posfit_minus {0.75, settings->rmuh * 0.60,  0.85, settings->rmuh * 0.68};
 
         marker_prefit_plus.SetFillColorAlpha(settings->color_prefit_plus,
                      utils::ColourUtils::GetColourByIdx(
@@ -570,11 +572,25 @@ namespace eft::plot {
                                                      .a_as_fraction()
         );
 
+        marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
+                                             utils::ColourUtils::GetColourByIdx(
+                                                     settings->color_postfit_plus)
+                                                     .a_as_fraction()
+        );
+
+        marker_posfit_minus.SetFillColorAlpha(settings->color_postfit_minus,
+                                              utils::ColourUtils::GetColourByIdx(
+                                                      settings->color_postfit_minus)
+                                                      .a_as_fraction()
+        );
+
 
         // draw pseudo-legend
         if (is_vertical) {
             marker_prefit_plus.Draw();
             marker_prefit_minus.Draw();
+            marker_posfit_plus.Draw();
+            marker_posfit_minus.Draw();
         }
 
         EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", 0.35, y);
