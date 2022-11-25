@@ -482,7 +482,7 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical) {
-            latex.DrawLatex(x, y + 0.05, settings->res_status.c_str());
+            latex.DrawLatex(x, y + 0.07, settings->res_status.c_str());
             EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.05);
         }
         else {
@@ -493,7 +493,7 @@ namespace eft::plot {
         latex.SetTextSize(settings->text_size); // 0.030
 
         if (is_vertical)
-            latex.SetTextSize(0.020); //0.045 is std
+            latex.SetTextSize(0.015); //0.045 is std
 
         //latex.SetTextSize(0.030); // 0.030
         latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
