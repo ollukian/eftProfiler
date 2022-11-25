@@ -480,8 +480,8 @@ namespace eft::plot {
         float dx = 0;
 
         if (is_vertical) {
-             std::swap(x, y);
-             std::swap(dx, dy);
+             //std::swap(x, y);
+             //std::swap(dx, dy);
 
              //x = 1 - settings->rmargin - 0.05;
              y = settings->bmargin + 0.02;
