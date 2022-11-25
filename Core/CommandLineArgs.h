@@ -158,6 +158,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
                 }
                 val.emplace_back(elem[0]);
             }
+            EFT_PROF_INFO("written {} elems: [{}]", val.size(), val);
             return true;
         }
         else if constexpr(std::is_same_v<std::vector<std::string>, std::remove_cv_t<T>>) {
