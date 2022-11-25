@@ -400,8 +400,13 @@ namespace eft::plot {
 
 
         // lines to show full 1 sigma error
-        TLine l1(0, - 1 * scaling, nb_systematics, - 1 * scaling);
-        TLine l2(0, scaling, nb_systematics, scaling);
+
+        float x_low = 0.f;
+        if (is_vertical)
+            x_low = 2.f;
+
+        TLine l1(x_low, - 1 * scaling, nb_bins, - 1 * scaling);
+        TLine l2(x_low, scaling, nb_bins, scaling);
 
         for (auto l : {&l1, &l2}) {
             l->SetLineStyle(kDashed);
@@ -478,7 +483,7 @@ namespace eft::plot {
              std::swap(x, y);
              std::swap(dx, dy);
 
-             x = 1 - settings->rmargin - 0.05;
+             //x = 1 - settings->rmargin - 0.05;
              y = settings->bmargin + 0.02;
 
              //if (dx == 0.03)
