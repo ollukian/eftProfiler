@@ -317,12 +317,16 @@ namespace eft::plot {
 
         bool is_vertical = settings->vertical;
 
-//        if (is_vertical) {
-//            canvas->SetRightMargin(settings->bmargin);
-//            canvas->SetLeftMargin(settings->tmargin);
-//            canvas->SetTopMargin(settings->rmargin);
-//            canvas->SetBottomMargin(settings->lmargin);
-//        }
+        if (is_vertical) {
+            if (settings->rmargin == 0.10f) // if they are default
+                settings->rmargin = 0.20;
+            if (settings->bmargin == 0.40f) // if they are default
+                settings->bmargin = 0.50;
+            //canvas->SetRightMargin(settings->bmargin);
+            //canvas->SetLeftMargin(settings->tmargin);
+            //canvas->SetTopMargin(settings->rmargin);
+            //canvas->SetBottomMargin(settings->lmargin);
+        }
 
         float legend_x_low  = 1.f - settings->rmargin - 0.2f;
         float legend_y_low  = 1.f - settings->tmargin - 0.1f;
@@ -452,7 +456,7 @@ namespace eft::plot {
              std::swap(x, y);
              std::swap(dx, dy);
 
-             x = 1 - settings->rmargin;
+             x = 1 - settings->rmargin + 0.05;
              y = settings->bmargin;
 
              dx = -dx;
@@ -469,7 +473,7 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical) {
-            latex.DrawLatex(x, y += 0.10, settings->res_status.c_str());
+            latex.DrawLatex(x, y + 0.15, settings->res_status.c_str());
             EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y);
         }
         else {
@@ -497,6 +501,7 @@ namespace eft::plot {
             }
         }
 
+        EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", 0.35, y);
         latex.DrawLatex(0.35, y, selection_info.c_str());
 
         if (settings->mu_latex.empty())
