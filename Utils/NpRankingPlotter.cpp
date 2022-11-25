@@ -449,20 +449,20 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical)
-            latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
+            latex.DrawLatex(x, y += 0.10, settings->res_status.c_str());
         else
-            latex.DrawLatex(x, y + 0.10, settings->res_status.c_str());
+            latex.DrawLatex(x += 0.10, y, settings->res_status.c_str());
 
         latex.SetTextSize(settings->text_size); // 0.030
         //latex.SetTextSize(0.030); // 0.030
-        latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
+        latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
 
         string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
                                                  settings->ds_title,
                                                  settings->energy,
                                                  settings->lumi);
 
-        latex.DrawLatex(x, y - 2 * dy, text_ds_energy_lumi.c_str());
+        latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
 
         string selection_info = "All nuissance parameters";
         if ( ! settings->match_names.empty() ) {
@@ -475,9 +475,9 @@ namespace eft::plot {
         latex.DrawLatex(0.35, y, selection_info.c_str());
 
         if (settings->mu_latex.empty())
-            latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
+            latex.DrawLatex(x -= dx, y -= dy, settings->poi.c_str());
         else
-            latex.DrawLatex(x, y - 3 * dy, settings->mu_latex.c_str());
+            latex.DrawLatex(x -= dx, y -= dy, settings->mu_latex.c_str());
 
 
         const string stem_name = eft::utils::PlotterUtils::FormName(settings);
