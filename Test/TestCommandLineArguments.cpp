@@ -162,6 +162,7 @@ void TestNegativeParsing() {
 
 void TestSetValIfArgExistsBOOL()
 {
+    eft::stats::Logger::SetFullPrinting();
     {
         istringstream arguments {"--no_gamma"};
         int argc {0};
