@@ -34,11 +34,11 @@ vector<vector<char>> ConvertToArgcAgv(istringstream& s)
     EFT_PROF_INFO("argv:");
     for (size_t idx {0}; idx != nb_components; ++idx) {
         size_t nb_chars_line {vstrings[idx].size()};
-        fmt::print(fmt::fg(fmt::color::aqua), "Arg#{} ==> [", idx);
+        //fmt::print(fmt::fg(fmt::color::aqua), "Arg#{} ==> [", idx);
         for (size_t idx_char {0}; idx_char < nb_chars_line; ++idx_char) {
-            fmt::print(fmt::fg(fmt::color::aqua), "{}", vstrings[idx][idx_char]);
+            //fmt::print(fmt::fg(fmt::color::aqua), "{}", vstrings[idx][idx_char]);
         }
-        fmt::print(fmt::fg(fmt::color::aqua), "]\n");
+        //fmt::print(fmt::fg(fmt::color::aqua), "]\n");
     }
     return vstrings;
 }
@@ -115,12 +115,20 @@ void TestBasicArgParsing() {
         ASSERT(cmd.HasKey("third"));
         ASSERT(cmd.HasKey("fourth"));
         ASSERT(cmd.HasKey("fifth"));
+
+        ASSERT_NOT(cmd.HasKey("no"));
+        ASSERT_NOT(cmd.HasKey("empty"));
+        ASSERT_NOT(cmd.HasKey(""));
+        string val1;
+        ASSERT_NOT(cmd.SetValIfArgExists(val1, "empty"));
+        ASSERT_NOT(cmd.SetValIfArgExists(val1, ""));
+
         ASSERT_EQUAL(cmd.GetKeys().size(), 5);
         ASSERT_EQUAL(cmd.GetVals("first")->size(), 0);
         ASSERT_EQUAL(cmd.GetVals("second")->size(), 0);
         ASSERT_EQUAL(cmd.GetVals("third")->size(), 0);
         ASSERT_EQUAL(cmd.GetVals("fourth")->size(), 5);
-        ASSERT_EQUAL(cmd.GetVals("fifth")->size(), 6);
+        ASSERT_EQUAL(cmd.GetVals("fifth")->size(), 1);
     }
 }
 
@@ -144,6 +152,7 @@ void TestNegativeParsing() {
         ASSERT_NO_THROW(CommandLineArgs(argc, argv));
         CommandLineArgs cmd(argc, argv);
         ASSERT(cmd.HasKey("key_to_neg"));
+        ASSERT(cmd.HasKey("another_key"));
         ASSERT(cmd.GetVal("key_to_neg").has_value());
         ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[0], "-1");
         ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[1], "-2");
@@ -166,12 +175,31 @@ void TestSetValIfArgExistsBOOL()
         ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_1) );
         ASSERT(bool_val_1);
     }
+    {
+        istringstream arguments {"--b --first arg1 arg2 a --no_gamma --no_arg --n"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+        bool bool_val_1 = false;
+
+        ASSERT(cmd.HasKey("b"));
+        ASSERT(cmd.HasKey("first"));
+        ASSERT(cmd.HasKey("no_gamma"));
+        ASSERT(cmd.HasKey("no_arg"));
+
+        ASSERT( cmd.SetValIfArgExists("no_gamma", bool_val_1) );
+        ASSERT(bool_val_1);
+        ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_1) );
+        ASSERT(bool_val_1);
+    }
 }
 
 void TestSetValIfArgExistsFloat()
 {
     {
-        istringstream arguments {"--key1 1.2 --key2 2.3 --key3 3.4"};
+        istringstream arguments {"--key1 1.2 --key2 2.3 --key3 3.4 --key4 .1"};
         int argc {0};
         char** argv = nullptr;
         GetArgcArgvFromVecCharStars(arguments, argc, argv);
@@ -180,6 +208,12 @@ void TestSetValIfArgExistsFloat()
         float my_float_1 = 0.1f;
         float my_float_2 = 0.2f;
         float my_float_3 = 0.3f;
+
+        ASSERT(cmd.HasKey("key1"));
+        ASSERT(cmd.HasKey("key2"));
+        ASSERT(cmd.HasKey("key3"));
+        ASSERT(cmd.HasKey("key4"));
+
         ASSERT( cmd.SetValIfArgExists("key1", my_float_1));
         ASSERT( cmd.SetValIfArgExists("key2", my_float_2));
         ASSERT( cmd.SetValIfArgExists("key3", my_float_3));
@@ -259,19 +293,28 @@ void TestSetValIfArgExistsVectorStrings()
 void TestIncorrectArgs() {
     {
         istringstream arguments {"---key1 1 --key2"};
-        EFT_PROF_CRITICAL("Implement");
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+
+        ASSERT_NO_THROW(std::ignore = cmd.HasKey("-key1"));
+        ASSERT(cmd.HasKey("-key1"));
+        ASSERT(cmd.HasKey("key2"));
+        ASSERT_EQUAL(cmd.GetKeys().size(), 2);
     }
 }
 
 
 
 EFT_IMPLEMENT_TESTFILE(CommandLineArguments) {
-        EFT_ADD_TEST(TestBasicArgParsing,  "CommandLineArguments");
-        EFT_ADD_TEST(TestNegativeParsing,  "CommandLineArguments");
-        //EFT_ADD_TEST(TestIncorrectArgs,    "CommandLineArguments");
-        EFT_ADD_TEST(TestSetValIfArgExistsBOOL, "CommandLineArguments");
-        EFT_ADD_TEST(TestSetValIfArgExistsFloat, "CommandLineArguments");
-        EFT_ADD_TEST(TestSetValIfArgExistsString, "CommandLineArguments");
-        EFT_ADD_TEST(TestSetValIfArgExistsVectorStrings, "CommandLineArguments");
+        EFT_ADD_TEST(TestBasicArgParsing,                   "CommandLineArguments");
+        EFT_ADD_TEST(TestNegativeParsing,                   "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsBOOL,             "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsFloat,            "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsString,           "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsVectorStrings,    "CommandLineArguments");
+        EFT_ADD_TEST(TestIncorrectArgs,                     "CommandLineArguments");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
