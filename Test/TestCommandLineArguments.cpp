@@ -50,7 +50,7 @@ vector<vector<char>> ConvertToArgcAgv(const vector<string>& s)
     return ConvertToArgcAgv(is);
 }
 
-void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char** argv) {
+void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char**& argv) {
     //static vector<vector<char>> vstrings;
     //static vector<const char*>  cstrings;
 
