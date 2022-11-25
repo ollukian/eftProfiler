@@ -245,14 +245,14 @@ namespace eft::plot {
         //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value);
         //const auto range_low = -range_high;
 
-        EFT_PROF_INFO("range_high: {}", range_high);
-        EFT_PROF_INFO("range_low: {}", range_low);
-        EFT_PROF_INFO("scaling: {}", scaling);
-        EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
-        EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
-        EFT_PROF_INFO("[0]impact_minus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_minus_sigma_var);
-        EFT_PROF_INFO("[0]impact_plus_one_var = {}", res_for_plot_after_selector.at(0).impact_plus_one_var);
-        EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
+//        EFT_PROF_INFO("range_high: {}", range_high);
+//        EFT_PROF_INFO("range_low: {}", range_low);
+//        EFT_PROF_INFO("scaling: {}", scaling);
+//        EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
+//        EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
+//        EFT_PROF_INFO("[0]impact_minus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_minus_sigma_var);
+//        EFT_PROF_INFO("[0]impact_plus_one_var = {}", res_for_plot_after_selector.at(0).impact_plus_one_var);
+//        EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
 
 
         histo->GetXaxis()->LabelsOption("v");
@@ -434,6 +434,8 @@ namespace eft::plot {
         latex.SetTextSize(0.040); //0.045 is std
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
+        if (settings->vertical)
+            latex.SetTextAngle(90);
         latex.DrawLatex(x, y, settings->experiment.c_str());
         latex.SetTextFont(settings->text_font); //put back the font 42
         latex.DrawLatex(x + 0.10, y, settings->res_status.c_str());
