@@ -84,15 +84,38 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
 
     auto val_opt = GetVal(key);
     if (val_opt.has_value()) {
-        if constexpr(std::is_same_v<std::string, T>) {
+        if constexpr (std::is_pointer_v<T>) {
+            EFT_PROF_INFO("is a pointer, loop again, removing pointer");
+            return SetValIfArgExists(key, *val);
+        }
+//        if constexpr (std::is_const_v<T>) {
+//            EFT_PROF_INFO("is const, loop again, removing constness");
+//            return SetValIfArgExists(key, std::remove_const_t<>(val));
+//        }
+
+        else if constexpr(std::is_same_v<std::string, T>) {
             val = val_opt.value();
             EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as string", key, val_opt.value());
             return true;
         }
-//        else if constexpr(std::is_same_v<std::vector<char>, T>) {
-//            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
-//            val = GetVals(key).value();
-//        }
+        else if constexpr(std::is_same_v<std::vector<char>, T>) {
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<char>", key, val_opt.value());
+            std::vector<std::string> tmp = GetVals(key).value();
+            val.clear();
+            val.resize(tmp.size());
+            for (const auto& elem : tmp) {
+                if (elem.size() != 1) {
+                    throw std::logic_error(fmt::format("{} [{}] as array of chars: {} [{}] {}",
+                                                       "Cannot parse obj for the key",
+                                                       key,
+                                                       "element",
+                                                       elem,
+                                                       "is not a char"));
+                }
+                val.emplace_back(elem[0]);
+            }
+            return true;
+        }
         else if constexpr(std::is_same_v<std::vector<std::string>, T>) {
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
             val = GetVals(key).value();
@@ -108,6 +131,19 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         else if constexpr(std::is_integral_v<T>) {
             val = stoi(val_opt.value());
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
+            return true;
+        }
+        if constexpr(std::is_same_v<char, T>) {
+            std::string tmp = val_opt.value();
+            if (tmp.size() != 1) {
+                throw std::logic_error(fmt::format("{}: [{}] as a char: [{}] {}",
+                                                   "Cannot parse char for the key",
+                                                   key,
+                                                   tmp,
+                                                   "is not a char"));
+            }
+            val = tmp[0];
+            EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as char", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_array_v<std::decay_t<T>>) {

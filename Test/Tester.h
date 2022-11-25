@@ -35,6 +35,8 @@ public:
 
     static inline std::unique_ptr<Tester>& Get(); // may throw via new()
 
+    static inline void SetGroupName(const std::string& name) { group_name_ = name; }
+
     Tester(const Tester&) = delete;
 
     static inline Tester* Create() { return new Tester(); }
@@ -44,6 +46,7 @@ public:
 private:
     static inline TestRunner tr_;
     static inline std::unique_ptr<Tester> tester_ {};
+    static inline std::string group_name_ {};
     //std::vector<std::pair<GroupName, Group>> tests_;
     std::map<GroupName, Group> tests_;
     std::vector<GroupName> group_nb_;
@@ -79,6 +82,7 @@ inline std::unique_ptr<Tester>& Tester::Get()
 #define EFT_IMPLEMENT_TESTFILE(namethis) \
     void Test##namethis()
 #endif
+// Tester::SetGroupName(#namethis);     \
 
 #ifndef EFT_END_IMPLEMENT_TESTFILE
 #define EFT_END_IMPLEMENT_TESTFILE(namethis)

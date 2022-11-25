@@ -262,7 +262,31 @@ void TestSetValIfArgExistsString()
     }
 }
 
-void TestSetValIfArgExistsVectorStrings()
+void TestSetValIfArgExistsChar() {
+    {
+        istringstream arguments {"--key_for_char c --key2 r"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+        char c1;
+        char c2;
+
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key_for_char", c1));
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key2", c1));
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("random", c1));
+
+        ASSERT( cmd.SetValIfArgExists("key_for_char", c1));
+        ASSERT( cmd.SetValIfArgExists("key2", c2));
+        ASSERT_EQUAL(c1, 'c');
+        ASSERT_EQUAL(c2, 'r');
+        ASSERT_NOT( cmd.SetValIfArgExists("non_existent", c2));
+        ASSERT_EQUAL(c2, 'r');
+    }
+}
+
+void TestSetValIfArgExistsVector()
 {
     {
         eft::stats::Logger::SetFullPrinting();
@@ -295,6 +319,58 @@ void TestSetValIfArgExistsVectorStrings()
     }
 }
 
+void TestSetValIfArgExistsPointer() {
+    {
+        istringstream arguments {"--key1 1 --key2"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+
+        int* val1 = new int(0);
+
+        ASSERT(val1);
+        ASSERT_EQUAL(*val1, 0);
+
+        ASSERT_NO_THROW(std::ignore = cmd.HasKey("key1"));
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key1", val1));
+        ASSERT_EQUAL(*val1, 1);
+        delete val1; // try with raw pointer
+    }
+    {
+        istringstream arguments {"--key1 1 --key2"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+
+        auto val1 = make_shared<int>(0);
+        ASSERT(val1.get());
+        ASSERT_EQUAL(*val1, 0);
+
+        ASSERT_NO_THROW(std::ignore = cmd.HasKey("key1"));
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key1", val1));
+        ASSERT_EQUAL(*val1, 1);
+    }
+    {
+        istringstream arguments {"--input my_cool_input --filename file1.root file2.root"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+        auto my_vec_1 = new std::vector<std::string>();
+        auto my_vec_2 = new std::vector<std::string>();
+
+        ASSERT( cmd.SetValIfArgExists("input", my_vec_1));
+        ASSERT( cmd.SetValIfArgExists("filename", my_vec_2));
+        ASSERT_EQUAL(*my_vec_1, vector<string>({"my_cool_input"}) );
+        ASSERT_EQUAL(*my_vec_2, vector<string>({"file1.root", "file2.root"}));
+    }
+}
+
 void TestIncorrectArgs() {
     {
         istringstream arguments {"---key1 1 --key2"};
@@ -317,9 +393,11 @@ EFT_IMPLEMENT_TESTFILE(CommandLineArguments) {
         EFT_ADD_TEST(TestBasicArgParsing,                   "CommandLineArguments");
         EFT_ADD_TEST(TestNegativeParsing,                   "CommandLineArguments");
         EFT_ADD_TEST(TestSetValIfArgExistsBOOL,             "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsChar,             "CommandLineArguments");
         EFT_ADD_TEST(TestSetValIfArgExistsFloat,            "CommandLineArguments");
         EFT_ADD_TEST(TestSetValIfArgExistsString,           "CommandLineArguments");
-        EFT_ADD_TEST(TestSetValIfArgExistsVectorStrings,    "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsVector,           "CommandLineArguments");
         EFT_ADD_TEST(TestIncorrectArgs,                     "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsPointer,            "CommandLineArguments");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
