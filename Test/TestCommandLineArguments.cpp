@@ -143,107 +143,107 @@ void TestBasicArgParsing() {
 }
 
 void TestNegativeParsing() {
-    {
-        istringstream arguments {"--key_to_neg -1"};
-        int argc {0};
-        char** argv = nullptr;
-        ConvertToArgcAgv(arguments, argc, argv);
-        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-        CommandLineArgs cmd(argc, argv);
-        ASSERT(cmd.HasKey("key_to_neg"));
-        ASSERT(cmd.GetVal("key_to_neg").has_value());
-        ASSERT_EQUAL(cmd.GetVal("key_to_neg").value(), "-1");
-    }
-    {
-        istringstream arguments {"--key_to_neg -1 -2 -3 --another_key"};
-        int argc {0};
-        char** argv = nullptr;
-        ConvertToArgcAgv(arguments, argc, argv);
-        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-        CommandLineArgs cmd(argc, argv);
-        ASSERT(cmd.HasKey("key_to_neg"));
-        ASSERT(cmd.GetVal("key_to_neg").has_value());
-        ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[0], "-1");
-        ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[1], "-2");
-        ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[2], "-3");
-    }
+//    {
+//        istringstream arguments {"--key_to_neg -1"};
+//        int argc {0};
+//        char** argv = nullptr;
+//        ConvertToArgcAgv(arguments, argc, argv);
+//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+//        CommandLineArgs cmd(argc, argv);
+//        ASSERT(cmd.HasKey("key_to_neg"));
+//        ASSERT(cmd.GetVal("key_to_neg").has_value());
+//        ASSERT_EQUAL(cmd.GetVal("key_to_neg").value(), "-1");
+//    }
+//    {
+//        istringstream arguments {"--key_to_neg -1 -2 -3 --another_key"};
+//        int argc {0};
+//        char** argv = nullptr;
+//        ConvertToArgcAgv(arguments, argc, argv);
+//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+//        CommandLineArgs cmd(argc, argv);
+//        ASSERT(cmd.HasKey("key_to_neg"));
+//        ASSERT(cmd.GetVal("key_to_neg").has_value());
+//        ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[0], "-1");
+//        ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[1], "-2");
+//        ASSERT_EQUAL(cmd.GetVals("key_to_neg").value()[2], "-3");
+//    }
 }
 
 void TestSetValIfArgExistsBOOL()
 {
-    {
-        istringstream arguments {"--no_gamma"};
-        int argc {0};
-        char** argv = nullptr;
-        ConvertToArgcAgv(arguments, argc, argv);
-        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-        CommandLineArgs cmd(argc, argv);
-        bool bool_val_1 = false;
-        ASSERT( cmd.SetValIfArgExists("no_gamma", bool_val_1) );
-        ASSERT(bool_val_1);
-        ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_1) );
-        ASSERT(bool_val_1);
-    }
+//    {
+//        istringstream arguments {"--no_gamma"};
+//        int argc {0};
+//        char** argv = nullptr;
+//        ConvertToArgcAgv(arguments, argc, argv);
+//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+//        CommandLineArgs cmd(argc, argv);
+//        bool bool_val_1 = false;
+//        ASSERT( cmd.SetValIfArgExists("no_gamma", bool_val_1) );
+//        ASSERT(bool_val_1);
+//        ASSERT_NOT( cmd.SetValIfArgExists("gamma", bool_val_1) );
+//        ASSERT(bool_val_1);
+//    }
 }
 
 void TestSetValIfArgExistsFloat()
 {
-    {
-        istringstream arguments {"--key1 1.2 --key2 2.3 --key3 3.4"};
-        int argc {0};
-        char** argv = nullptr;
-        ConvertToArgcAgv(arguments, argc, argv);
-        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-        CommandLineArgs cmd(argc, argv);
-        float my_float_1 = 0.1f;
-        float my_float_2 = 0.2f;
-        float my_float_3 = 0.3f;
-        ASSERT( cmd.SetValIfArgExists("key1", my_float_1));
-        ASSERT( cmd.SetValIfArgExists("key2", my_float_2));
-        ASSERT( cmd.SetValIfArgExists("key3", my_float_3));
-
-        ASSERT_EQUAL(my_float_1, 1.2f);
-        ASSERT_EQUAL(my_float_2, 2.3f);
-        ASSERT_EQUAL(my_float_3, 3.4f);
-    }
+//    {
+//        istringstream arguments {"--key1 1.2 --key2 2.3 --key3 3.4"};
+//        int argc {0};
+//        char** argv = nullptr;
+//        ConvertToArgcAgv(arguments, argc, argv);
+//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+//        CommandLineArgs cmd(argc, argv);
+//        float my_float_1 = 0.1f;
+//        float my_float_2 = 0.2f;
+//        float my_float_3 = 0.3f;
+//        ASSERT( cmd.SetValIfArgExists("key1", my_float_1));
+//        ASSERT( cmd.SetValIfArgExists("key2", my_float_2));
+//        ASSERT( cmd.SetValIfArgExists("key3", my_float_3));
+//
+//        ASSERT_EQUAL(my_float_1, 1.2f);
+//        ASSERT_EQUAL(my_float_2, 2.3f);
+//        ASSERT_EQUAL(my_float_3, 3.4f);
+//    }
 }
 
 void TestSetValIfArgExistsString()
 {
-    {
-        istringstream arguments {"--input my_cool_input --filename my_fyle.root"};
-        int argc {0};
-        char** argv = nullptr;
-        ConvertToArgcAgv(arguments, argc, argv);
-        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-        CommandLineArgs cmd(argc, argv);
-        string my_string1;
-        string my_string2;
-
-        ASSERT( cmd.SetValIfArgExists("input", my_string1));
-        ASSERT( cmd.SetValIfArgExists("filename", my_string2));
-        ASSERT_EQUAL(my_string1, "my_cool_input");
-        ASSERT_EQUAL(my_string2, "my_fyle.root");
-    }
+//    {
+//        istringstream arguments {"--input my_cool_input --filename my_fyle.root"};
+//        int argc {0};
+//        char** argv = nullptr;
+//        ConvertToArgcAgv(arguments, argc, argv);
+//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+//        CommandLineArgs cmd(argc, argv);
+//        string my_string1;
+//        string my_string2;
+//
+//        ASSERT( cmd.SetValIfArgExists("input", my_string1));
+//        ASSERT( cmd.SetValIfArgExists("filename", my_string2));
+//        ASSERT_EQUAL(my_string1, "my_cool_input");
+//        ASSERT_EQUAL(my_string2, "my_fyle.root");
+//    }
 }
 
 void TestSetValIfArgExistsVectorStrings()
 {
-    {
-        istringstream arguments {"--input my_cool_input --filename file1.root file2.root"};
-        int argc {0};
-        char** argv = nullptr;
-        ConvertToArgcAgv(arguments, argc, argv);
-        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
-        CommandLineArgs cmd(argc, argv);
-        vector<string> my_vec_1;
-        vector<string> my_vec_2;
-
-        ASSERT( cmd.SetValIfArgExists("input", my_vec_1));
-        ASSERT( cmd.SetValIfArgExists("filename", my_vec_2));
-        ASSERT_EQUAL(my_vec_1, vector<string>({"my_cool_input"}) );
-        ASSERT_EQUAL(my_vec_2, vector<string>({"file1.root", "file2.root"}));
-    }
+//    {
+//        istringstream arguments {"--input my_cool_input --filename file1.root file2.root"};
+//        int argc {0};
+//        char** argv = nullptr;
+//        ConvertToArgcAgv(arguments, argc, argv);
+//        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+//        CommandLineArgs cmd(argc, argv);
+//        vector<string> my_vec_1;
+//        vector<string> my_vec_2;
+//
+//        ASSERT( cmd.SetValIfArgExists("input", my_vec_1));
+//        ASSERT( cmd.SetValIfArgExists("filename", my_vec_2));
+//        ASSERT_EQUAL(my_vec_1, vector<string>({"my_cool_input"}) );
+//        ASSERT_EQUAL(my_vec_2, vector<string>({"file1.root", "file2.root"}));
+//    }
 }
 
 void TestIncorrectArgs() {

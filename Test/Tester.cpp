@@ -26,56 +26,29 @@ void Tester::RunTests(const std::string& groupname_to_run_only)
     fmt::print(cout, "=={:=<45}==={:=<10}==={:=<10}==\n", "", "", "");
     fmt::print(cout, "| {:^45} | {:^10} | {:10} |\n", "Test Name", "Status", "Duration");
     fmt::print(cout, "=={:=<45}==={:=<10}==={:=<10}==\n", "", "", "");
-    //EFT_PROF_INFO("=={:=<45}==={:=<10}==", "", "");
-    //EFT_PROF_INFO("| {:^45} | {:^10} |", "Test Name", "Status");
-    //EFT_PROF_INFO("=={:=<45}==={:=<10}==", "", "");
-
-    bool first = true;
-
     for (const auto& groupname : group_nb_) {
         const auto& tests = tests_.at(groupname);
-        //if (!first) {
-        //    EFT_PROF_INFO("+{:-<45} | {:-<10} +", "", "");
-       // }
-        //else {
-        //    first = false;
-        //}
-        bool group_ok = true;
         fmt::print(cout, "| {:^72} |\n", groupname);
-        fmt::print(cout, "+{:-<45}-+-{:-<10}--+-{:-<10}-+\n", "", "", "");
-        //EFT_PROF_INFO("| {:^58} |", groupname);
-        //EFT_PROF_INFO("+{:-<45}--+-{:-<10}-+", "", "");
+        fmt::print(cout, "+{:-<45}--+-{:-<10}-+-{:-<10}-+\n", "", "", "");
         for (const auto& [name, function] : tests)
         {
-            //cerr << fmt::format("| {:45} | ==> ", name);
             Logger::SetSilent(); // to ignore text from the tests
             auto test_res = tr_.RunTest(function, "");
             Logger::SetLevel(spdlog::level::level_enum::info);
             if (test_res.res == "OK") {
-                //EFT_PROF_INFO("| {:45} | {:10} |", name, test_res);
-                //fmt::print(cout, "| {:45} | {:10} |\n", name, "Wine", "OK");
                 fmt::print(fmt::fg(fmt::color::green), "| {:45} | {:10} | {:10} |\n", name, "OK", test_res.PrettyDuration());
             }
             else {
-                group_ok = false;
-                ////fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} | {:10} |\n", name, test_res.res, test_res.duration.count());
                 fmt::print(fmt::fg(fmt::color::red), "| {:45} | {:10} | {:10} |\n", name, "Fail", test_res.PrettyDuration());
                 fmt::print(fmt::fg(fmt::color::red), "| {}", test_res.res);
-                //EFT_PROF_ERROR("| {:45} | {:10} |", name, test_res);
-                //fmt::print(cerr, "| {:45} | {:10} |\n", name, std::move(test_res));
             }
-            //EFT_PROF_INFO("| {:45} | {:10} |", name, std::move(test_res));
             Logger::SetLevel(spdlog::level::level_enum::info);
         } // tests in this group
         if (tr_.GetFailCount() == 0) {
-            fmt::print(cout, "+{:-<45}-+-{:-<10}--+-{:-<10}-+\n", "-", "-", "");
-            //EFT_PROF_INFO("+{:-<45}--+-{:-<10}-+", "-", "-");
-            //EFT_PROF_INFO("Tests Group: {:30} all test have been successfully passed", groupname);
+            fmt::print(cout, "+{:-<45}--+-{:-<10}-+-{:-<10}-+\n", "-", "-", "");
         }
         else {
             fmt::print(fmt::fg(fmt::color::red), "| Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
-            //fmt::print(cerr, "Tests Group: {:30}, {} tests have failed\n", groupname, tr_.GetFailCount());
-            //EFT_PROF_CRITICAL("Tests Group: {:30}, {} tests have failed", groupname, tr_.GetFailCount());
             return;
         }
     } // groups
