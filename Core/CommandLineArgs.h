@@ -174,12 +174,6 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as float", key, val_opt.value());
             return true;
         }
-        else if constexpr(std::is_integral_v<std::remove_cv_t<T>>) {
-            EFT_PROF_DEBUG("is an int");
-            val = stoi(val_opt.value());
-            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
-            return true;
-        }
         if constexpr(std::is_same_v<char, std::remove_cv_t<T>>) {
             EFT_PROF_INFO("requested value is a char");
             std::string tmp = val_opt.value();
@@ -193,6 +187,12 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             }
             val = tmp[0];
             EFT_PROF_INFO("[CommandLineArgs] Set value for key: {:10} ==> {:10} as char", key, val_opt.value());
+            return true;
+        }
+        else if constexpr(std::is_integral_v<std::remove_cv_t<T>>) {
+            EFT_PROF_DEBUG("is an int");
+            val = stoi(val_opt.value());
+            EFT_PROF_INFO("[CommandLineArgs] value for key: {:10} ==> {:10} as integer", key, val_opt.value());
             return true;
         }
         else if constexpr(std::is_array_v<std::decay_t<T>>) {
