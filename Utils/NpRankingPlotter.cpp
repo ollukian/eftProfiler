@@ -307,17 +307,6 @@ namespace eft::plot {
         histo_minus_sigma_var->SetLineWidth(1);
 
 
-
-        auto legend = make_unique<TLegend>(1 - settings->rmargin - 0.2,
-                                           1 - settings->tmargin - 0.1,
-                                           1 - settings->rmargin,
-                                           1 - settings->tmargin);
-        legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
-        legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
-        legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
-        legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
-        legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
-
         std::filesystem::create_directory(settings->out_dir); // figures -> by default
 
         auto canvas = std::make_unique<TCanvas>("c",
@@ -329,6 +318,37 @@ namespace eft::plot {
         canvas->SetLeftMargin   (settings->lmargin); // 0.10
         canvas->SetTopMargin    (settings->tmargin); // 0.05
         canvas->SetBottomMargin (settings->bmargin); // 0.4
+
+        bool is_vertical = settings->vertical;
+
+        if (is_vertical) {
+            canvas->SetRightMargin(settings->bmargin);
+            canvas->SetLeftMargin(settings->tmargin);
+            canvas->SetTopMargin(settings->rmargin);
+            canvas->SetBottomMargin(settings->lmargin);
+        }
+
+        float legend_x_low  = 1.f - settings->rmargin - 0.2f;
+        float legend_y_low  = 1.f - settings->tmargin - 0.1f;
+        float legend_x_high = 1.f - settings->rmargin;
+        float legend_y_high = 1.f - settings->tmargin;
+
+        if (is_vertical) {
+            legend_x_low = legend_x_high;
+            legend_x_high = legend_x_low + 0.1f;
+            legend_y_low = 0.6f;
+            legend_y_high = 1.f - settings->tmargin;
+        }
+
+        auto legend = make_unique<TLegend>(legend_x_low,
+                                           legend_y_low,
+                                           legend_x_high,
+                                           legend_y_high);
+        legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
+        legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
+        legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
+        legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
+        legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
 
         histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
@@ -432,11 +452,11 @@ namespace eft::plot {
         float x = 0.02f + settings->lmargin; // 0.12
         float dx = 0;
 
-        bool is_vertical = settings->vertical;
-
         if (is_vertical) {
              std::swap(x, y);
              std::swap(dx, dy);
+
+             x = -x;
         }
 
         latex.SetNDC();
