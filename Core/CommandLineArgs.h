@@ -145,7 +145,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
             std::vector<std::string> tmp = GetVals(key).value();
             EFT_PROF_INFO("exctacted {} elems: [{}]", tmp.size(), tmp);
             val.clear();
-            val.resize(tmp.size());
+            val.reserve(tmp.size());
             for (const auto& elem : tmp) {
                 EFT_PROF_INFO("handle: [{}]", elem);
                 if (elem.size() != 1) {
