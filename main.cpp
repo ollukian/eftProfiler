@@ -17,6 +17,7 @@ int main(int argc, char* argv[]) {
     gErrorIgnoreLevel = kError;
 
     eft::stats::Logger::Init();
+    eft::stats::Logger::SetRelease();
 
     if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
