@@ -525,7 +525,7 @@ namespace eft::plot {
         latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
         EFT_PROF_WARN("latex.DrawLatex(x, y, SMEFT; at {}, {}", x, y);
 
-        string text_ds_energy_lumi = fmt::format("{}\n (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+        string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
                                                  settings->ds_title,
                                                  settings->energy,
                                                  settings->lumi);
@@ -534,7 +534,7 @@ namespace eft::plot {
             text_ds_energy_lumi = fmt::format("{}", settings->ds_title);
             latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
             EFT_PROF_WARN("latex.DrawLatex(x, y, ds; at {}, {}", x, y);
-            text_ds_energy_lumi = fmt::format("#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+            text_ds_energy_lumi = fmt::format("(#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
                                               settings->energy,
                                               settings->lumi);
             latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
