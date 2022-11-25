@@ -283,11 +283,26 @@ namespace eft::plot {
         histo_plus_one_var->SetLineColor(settings->color_prefit_plus); // kBlue
         histo_plus_one_var->SetLineWidth(2);
 
-        histo_plus_sigma_var->SetFillColorAlpha(settings->color_postfit_plus, 0.6); // used to be red
+        size_t a_plus = utils::ColourUtils::GetColourByIdx(settings->color_postfit_plus).a();
+        if (a_plus == 255)
+            histo_plus_sigma_var->SetFillColorAlpha(settings->color_postfit_plus, 0.6); // used to be red // 0.6
+        else {
+            histo_plus_sigma_var->SetFillColorAlpha(settings->color_postfit_plus,
+                                                    utils::ColourUtils::
+                                                    GetColourByIdx(settings->color_postfit_plus)
+                                                    .a_as_fraction()); // used to be red // 0.6
+        }
         histo_plus_sigma_var->SetLineColor(settings->color_postfit_plus); // kBlue
         histo_plus_sigma_var->SetLineWidth(1);
 
-        histo_minus_sigma_var->SetFillColorAlpha(settings->color_postfit_minus, 0.6); // used to be violet
+        size_t a_minus = utils::ColourUtils::GetColourByIdx(settings->color_postfit_minus).a();
+        if (a_plus == 255)
+            histo_minus_sigma_var->SetFillColorAlpha(settings->color_postfit_minus, 0.6); // used to be violet // 0.6
+        else
+            histo_minus_sigma_var->SetFillColorAlpha(settings->color_postfit_minus,
+                                                    utils::ColourUtils::
+                                                    GetColourByIdx(settings->color_postfit_minus)
+                                                            .a_as_fraction()); // used to be red // 0.6
         histo_minus_sigma_var->SetLineColor(settings->color_postfit_minus); // kGreen
         histo_minus_sigma_var->SetLineWidth(1);
 
