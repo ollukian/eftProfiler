@@ -555,8 +555,8 @@ namespace eft::plot {
         //TBox marker_prefit_plus  {0.020, scaling,  0.025, 1.03 * scaling};
         //TBox marker_prefit_minus {0.020, scaling + 0.05,  0.025, 1.03 * scaling + 0.05};
 
-        TBox marker_prefit_plus  {0.20, 0.001,  0.25, 0.0015};
-        TBox marker_prefit_minus {0.3, 0.0015, 0.35, 0.0020};
+        TBox marker_prefit_plus  {0.3, settings->rmuh * 0.7,  0.35, settings->rmuh * 0.73};
+        TBox marker_prefit_minus {0.3, settings->rmuh * 0.75,  0.35, settings->rmuh * 0.78};
 
         marker_prefit_plus.SetFillColorAlpha(settings->color_prefit_plus,
                      utils::ColourUtils::GetColourByIdx(
