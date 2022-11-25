@@ -144,11 +144,9 @@ namespace eft::plot {
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
                          bool res = callback_(info);
-                         EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
-                                       "overall",
-                                       "",
-                                       info.poi,
+                         EFT_PROF_INFO("Does np: {:40} for poi: {:15} passes name selection ==> result: {}",
                                        info.name,
+                                       info.poi,
                                        res);
                          return res;
                      }
@@ -156,7 +154,7 @@ namespace eft::plot {
 
         res_for_plot_after_selector.shrink_to_fit();
 
-        EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, try to plot {} out of them",
+        EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, plot {} out of them",
                       res_for_plot_after_selector.size(),
                       settings->top);
 
