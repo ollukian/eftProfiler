@@ -313,8 +313,8 @@ namespace eft::plot {
         bool is_vertical = settings->vertical;
 
         if (is_vertical) {
-            if (settings->rmargin == 0.10f) // if they are default
-                settings->rmargin = 0.20;
+            //if (settings->rmargin == 0.10f) // if they are default
+            //    settings->rmargin = 0.20;
             if (settings->bmargin == 0.40f) // if they are default
                 settings->bmargin = 0.50;
             //canvas->SetRightMargin(settings->bmargin);
@@ -482,7 +482,7 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical) {
-            latex.DrawLatex(x, y + 0.07, settings->res_status.c_str());
+            latex.DrawLatex(x, y + 0.09, settings->res_status.c_str());
             EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.05);
         }
         else {
