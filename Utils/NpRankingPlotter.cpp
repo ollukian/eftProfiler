@@ -560,8 +560,8 @@ namespace eft::plot {
         float x_size_one_block = 0.15f;
         float dx_between_markers = 0.15f;
 
-        float y_start_multiplier = 0.15f;
-        float y_end_multiplier   = 0.35f;
+        float y_start_multiplier = 0.05f;
+        float y_end_multiplier   = 0.25f;
         float dy_text = 0.05f;
 
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
