@@ -571,23 +571,14 @@ namespace eft::plot {
         marker_prefit_plus.SetLineColor(settings->color_prefit_plus);
         marker_prefit_minus.SetLineColor(settings->color_prefit_minus);
 
-//        marker_prefit_plus.SetFillColorAlpha(settings->color_prefit_plus,
-//                                             utils::ColourUtils::GetColourByIdx(
-//                                                     settings->color_prefit_plus)
-//                                                     .a_as_fraction()
-//        );
-
-        marker_prefit_minus.SetFillColorAlpha(settings->color_prefit_minus,
-                                             utils::ColourUtils::GetColourByIdx(
-                                                     settings->color_prefit_minus)
-                                                     .a_as_fraction()
-        );
+        marker_prefit_plus.SetFillColor(settings->color_prefit_plus);
+        marker_prefit_minus.SetFillColor(settings->color_prefit_minus);
 
         marker_posfit_plus.SetLineWidth(1);
-        marker_posfit_plus.SetLineWidth(1);
+        marker_posfit_minus.SetLineWidth(1);
 
         marker_posfit_plus.SetFillStyle(0);
-        marker_posfit_plus.SetFillStyle(0);
+        marker_posfit_minus.SetFillStyle(0);
 
         marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
                                              utils::ColourUtils::GetColourByIdx(
