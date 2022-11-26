@@ -580,17 +580,20 @@ namespace eft::plot {
         marker_posfit_plus.SetFillStyle(0);
         marker_posfit_minus.SetFillStyle(0);
 
-        marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
-                                             utils::ColourUtils::GetColourByIdx(
-                                                     settings->color_postfit_plus)
-                                                     .a_as_fraction()
-        );
+        marker_posfit_plus.SetFillColor(settings->color_postfit_plus);
+        marker_posfit_plus.SetFillColor(settings->color_postfit_minus);
 
-        marker_posfit_minus.SetFillColorAlpha(settings->color_postfit_minus,
-                                              utils::ColourUtils::GetColourByIdx(
-                                                      settings->color_postfit_minus)
-                                                      .a_as_fraction()
-        );
+//        marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
+//                                             utils::ColourUtils::GetColourByIdx(
+//                                                     settings->color_postfit_plus)
+//                                                     .a_as_fraction()
+//        );
+//
+//        marker_posfit_minus.SetFillColorAlpha(settings->color_postfit_minus,
+//                                              utils::ColourUtils::GetColourByIdx(
+//                                                      settings->color_postfit_minus)
+//                                                      .a_as_fraction()
+//        );
 
 
         // draw pseudo-legend
