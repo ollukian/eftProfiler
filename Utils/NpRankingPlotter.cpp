@@ -561,8 +561,8 @@ namespace eft::plot {
         float x_size_one_block = 0.15f;
         float dx_between_markers = 0.15f;
 
-        float y_start_multiplier = 0.30f;
-        float y_end_multiplier   = 0.50f;
+        float y_start_multiplier = 0.15f;
+        float y_end_multiplier   = 0.35f;
 
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
@@ -612,10 +612,10 @@ namespace eft::plot {
 
             latex.SetNDC(false);
             latex.SetTextAlign(12);
-            latex.DrawLatex(x_start_init + dx_between_markers * 0, settings->rmuh * (y_end_multiplier + 0.1), "+1 impact (#theta = #hat{#theta} + 1)");
-            latex.DrawLatex(x_start_init + dx_between_markers * 1, settings->rmuh * (y_end_multiplier + 0.1), "-1 impact (#theta = #hat{#theta} - 1)");
-            latex.DrawLatex(x_start_init + dx_between_markers * 2, settings->rmuh * (y_end_multiplier + 0.1), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
-            latex.DrawLatex(x_start_init + dx_between_markers * 3, settings->rmuh * (y_end_multiplier + 0.1), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 0, settings->rmuh * (y_end_multiplier + 0.1), "+1 impact (#theta = #hat{#theta} + 1)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 1, settings->rmuh * (y_end_multiplier + 0.1), "-1 impact (#theta = #hat{#theta} - 1)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 2, settings->rmuh * (y_end_multiplier + 0.1), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 3, settings->rmuh * (y_end_multiplier + 0.1), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
             latex.SetNDC(true);
         }
 
