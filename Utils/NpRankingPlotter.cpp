@@ -605,6 +605,11 @@ namespace eft::plot {
             marker_posfit_plus.Draw();
             marker_posfit_minus.Draw();
 
+            EFT_PROF_WARN("draw latex +1 at {}, {}",x_start_init + dx_between_markers * 0,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex -1 at {}, {}",x_start_init + dx_between_markers * 1,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex +s at {}, {}",x_start_init + dx_between_markers * 2,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,settings->rmuh * (y_end_multiplier + 0.1));
+
             latex.DrawLatex(x_start_init + dx_between_markers * 0, settings->rmuh * (y_end_multiplier + 0.1), "+1 impact (#theta = #hat{#theta} + 1)");
             latex.DrawLatex(x_start_init + dx_between_markers * 1, settings->rmuh * (y_end_multiplier + 0.1), "-1 impact (#theta = #hat{#theta} - 1)");
             latex.DrawLatex(x_start_init + dx_between_markers * 2, settings->rmuh * (y_end_multiplier + 0.1), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
