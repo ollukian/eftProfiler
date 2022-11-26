@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
                 {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
                 {"float",           "rmargin",          "0.10",         "Canvas margin RIGHT"},
                 {"float",           "lmargin",          "0.10",         "Canvas margin LEFT"},
-                {"float",           "tmargin",          "0.05",         "Canvas margin TOP"},
+                {"float",           "tmargin",          "0.02",         "Canvas margin TOP"},
                 {"float",           "bmargin",          "0.40",         "Canvas margin BOTTOM"},
                 {"vector<size_t>",  "plt_size",         "1200 800",     "Size of the canvas (x, y). Example: --plt_size 1200 800"},
                 {"string",          "study_type",       "",             ""},

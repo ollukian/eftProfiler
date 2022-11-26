@@ -47,7 +47,7 @@ struct FitManagerConfig {
     std::string                 color_np;  // <== to add
     float                       rmargin             {0.10};
     float                       lmargin             {0.10};
-    float                       tmargin             {0.05};
+    float                       tmargin             {0.02};
     float                       bmargin             {0.40};
     std::vector<size_t>         plt_size            {1200, 800};
     float                       rmul                {-0.002};
