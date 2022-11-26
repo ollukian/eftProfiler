@@ -266,14 +266,17 @@ namespace eft::plot {
 
         histo->GetXaxis()->LabelsOption("v");
 
-        if (settings->vertical) {
-            histo->GetYaxis()->LabelsOption("h");
-        }
+        //if (settings->vertical) {
+        //    histo->GetYaxis()->LabelsOption("h");
+        //}
 
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
         histo->GetYaxis()->SetTitleOffset(settings->mu_offset); // 1.4
-        histo->GetYaxis()->SetTitle("#Delta #mu");
+        if (settings->mu_latex.empty())
+            histo->GetYaxis()->SetTitle(fmt::format("#Delta {}", settings->poi).c_str());
+        else
+            histo->GetYaxis()->SetTitle(fmt::format("#Delta {}", settings->mu_latex).c_str());
 
         //histo->SetFillColor(kBlue);
         histo->SetFillColorAlpha(kGray, 0.6); // used to be blue // gray
