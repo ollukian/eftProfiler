@@ -611,6 +611,7 @@ namespace eft::plot {
             EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,settings->rmuh * (y_end_multiplier + 0.1));
 
             latex.SetNDC(false);
+            latex.SetTextAlign(12);
             latex.DrawLatex(x_start_init + dx_between_markers * 0, settings->rmuh * (y_end_multiplier + 0.1), "+1 impact (#theta = #hat{#theta} + 1)");
             latex.DrawLatex(x_start_init + dx_between_markers * 1, settings->rmuh * (y_end_multiplier + 0.1), "-1 impact (#theta = #hat{#theta} - 1)");
             latex.DrawLatex(x_start_init + dx_between_markers * 2, settings->rmuh * (y_end_multiplier + 0.1), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
