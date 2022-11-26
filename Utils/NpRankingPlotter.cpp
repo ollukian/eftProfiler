@@ -545,9 +545,9 @@ namespace eft::plot {
 
         string selection_info = fmt::format("Top {} Nuissance parameters", nb_systematics);
         if ( ! settings->match_names.empty() ) {
-            selection_info = "Group of Nuissance parameters: ";
+            selection_info = "NPs: ";
             for (const string& match : settings->match_names) {
-                selection_info += match + " ";
+                selection_info += R"(")" + match + R"(" )";
             }
         }
 
