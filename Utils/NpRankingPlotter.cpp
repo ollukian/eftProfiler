@@ -559,8 +559,8 @@ namespace eft::plot {
         float x_size_one_block = 0.15f;
         float dx_between_markers = 0.15f;
 
-        float y_start_multiplier = 0.50f;
-        float y_end_multiplier   = 0.70f;
+        float y_start_multiplier = 0.30f;
+        float y_end_multiplier   = 0.50f;
 
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
