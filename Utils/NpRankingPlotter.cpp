@@ -557,9 +557,9 @@ namespace eft::plot {
 
         float x_start = 0.3f;
         float x_size_one_block = 0.15f;
-        float dx_between_markers = 0.20f;
+        float dx_between_markers = 0.15f;
 
-        float y_start_multiplier = 0.60f;
+        float y_start_multiplier = 0.50f;
         float y_end_multiplier   = 0.70f;
 
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
@@ -570,6 +570,9 @@ namespace eft::plot {
 
         marker_prefit_plus.SetLineColor(settings->color_prefit_plus);
         marker_prefit_minus.SetLineColor(settings->color_prefit_minus);
+
+        marker_prefit_plus.SetLineWidth(3);
+        marker_prefit_minus.SetLineWidth(3);
 
         marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
                                              utils::ColourUtils::GetColourByIdx(
