@@ -555,7 +555,9 @@ namespace eft::plot {
         //TBox marker_prefit_plus  {0.020, scaling,  0.025, 1.03 * scaling};
         //TBox marker_prefit_minus {0.020, scaling + 0.05,  0.025, 1.03 * scaling + 0.05};
 
-        float x_start = 0.3f;
+        const float x_start_init = 0.3f;
+
+        float x_start = x_start_init;
         float x_size_one_block = 0.15f;
         float dx_between_markers = 0.15f;
 
@@ -602,6 +604,11 @@ namespace eft::plot {
             marker_prefit_minus.Draw();
             marker_posfit_plus.Draw();
             marker_posfit_minus.Draw();
+
+            latex.DrawLatex(x_start_init + dx_between_markers * 0, settings->rmuh * (y_end_multiplier + 0.1), "+1 impact (#theta = #hat{#theta} + 1)");
+            latex.DrawLatex(x_start_init + dx_between_markers * 1, settings->rmuh * (y_end_multiplier + 0.1), "-1 impact (#theta = #hat{#theta} - 1)");
+            latex.DrawLatex(x_start_init + dx_between_markers * 2, settings->rmuh * (y_end_multiplier + 0.1), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
+            latex.DrawLatex(x_start_init + dx_between_markers * 3, settings->rmuh * (y_end_multiplier + 0.1), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
         }
 
         EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", 0.35, y);
