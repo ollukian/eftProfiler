@@ -552,9 +552,8 @@ namespace eft::plot {
         }
 
 
-        //TBox marker_prefit_plus  {0.020, scaling,  0.025, 1.03 * scaling};
-        //TBox marker_prefit_minus {0.020, scaling + 0.05,  0.025, 1.03 * scaling + 0.05};
 
+        // TODO: wrap by draw legend....
         const float x_start_init = 0.3f;
 
         float x_start = x_start_init;
@@ -563,6 +562,7 @@ namespace eft::plot {
 
         float y_start_multiplier = 0.15f;
         float y_end_multiplier   = 0.35f;
+        float dy_text = 0.05f;
 
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
@@ -613,7 +613,6 @@ namespace eft::plot {
             EFT_PROF_WARN("draw latex +s at {}, {}",x_start_init + dx_between_markers * 2,settings->rmuh * (y_end_multiplier + 0.1));
             EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,settings->rmuh * (y_end_multiplier + 0.1));
 
-            float dy_text = 0.05f;
 
             latex.SetNDC(false);
             latex.SetTextAlign(12);
@@ -622,10 +621,25 @@ namespace eft::plot {
             latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 2, settings->rmuh * (y_end_multiplier + dy_text), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
             latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 3, settings->rmuh * (y_end_multiplier + dy_text), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
             latex.SetNDC(true);
+            latex.SetTextAlign(11); // default
         }
 
-        EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", 0.35, y);
-        latex.DrawLatex(0.35, y, selection_info.c_str());
+        float x_selection_info = 0.35;
+        float y_selection_info = y;
+
+        if (is_vertical) {
+            x_selection_info = x_start_init + (dx_between_markers + x_size_one_block) * 4;
+            y_selection_info = settings->rmuh * (y_end_multiplier + dy_text);
+            latex.SetNDC(false);
+            latex.SetTextAlign(12);
+            latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
+            latex.SetNDC(true);
+            latex.SetTextAlign(11); // default
+        } else {
+            latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
+        }
+
+        EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", x_selection_info, y_selection_info);
 
         if (settings->mu_latex.empty())
             latex.DrawLatex(x -= dx, y -= dy, settings->poi.c_str());
