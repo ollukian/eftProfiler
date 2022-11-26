@@ -543,7 +543,7 @@ namespace eft::plot {
             latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
         }
 
-        string selection_info = "All nuissance parameters";
+        string selection_info = fmt::format("Top {} Nuissance parameters", nb_systematics);
         if ( ! settings->match_names.empty() ) {
             selection_info = "Group of Nuissance parameters: ";
             for (const string& match : settings->match_names) {
@@ -629,7 +629,7 @@ namespace eft::plot {
 
         if (is_vertical) {
             x_selection_info = x_start_init + (dx_between_markers + x_size_one_block) * 4;
-            y_selection_info = settings->rmuh * (y_end_multiplier + dy_text);
+            y_selection_info = settings->rmuh * (y_start_multiplier);
             latex.SetNDC(false);
             latex.SetTextAlign(12);
             latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
