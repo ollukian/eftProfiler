@@ -11,6 +11,7 @@
 #include "../Utils/FileSystemUtils.h"
 #include "../Utils/ColourUtils.h"
 #include "../Utils/PlotterUtils.h"
+#include "../Utils/Scene.h"
 
 #include <iostream>
 #include <fstream>
@@ -407,7 +408,7 @@ namespace eft::plot {
             {
                 (*h)->Draw(draw_options.c_str());
             } // over all the histograms
-        } // if drawing options are forces
+        } // if draw options are forces
 
 
         // lines to show full 1 sigma error

@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
                 {"bool",            "silent",           "false",        R"(x MUST me FIRST option. To prevent any output, except demanded: to use as wrapper around wc.)"},
                 {"bool",            "release",          "false",        R"(Set message level to "INFO". Available only for debugging during development)"},
                 {"string",          "get",              "",             R"(MUST be with --silent option. POI | NPS | GLOBS | CATS | + [COUNT] <== prints them to stdout)"},
-                {"vector<string>",  "h_draw_options",   "H",            R"(Options for the drawing of histograms. Note: [HBAR] is default for --vertical)"},
+                {"vector<string>",  "h_draw_options",   "H",            R"(Options for the draw of histograms. Note: [HBAR] is default for --vertical)"},
         })
         {
             cout << fmt::format("|{:^20} | {:<20} | {:^15} | {:<60}|", options[0], options[1], options[2], options[3]) << endl;
