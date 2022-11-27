@@ -329,10 +329,16 @@ namespace eft::plot {
 
         std::filesystem::create_directory(settings->out_dir); // figures -> by default
 
-        auto canvas = std::make_unique<TCanvas>("c",
-                                                            "c",
-                                                                settings->plt_size[0],
-                                                                settings->plt_size[1]); // 1200 x 800
+
+        auto canvas = eft::utils::draw::Scene::Create(
+                settings->plt_size[0],
+                settings->plt_size[1]
+                );
+
+//        auto canvas = std::make_unique<TCanvas>("c",
+//                                                            "c",
+//                                                                settings->plt_size[0],
+//                                                                settings->plt_size[1]); // 1200 x 800
 
 
 
@@ -662,7 +668,8 @@ namespace eft::plot {
         for (const std::string& fileformat : settings->fileformat) {
             string name = stem_name + '.' + fileformat;
 
-            canvas->SaveAs(std::move(name).c_str());
+            eft::utils::draw::Scene::SaveAs(name);
+            //canvas->SaveAs(std::move(name).c_str());
         }
     }
 

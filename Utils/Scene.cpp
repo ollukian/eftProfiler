@@ -38,7 +38,7 @@ TBox* Scene::AddBox(float xl, float yl, float xh, float yh) {
     EFT_PROF_INFO("Create box with coord: [{}], [{}], [{}], [{}]", xl, yl, xh, yh);
     std::unique_ptr<TObject> box = make_unique<TBox>(xl, yl, xh, yh);
     auto box_drawable = make_unique<Drawable>(std::move(box));
-    Register(box_drawable);
+    return dynamic_cast<TBox *>(Register(box_drawable));
 }
 
 void Scene::Draw() noexcept {
