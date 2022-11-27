@@ -51,7 +51,7 @@ public:
     static void SaveAs(const std::string& name) noexcept;
 
     static TCanvas* Create(size_t width = 800, size_t height = 1200);
-    static TBox*    AddBox(float xl, float yl, float xh, float yr);
+    static TBox& AddBox(float xl, float yl, float xh, float yr);
     //static TBox*    AddBox(TBox& box);
     static TLatex*  DrawLatex(float x, float y, const std::string& text);
     //static TLatex*  DrawLatexNDC(float x, float y, const std::string& text);
