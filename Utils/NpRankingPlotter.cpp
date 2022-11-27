@@ -195,7 +195,7 @@ namespace eft::plot {
         bool is_vertical = settings->vertical;
         size_t nb_bins = nb_systematics;
         if (is_vertical)
-            nb_bins += 2;
+            nb_bins += 3;
 
         auto histo                  = PlotterUtils::MakeHisto1D("histo", nb_bins);
         auto histo_neg              = PlotterUtils::MakeHisto1D("h_neg", nb_bins);
@@ -225,7 +225,7 @@ namespace eft::plot {
             // to save space for labels
             size_t idx_bin = idx_syst;
             if (is_vertical) {
-                idx_bin += 2;
+                idx_bin += 3;
             }
 
             string bin_label = PlotterUtils::GetLabel(settings,
@@ -428,7 +428,7 @@ namespace eft::plot {
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             size_t idx_bin = idx_syst;
             if (is_vertical) {
-                idx_bin += 2;
+                idx_bin += 3;
             }
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
                            idx_syst,
@@ -454,7 +454,7 @@ namespace eft::plot {
 
         nb_bins = nb_systematics;
         if (is_vertical)
-            nb_bins += 2;
+            nb_bins += 3;
 
         // draw second axes for nps
         auto axis_nps = make_unique<TGaxis>(
