@@ -103,5 +103,6 @@ EFT_ADD_TESTFILE(ColourUtils);
 EFT_ADD_TESTFILE(CommandLineArguments);
 EFT_ADD_TESTFILE(PlotterUtils);
 EFT_ADD_TESTFILE(WorkSpaceWrapper);
+EFT_ADD_TESTFILE(Scene);
 
 #endif //EFTPROFILER_TESTER_H

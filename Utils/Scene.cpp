@@ -87,7 +87,7 @@ TLatex*  Scene::DrawLatex(float x, float y, const std::string& text) {
 }
 
 void Scene::CreateLatex(LatexSettings settings, std::string name) {
-    latexDrawer->AddSettings(std::move(settings), std::move(name));
+    //latexDrawer->AddSettings(std::move(settings), std::move(name));
 }
 
 } // eft::utils::draw
