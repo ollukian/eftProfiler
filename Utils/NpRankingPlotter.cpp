@@ -267,9 +267,9 @@ namespace eft::plot {
         histo->GetXaxis()->LabelsOption("v");
 
         if (is_vertical) {
-            int nb_labels = histo->GetXaxis()->GetNdivisions();
+            int nb_labels = histo->GetYaxis()->GetNdivisions();
             for (int idx_label {0}; idx_label < nb_labels; ++idx_label) {
-                histo->GetXaxis()->ChangeLabel(idx_label, 90);
+                histo->GetYaxis()->ChangeLabel(idx_label, 90);
             }
         }
 
@@ -484,7 +484,7 @@ namespace eft::plot {
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
 
-        TBox box {0.02f, 0.99 * settings->rmul, 2.97f, 0.99 * settings->rmuh};
+        TBox box {0.02f, 0.999 * settings->rmul, 2.97f, 0.99 * settings->rmuh};
         box.SetFillColor(kWhite);
 
         if (is_vertical)
