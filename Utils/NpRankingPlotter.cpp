@@ -266,6 +266,13 @@ namespace eft::plot {
 
         histo->GetXaxis()->LabelsOption("v");
 
+        if (is_vertical) {
+            int nb_labels = histo->GetXaxis()->GetNdivisions();
+            for (int idx_label {0}; idx_label < nb_labels; ++idx_label) {
+                histo->GetXaxis()->ChangeLabel(idx_label, 90);
+            }
+        }
+
         //if (settings->vertical) {
         //    histo->GetYaxis()->LabelsOption("h");
         //}
