@@ -29,6 +29,10 @@ void Scene::Init(const std::shared_ptr<eft::stats::FitManagerConfig>& config) no
 TCanvas* Scene::Create(size_t width, size_t height) {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Create scene with width: {}, height: {}", width, height);
+    if (canvas_ != nullptr) {
+        EFT_PROF_WARN("A scene already exists. New one will replace the previous one");
+        canvas_.reset();
+    }
     canvas_ = std::make_unique<TCanvas>("c", "c", width, height);
     return canvas_.get();
 }
