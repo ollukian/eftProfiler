@@ -9,12 +9,14 @@
 #include "Core/Logger.h"
 
 #include "TError.h"
+#include "TStyle.h"
 
 using namespace std;
 
 int main(int argc, char* argv[]) {
     //
     gErrorIgnoreLevel = kError;
+    gStyle->SetHistMinimumZero(true);
 
     eft::stats::Logger::Init();
     eft::stats::Logger::SetRelease();

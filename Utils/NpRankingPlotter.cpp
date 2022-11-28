@@ -584,6 +584,8 @@ namespace eft::plot {
         float y_end_multiplier   = 0.25f;
         float dy_text = 0.05f;
 
+        histo->GetYaxis()->SetNoExponent(false);
+
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_posfit_plus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
