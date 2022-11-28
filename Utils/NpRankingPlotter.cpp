@@ -8,6 +8,10 @@
 #include "../Core/Logger.h"
 #include "NpRankingPlotter.h"
 #include "../Application/FitManager.h"
+#include "../Utils/FileSystemUtils.h"
+#include "../Utils/ColourUtils.h"
+#include "../Utils/PlotterUtils.h"
+#include "../Utils/Scene.h"
 
 #include <iostream>
 #include <fstream>
@@ -24,6 +28,7 @@
 #include "TLine.h"
 #include "TGraphErrors.h"
 #include "TGaxis.h"
+#include "TBox.h"
 
 
 using namespace std;
@@ -38,18 +43,18 @@ namespace eft::plot {
             EFT_PROF_CRITICAL("[NpRankingPlotter][ReadValues] no --input is set: directory to read values from");
             return;
         }
-
-        cout << "[NpRankingPlotter] read values from: " << path.string() << endl;
-        cout << "[NpRankingPlotter] start looping over the directory" << endl;
+        EFT_PROF_INFO("Read result files from {}", path.string());
+        //cout << "[NpRankingPlotter] read values from: " << path.string() << endl;
 
         for (const auto& entry : fs::directory_iterator{path}) {
             const auto filenameStr = entry.path().filename().string();
-            cout << filenameStr;
+            //cout << filenameStr;
             if (entry.is_directory()) {
-                cout << " ==> is a directory" << endl;
+                EFT_PROF_INFO("{} is a directory, skip it", filenameStr);
             }
             else if (entry.is_regular_file()) {
-                cout << " ==> is a regular file, try to parse it" << endl;
+                //EFT_PROF_DEBUG();
+                //cout << " ==> is a regular file, try to parse it" << endl;
                 RegisterRes(ReadValuesOneFile(entry));
                 //if (callback(res)) {
                 //    EFT_PROF_INFO("NpRankingPlotter::ReadValues passes selection set by the callback. Register it");
@@ -107,8 +112,12 @@ namespace eft::plot {
                 j.at("nll").get_to(res.nll);
         }
 
+        if (res.np_name == "none")
+        {
+            EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {:10}, np: {:30} => skip not constrained", res.poi_name, res.np_name);
+        }
 
-        EFT_PROF_INFO("[ReadValueOneFile] read res for poi: {}, np: {}", res.poi_name, res.np_name);
+        EFT_PROF_DEBUG("[ReadValueOneFile] read res for poi: {:10}, np: {:30}", res.poi_name, res.np_name);
         //cout << setw(4) << j << endl;
         np_study_res_[res.np_name] = res;
         return res;
@@ -122,31 +131,41 @@ namespace eft::plot {
         gStyle->SetOptStat(0000000);
 
         EFT_PROF_TRACE("[NpRankingPlotter]{Plot}");
-        EFT_PROF_INFO("[NpRankingPlotter] before selector available {} NP, plot {} out of them",
+        EFT_PROF_INFO("[NpRankingPlotter] before selector available {} NP, try to plot {} out of them",
                       res_for_plot_.size(),
                       settings->top);
 
         vector<stats::NpInfoForPlot> res_for_plot_after_selector;
+        res_for_plot_after_selector.reserve(res_for_plot_.size());
 
+        size_t total_nb_systematics_in_folder = res_for_plot_.size();
+
+        // TODO: wrap by "GetSelected"
         std::copy_if(res_for_plot_.begin(),
                      res_for_plot_.end(),
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
-                         EFT_PROF_DEBUG("callback for info for poi: {:10}, np: {:40} -> {}", info.poi, info.name, callback_(info));
-                         return callback_(info);
+                         bool res = callback_(info);
+                         EFT_PROF_INFO("Does np: {:60} for poi: {} pass name selection ==> result: {}",
+                                       info.name,
+                                       info.poi,
+                                       res);
+                         return res;
                      }
         );
+
+        res_for_plot_after_selector.shrink_to_fit();
 
         EFT_PROF_INFO("[NpRankingPlotter] after selector available {} NP, plot {} out of them",
                       res_for_plot_after_selector.size(),
                       settings->top);
 
-        EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact");
-
-        EFT_PROF_DEBUG("impacts before sorting:");
-        for (const auto& res : res_for_plot_after_selector) {
-            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
+        if (res_for_plot_after_selector.empty()) {
+            EFT_PROF_ERROR("No entries passing selection is available");
+            return;
         }
+
+        EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact (quadratic sum of post-fit impacts)");
 
         std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
                   [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
@@ -162,42 +181,75 @@ namespace eft::plot {
                   }
         );
 
-        EFT_PROF_DEBUG("impacts after sorting:");
-        for (const auto& res : res_for_plot_after_selector) {
-            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
-        }
+//        EFT_PROF_DEBUG("impacts after sorting:");
+//        for (const auto& res : res_for_plot_after_selector) {
+//            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
+//        }
 
         size_t nb_systematics = settings->top;
         if (nb_systematics > res_for_plot_after_selector.size())
             nb_systematics = res_for_plot_after_selector.size();
 
-        auto histo = MakeHisto1D("histo", nb_systematics);
-        auto histo_neg = MakeHisto1D("h_neg", nb_systematics);
-        auto histo_plus_sigma_var = MakeHisto1D("h_1sigma_var", nb_systematics);
-        auto histo_minus_sigma_var = MakeHisto1D("h_-1sigma_var", nb_systematics);
-        auto histo_minus_one_var = MakeHisto1D("h_-1_var", nb_systematics);
-        auto histo_plus_one_var = MakeHisto1D("h_+1_var", nb_systematics);
 
+        using eft::utils::PlotterUtils;
 
+        bool is_vertical = settings->vertical;
+        size_t nb_bins = nb_systematics;
+        if (is_vertical)
+            nb_bins += 3;
 
+        auto histo                  = PlotterUtils::MakeHisto1D("histo", nb_bins);
+        auto histo_neg              = PlotterUtils::MakeHisto1D("h_neg", nb_bins);
+        auto histo_plus_sigma_var   = PlotterUtils::MakeHisto1D("h_1sigma_var", nb_bins);
+        auto histo_minus_sigma_var  = PlotterUtils::MakeHisto1D("h_-1sigma_var", nb_bins);
+        auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_bins);
+        auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_bins);
+
+        TGaxis::SetMaxDigits(3);
+        //TAxis::SetNoExponent(false);
+//        histo->GetYaxis()->SetNoExponent(false);
+//        histo_neg->GetYaxis()->SetNoExponent(false);
+//        histo_plus_sigma_var->GetYaxis()->SetNoExponent(false);
+//        histo_minus_sigma_var->GetYaxis()->SetNoExponent(false);
+//        histo_minus_one_var->GetYaxis()->SetNoExponent(false);
+//        histo_plus_one_var->GetYaxis()->SetNoExponent(false);
+
+        if ( ! settings->np_names.empty() ) {
+            if (settings->np_names.size() != nb_systematics) {
+                EFT_PROF_CRITICAL("Number of provided systematics names: {} doesn't match the amount to be plot: {}",
+                                  settings->np_names.size(),
+                                  nb_systematics);
+                return;
+            }
+        }
+
+        // idx_syst -> int, because TH1D::SetBinContent requires int as an argument
+        // no idea why not size_t
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set {:3} with name {:40} to {}",
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
                            res_for_plot_after_selector[idx_syst].impact);
 
-            string bin_label = res_for_plot_after_selector[idx_syst].name;
-            if ( ! settings->replacements.empty() )
-                ReplaceStrings(bin_label, settings->replacements);
+            // for vertical plot, a few bins are to be emtpy
+            // to save space for labels
+            size_t idx_bin = idx_syst;
+            if (is_vertical) {
+                idx_bin += 3;
+            }
 
-            histo->GetXaxis()->SetBinLabel(idx_syst + 1, bin_label.c_str());
+            string bin_label = PlotterUtils::GetLabel(settings,
+                                                      idx_syst,
+                                                      res_for_plot_after_selector[idx_syst].name);
 
-            histo->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact);
-            histo_neg->SetBinContent(idx_syst + 1, - res_for_plot_after_selector[idx_syst].impact);
-            histo_plus_sigma_var ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
-            histo_minus_sigma_var->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
-            histo_plus_one_var   ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
-            histo_minus_one_var  ->SetBinContent(idx_syst + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
+            histo->GetXaxis()->SetBinLabel(idx_bin + 1, bin_label.c_str());
+
+            histo->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact);
+            histo_neg->SetBinContent(idx_bin + 1, - res_for_plot_after_selector[idx_syst].impact);
+            histo_plus_sigma_var ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
+            histo_minus_sigma_var->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
+            histo_plus_one_var   ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
+            histo_minus_one_var  ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_minus_one_var);
             //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
         }
 
@@ -212,21 +264,40 @@ namespace eft::plot {
         //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value);
         //const auto range_low = -range_high;
 
-        EFT_PROF_INFO("range_high: {}", range_high);
-        EFT_PROF_INFO("range_low: {}", range_low);
-        EFT_PROF_INFO("scaling: {}", scaling);
-        EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
-        EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
-        EFT_PROF_INFO("[0]impact_minus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_minus_sigma_var);
-        EFT_PROF_INFO("[0]impact_plus_one_var = {}", res_for_plot_after_selector.at(0).impact_plus_one_var);
-        EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
+//        EFT_PROF_INFO("range_high: {}", range_high);
+//        EFT_PROF_INFO("range_low: {}", range_low);
+//        EFT_PROF_INFO("scaling: {}", scaling);
+//        EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
+//        EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
+//        EFT_PROF_INFO("[0]impact_minus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_minus_sigma_var);
+//        EFT_PROF_INFO("[0]impact_plus_one_var = {}", res_for_plot_after_selector.at(0).impact_plus_one_var);
+//        EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
 
 
-        histo->GetXaxis()->LabelsOption("v");
+        if (is_vertical)
+            histo->GetXaxis()->LabelsOption("v");
+
+        histo->GetYaxis()->SetLabelSize(0.025); // 0.04 by default
+        histo->GetYaxis()->SetLabelOffset(0.01); // 0.005 by default
+
+        if (is_vertical) {
+            int nb_labels = histo->GetYaxis()->GetNdivisions();
+            for (int idx_label {0}; idx_label < nb_labels; ++idx_label) {
+                histo->GetYaxis()->ChangeLabel(idx_label, 90);
+            }
+        }
+
+        //if (settings->vertical) {
+        //    histo->GetYaxis()->LabelsOption("h");
+        //}
+
         //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
-        histo->GetYaxis()->SetTitleOffset(1.4);
-        histo->GetYaxis()->SetTitle("#Delta #mu");
+        histo->GetYaxis()->SetTitleOffset(settings->mu_offset); // 1.4
+        if (settings->mu_latex.empty())
+            histo->GetYaxis()->SetTitle(fmt::format("#Delta {}", settings->poi).c_str());
+        else
+            histo->GetYaxis()->SetTitle(fmt::format("#Delta {}", settings->mu_latex).c_str());
 
         //histo->SetFillColor(kBlue);
         histo->SetFillColorAlpha(kGray, 0.6); // used to be blue // gray
@@ -238,56 +309,141 @@ namespace eft::plot {
         histo_neg->SetLineWidth(3);
 
         //histo_minus_one_var->SetFillColorAlpha(kGreen, 0.5); // used to be green
-        histo_minus_one_var->SetLineColor(kGreen);
+        histo_minus_one_var->SetLineColor(settings->color_prefit_minus); // kGreen
         histo_minus_one_var->SetLineWidth(2);
 
         //histo_plus_one_var->SetFillColorAlpha(kBlue, 0.5); // used to be magenta
-        histo_plus_one_var->SetLineColor(kBlue);
+        histo_plus_one_var->SetLineColor(settings->color_prefit_plus); // kBlue
         histo_plus_one_var->SetLineWidth(2);
 
-        histo_plus_sigma_var->SetFillColorAlpha(kBlue, 0.6); // used to be red
-        histo_plus_sigma_var->SetLineColor(kBlue);
+        size_t a_plus = utils::ColourUtils::GetColourByIdx(settings->color_postfit_plus).a();
+        if (a_plus == 255)
+            histo_plus_sigma_var->SetFillColorAlpha(settings->color_postfit_plus, 0.6); // used to be red // 0.6
+        else {
+            histo_plus_sigma_var->SetFillColorAlpha(settings->color_postfit_plus,
+                                                    utils::ColourUtils::
+                                                    GetColourByIdx(settings->color_postfit_plus)
+                                                    .a_as_fraction()); // used to be red // 0.6
+        }
+        histo_plus_sigma_var->SetLineColor(settings->color_postfit_plus); // kBlue
         histo_plus_sigma_var->SetLineWidth(1);
 
-        histo_minus_sigma_var->SetFillColorAlpha(kGreen, 0.6); // used to be violet
-        histo_minus_sigma_var->SetLineColor(kGreen);
+        size_t a_minus = utils::ColourUtils::GetColourByIdx(settings->color_postfit_minus).a();
+        if (a_plus == 255)
+            histo_minus_sigma_var->SetFillColorAlpha(settings->color_postfit_minus, 0.6); // used to be violet // 0.6
+        else
+            histo_minus_sigma_var->SetFillColorAlpha(settings->color_postfit_minus,
+                                                    utils::ColourUtils::
+                                                    GetColourByIdx(settings->color_postfit_minus)
+                                                            .a_as_fraction()); // used to be red // 0.6
+        histo_minus_sigma_var->SetLineColor(settings->color_postfit_minus); // kGreen
         histo_minus_sigma_var->SetLineWidth(1);
 
 
-
-        auto legend = make_unique<TLegend>(0.7, 0.85, 0.90, 0.95);
-        legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
-        legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
-        legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
-        legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
-        legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
-
         std::filesystem::create_directory(settings->out_dir); // figures -> by default
 
-        auto canvas = std::make_unique<TCanvas>("c",
-                                                            "c",
-                                                                settings->plt_size[0],
-                                                                settings->plt_size[1]); // 1200 x 800
+
+        auto canvas = eft::utils::draw::Scene::Create(
+                settings->plt_size[0],
+                settings->plt_size[1]
+                );
+
+//        auto canvas = std::make_unique<TCanvas>("c",
+//                                                            "c",
+//                                                                settings->plt_size[0],
+//                                                                settings->plt_size[1]); // 1200 x 800
+
+
+
+        if (is_vertical) {
+            //if (settings->rmargin == 0.10f) // if they are default
+            //    settings->rmargin = 0.20;
+            if (settings->bmargin == 0.40f) // if they are default
+                settings->bmargin = 0.50;
+
+            if (settings->lmargin == 0.10f) // if they are default
+                settings->lmargin = 0.05;
+
+            if (settings->rmargin == 0.10f) // if they are default
+                settings->rmargin = 0.05;
+            //canvas->SetRightMargin(settings->bmargin);
+            //canvas->SetLeftMargin(settings->tmargin);
+            //canvas->SetTopMargin(settings->rmargin);
+            //canvas->SetBottomMargin(settings->lmargin);
+        }
 
         canvas->SetRightMargin  (settings->rmargin); // 0.10
         canvas->SetLeftMargin   (settings->lmargin); // 0.10
         canvas->SetTopMargin    (settings->tmargin); // 0.05
         canvas->SetBottomMargin (settings->bmargin); // 0.4
 
+
+        float legend_x_low  = 1.f - settings->rmargin - 0.2f;
+        float legend_y_low  = 1.f - settings->tmargin - 0.1f;
+        float legend_x_high = 1.f - settings->rmargin;
+        float legend_y_high = 1.f - settings->tmargin;
+
+        if (is_vertical) {
+            legend_x_low = legend_x_high;
+            legend_x_high = legend_x_low + 0.1f;
+            legend_y_low = 0.6f;
+            legend_y_high = 1.f - settings->tmargin;
+        }
+
+        auto legend = make_unique<TLegend>(legend_x_low,
+                                           legend_y_low,
+                                           legend_x_high,
+                                           legend_y_high);
+        legend->AddEntry(histo.get(), "impact (#delta_{#theta})");
+        legend->AddEntry(histo_plus_sigma_var.get(), "+#sigma impact (#theta = #hat{#theta} + #sigma_{#hat{#theta}})");
+        legend->AddEntry(histo_minus_sigma_var.get(), "-#sigma impact #theta = #hat{#theta} - #sigma_{#hat{#theta}})");
+        legend->AddEntry(histo_plus_one_var.get(), "+1 impact (#theta = #hat{#theta} + 1)");
+        legend->AddEntry(histo_minus_one_var.get(), "-1 impact (#theta = #hat{#theta} - 1)");
+
         histo->GetXaxis()->SetLabelSize(settings->label_size); // 0.02 by default
 
-        histo->Draw("H same");
-        histo_neg->Draw("H same");
+        if (settings->h_draw_options.empty()) {
+            //if(settings->vertical) {
+                histo->Draw("HBAR same");
+                histo_neg->Draw("HBAR same");
 
-        histo_plus_one_var->Draw("H same");
-        histo_minus_one_var->Draw("H same");
-        histo_plus_sigma_var->Draw("H same");
-        histo_minus_sigma_var->Draw("H same");
+                histo_plus_one_var->Draw("HBAR same");
+                histo_minus_one_var->Draw("HBAR same");
+                histo_plus_sigma_var->Draw("HBAR same");
+                histo_minus_sigma_var->Draw("HBAR same");
+            //} else {
+                histo->Draw("H same");
+                histo_neg->Draw("H same");
+
+                histo_plus_one_var->Draw("H same");
+                histo_minus_one_var->Draw("H same");
+                histo_plus_sigma_var->Draw("H same");
+                histo_minus_sigma_var->Draw("H same");
+            //}
+        } else {
+            string draw_options = StringUtils::Join(' ', settings->h_draw_options);
+            draw_options += " same";
+
+            for (auto* h : {&histo,
+                                  &histo_neg,
+                                  &histo_plus_sigma_var,
+                                  &histo_plus_one_var,
+                                  &histo_minus_sigma_var,
+                                  &histo_minus_one_var})
+            {
+                (*h)->Draw(draw_options.c_str());
+            } // over all the histograms
+        } // if draw options are forces
 
 
         // lines to show full 1 sigma error
-        TLine l1(0, - 1 * scaling, nb_systematics, - 1 * scaling);
-        TLine l2(0, scaling, nb_systematics, scaling);
+
+        float x_low = 0.f;
+        if (is_vertical)
+            x_low = 2.f;
+
+        TLine l1(x_low, - 1 * scaling, nb_bins, - 1 * scaling);
+        TLine l2(x_low, scaling, nb_bins, scaling);
 
         for (auto l : {&l1, &l2}) {
             l->SetLineStyle(kDashed);
@@ -297,19 +453,23 @@ namespace eft::plot {
         }
 
         auto graph_nps_obs = make_shared<TH1D>("h_nps_obs", "",
-                                               settings->top,
+                                               nb_bins,
                                                0,
-                                               settings->top
+                                               nb_bins
         );
         //auto graph_nps_obs = make_shared<TGraphErrors>(settings->top);
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
+            size_t idx_bin = idx_syst;
+            if (is_vertical) {
+                idx_bin += 3;
+            }
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
                            idx_syst,
                            res_for_plot_after_selector[idx_syst].name,
                            scaling * res_for_plot_after_selector.at(idx_syst).obs_value,
                            scaling * res_for_plot_after_selector.at(idx_syst).obs_error);
-            graph_nps_obs->SetBinContent(idx_syst + 1,res_for_plot_after_selector.at(idx_syst).obs_value);
-            graph_nps_obs->SetBinError(idx_syst   + 1,  res_for_plot_after_selector.at(idx_syst).obs_error);
+            graph_nps_obs->SetBinContent(idx_bin + 1,res_for_plot_after_selector.at(idx_syst).obs_value);
+            graph_nps_obs->SetBinError(idx_bin   + 1,  res_for_plot_after_selector.at(idx_syst).obs_error);
         }
 
         graph_nps_obs->Scale(scaling);
@@ -319,23 +479,32 @@ namespace eft::plot {
         graph_nps_obs->SetLineColorAlpha(kBlack, 0.9);
         graph_nps_obs->SetMarkerStyle(20);
         graph_nps_obs->SetMarkerSize(1); // 2
-        //graph_nps_obs->SetLineColorAlpha(kGreen, 0.6);
         graph_nps_obs->SetLineWidth(2); // 4
         graph_nps_obs->Draw("same E1 X0");
 
+        if ( ! is_vertical )
+            legend->Draw("same");
 
-        legend->Draw("same");
+        nb_bins = nb_systematics;
+        if (is_vertical)
+            nb_bins += 3;
 
         // draw second axes for nps
         auto axis_nps = make_unique<TGaxis>(
-                                        nb_systematics,
+                                    nb_bins,
                                         - 1 * scaling,
-                                        nb_systematics,
+                                        nb_bins,
                                         1 * scaling,
                                         -1.f,
                                         1.f,
                                         510,
                                         "+L");
+
+
+
+        if (is_vertical) {
+            axis_nps->ChangeLabel(0, 90);
+        }
         //axis_nps->SetLineColor(kRed);
         //axis_nps->SetTextColor(kRed);
         axis_nps->SetTitle("#hat{#theta} - #theta_{0}");
@@ -343,83 +512,189 @@ namespace eft::plot {
         //axis_nps->SetLabelColor(kRed);
         axis_nps->SetLabelFont(histo->GetLabelFont());
         axis_nps->SetLabelSize(0.02);
-        axis_nps->SetTitleOffset(1.0);
+        axis_nps->SetTitleOffset(settings->np_offset); // 1.0
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
 
+        TBox box {0.02f, 0.99 * settings->rmul, 2.97f, 0.99 * settings->rmuh};
+        box.SetFillColor(kWhite);
+
+        if (is_vertical)
+            box.Draw();
+
         TLatex latex;
-        float y = 0.9f, dy = 0.03f;
-        float x = 0.12f;
+        float y = 1.f - settings->tmargin - 0.04f;
+        float dy = settings->dy; // 0.03
+        float x = 0.02f + settings->lmargin; // 0.12
+        float dx = 0;
+
+        if (is_vertical) {
+             y = settings->bmargin + 0.02;
+             dx = -0.012;
+             dy = 0.f;
+        }
+
         latex.SetNDC();
         latex.SetTextSize(0.040); //0.045 is std
-        //mylatex.SetTextFont(72);
         latex.SetTextFont(72);
         latex.SetTextColor(kBlack);
-        latex.DrawLatex(x, y, "ATLAS");
-        latex.SetTextFont(42); //put back the font
-        //latex.DrawLatex(0.26, 0.92, "Simulation Preliminary");
-        latex.DrawLatex(x + 0.10, y, "Internal");
 
-        latex.SetTextSize(0.030); //0.045 is std
-        latex.DrawLatex(x, y - dy, "SMEFT, top symmetry");
-        latex.DrawLatex(x, y - 2 * dy, "Higgs combination (#sqrt{s} = 13 TeV, 36-139 fb^{-1})");
+        if (is_vertical)
+            latex.SetTextSize(0.025); //0.045 is std
 
-        string selection_info = "All nuissance parameters";
+        if (is_vertical)
+            latex.SetTextAngle(90);
+        EFT_PROF_WARN("latex.DrawLatex(x, y, settings->experiment.c_str()); at {},{}", x, y);
+        latex.DrawLatex(x, y, settings->experiment.c_str());
+        latex.SetTextFont(settings->text_font); //put back the font 42
+
+        if (is_vertical) {
+            latex.DrawLatex(x, y + 0.09, settings->res_status.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.09);
+        }
+        else {
+            latex.DrawLatex(x += 0.10, y, settings->res_status.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y);
+        }
+
+        latex.SetTextSize(settings->text_size); // 0.030
+
+        if (is_vertical)
+            latex.SetTextSize(0.015); //0.045 is std
+
+        //latex.SetTextSize(0.030); // 0.030
+        latex.DrawLatex(x -= dx, y -= dy, "SMEFT, top symmetry");
+        EFT_PROF_WARN("latex.DrawLatex(x, y, SMEFT; at {}, {}", x, y);
+
+        string text_ds_energy_lumi = fmt::format("{} (#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+                                                 settings->ds_title,
+                                                 settings->energy,
+                                                 settings->lumi);
+
+        if (is_vertical) {
+            text_ds_energy_lumi = fmt::format("{}", settings->ds_title);
+            latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, ds; at {}, {}", x, y);
+            text_ds_energy_lumi = fmt::format("(#sqrt{{s}} = {} TeV, {} fb^{{-1}})",
+                                              settings->energy,
+                                              settings->lumi);
+            latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, energy,lumi; at {}, {}", x, y);
+        }
+        else {
+            latex.DrawLatex(x -= dx, y -= dy, text_ds_energy_lumi.c_str());
+        }
+
+        string selection_info = fmt::format("Top {} Nuissance parameters", nb_systematics);
         if ( ! settings->match_names.empty() ) {
-            selection_info = "Group of Nuissance parameters: ";
+            selection_info = "NPs: ";
             for (const string& match : settings->match_names) {
-                selection_info += match + " ";
+                selection_info += R"(")" + match + R"(" )";
             }
         }
 
-        latex.DrawLatex(0.35, y, selection_info.c_str());
 
-        latex.DrawLatex(x, y - 3 * dy, settings->poi.c_str());
 
-        string ignore_part;
-        string select_part;
+        // TODO: wrap by draw legend....
+        const float x_start_init = 0.3f;
 
-        if ( ! settings->ignore_name.empty() )
-        {
-            string ignore_in_one_string = fmt::format("Ignore_{}_patterns__", settings->ignore_name.size());
-            for (const auto& patter : settings->ignore_name)
-                ignore_in_one_string += patter + "__";
+        float x_start = x_start_init;
+        float x_size_one_block = 0.15f;
+        float dx_between_markers = 0.15f;
 
-            ignore_part = "__" + ignore_in_one_string.substr(0, ignore_in_one_string.size() - 2);
-            //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
-            //                   res_for_plot_after_selector[0].poi,
-            //                   settings->top,
-            //                   ignore_in_one_string);
+        float y_start_multiplier = 0.05f;
+        float y_end_multiplier   = 0.25f;
+        float dy_text = 0.05f;
+
+        TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
+        TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
+        TBox marker_posfit_plus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
+        TBox marker_posfit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
+
+
+        marker_prefit_plus. SetLineColor(settings->color_prefit_plus);
+        marker_prefit_minus.SetLineColor(settings->color_prefit_minus);
+        marker_prefit_plus. SetFillColor(settings->color_prefit_plus);
+        marker_prefit_minus.SetFillColor(settings->color_prefit_minus);
+        marker_prefit_plus. SetFillStyle(0);
+        marker_prefit_minus.SetFillStyle(0);
+        marker_prefit_plus. SetLineWidth(1);
+        marker_prefit_minus.SetLineWidth(1);
+
+
+        marker_posfit_plus. SetFillColor(settings->color_postfit_plus);
+        marker_posfit_minus.SetFillColor(settings->color_postfit_minus);
+        marker_posfit_plus. SetLineColor(settings->color_postfit_plus);
+        marker_posfit_minus.SetLineColor(settings->color_postfit_minus);
+
+
+
+
+//        marker_posfit_plus.SetFillColorAlpha(settings->color_postfit_plus,
+//                                             utils::ColourUtils::GetColourByIdx(
+//                                                     settings->color_postfit_plus)
+//                                                     .a_as_fraction()
+//        );
+//
+//        marker_posfit_minus.SetFillColorAlpha(settings->color_postfit_minus,
+//                                              utils::ColourUtils::GetColourByIdx(
+//                                                      settings->color_postfit_minus)
+//                                                      .a_as_fraction()
+//        );
+
+
+        // draw pseudo-legend
+        if (is_vertical) {
+            marker_prefit_plus.Draw();
+            marker_prefit_minus.Draw();
+            marker_posfit_plus.Draw();
+            marker_posfit_minus.Draw();
+
+            EFT_PROF_WARN("draw latex +1 at {}, {}",x_start_init + dx_between_markers * 0,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex -1 at {}, {}",x_start_init + dx_between_markers * 1,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex +s at {}, {}",x_start_init + dx_between_markers * 2,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,settings->rmuh * (y_end_multiplier + 0.1));
+
+
+            latex.SetNDC(false);
+            latex.SetTextAlign(12);
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 0, settings->rmuh * (y_end_multiplier + dy_text), "+1 impact (#theta = #hat{#theta} + 1)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 1, settings->rmuh * (y_end_multiplier + dy_text), "-1 impact (#theta = #hat{#theta} - 1)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 2, settings->rmuh * (y_end_multiplier + dy_text), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 3, settings->rmuh * (y_end_multiplier + dy_text), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
+            latex.SetNDC(true);
+            latex.SetTextAlign(11); // default
         }
 
-        if ( ! settings->match_names.empty() )
-        {
-            string matches_in_one_string = fmt::format("Select_{}_patterns__", settings->ignore_name.size());
-            for (const auto& patter : settings->match_names)
-                matches_in_one_string += patter + "__";
+        float x_selection_info = 0.35;
+        float y_selection_info = y;
 
-            select_part = "__" + matches_in_one_string.substr(0, matches_in_one_string.size() - 2);
-            //name = fmt::format("Impact_{}_{}_nps__{}.pdf",
-            //                   res_for_plot_after_selector[0].poi,
-            //                   settings->top,
-            //                   matches_in_one_string);
+        if (is_vertical) {
+            x_selection_info = x_start_init + (dx_between_markers + x_size_one_block) * 4;
+            y_selection_info = settings->rmuh * (y_start_multiplier);
+            latex.SetNDC(false);
+            latex.SetTextAlign(12);
+            latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
+            latex.SetNDC(true);
+            latex.SetTextAlign(11); // default
+        } else {
+            latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
         }
 
-        std::string stem_name;
-        if (settings->output.empty())
-            stem_name = fmt::format("Impact_{}_{}_nps{}{}",
-                                    settings->poi,
-                                    settings->top,
-                                    select_part,
-                                    ignore_part);
+        EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", x_selection_info, y_selection_info);
+
+        if (settings->mu_latex.empty())
+            latex.DrawLatex(x -= dx, y -= dy, settings->poi.c_str());
         else
-            stem_name = settings->output;
+            latex.DrawLatex(x -= dx, y -= dy, settings->mu_latex.c_str());
 
 
+        const string stem_name = eft::utils::PlotterUtils::FormName(settings);
         for (const std::string& fileformat : settings->fileformat) {
             string name = stem_name + '.' + fileformat;
 
-            canvas->SaveAs(std::move(name).c_str());
+            eft::utils::draw::Scene::SaveAs(name);
+            //canvas->SaveAs(std::move(name).c_str());
         }
     }
 
@@ -448,7 +723,7 @@ namespace eft::plot {
             info.obs_error = res.np_err;
         }*/
 
-        const auto error_full = res.poi_fixed_np_err;
+        const auto error_full = res.poi_free_fit_err;
         //static constexpr float error_full = 0.0932585782834731;
         //auto error_full = res.poi_fixed_np_err;
 
@@ -474,46 +749,38 @@ namespace eft::plot {
         info.impact_plus_one_var    = res.poi_plus_one_variation_val    - res.poi_fixed_np_val;
         info.impact_minus_one_var   = res.poi_minus_one_variation_val   - res.poi_fixed_np_val;
 
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, np val: {:10} ==> np error: {:10}",
+        EFT_PROF_TRACE("name: {:30}, fixed: {:10}, np val: {:10} ==> np error: {:10}",
                        res.np_name,
                        res.poi_fixed_np_val,
                        res.np_val,
                        res.np_err);
 
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_plus_sigma_variation_val,
-                       info.impact_plus_sigma_var);
-
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -sigma: {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_minus_sigma_variation_val,
-                       info.impact_minus_sigma_var);
-
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +1    : {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_plus_one_variation_val,
-                       info.impact_plus_one_var);
-
-        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1    : {:10} ==> impact: {:10}",
-                       res.np_name,
-                       res.poi_fixed_np_val,
-                       res.poi_minus_one_variation_val,
-                       info.impact_minus_one_var);
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +sigma: {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_plus_sigma_variation_val,
+//                       info.impact_plus_sigma_var);
+//
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -sigma: {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_minus_sigma_variation_val,
+//                       info.impact_minus_sigma_var);
+//
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, +1    : {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_plus_one_variation_val,
+//                       info.impact_plus_one_var);
+//
+//        EFT_PROF_DEBUG("name: {:30}, fixed: {:10}, -1    : {:10} ==> impact: {:10}",
+//                       res.np_name,
+//                       res.poi_fixed_np_val,
+//                       res.poi_minus_one_variation_val,
+//                       info.impact_minus_one_var);
 
 
         return info;
-    }
-
-    std::shared_ptr<TH1D> NpRankingPlotter::MakeHisto1D(const string& name, size_t nb_bins) noexcept {
-        return std::make_shared<TH1D>(name.c_str(), name.c_str(),
-                                      nb_bins,
-                                      0,
-                                      nb_bins
-        );
     }
 
     void NpRankingPlotter::ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs) {
@@ -533,8 +800,7 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, ignore_name);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, match_names);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, poi);
-        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_prefit);
-        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_postfit);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, color_np);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, lmargin);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, rmargin);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, tmargin);
@@ -550,10 +816,48 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_scale);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, label_size);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_prefix);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, remove_suffix);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, ds_title);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, energy);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, lumi);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, experiment);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, res_status);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_offset);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_offset);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, mu_latex);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, np_names);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, text_size);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, text_font);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text_ndc);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, dy);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, h_draw_options);
 #undef EFT_GET_FROM_CONFIG
 #endif
 
-        np_ranking_settings->replacements = ParseReplacements(config.replace);
+
+        np_ranking_settings->replacements = eft::utils::PlotterUtils::ParseReplacements(config.replace);
+
+#ifndef EFT_PROCESS_COLOUR
+#define EFT_PROCESS_COLOUR(cfg, settings, colour_str) \
+    settings->colour_str = utils::ColourUtils::GetColourFromString(config.colour_str);
+
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_prefit_minus );
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_prefit_plus );
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_postfit_minus );
+        EFT_PROCESS_COLOUR(config, np_ranking_settings, color_postfit_plus );
+#endif
+#undef EFT_PROCESS_COLOUR
+
+
+        if (np_ranking_settings->np_names.size() == 1) {
+            const string& np_names_string = np_ranking_settings->np_names.at(0);
+            const auto pos_filename = np_names_string.find("file:");
+            if (pos_filename != std::string::npos)
+            {
+                ReadNpNamesFromFile(np_names_string.substr(pos_filename + 1, np_names_string.length()));
+            }
+        }
 
         vector<EntriesSelector> callbacks;
         if ( ! np_ranking_settings->ignore_name.empty() )
@@ -561,43 +865,54 @@ namespace eft::plot {
         if ( ! np_ranking_settings->match_names.empty() )
             callbacks.emplace_back(CreateLambdaForMatchingNpNames(np_ranking_settings->match_names));
 
+        // TODO: add function: add callback poi match
         callbacks.emplace_back([this](const NpInfoForPlot& info) -> bool {
-            EFT_PROF_INFO("callback [poi match] for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
-           return info.poi == np_ranking_settings->poi;
+            bool res = (info.poi == np_ranking_settings->poi);
+            EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
+                           "poi match",
+                           np_ranking_settings->poi,
+                           info.poi,
+                           info.name,
+                           res);
+            return res;
         });
 
         callbacks.emplace_back(std::move([&](const NpInfoForPlot& info) -> bool {
-            EFT_PROF_INFO("callback [no gamma] for np: {} result: {}", info.name, info.name.find("gamma") == std::string::npos);
-            return info.name.find("gamma") == std::string::npos;
+            bool res = info.name.find("gamma") == std::string::npos;
+            EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
+                           "no gamma",
+                           info.poi,
+                           info.name,
+                           res);
+            return res;
         }));
 
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine created with {} callbacks to be joined", callbacks.size());
 
         SetCallBack(std::move([callbacks](const NpInfoForPlot& info) -> bool
                               {
-                                  EFT_PROF_INFO("Global callback for {} with {} components",
-                                                info.name, callbacks.size());
+                                  //EFT_PROF_INFO("Global callback for {} with {} components",
+                                  //              info.name, callbacks.size());
                                   return std::all_of(callbacks.begin(),
                                                      callbacks.end(),
                                                      [&](const auto& cb) -> bool
                                                      {
-                                                         EFT_PROF_INFO("callback for {} res: {}",
-                                                                       info.name, cb(info));
+                                                         //EFT_PROF_INFO("callback for {} res: {}",
+                                                         //              info.name, cb(info));
                                                          return cb(info);
                                                      });
                               }));
 
-//    SetCallBack([this](const NpInfoForPlot& info) -> bool {
-//        if (np_ranking_settings->ignore_name.empty())
-//            return info.poi == np_ranking_settings->poi
-//                   && (info.name.find("gamma") == std::string::npos);
-//        else
-//            return info.poi == poi
-//                   && (info.name.find("gamma") == std::string::npos)
-//                   && (info.name.find(plotter.np_ranking_settings->ignore_name[0]) == std::string::npos);
-//    });
+
 
     }
+
+void NpRankingPlotter::ReadNpNamesFromFile(const std::string& path) const
+{
+    EFT_PROF_INFO("Read np names from: {}", path);
+    np_ranking_settings->np_names = utils::FileSystemUtils::ReadLines(path).value();
+}
+
 
 
 std::vector<NpRankingPlotter::Replacement>
