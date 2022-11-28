@@ -169,8 +169,6 @@ void TestSceneBasicDrawableRegistering() {
         auto box_active_ptr_1 = Scene::Register(box_raw1)->As<TBox>();
         auto box_active_ptr_2 = Scene::Register(box_raw2)->As<TBox>();
 
-        ASSERT_EQUAL(box_raw1, nullptr);
-        ASSERT_EQUAL(box_raw2, nullptr);
         ASSERT_NOT_EQUAL(box_active_ptr_1, nullptr);
         ASSERT_NOT_EQUAL(box_active_ptr_1, nullptr);
 
