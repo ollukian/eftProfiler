@@ -123,6 +123,7 @@ void TestDrawableCtor() {
 
 void TestSceneBasicDrawableRegistering() {
     {
+        EFT_PROF_CRITICAL("test #1");
         eft::stats::Logger::SetFullPrinting();
         EFT_PROF_INFO("TestSceneBasicDrawableRegistering");
         auto canvas = Scene::Create(1200, 800);
@@ -136,12 +137,18 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT_EQUAL(reg[0]->should_be_drawn, true);
     }
     {
+        EFT_PROF_CRITICAL("test #2");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
+        EFT_PROF_CRITICAL("test #3  create box #1");
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
+        EFT_PROF_CRITICAL("test #3  create box #2");
         auto box2 = Drawable::Create(new TBox(1, 1, 1, 1), "", "box2");
+        EFT_PROF_CRITICAL("test #3  register box #1");
         Scene::Register(box1);
+        EFT_PROF_CRITICAL("test #3  register box #2");
         Scene::Register(box2);
+        EFT_PROF_CRITICAL("test #3  get reg");
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 2u);
         ASSERT_EQUAL(reg[0]->name, "box1");
@@ -152,6 +159,7 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT_EQUAL(reg[1]->should_be_drawn, true);
     }
     {
+        EFT_PROF_CRITICAL("test #3");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box_raw1 = Scene::AddBox(1, 2, 3, 4);

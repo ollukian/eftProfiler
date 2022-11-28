@@ -11,6 +11,9 @@
 
 #include "TObject.h"
 
+#include "Logger.h"
+#include "Profiler.h"
+
 namespace eft::utils::draw {
 
 struct Drawable {
@@ -83,10 +86,14 @@ struct Drawable {
 
 std::unique_ptr<Drawable> Drawable::Create(TObject* ptr, std::string opt, std::string name_external)
 {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Create a Drawable: {} to the scene from a pointer to Drawable", name_external);
     return std::make_unique<Drawable>(ptr, std::move(opt), std::move(name_external));
 }
 std::unique_ptr<Drawable> Drawable::Create(std::unique_ptr<TObject> obj, std::string opt, std::string name_external)
 {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Create a Drawable: {} to the scene from a unique ptr to Drawable", name_external);
     return std::make_unique<Drawable>(std::move(obj), std::move(opt), std::move(name_external));
 }
 
