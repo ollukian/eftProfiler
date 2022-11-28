@@ -277,7 +277,7 @@ namespace eft::plot {
         if (is_vertical)
             histo->GetXaxis()->LabelsOption("v");
 
-        histo->GetYaxis()->SetLabelSize(0.02); // 0.04 by default
+        histo->GetYaxis()->SetLabelSize(0.04); // 0.04 by default
 
         if (is_vertical) {
             int nb_labels = histo->GetYaxis()->GetNdivisions();
