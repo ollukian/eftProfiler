@@ -25,14 +25,14 @@ class TGaxis;
 #include "TCanvas.h"
 
 
-//#include "TBox.h"
-//#include "TEllipse.h"
-//#include "TMarker.h"
-//#include "TLegend.h"
-//#include "TStyle.h"
-//#include "TLine.h"
-//#include "TGraphErrors.h"
-//#include "TGaxis.h"
+#include "TBox.h"
+#include "TEllipse.h"
+#include "TMarker.h"
+#include "TLegend.h"
+#include "TStyle.h"
+#include "TLine.h"
+#include "TGraphErrors.h"
+#include "TGaxis.h"
 
  //  public TObject, public TAttLine, public TAttFill, public TAttBBox2D
  //
@@ -51,9 +51,12 @@ public:
     static void SaveAs(const std::string& name) noexcept;
 
     static TCanvas* Create(size_t width = 800, size_t height = 1200);
-    static TBox * AddBox(float xl, float yl, float xh, float yr);
+    static TBox *   AddBox(float xl, float yl, float xh, float yr);
+    static TLine*   AddLine(float xl, float yl, float xh, float yh, uint16_t colour = kBlack);
+    //static TH1D*    AddHisto(size_t nb_bins, double low, double high);
     //static TBox*    AddBox(TBox& box);
     static TLatex*  DrawLatex(float x, float y, const std::string& text);
+    static TLatex*  WriteLine(const std::string& text); // x, y, dx and dy are from settings
     //static TLatex*  DrawLatexNDC(float x, float y, const std::string& text);
 
     //static void     RegisterHisto(const HistoPtr& histo, std::string name = "histo");

@@ -7,12 +7,16 @@
 #include "Drawing/Latex.h"
 #include "Drawing/Drawable.h"
 
+#include "TBox.h"
+#include "TObject.h"
+
 using namespace std;
 using namespace eft::utils::draw;
 
 void TestDrawableCtor() {
     {
         Drawable d;
+        TBox box;
     }
 }
 
