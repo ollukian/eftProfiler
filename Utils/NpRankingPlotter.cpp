@@ -205,6 +205,14 @@ namespace eft::plot {
         auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_bins);
         auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_bins);
 
+        //TAxis::SetNoExponent(false);
+        histo->GetYaxis()->SetNoExponent(false);
+        histo_neg->GetYaxis()->SetNoExponent(false);
+        histo_plus_sigma_var->GetYaxis()->SetNoExponent(false);
+        histo_minus_sigma_var->GetYaxis()->SetNoExponent(false);
+        histo_minus_one_var->GetYaxis()->SetNoExponent(false);
+        histo_plus_one_var->GetYaxis()->SetNoExponent(false);
+
         if ( ! settings->np_names.empty() ) {
             if (settings->np_names.size() != nb_systematics) {
                 EFT_PROF_CRITICAL("Number of provided systematics names: {} doesn't match the amount to be plot: {}",
@@ -583,8 +591,6 @@ namespace eft::plot {
         float y_start_multiplier = 0.05f;
         float y_end_multiplier   = 0.25f;
         float dy_text = 0.05f;
-
-        histo->GetYaxis()->SetNoExponent(false);
 
         TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
