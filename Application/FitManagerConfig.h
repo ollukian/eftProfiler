@@ -45,9 +45,9 @@ struct FitManagerConfig {
     std::string                 color_postfit_minus {"kGreen"};
 
     std::string                 color_np;  // <== to add
-    float                       rmargin             {0.10};
+    float                       rmargin             {0.05};
     float                       lmargin             {0.10};
-    float                       tmargin             {0.02};
+    float                       tmargin             {0.03};
     float                       bmargin             {0.40};
     std::vector<size_t>         plt_size            {1200, 800};
     float                       rmul                {-0.002};
