@@ -123,6 +123,7 @@ void TestDrawableCtor() {
 
 void TestSceneBasicDrawableRegistering() {
     {
+        eft::stats::Logger::SetFullPrinting();
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
