@@ -365,6 +365,42 @@ void TestSetValIfArgExistsPointer() {
         ASSERT( cmd.SetValIfArgExists("filename", my_vec_2));
         ASSERT_EQUAL(*my_vec_1, vector<string>({"my_cool_input"}) );
         ASSERT_EQUAL(*my_vec_2, vector<string>({"file1.root", "file2.root"}));
+
+        delete my_vec_1;
+        delete my_vec_2;
+    }
+}
+
+void TestSharedPtrReading() {
+    {
+        istringstream arguments {"--key1 1 --key2 --key_vec one two threeeee"};
+        int argc {0};
+        char** argv = nullptr;
+        GetArgcArgvFromVecCharStars(arguments, argc, argv);
+        ASSERT_NO_THROW(CommandLineArgs(argc, argv));
+        CommandLineArgs cmd(argc, argv);
+
+        auto i_ptr = make_shared<int>(0);
+        auto i_ptr_2 = make_shared<int>(0);
+        auto vec_ptr_1 = make_shared<vector<string>>();
+
+        ASSERT(i_ptr.get());
+        ASSERT(i_ptr_2.get());
+        ASSERT(vec_ptr_1.get());
+        ASSERT_EQUAL(*i_ptr, 0);
+        ASSERT_EQUAL(*i_ptr_2, 0);
+
+        ASSERT_NO_THROW(std::ignore = cmd.HasKey("key1"));
+        ASSERT_NO_THROW(std::ignore = cmd.HasKey("key_not_present"));
+        ASSERT_NO_THROW(std::ignore = cmd.HasKey("key_vec"));
+
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key1", i_ptr));
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key_not_present", i_ptr_2));
+        ASSERT_NO_THROW(cmd.SetValIfArgExists("key_vec", vec_ptr_1));
+        ASSERT_EQUAL(*i_ptr, 1);
+        ASSERT_EQUAL(*i_ptr_2, 0);
+        const vector<string> expected {"one", "two", "threeeee"};
+        ASSERT_EQUAL(*vec_ptr_1, expected);
     }
 }
 
@@ -395,6 +431,7 @@ EFT_IMPLEMENT_TESTFILE(CommandLineArguments) {
         EFT_ADD_TEST(TestSetValIfArgExistsString,           "CommandLineArguments");
         EFT_ADD_TEST(TestSetValIfArgExistsVector,           "CommandLineArguments");
         EFT_ADD_TEST(TestIncorrectArgs,                     "CommandLineArguments");
-        EFT_ADD_TEST(TestSetValIfArgExistsPointer,            "CommandLineArguments");
+        EFT_ADD_TEST(TestSetValIfArgExistsPointer,          "CommandLineArguments");
+        EFT_ADD_TEST(TestSharedPtrReading,                  "CommandLineArguments");
 }
 EFT_END_IMPLEMENT_TESTFILE(ColourUtils);
