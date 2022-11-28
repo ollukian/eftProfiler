@@ -62,6 +62,8 @@ public:
     //static void     RegisterHisto(const HistoPtr& histo, std::string name = "histo");
     //static HistoPtr& GetHisto(const std::string& name);
 
+    static const std::vector<Object>& GetRegistry() noexcept { return objects_; }
+
 private:
     static inline TObject * Register(Object& object) noexcept { objects_.push_back(std::move(object)); return objects_.back()->obj.get(); };
     //static inline TObject& Register(TObject* obj) noexcept;
