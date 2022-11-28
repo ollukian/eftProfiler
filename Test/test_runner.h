@@ -16,7 +16,6 @@
 #include <set>
 #include <string>
 #include <vector>
-#include "Profiler.h"
 
 template <class T>
 std::ostream& operator << (std::ostream& os, const std::vector<T>& s) {
@@ -72,66 +71,27 @@ void AssertEqual(const T& t, const U& u, const std::string& hint = {}) {
     }
 }
 
-template<class T, class U>
-void AssertNotEqual(const T& t, const U& u, const std::string& hint = {}) {
-    if ((t == u)) {
-        std::ostringstream os;
-        os << "Assertion failed: " << t << " == " << u;
-        if (!hint.empty()) {
-            os << " hint: " << hint;
-        }
-        throw std::runtime_error(os.str());
-    }
-}
-
 inline void Assert(bool b, const std::string& hint) {
     AssertEqual(b, true, hint);
 }
 
-class TestRunner;
-struct TestRes;
-
-struct TestRes {
-    std::chrono::microseconds duration;
-    std::string name;
-    std::string res;
-
-    inline std::string PrettyDuration() const noexcept;
-};
-
-
 class TestRunner {
 public:
     template <class TestFunc>
-    TestRes RunTest(TestFunc func, const std::string& test_name) {
-        TestRes res;
+    void RunTest(TestFunc func, const std::string& test_name) {
         try {
-            {
-                EFT_LOG_DURATION(test_name)
-                func();
-            }
-            res.res = "OK";
-            res.duration = eft::utils::Profiler::GetLastDuration();
-            res.name = test_name;
-            return res;
-            //std::cerr << test_name << " OK" << std::endl;
+            func();
+            std::cerr << test_name << " OK" << std::endl;
         }
         catch (std::exception& e) {
             ++fail_count;
-            res.res = std::string("Fail: ") + std::string(e.what());
-            return res;
-            //return std::string("Fail: ") + std::string(e.what());
-            //std::cerr << test_name << " fail: " << e.what() << std::endl;
+            std::cerr << test_name << " fail: " << e.what() << std::endl;
         }
         catch (...) {
             ++fail_count;
-            res.res = "Unknown exception caught";
-            return res;
-            //std::cerr << "Unknown exception caught" << std::endl;
+            std::cerr << "Unknown exception caught" << std::endl;
         }
     }
-
-    inline size_t GetFailCount() const noexcept { return fail_count; }
 
     ~TestRunner() {
         if (fail_count > 0) {
@@ -144,103 +104,18 @@ private:
     int fail_count = 0;
 };
 
-std::string TestRes::PrettyDuration() const noexcept {
-    EFT_PROFILE_FN();
-    std::string units {" mcs"};
-    long long duration_mcs = duration.count();
-    if (duration_mcs > 1000) {
-        units = " ms";
-        duration_mcs /= 1000;
-    }
-    else {
-        return std::to_string(duration_mcs) + units;
-    }
-
-    if (duration_mcs > 1000) {
-        units = " s";
-        duration_mcs /= 1000;
-    }
-    else {
-        int tail = duration.count() % 1000;
-        std::string tail_str = "." + std::to_string(tail).substr(0, 3);
-        //return std::to_string(duration_mcs) + std::to_string(tail).substr(0, 3) + units;
-        return std::to_string(duration_mcs) + tail_str + units;
-    }
-    int tail = (duration.count() / 1000) % 1000;
-    std::string tail_str = "." + std::to_string(tail).substr(0, 3);
-    return std::to_string(duration_mcs) + tail_str + units;
+#define ASSERT_EQUAL(x, y) {            \
+  std::ostringstream os;                \
+  os << #x << " != " << #y << ", "      \
+    << __FILE__ << ":" << __LINE__;     \
+  AssertEqual(x, y, os.str());          \
 }
 
-
-#define ASSERT_EQUAL(x, y) {                \
-  std::ostringstream __os;                  \
-  __os << #x << " != " << #y << ", "        \
-    << __FILE__ << ":" << __LINE__;         \
-  AssertEqual(x, y, __os.str());            \
-}
-
-#define ASSERT_NOT_EQUAL(x, y) {                \
-    std::ostringstream __os;                    \
-  __os << #x << " == " << #y << ", "            \
-    << __FILE__ << ":" << __LINE__;             \
-  AssertNotEqual(x, y, __os.str());             \
-}
-
-#define ASSERT(x) {                         \
-  ostringstream __os;                       \
-  __os << #x << " is false, "               \
-    << __FILE__ << ":" << __LINE__;         \
-  Assert(x, __os.str());                    \
-}
-
-#define ASSERT_NOT(x) {                    \
-  ostringstream __os;                      \
-  __os << #x << " is true, "               \
-    << __FILE__ << ":" << __LINE__;        \
-  Assert(!(x), __os.str());                \
-}
-
-#define ASSERT_THROW(expression, exceptionType) { \
-    bool __eft__is_passes = false;              \
-    std::ostringstream __os;                    \
-    try {                                       \
-        expression;                             \
-        __os << #expression << " didn't throw " \
-            << #exceptionType << ", at: "       \
-            << __FILE__ << ':' << __LINE__;     \
-        __eft__is_passes = false;               \
-    } catch (const exceptionType& e) {          \
-        __eft__is_passes = true;                \
-    } catch (std::exception& e) {               \
-        __os << #expression                     \
-            << " throw std::exception: "        \
-            << e.what() << " instead of: "      \
-            << #exceptionType << ", at: "       \
-            << __FILE__ << ':' << __LINE__;     \
-    } catch(...) {                              \
-        __os << #expression                     \
-            << " throw an unknown exception: "  \
-            << " instead of: "                  \
-            << #exceptionType << ", at: "       \
-            << __FILE__ << ':' << __LINE__;     \
-    }                                           \
-   if ( !__eft__is_passes ) {                   \
-      throw std::runtime_error(__os.str());     \
-   }                                            \
-}
-
-
-#define ASSERT_NO_THROW(expression) {               \
-    try {                                           \
-        expression;                                 \
-    } catch(...) {                                  \
-        std::ostringstream __os;                    \
-        __os << #expression                         \
-            << " which should not throw, "          \
-            << " throws an exception at:"           \
-            << __FILE__ << ':' << __LINE__;         \
-       throw std::runtime_error(__os.str());        \
-    }                                               \
+#define ASSERT(x) {                     \
+  ostringstream os;                     \
+  os << #x << " is false, "             \
+    << __FILE__ << ":" << __LINE__;     \
+  Assert(x, os.str());                  \
 }
 
 #define RUN_TEST(tr, func) \

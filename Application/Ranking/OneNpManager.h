@@ -8,11 +8,9 @@
 #include <string>
 #include <map>
 #include <memory>
-#include <FitSettings.h>
 
 #include "StudyRes.h"
 #include "../Fitter/ErrorsReEvaluation.h"
-#include "NpRankingStudyRes.h"
 
 class IWorkspaceWrapper;
 class RooArgSet;
@@ -86,8 +84,6 @@ private:
     RooArgSet*  pois_        {nullptr};
     fit::Errors  errors_ = fit::Errors::DEFAULT;
     IWorkspaceWrapper* ws_ {nullptr};
-
-    NpRankingStudySettings np_ranking_settings_;
     //std::shared_ptr<IWorkspaceWrapper> ws_;
 private:
     OneNpManager() noexcept = default;
@@ -110,7 +106,6 @@ public:
     inline OneNpManagerBuilder& UsingSnapshotWithInitVals(std::string name) noexcept;
     inline OneNpManagerBuilder& UsingPOIs(RooArgSet* pois) noexcept;
     inline OneNpManagerBuilder& UsingErrors(fit::Errors errors) noexcept;
-    inline OneNpManagerBuilder& UsingFitSettings(NpRankingStudySettings settings) noexcept;
 private:
     OneNpManager result_;
 private:
@@ -232,11 +227,6 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingErrors(fit::Errors errors)
 {
     EFT_PROF_TRACE("OneNpManagerBuilder::UsingErrors");
     result_.errors_ = errors;
-    return *this;
-}
-inline OneNpManagerBuilder& OneNpManagerBuilder::UsingFitSettings(NpRankingStudySettings settings) noexcept
-{
-    result_.np_ranking_settings_ = settings;
     return *this;
 }
 

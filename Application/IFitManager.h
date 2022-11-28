@@ -36,8 +36,8 @@ public:
 
     // global tasks
     virtual void DoGlobalFit() = 0;
-    virtual void ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) = 0;
-    virtual void DoFitAllNpFloat(const NpRankingStudySettings& settings) = 0;
+    virtual void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) = 0;
+    virtual void DoFitAllNpFloat(NpRankingStudySettings settings) = 0;
 
     //IFitManager() = default;
     virtual ~IFitManager() noexcept = default;

@@ -14,7 +14,7 @@
 namespace eft::stats {
 
 struct FitManagerConfig {
-    std::string                 ws_path             {"/pbs/home/o/ollukian/public/EFT/git/eftProfiler/source/WS-Comb-Higgs_topU3l_obs.root"};
+    std::string                 ws_path;
     std::string                 ws_name             {"combWS"};
     std::string                 model_config        {"ModelConfig"};
     std::string                 comb_pdf            {"combPdf"};
@@ -23,9 +23,7 @@ struct FitManagerConfig {
     std::string                 poi                 {"cHG"};
     std::vector<std::string>    errors;
     size_t                      worker_id           {0};
-    double                      eps                 {1E-3}; // to be divided on 1000 later on
-    size_t                      strategy            {1};
-    size_t                      retry               {0};
+    double                      fit_precision       {1E-3};
     double                      poi_init_val        {0.};
     std::string                 study_type;
     std::string                 snapshot;
@@ -34,22 +32,15 @@ struct FitManagerConfig {
     bool                        fit_single_poi      {true};
     bool                        reuse_nll           {true};      // <== to add
     bool                        save_prelim         {false};
-    bool                        silent              {false};
-    bool                        release             {false};
-    std::vector<std::string>    get                 ;
     // PLOTTING
     bool                        vertical            {false};     // <== to add
-    std::string                 color_prefit_plus   {"kBlue"};
-    std::string                 color_prefit_minus  {"kGreen"};
-    std::string                 color_postfit_plus  {"kBlue"};
-    std::string                 color_postfit_minus {"kGreen"};
-
-    std::string                 color_np;  // <== to add
-    float                       rmargin             {0.05};
-    float                       lmargin             {0.10};
-    float                       tmargin             {0.03};
-    float                       bmargin             {0.40};
-    std::vector<size_t>         plt_size            {1200, 800};
+    std::string                 color_prefit;   // <== to add
+    std::string                 color_postfit;  // <== to add
+    float                       rmargin             {0.10};      // <== to add
+    float                       lmargin             {0.10};      // <== to add
+    float                       tmargin             {0.05};      // <== to add
+    float                       bmargin             {0.40};      // <== to add
+    std::vector<size_t>         plt_size            {1200, 800}; // <== to add
     float                       rmul                {-0.002};
     float                       rmuh                {0.002};
     float                       np_scale            {1E-9};
@@ -62,23 +53,7 @@ struct FitManagerConfig {
     std::string                 output              {};
     std::string                 input               {};
     std::vector<std::string>    remove_prefix       {};
-    std::vector<std::string>    remove_suffix       {};
     std::vector<std::string>    replace             {};
-    std::string                 ds_title            {"Higgs Combination"};
-    float                       energy              {13};
-    std::string                 lumi                {"36.1-139"};
-    std::string                 experiment          {"ATLAS"};
-    std::string                 res_status          {"Internal"};
-    float                       mu_offset           {1.4};
-    float                       np_offset           {1.0};
-    std::string                 mu_latex            {};
-    std::vector<std::string>    np_names            {};
-    float                       text_size           {0.030};
-    float                       text_font           {42};
-    float                       dy                  {0.03};
-    std::vector<std::string>    add_text            {};
-    std::vector<std::string>    add_text_ndc        {};
-    std::vector<std::string>    h_draw_options      {};
 };
 
 template<typename OStream>
