@@ -524,7 +524,7 @@ namespace eft::plot {
 
         if (is_vertical) {
              y = settings->bmargin + 0.02;
-             dx = -0.015;
+             dx = -0.012;
              dy = 0.f;
         }
 
@@ -543,8 +543,8 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical) {
-            latex.DrawLatex(x, y + 0.10, settings->res_status.c_str());
-            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.10);
+            latex.DrawLatex(x, y + 0.09, settings->res_status.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.09);
         }
         else {
             latex.DrawLatex(x += 0.10, y, settings->res_status.c_str());
