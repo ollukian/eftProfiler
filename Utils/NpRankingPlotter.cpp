@@ -265,7 +265,10 @@ namespace eft::plot {
 //        EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
 
 
-        histo->GetXaxis()->LabelsOption("v");
+        if (is_vertical)
+            histo->GetXaxis()->LabelsOption("v");
+
+        histo->GetYaxis()->SetLabelSize(0.03); // 0.04 by default
 
         if (is_vertical) {
             int nb_labels = histo->GetYaxis()->GetNdivisions();
