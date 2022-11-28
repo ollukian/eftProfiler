@@ -205,13 +205,14 @@ namespace eft::plot {
         auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_bins);
         auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_bins);
 
+        TGaxis::SetMaxDigits(3);
         //TAxis::SetNoExponent(false);
-        histo->GetYaxis()->SetNoExponent(false);
-        histo_neg->GetYaxis()->SetNoExponent(false);
-        histo_plus_sigma_var->GetYaxis()->SetNoExponent(false);
-        histo_minus_sigma_var->GetYaxis()->SetNoExponent(false);
-        histo_minus_one_var->GetYaxis()->SetNoExponent(false);
-        histo_plus_one_var->GetYaxis()->SetNoExponent(false);
+//        histo->GetYaxis()->SetNoExponent(false);
+//        histo_neg->GetYaxis()->SetNoExponent(false);
+//        histo_plus_sigma_var->GetYaxis()->SetNoExponent(false);
+//        histo_minus_sigma_var->GetYaxis()->SetNoExponent(false);
+//        histo_minus_one_var->GetYaxis()->SetNoExponent(false);
+//        histo_plus_one_var->GetYaxis()->SetNoExponent(false);
 
         if ( ! settings->np_names.empty() ) {
             if (settings->np_names.size() != nb_systematics) {
