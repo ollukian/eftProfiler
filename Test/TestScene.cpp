@@ -28,15 +28,15 @@ void TestDrawableCtorFromUniquePtr() {
     }
     {
         auto box = make_unique<TBox>(0, 0, 1, 1);
-        auto box_drawable = Drawable::Create(std::move(box), "name_box");
+        auto box_drawable = Drawable::Create(std::move(box), "options");
         ASSERT(box_drawable.get());
-        ASSERT_EQUAL(box_drawable->name, "name_box");
-        ASSERT_EQUAL(box_drawable->draw_options, "");
+        ASSERT_EQUAL(box_drawable->name, "");
+        ASSERT_EQUAL(box_drawable->draw_options, "options");
         ASSERT_EQUAL(box_drawable->should_be_drawn, true);
     }
     {
         auto box = make_unique<TBox>(0, 0, 1, 1);
-        auto box_drawable = Drawable::Create(std::move(box), "name_box", "options_for_drawing");
+        auto box_drawable = Drawable::Create(std::move(box), "options_for_drawing", "name_box");
         ASSERT(box_drawable.get());
         ASSERT_EQUAL(box_drawable->name, "name_box");
         ASSERT_EQUAL(box_drawable->draw_options, "options_for_drawing");
@@ -44,7 +44,7 @@ void TestDrawableCtorFromUniquePtr() {
     }
     {
         auto box = make_unique<TBox>(0, 0, 1, 1);
-        auto box_drawable = Drawable::Create(std::move(box), "name_box", "options_for_drawing");
+        auto box_drawable = Drawable::Create(std::move(box), "options_for_drawing", "name_box");
         ASSERT(box_drawable.get());
         box_drawable->should_be_drawn = false;
         ASSERT_EQUAL(box_drawable->name, "name_box");
@@ -68,15 +68,15 @@ void TestDrawableCtor() {
     }
     {
         auto box = new TBox(0, 0, 1, 1);
-        auto box_drawable = Drawable::Create(std::move(box), "name_box");
+        auto box_drawable = Drawable::Create(std::move(box), "options");
         ASSERT(box_drawable.get());
-        ASSERT_EQUAL(box_drawable->name, "name_box");
-        ASSERT_EQUAL(box_drawable->draw_options, "");
+        ASSERT_EQUAL(box_drawable->name, "");
+        ASSERT_EQUAL(box_drawable->draw_options, "options");
         ASSERT_EQUAL(box_drawable->should_be_drawn, true);
     }
     {
         auto box = new TBox(0, 0, 1, 1);
-        auto box_drawable = Drawable::Create(std::move(box), "name_box", "options_for_drawing");
+        auto box_drawable = Drawable::Create(std::move(box), "options_for_drawing", "name_box");
         ASSERT(box_drawable.get());
         ASSERT_EQUAL(box_drawable->name, "name_box");
         ASSERT_EQUAL(box_drawable->draw_options, "options_for_drawing");
@@ -84,7 +84,7 @@ void TestDrawableCtor() {
     }
     {
         auto box = new TBox(0, 0, 1, 1);
-        auto box_drawable = Drawable::Create(std::move(box), "name_box", "options_for_drawing");
+        auto box_drawable = Drawable::Create(std::move(box), "options_for_drawing", "name_box");
         ASSERT(box_drawable.get());
         box_drawable->should_be_drawn = false;
         ASSERT_EQUAL(box_drawable->name, "name_box");
