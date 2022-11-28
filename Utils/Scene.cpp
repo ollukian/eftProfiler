@@ -33,12 +33,14 @@ TCanvas* Scene::Create(size_t width, size_t height) {
     return canvas_.get();
 }
 
-TBox* Scene::AddBox(float xl, float yl, float xh, float yh) {
+Drawable* Scene::AddBox(float xl, float yl, float xh, float yh) {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Create box with coord: [{}], [{}], [{}], [{}]", xl, yl, xh, yh);
     std::unique_ptr<TObject> box = make_unique<TBox>(xl, yl, xh, yh);
     auto box_drawable = make_unique<Drawable>(std::move(box));
-    return dynamic_cast<TBox *>(Register(box_drawable));
+    //Register(box_drawable);
+    return Register(box_drawable);
+    //return dynamic_cast<TBox *>(Register(box_drawable));
 }
 
 void Scene::Draw() noexcept {

@@ -51,8 +51,8 @@ public:
     static void SaveAs(const std::string& name) noexcept;
 
     static TCanvas* Create(size_t width = 800, size_t height = 1200);
-    static TBox *   AddBox(float xl, float yl, float xh, float yr);
-    static TLine*   AddLine(float xl, float yl, float xh, float yh, uint16_t colour = kBlack);
+    static Drawable*  AddBox(float xl, float yl, float xh, float yr);
+    static Drawable*  AddLine(float xl, float yl, float xh, float yh, uint16_t colour = kBlack);
     //static TH1D*    AddHisto(size_t nb_bins, double low, double high);
     //static TBox*    AddBox(TBox& box);
     static TLatex*  DrawLatex(float x, float y, const std::string& text);
@@ -65,7 +65,7 @@ public:
     static const std::vector<Object>& GetRegistry() noexcept { return objects_; }
 
 private:
-    static inline TObject * Register(Object& object) noexcept { objects_.push_back(std::move(object)); return objects_.back()->obj.get(); };
+    static inline Drawable* Register(Object& object) noexcept { objects_.push_back(std::move(object)); return objects_.back().get(); };
     //static inline TObject& Register(TObject* obj) noexcept;
 
     static void CreateLatexHorizontalOrientation() noexcept;
