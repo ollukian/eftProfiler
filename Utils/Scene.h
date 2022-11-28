@@ -69,6 +69,8 @@ public:
     static inline Drawable* Register(Object& object) noexcept;
     static inline Drawable* Register(Drawable* object) noexcept;
 
+    static inline void Clear() noexcept;
+
 private:
     //static inline TObject& Register(TObject* obj) noexcept;
 
@@ -96,6 +98,16 @@ inline Drawable* Scene::Register(Scene::Object& object) noexcept {
     EFT_PROF_INFO("Register an object with name: {} to the scene from a unique ptr", object->name);
     objects_.push_back(std::move(object));
     return objects_.back().get();
+}
+
+inline void Scene::Clear() noexcept {
+    EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("Clear scene");
+    objects_.clear();
+    canvas_.reset();
+    latexDrawer.reset();
+    histos_.clear();
+    config_.reset();
 }
 
 //TObject& Scene::Register(TObject* obj) noexcept {
