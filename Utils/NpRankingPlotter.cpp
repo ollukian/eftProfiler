@@ -360,6 +360,12 @@ namespace eft::plot {
             //    settings->rmargin = 0.20;
             if (settings->bmargin == 0.40f) // if they are default
                 settings->bmargin = 0.50;
+
+            if (settings->lmargin == 0.10f) // if they are default
+                settings->lmargin = 0.05;
+
+            if (settings->rmargin == 0.10f) // if they are default
+                settings->rmargin = 0.05;
             //canvas->SetRightMargin(settings->bmargin);
             //canvas->SetLeftMargin(settings->tmargin);
             //canvas->SetTopMargin(settings->rmargin);
@@ -518,7 +524,7 @@ namespace eft::plot {
 
         if (is_vertical) {
              y = settings->bmargin + 0.02;
-             dx = -0.01;
+             dx = -0.015;
              dy = 0.f;
         }
 
@@ -537,8 +543,8 @@ namespace eft::plot {
         latex.SetTextFont(settings->text_font); //put back the font 42
 
         if (is_vertical) {
-            latex.DrawLatex(x, y + 0.09, settings->res_status.c_str());
-            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.05);
+            latex.DrawLatex(x, y + 0.10, settings->res_status.c_str());
+            EFT_PROF_WARN("latex.DrawLatex(x, y, settings->res_status.c_str()); at {}, {}", x, y + 0.10);
         }
         else {
             latex.DrawLatex(x += 0.10, y, settings->res_status.c_str());
