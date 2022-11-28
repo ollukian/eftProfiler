@@ -135,6 +135,7 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT_EQUAL(reg[0]->name, "box1");
         ASSERT_EQUAL(reg[0]->draw_options, "opt");
         ASSERT_EQUAL(reg[0]->should_be_drawn, true);
+        Scene::Clear();
     }
     {
         EFT_PROF_CRITICAL("test #2");
@@ -157,6 +158,7 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT_EQUAL(reg[1]->name, "box2");
         ASSERT_EQUAL(reg[1]->draw_options, "");
         ASSERT_EQUAL(reg[1]->should_be_drawn, true);
+        Scene::Clear();
     }
     {
         EFT_PROF_CRITICAL("test #3");
@@ -182,6 +184,7 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT_EQUAL(box_active_ptr_2->GetY1(), 6);
         ASSERT_EQUAL(box_active_ptr_2->GetX2(), 7);
         ASSERT_EQUAL(box_active_ptr_2->GetY2(), 8);
+        Scene::Clear();
     }
 }
 
