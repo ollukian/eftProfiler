@@ -499,6 +499,12 @@ namespace eft::plot {
                                         1.f,
                                         510,
                                         "+L");
+
+
+
+        if (is_vertical) {
+            axis_nps->ChangeLabel(0, 90);
+        }
         //axis_nps->SetLineColor(kRed);
         //axis_nps->SetTextColor(kRed);
         axis_nps->SetTitle("#hat{#theta} - #theta_{0}");
