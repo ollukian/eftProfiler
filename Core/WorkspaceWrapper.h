@@ -149,8 +149,8 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
         return false;
     }
 
-    std::unique_ptr<TFile> f_ {TFile::Open(path.c_str())};
-    //TFile* f_ = TFile::Open(std::move(path).c_str());
+    //std::unique_ptr<TFile> f_ {TFile::Open(path.c_str())};
+    TFile* f_ = TFile::Open(std::move(path).c_str());
     if (f_) {
         ws_ = std::make_unique<RooWorkspace>(
                 *dynamic_cast<RooWorkspace*>( f_->Get( std::move(name).c_str() ) )
