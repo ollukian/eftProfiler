@@ -6,8 +6,12 @@
 #include "../Fitter/IFitter.h"
 #include "../Fitter/Fitter.h"
 #include "../Utils/FitUtils.h"
-
+#include "../Utils/StringUtils.h"
 #include "../Core/Logger.h"
+#include "../Test/test_runner.h"
+
+#include "../Vendors/spdlog/fmt/fmt.h"
+#include "spdlog/fmt/ostr.h"
 
 #include "../Vendors/spdlog/fmt/fmt.h"
 
@@ -71,7 +75,7 @@ void FitManager::DoGlobalFit()
     res->Print("v");
 }
 
-void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) {
+void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) {
     NpRankingStudyRes res;
     res.poi_name = settings.poi;
     res.statType = settings.statType;
@@ -89,7 +93,14 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     {
         //auto* globObs = GetListAsArgSet("paired_globs");
         //auto* nps = GetListAsArgSet("paired_nps");
-        SetAllGlobObsTo(0, 0); // to find values for np preferred by data
+        if (settings.prePostFit != PrePostFit::POSTFIT) {
+            EFT_PROF_INFO("For study type set pois to init values and globs to 0");
+            SetAllPoisTo(settings.poi_init_val, 0);
+            SetAllGlobObsTo(0, 0); // to find values for np preferred by data
+        }
+        else {
+            EFT_PROF_INFO("For study type [potsfit] no need to set pois to init values and globs to 0");
+        }
         auto args = new RooArgSet();
         args->add(*globObs);
         args->add(*nps);
@@ -288,10 +299,11 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
             .UsingNPs(nps)
             .ForNP(res.np_name)
             .UsingErrors(settings.errors)
-            .UsingWS(ws_)
+            .UsingWS(ws_.get())
             .UsingSnapshotWithInitVals("tmp_nps")
             .ForPOI(res.poi_name)
-            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)));
+            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
+            .UsingFitSettings(settings);
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);
@@ -344,12 +356,6 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     EFT_PROF_INFO("|{:^15} | {:^3} +- {:^6}|", " * ", res.np_val, res.np_err);
     EFT_PROF_INFO("+{:=^15}==={:=^15}===={:=^15}+", "=", "=", "=");
 
-    //EFT_PROF_DEBUG("current path: {}", std::filesystem::current_path().string());
-
-    //std::filesystem::path path_res = std::filesystem::current_path();
-    //if ( !settings.path_to_save_res.empty() )
-    // /   path_res /= settings.path_to_save_res;
-    //EFT_PROF_INFO("Save res to {}", path_res.string());
     std::filesystem::path path_res = settings.path_to_save_res;
 
     if ( !std::filesystem::exists(path_res) ) {
@@ -382,7 +388,7 @@ void FitManager::ComputeNpRankingOneWorker(NpRankingStudySettings settings, size
     }
 }
 
-void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
+void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
 {
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetUpGlobObs(settings.prePostFit);
@@ -434,6 +440,10 @@ void FitManager::DoFitAllNpFloat(NpRankingStudySettings settings)
     fitSettings.data = &data;
     fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
     fitSettings.errors = settings.errors;
+    fitSettings.retry = settings.retry;
+    fitSettings.strategy = settings.strategy;
+    fitSettings.eps = settings.eps;
+    // TODO: use one set of settings...
 
 
     EFT_PROF_INFO("[DoFitAllNpFloat] compute free fit values and errors on all nps");
@@ -530,30 +540,11 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissFloat]");
-
-//    args_["np"]->Print("");
-//    for (const auto& np : *args_["np"]) {
-//        const string name = {np->GetTitle()};
-//        cout << fmt::format("dealing with: {} ...", name) << endl;
-//        //if (string(dynamic_cast<RooRealVar*>(np)->GetTitle()).substr(0, 5) == "ATLAS")
-//        if (name.substr(0, 5) == "ATLAS") {
-//            cout << fmt::format("dealing with: {:40} OK", name) << endl;
-//            dynamic_cast<RooRealVar *>(np)->setConstant(false);
-//        }
-//        else {
-//            cout << fmt::format("dealing with: {:40} DO NOT set to float", name) << endl;
-//        }
-//    }
-
-    //args_["np"]->Print("v");
     for (const auto& np : *args_["np"]) {
         const string name = {np->GetTitle()};
-        EFT_PROF_DEBUG("Set {} to float", name);
+        EFT_PROF_DEBUG("Set {} to float ==> {}", name, *dynamic_cast<RooRealVar *>(np));
         dynamic_cast<RooRealVar *>(np)->setConstant(false);
     }
-
-    //cout << "status after:" << endl;
-    //args_["np"]->Print("v");
 }
 
 void FitManager::ExtractPOIs() noexcept
@@ -569,12 +560,26 @@ void FitManager::ExtractPOIs() noexcept
         pois_.push_back(std::move(name));
     }
     EFT_PROF_DEBUG("[FitManager] list of POIs in string format:");
-    for (const auto& poi : pois_) { EFT_PROF_INFO("[{}]", poi); }
+    for (const auto& poi : pois_) { EFT_PROF_DEBUG("[{}]", poi); }
 }
 
 void FitManager::Init(FitManagerConfig&& config)
 {
-    EFT_PROF_INFO("[FitManager] init from config: path to ws: {}, name: {},model_config: {}",
+
+    if (config.ws_name.empty()) {
+        EFT_PROF_CRITICAL("ws_name is empty");
+        throw std::logic_error("no ws_name set");
+    }
+    if (config.ws_path.empty()) {
+        EFT_PROF_CRITICAL("ws_path is empty");
+        throw std::logic_error("no ws_path set");
+    }
+    if (config.model_config.empty()) {
+        EFT_PROF_CRITICAL("model_config is empty");
+        throw std::logic_error("no model_config set");
+    }
+
+    EFT_PROF_INFO("[FitManager] init from config: path to ws: [{}], name: [{}], model_config: [{}]",
                   config.ws_path, config.ws_name, config.model_config);
     SetWsWrapper();
     SetWS(std::move(config.ws_path),
@@ -609,6 +614,11 @@ void FitManager::Init(FitManagerConfig&& config)
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;
     ExtractNotGammaNps();
 
+    if ( !config.get.empty() ) {
+        ProcessGetCommand(config);
+        return;
+    }
+
     EFT_PROF_INFO("[FitManager] INIT DONE");
 }
 
@@ -628,7 +638,6 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
      }
 
 #endif
-
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, res_path);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, worker_id);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi);
@@ -638,12 +647,14 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_pdf);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, top);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, fit_precision);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, eps);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, snapshot);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit_plus);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_prefit_minus);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit_plus);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, color_postfit_minus);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmul);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmuh);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_scale);
@@ -657,6 +668,19 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmargin);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, tmargin);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, bmargin);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, retry);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, strategy);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ds_title);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, energy);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, lumi);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, experiment);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, res_status);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_offset);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, mu_offset);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, mu_latex);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_size);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_font);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dy);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
@@ -674,6 +698,8 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, fit_single_poi);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, vertical);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, reuse_nll);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, silent);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, release);
 #undef EFT_ADD_BOOL_OPTIONS
 
     // vectors
@@ -690,6 +716,12 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_VEC_OPTION(commandLineArgs, config, match_names);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, replace);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, remove_prefix);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, remove_suffix);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, np_names);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text_ndc);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, get);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, h_draw_options);
 #undef EFT_ADD_VEC_OPTION
 
 
@@ -699,6 +731,9 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
         return;
         //hrow std::runtime_error("ERROR ^------- see the message above");
     }
+
+    if (config.release)
+        eft::stats::Logger::SetRelease();
 
     commandLineArgs.ReportStatus();
 }
@@ -772,7 +807,8 @@ void FitManager::ExtractNotGammaNps() noexcept
     {
         EFT_PROF_CRITICAL("FitManager::ExtractNotGammaNps the lists_[paired_nps] is empty.");
         EFT_PROF_CRITICAL("FitManager::ExtractNotGammaNps extract them before");
-        throw std::runtime_error("no paired nps extracted");
+        return;
+        //throw std::runtime_error("no paired nps extracted");
     }
     assert( lists_[ "paired_nps"   ]->size() != 0);
 
@@ -816,6 +852,89 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
             }
         }
     }
+
+}
+
+void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
+    EFT_PROF_DEBUG("Process get command: {}", config.get);
+    ASSERT_NOT(config.get.empty());
+    string get_demand = config.get[0];
+    bool get_count = false;
+    if (config.get.size() > 1) {
+        string count_candidate = config.get[1];
+        eft::StringUtils::Trim(count_candidate);
+        eft::StringUtils::ToLowCase(count_candidate);
+        if (count_candidate == "count") {
+            EFT_PROF_DEBUG("In the count mode");
+            get_count = true;
+        }
+    }
+    eft::StringUtils::Trim(get_demand);
+    eft::StringUtils::ToLowCase(get_demand);
+    EFT_PROF_DEBUG("after trimming and lowering: {}", get_demand);
+    if (get_demand == "poi") {
+        if (get_count) {
+            cout << pois_.size() << endl;
+            return;
+        }
+        EFT_PROF_DEBUG("dispatch to POI, there are {} available", pois_.size());
+        for (const auto& poi : pois_) {
+            std::cout << poi << std::endl;
+        }
+        return;
+    }
+
+    // TODO: finish printing results by "get" demand
+    RooArgSet* argSet = nullptr;
+
+    if (get_demand == "np" || get_demand == "nps") {
+        argSet = args_["np_all"];
+    }
+    else if (get_demand == "obs" ) {
+        argSet = args_["obs"];
+    }
+    else if (get_demand == "globs" ) {
+        argSet = args_["globObs"];
+    }
+    else if (get_demand == "paired_globs" ) {
+        argSet = args_["paired_globs"];
+    }
+    else if (get_demand == "paired_nps"
+            || get_demand == "paired_globs"
+            || get_demand == "non_gamma_nps") {
+        argSet = GetListAsArgSet(get_demand);
+    }
+
+
+    if (argSet) {
+        if (get_count) {
+            cout << argSet->size() << endl;
+            return;
+        }
+
+        EFT_PROF_DEBUG("for key {} available {} params", get_demand, argSet->size());
+        for (const auto& arg : *argSet) {
+            //EFT_PROF_DEBUG("{}", *dynamic_cast<RooRealVar*>(arg));
+            cout << arg->GetTitle() << endl;
+        }
+        return;
+    }
+    else {
+        EFT_PROF_CRITICAL("Argset for demand [{}] is empty", get_demand);
+        throw std::logic_error("");
+    } // if argset is empte even though the name is known
+
+    // counts
+    if (get_demand == "pdf") {
+        funcs_[ "pdf_total" ]->Print();
+        return;
+    }
+    else if (get_demand == "ds_total"){
+        data_[ "ds_total" ]->Print();
+        return;
+    }
+
+    throw std::logic_error(fmt::format("--get {} is now known. Use: np, poi, globs, obs, paired_globs, paired_nps, non_gamma_nps"));
 
 }
 

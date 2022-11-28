@@ -104,8 +104,10 @@ struct NpRankingStudySettings
     PrePostFit prePostFit {PrePostFit::OBSERVED};
     fit::Errors errors {fit::Errors::DEFAULT};
     bool no_gamma {false};
-    double poi_init_val {0.};
-    double fit_precision {0.};
+    double poi_init_val;
+    double eps;
+    size_t retry;
+    size_t strategy;
 };
 
 // Only information relevant for plotting
