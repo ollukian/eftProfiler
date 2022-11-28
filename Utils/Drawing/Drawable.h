@@ -33,8 +33,8 @@ struct Drawable {
     Drawable() = default;
     ~Drawable() = default;
 
-    static std::unique_ptr<Drawable> Create(TObject* ptr, std::string opt = "", std::string name_external = "");
-    static std::unique_ptr<Drawable> Create(std::unique_ptr<TObject> ptr, std::string opt = "", std::string name_external = "");
+    static inline std::unique_ptr<Drawable> Create(TObject* ptr, std::string opt = "", std::string name_external = "");
+    static inline std::unique_ptr<Drawable> Create(std::unique_ptr<TObject> ptr, std::string opt = "", std::string name_external = "");
 };
 
 std::unique_ptr<Drawable> Drawable::Create(TObject* ptr, std::string opt, std::string name_external)
