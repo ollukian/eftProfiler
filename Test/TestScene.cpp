@@ -167,5 +167,6 @@ void TestSceneBasicDrawableRegistering() {
 EFT_IMPLEMENT_TESTFILE(Scene) {
     EFT_ADD_TEST(TestDrawableCtorFromUniquePtr, "Drawable")
     EFT_ADD_TEST(TestDrawableCtor,              "Drawable")
+    EFT_ADD_TEST(TestSceneBasicDrawableRegistering, "Drawable")
 }
 EFT_END_IMPLEMENT_TESTFILE(Scene);
