@@ -5,6 +5,9 @@
 #ifndef EFTPROFILER_SCENE_H
 #define EFTPROFILER_SCENE_H
 
+#include "Logger.h"
+#include "Profiler.h"
+
 class TH1D;
 class TBox;
 class TMarker;
@@ -63,7 +66,7 @@ public:
     //static HistoPtr& GetHisto(const std::string& name);
 
     static const std::vector<Object>& GetRegistry() noexcept { return objects_; }
-    static inline Drawable* Register(Object& object) noexcept { objects_.push_back(std::move(object)); return objects_.back().get(); };
+    static inline Drawable* Register(Object& object) noexcept;
     static inline Drawable* Register(Drawable* object) noexcept;
 
 private:
@@ -82,7 +85,16 @@ private:
 };
 
 inline Drawable* Scene::Register(Drawable* object) noexcept {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Register an object with name: {} to the scene from a pointer to Drawable", object->name);
     objects_.push_back(std::make_unique<Drawable>(std::move(*object)));
+    return objects_.back().get();
+}
+
+inline Drawable* Scene::Register(Scene::Object& object) noexcept {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Register an object with name: {} to the scene from a unique ptr", object->name);
+    objects_.push_back(std::move(object));
     return objects_.back().get();
 }
 

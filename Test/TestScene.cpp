@@ -124,6 +124,7 @@ void TestDrawableCtor() {
 void TestSceneBasicDrawableRegistering() {
     {
         eft::stats::Logger::SetFullPrinting();
+        EFT_PROF_INFO("TestSceneBasicDrawableRegistering");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
@@ -155,22 +156,24 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT(canvas);
         auto box_raw1 = Scene::AddBox(1, 2, 3, 4);
         auto box_raw2 = Scene::AddBox(5, 6, 7, 8);
-        Scene::Register(box_raw1);
-        Scene::Register(box_raw2);
+        auto box_active_ptr_1 = Scene::Register(box_raw1)->As<TBox>();
+        auto box_active_ptr_2 = Scene::Register(box_raw2)->As<TBox>();
 
-        auto box1 = box_raw1->As<TBox>();
-        auto box2 = box_raw2->As<TBox>();
+        ASSERT_EQUAL(box_raw1, nullptr);
+        ASSERT_EQUAL(box_raw2, nullptr);
+        ASSERT_NOT_EQUAL(box_active_ptr_1, nullptr);
+        ASSERT_NOT_EQUAL(box_active_ptr_1, nullptr);
 
         ASSERT_EQUAL(Scene::GetRegistry().size(), 2u);
-        ASSERT_EQUAL(box1->GetX1(), 1);
-        ASSERT_EQUAL(box1->GetY1(), 2);
-        ASSERT_EQUAL(box1->GetX2(), 3);
-        ASSERT_EQUAL(box1->GetY2(), 4);
+        ASSERT_EQUAL(box_active_ptr_1->GetX1(), 1);
+        ASSERT_EQUAL(box_active_ptr_1->GetY1(), 2);
+        ASSERT_EQUAL(box_active_ptr_1->GetX2(), 3);
+        ASSERT_EQUAL(box_active_ptr_1->GetY2(), 4);
 
-        ASSERT_EQUAL(box2->GetX1(), 5);
-        ASSERT_EQUAL(box2->GetY1(), 6);
-        ASSERT_EQUAL(box2->GetX2(), 7);
-        ASSERT_EQUAL(box2->GetY2(), 8);
+        ASSERT_EQUAL(box_active_ptr_2->GetX1(), 5);
+        ASSERT_EQUAL(box_active_ptr_2->GetY1(), 6);
+        ASSERT_EQUAL(box_active_ptr_2->GetX2(), 7);
+        ASSERT_EQUAL(box_active_ptr_2->GetY2(), 8);
     }
 }
 
