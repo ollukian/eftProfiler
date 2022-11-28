@@ -126,6 +126,7 @@ void TestSceneBasicDrawableRegistering() {
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
+        Scene::Register(box1);
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 1u);
         ASSERT_EQUAL(reg[0]->name, "box1");
@@ -137,6 +138,8 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
         auto box2 = Drawable::Create(new TBox(1, 1, 1, 1), "", "box2");
+        Scene::Register(box1);
+        Scene::Register(box2);
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 2u);
         ASSERT_EQUAL(reg[0]->name, "box1");
@@ -149,8 +152,14 @@ void TestSceneBasicDrawableRegistering() {
     {
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
-        auto box1 = Scene::AddBox(1, 2, 3, 4)->As<TBox>();
-        auto box2 = Scene::AddBox(5, 6, 7, 8)->As<TBox>();
+        auto box_raw1 = Scene::AddBox(1, 2, 3, 4);
+        auto box_raw2 = Scene::AddBox(5, 6, 7, 8);
+        Scene::Register(box_raw1);
+        Scene::Register(box_raw2);
+
+        auto box1 = box_raw1->As<TBox>();
+        auto box2 = box_raw2->As<TBox>();
+
         ASSERT_EQUAL(Scene::GetRegistry().size(), 2u);
         ASSERT_EQUAL(box1->GetX1(), 1);
         ASSERT_EQUAL(box1->GetY1(), 2);

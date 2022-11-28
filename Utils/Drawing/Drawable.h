@@ -19,6 +19,17 @@ struct Drawable {
     std::string name;
     bool should_be_drawn {true};
 
+    Drawable(Drawable&& other) noexcept {
+        obj = std::move(other.obj);
+        std::swap(draw_options, other.draw_options);
+        std::swap(name, other.name);
+        std::swap(should_be_drawn, other.should_be_drawn);
+    }
+
+    Drawable(Drawable& other) = delete;
+
+    //Drawable* Clone()
+
     template<typename T>
     T* As() {
        return dynamic_cast<T*>(obj.get());

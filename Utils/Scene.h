@@ -63,9 +63,10 @@ public:
     //static HistoPtr& GetHisto(const std::string& name);
 
     static const std::vector<Object>& GetRegistry() noexcept { return objects_; }
+    static inline Drawable* Register(Object& object) noexcept { objects_.push_back(std::move(object)); return objects_.back().get(); };
+    static inline Drawable* Register(Drawable* object) noexcept;
 
 private:
-    static inline Drawable* Register(Object& object) noexcept { objects_.push_back(std::move(object)); return objects_.back().get(); };
     //static inline TObject& Register(TObject* obj) noexcept;
 
     static void CreateLatexHorizontalOrientation() noexcept;
@@ -79,6 +80,11 @@ private:
     static inline std::map<std::string, HistoPtr> histos_;
     static inline std::shared_ptr<eft::stats::FitManagerConfig>  config_ {};
 };
+
+inline Drawable* Scene::Register(Drawable* object) noexcept {
+    objects_.push_back(std::make_unique<Drawable>(std::move(*object)));
+    return objects_.back().get();
+}
 
 //TObject& Scene::Register(TObject* obj) noexcept {
 //    auto ptr = std::make_unique<TObject>(*obj);
