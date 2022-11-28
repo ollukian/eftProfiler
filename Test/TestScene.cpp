@@ -102,7 +102,11 @@ void TestDrawableCtor() {
     {
         auto box_1 = Drawable::Create(new TBox{1, 2, 3, 4});
         auto box_2 = Drawable::Create(new TBox{0, 0, 1, 1});
-        ASSERT_NOT_EQUAL(box_1, box_2)
+        ASSERT_NOT_EQUAL(box_1->As<TBox>()->GetX1(), box_2->As<TBox>()->GetX1());
+        ASSERT_NOT_EQUAL(box_1->As<TBox>()->GetX2(), box_2->As<TBox>()->GetX2());
+        ASSERT_NOT_EQUAL(box_1->As<TBox>()->GetY1(), box_2->As<TBox>()->GetY1());
+        ASSERT_NOT_EQUAL(box_1->As<TBox>()->GetY2(), box_2->As<TBox>()->GetY2());
+
     }
 }
 
