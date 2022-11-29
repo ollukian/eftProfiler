@@ -548,7 +548,7 @@ HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& setti
     EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
     auto fitRes = fitter.Fit(fitSettings);
     EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
-    const RooArgList list_nps(*args_["np_all"]);
+    const RooArgList list_nps(*args_["paired_nps"]);
     EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps wiht {} entries:", list_nps.size());
     for (const auto np : list_nps) {
         cout << np->GetName() << endl;
