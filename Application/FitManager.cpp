@@ -523,7 +523,11 @@ HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& setti
 
     EFT_PROF_INFO("set all POIs const");
     SetAllPOIsConst();
-    // TODO: float all pois, if needed by a flag
+
+    EFT_PROF_INFO("Float required poi: {}", settings.poi);
+    ws_->FloatVal(settings.poi);
+
+    // TODO: float all pois, if needed by a flag!!!!
 
     fit::Fitter fitter;
     fitter.SetNps(nps);

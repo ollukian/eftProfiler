@@ -22,6 +22,12 @@ struct HesseStudyResult {
     TMatrixDSym                     reducedCovMatrix;
     RooArgList                      params;
     std::map<std::string, double>   covariances;
+
+    bool is_sorted {false};
+
+    //void                          Sort() noexcept;
+    //std::map<std::string, double> GetNSorted(size_t n) const;
+    //std::vector<std::string> GetNSortedNames(size_t n) const;
     //std::vector<std::string>        np_names;
 
     HesseStudyResult()  = default;

@@ -46,7 +46,7 @@ std::ostream& operator << (std::ostream& os, const HesseStudyResult& res) {
         return os;
     os << '{';
     for (const auto& [name, cov] : res.covariances) {
-        os << fmt::format("{:40} ==> {}", name, cov);
+        os << fmt::format("{:40} ==> {}\n", name, cov);
     }
     return os << '}';
 }
