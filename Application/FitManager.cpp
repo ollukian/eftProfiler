@@ -83,10 +83,19 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     auto *nps = GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
     auto *non_gamma_nps = GetListAsArgSet("non_gamma_nps");
 
-    if(settings.no_gamma)
+    if(settings.no_gamma) {
         res.np_name = non_gamma_nps->operator[](workerId)->GetName();
-    else
+        EFT_PROF_INFO("No-gamma option ==> choose NP number from the non-gamma list. Deal with {} ==> {}",
+                      workerId,
+                      res.np_name);
+    }
+    else {
         res.np_name = nps->operator[](workerId)->GetName();
+        res.np_name = non_gamma_nps->operator[](workerId)->GetName();
+        EFT_PROF_INFO("All nps, including gamma ==> choose NP number from the full list. Deal with {} ==> {}",
+                      workerId,
+                      res.np_name);
+    }
     //res.np_name = nps->operator[](workerId)->GetName();
     {
         //auto* globObs = GetListAsArgSet("paired_globs");
@@ -112,7 +121,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
                   ws()->GetParVal(settings.poi),
                   ws()->GetParErr(settings.poi)
     );
-    DoFitAllNpFloat(settings);
+    //DoFitAllNpFloat(settings);
     {
 //    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
 //    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
@@ -302,6 +311,8 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
             .ForPOI(res.poi_name)
             .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
             .UsingFitSettings(settings);
+
+    npManager.RunFreeFit();
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);

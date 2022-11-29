@@ -32,13 +32,13 @@ struct FitManagerConfig {
     bool                        no_gamma            {false};
     bool                        fit_all_pois        {false};
     bool                        fit_single_poi      {true};
-    bool                        reuse_nll           {true};      // <== to add
+    bool                        reuse_nll           {true};
     bool                        save_prelim         {false};
     bool                        silent              {false};
     bool                        release             {false};
     std::vector<std::string>    get                 ;
     // PLOTTING
-    bool                        vertical            {false};     // <== to add
+    bool                        vertical            {false};
     std::string                 color_prefit_plus   {"kBlue"};
     std::string                 color_prefit_minus  {"kGreen"};
     std::string                 color_postfit_plus  {"kBlue"};

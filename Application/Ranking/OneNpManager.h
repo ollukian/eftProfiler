@@ -10,6 +10,8 @@
 #include <memory>
 #include <FitSettings.h>
 
+#include "RooAbsReal.h"
+
 #include "StudyRes.h"
 #include "../Fitter/ErrorsReEvaluation.h"
 #include "NpRankingStudyRes.h"
@@ -18,7 +20,7 @@ class IWorkspaceWrapper;
 class RooArgSet;
 class RooAbsPdf;
 class RooAbsData;
-class RooAbsReal;
+//class RooAbsReal;
 
 namespace eft::stats::ranking {
 
@@ -49,6 +51,7 @@ public:
     void RunPreFit(char sign);
     void RunPostFit(char sign);
     void RunFitFixingNpAtCentralValue();
+    void RunFreeFit();
 
     OneNpManager(const OneNpManager&) = default;
     OneNpManager(OneNpManager&&) = delete;
@@ -71,6 +74,8 @@ private:
 private:
     std::map<std::string, StudyRes> results_;
     std::string snapshot_init_values_name_;
+    //std::unique_ptr<RooAbsReal> nll_ {nullptr};
+    std::shared_ptr<RooAbsReal> nll_ {nullptr};
 
     double np_found_in_data_value {0.};
     double np_found_in_data_error {0.};
@@ -81,11 +86,11 @@ private:
     mutable NP    np_;
     mutable Nps   nps_;
     mutable Globs globs_;
-    RooAbsData*  data_;
-    RooAbsPdf*   pdf_;
+    RooAbsData*  data_       {nullptr};
+    RooAbsPdf*   pdf_        {nullptr};
     RooArgSet*  pois_        {nullptr};
-    fit::Errors  errors_ = fit::Errors::DEFAULT;
-    IWorkspaceWrapper* ws_ {nullptr};
+    fit::Errors  errors_     {fit::Errors::DEFAULT};
+    IWorkspaceWrapper* ws_   {nullptr};
 
     NpRankingStudySettings np_ranking_settings_;
     //std::shared_ptr<IWorkspaceWrapper> ws_;

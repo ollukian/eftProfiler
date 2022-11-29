@@ -82,7 +82,7 @@ int main(int argc, char* argv[]) {
                 {"string",          "color_postfit_plus", "kBlue",      "Colour for +sigma variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
                 {"string",          "color_postfit_minus","kGreen",     "Colour for -sigma variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
                 {"string",          "color_np",         "kBlack",       "x Colour for NP graph.    Formats: kBlue | RGB(x, y, z) | RGBA(x, y, z, a) || x in [0..255]"},
-                {"bool",            "reuse_nll",        "true",         "x do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
+                {"bool",            "reuse_nll",        "true",         "Do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
                 {"float",           "rmul",             "-0.002",       "LOW  value for the POI axis on the ranking plot"},
                 {"float",           "rmuh",             " 0.002",       "HIGH value for the POI axis on the ranking plot"},
                 {"float",           "np_scale",         "[post fit of top np]", "Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
@@ -247,6 +247,7 @@ int main(int argc, char* argv[]) {
         settings.eps                = config.eps;
         settings.retry = config.retry;
         settings.strategy = config.strategy;
+        settings.reuse_nll = config.reuse_nll;
         if (config.res_path.empty())
             EFT_PROF_WARN("save res to default (in the root folder)");
         else

@@ -77,6 +77,14 @@ void OneNpManager::RunPostFit(char sign)
 
     SavePostFit(sign);
 }
+
+void OneNpManager::RunFreeFit()
+{
+    EFT_PROF_INFO("[OneNpManager] run free fit");
+    RunFit();
+    SaveResAs("free_fit");
+}
+
 void OneNpManager::RunFitFixingNpAtCentralValue()
 {
     EFT_PROF_INFO("[OneNpManager] run fit fixing np at its central value");
@@ -89,26 +97,35 @@ void OneNpManager::RunFitFixingNpAtCentralValue()
 
 void OneNpManager::RunFit()
 {
+    EFT_PROF_DEBUG("Run Fit");
     fit::Fitter fitter;
 
     fitter.SetNps(nps_);
     fitter.SetGlobs(globs_);
 
     fit::FitSettings fitSettings;
-    fitSettings.pdf = pdf_;
-    fitSettings.data = data_;
-    fitSettings.pois = pois_;
-    fitSettings.errors = errors_;
-    fitSettings.nps = nps_;
-    fitSettings.retry = np_ranking_settings_.retry;
-    fitSettings.strategy = np_ranking_settings_.strategy;
-    fitSettings.eps = np_ranking_settings_.eps;
+    fitSettings.pdf         = pdf_;
+    fitSettings.data        = data_;
+    fitSettings.pois        = pois_;
+    fitSettings.errors      = errors_;
+    fitSettings.nps         = nps_;
+    fitSettings.retry       = np_ranking_settings_.retry;
+    fitSettings.strategy    = np_ranking_settings_.strategy;
+    fitSettings.eps         = np_ranking_settings_.eps;
 
-    std::unique_ptr<RooAbsReal> nll;
-    nll.reset(fitter.CreatNll(fitSettings));
-    //std::shared_ptr<RooAbsReal> nll = std::make_shared<RooAbsReal>( *fitter.CreatNll(fitSettings) );
-    //fitSettings.nll = fitter.CreatNll(fitSettings);
-    auto fitRes = fitter.Minimize(fitSettings, nll.get());
+    if ( ! np_ranking_settings_.reuse_nll || nll_ == nullptr) {
+        EFT_PROF_DEBUG("Need to create nll");
+        EFT_PROF_DEBUG("reuse_nll => {}", np_ranking_settings_.reuse_nll);
+        EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
+        nll_.reset(fitter.CreatNll(fitSettings));
+    }
+    else {
+        EFT_PROF_INFO("No need to re-create nll");
+        EFT_PROF_DEBUG("reuse_nll => {}", np_ranking_settings_.reuse_nll);
+        EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
+    }
+
+    fitter.Minimize(fitSettings, nll_.get());
 }
 
 void OneNpManager::SaveResAs(std::string key)
@@ -127,7 +144,7 @@ void OneNpManager::SaveResAs(std::string key)
     results_[std::move(key)] = std::move(res);
 }
 
-bool OneNpManagerBuilder::CheckValidity()
+    bool OneNpManagerBuilder::CheckValidity()
 {
     if (result_.nps_ == nullptr) {
         EFT_PROF_CRITICAL("OneNpManagerBuilder no nps set");

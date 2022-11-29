@@ -259,12 +259,6 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 
     EFT_PROF_INFO("[Minimizer] fit is finished");
     return {};
-    //auto result = make_unique<RooFitResult>(
-    //        *minim.save("fitResult","Fit Results")
-    //        );
-
-    //EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
-    //return result;
 }
 
 IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {

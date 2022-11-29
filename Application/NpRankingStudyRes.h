@@ -106,6 +106,7 @@ struct NpRankingStudySettings
     bool no_gamma {false};
     double poi_init_val;
     double eps;
+    bool reuse_nll {true};
     size_t retry;
     size_t strategy;
 };
