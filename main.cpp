@@ -303,7 +303,8 @@ int main(int argc, char* argv[]) {
         settings.fit_single_poi = config.fit_single_poi;
 
         manager->Init(std::move(config));
-        manager->ComputeHesseNps(settings);
+        auto res = manager->ComputeHesseNps(settings);
+        cout << res << endl;
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);
