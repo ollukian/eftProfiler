@@ -224,10 +224,12 @@ inline void FitManager::ExtractPdfTotal(std::string name) {
     auto pdf = ws_->GetCombinedPdf(name);
     if (pdf != nullptr)
         funcs_["pdf_total"] = pdf;
-    throw std::runtime_error(
-            fmt::format("No PDF with name: [{}] is set. Use --comb_pdf yourName to set it",
-                        name)
-                        );
+    else {
+        throw std::runtime_error(
+                fmt::format("No PDF with name: [{}] is set. Use --comb_pdf yourName to set it",
+                            name)
+        );
+    }
 }
 
 inline const std::vector<std::string>& FitManager::GetListPOIs() const noexcept
