@@ -35,6 +35,10 @@ int main(int argc, char* argv[]) {
         eft::stats::Logger::SetRelease();
     }
 
+    if (commandLineArgs.HasKey("debug")) {
+        eft::stats::Logger::SetFullPrinting();
+    }
+
     if (commandLineArgs.HasKey("h") || commandLineArgs.HasKey("help"))
     {
         cout << "for task, use one of the following:" << endl;
