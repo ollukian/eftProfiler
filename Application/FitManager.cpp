@@ -309,7 +309,8 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
             .UsingWS(ws_.get())
             .UsingSnapshotWithInitVals("tmp_nps")
             .ForPOI(res.poi_name)
-            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
+            .UsingPOIs(const_cast<RooArgSet*>(ws_->GetPOIs()))
+            //.UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
             .UsingFitSettings(settings);
 
     npManager.RunFreeFit();

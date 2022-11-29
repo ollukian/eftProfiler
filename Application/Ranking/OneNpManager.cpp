@@ -133,16 +133,20 @@ void OneNpManager::RunFit()
     fitSettings.strategy    = np_ranking_settings_.strategy;
     fitSettings.eps         = np_ranking_settings_.eps;
 
+    EFT_PROF_INFO("Status of POIs before nll creation:");
+    for (auto poi : *pois_) {
+        auto poi_cast = dynamic_cast<RooRealVar*>(poi);
+        EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+    }
+
+    EFT_PROF_DEBUG("reuse_nll      => {}", np_ranking_settings_.reuse_nll);
+    EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
     if ( ! np_ranking_settings_.reuse_nll || nll_ == nullptr) {
         EFT_PROF_DEBUG("Need to create nll");
-        EFT_PROF_DEBUG("reuse_nll => {}", np_ranking_settings_.reuse_nll);
-        EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
         nll_.reset(fitter.CreatNll(fitSettings));
     }
     else {
         EFT_PROF_INFO("No need to re-create nll");
-        EFT_PROF_DEBUG("reuse_nll => {}", np_ranking_settings_.reuse_nll);
-        EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
     }
 
     fitter.Minimize(fitSettings, nll_.get());
