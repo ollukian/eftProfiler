@@ -24,6 +24,16 @@ void OneNpManager::ResetNp() {
 void OneNpManager::ResetPoi()
 {
     EFT_PROF_TRACE("OneNpManager::ResetPoi");
+
+    EFT_PROF_INFO("Fix all pois const and to their init values");
+    for (auto poi : *pois_) {
+        auto poi_cast = dynamic_cast<RooRealVar*>(poi);
+        poi_cast->setVal(poi_init_value);
+        poi_cast->setError(poi_init_error);
+        poi_cast->setConstant(true);
+        EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+    }
+
     if (np_ranking_settings_.fit_all_pois) {
         EFT_PROF_DEBUG("Fit all pois => float all of them");
         for (auto poi : *pois_) {
@@ -33,7 +43,7 @@ void OneNpManager::ResetPoi()
         }
     }
     else {
-        EFT_PROF_DEBUG("Fit one poi => float only {}", poi_);
+        EFT_PROF_DEBUG("Fit one poi => float only {} and fix the rest", poi_);
         ws_->FloatVal(poi_);
         EFT_PROF_DEBUG("Status of all pois:");
         for (auto poi : *pois_) {
@@ -137,6 +147,7 @@ void OneNpManager::RunFit()
     for (auto poi : *pois_) {
         auto poi_cast = dynamic_cast<RooRealVar*>(poi);
         EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+        EFT_PROF_DEBUG("as macro: {}", *poi_cast);
     }
 
     EFT_PROF_DEBUG("reuse_nll      => {}", np_ranking_settings_.reuse_nll);

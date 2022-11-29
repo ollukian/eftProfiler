@@ -317,7 +317,7 @@ inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_s
 }
 
 template<typename OStream>
-OStream& operator<<(OStream& os, const RooRealVar& var) {
+OStream& operator<<(OStream& os, RooRealVar& var) {
     std::string constness = "const";
     if (! var.isConstant() )
         constness = "float";
