@@ -301,6 +301,7 @@ int main(int argc, char* argv[]) {
         settings.reuse_nll = config.reuse_nll;
         settings.fit_all_pois = config.fit_all_pois;
         settings.fit_single_poi = config.fit_single_poi;
+        settings.errors = eft::stats::fit::Errors::HESSE;
 
         manager->Init(std::move(config));
         auto res = manager->ComputeHesseNps(settings);
