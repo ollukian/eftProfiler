@@ -6,10 +6,11 @@
 #define EFTPROFILER_HESSESTUDYRESULT_H
 
 #include "TMatrixDSym.h"
+#include "RooArgList.h"
 
 class RooFitResult;
 class RooRealVar;
-class RooArgList;
+//class RooArgList;
 
 #include <map>
 #include <vector>
