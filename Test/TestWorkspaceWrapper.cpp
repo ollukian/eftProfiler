@@ -496,6 +496,7 @@ void CreateWS(const string& filename)
 [[nodiscard]]
 //std::shared_ptr<WorkspaceWrapper> LoadWS() {
 WorkspaceWrapper* LoadWS() {
+    auto level = RooMsgService::instance().globalKillBelow();
     RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
     static const string path {"__temp_ws_for_eftTests.root"};
     static const string ws_name {"ws_test"};
@@ -503,6 +504,7 @@ WorkspaceWrapper* LoadWS() {
     //auto ws_ = std::make_shared<WorkspaceWrapper>();
     ws_->SetWS(path, ws_name);
     ws_->SetModelConfig("ModelConfig");
+    RooMsgService::instance().setGlobalKillBelow(level);
     return ws_;
 }
 
@@ -631,9 +633,11 @@ void Initiate() {
 //                  "Running tests of the Workspace wrapper. First stage may take some non-negligible time",
 //                  "due to creation of a toy RooWorkspace, requiring compiling of functions for a few test",
 //                  "systematics: luminosity and efficiency");
+    auto level = RooMsgService::instance().globalKillBelow();
     RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::FATAL);
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
+    RooMsgService::instance().setGlobalKillBelow(level);
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {
