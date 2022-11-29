@@ -304,6 +304,8 @@ int main(int argc, char* argv[]) {
 
         manager->Init(std::move(config));
         auto res = manager->ComputeHesseNps(settings);
+        EFT_PROF_INFO("Sort result:");
+        const auto sorted = res.GetSorted();
         cout << res << endl;
     }
     else {

@@ -40,13 +40,48 @@ HesseStudyResult::ExtractFromRooFitResult(const RooFitResult& res, const RooArgL
     return {cov, params, std::move(covariances)};
 }
 
+void HesseStudyResult::Sort() noexcept {
+    EFT_PROFILE_FN();
 
-std::ostream& operator << (std::ostream& os, const HesseStudyResult& res) {
+    vector<pair<string, double>> res {covariances.begin(), covariances.end()};
+
+    std::sort(res.begin(),
+              res.end(),
+              [&](const auto& l, const auto& r) -> bool {
+       return l.second < r.second;
+    });
+
+    sorted_names.clear();
+    sorted_names.reserve(res.size());
+    for (const auto& [name, impact] : res) {
+        sorted_names.push_back(name);
+    }
+    sorted_names.shrink_to_fit();
+
+    is_sorted = true;
+    sorted_covariances = std::move(res);
+}
+
+const std::vector<std::pair<std::string, double>>& HesseStudyResult::GetSorted() noexcept {
+    if ( ! is_sorted )
+        Sort();
+    return sorted_covariances;
+}
+
+const std::vector<std::string>&  HesseStudyResult::GetSortedNames() noexcept {
+    if ( ! is_sorted )
+        Sort();
+    return sorted_names;
+}
+
+
+    std::ostream& operator << (std::ostream& os, const HesseStudyResult& res) {
     if (res.covariances.empty())
         return os;
     os << '{';
+    size_t idx = 1;
     for (const auto& [name, cov] : res.covariances) {
-        os << fmt::format("{:40} ==> {}\n", name, cov);
+        os << fmt::format("|#{:3}|{:50} ==> {}\n", idx++, name, cov);
     }
     return os << '}';
 }

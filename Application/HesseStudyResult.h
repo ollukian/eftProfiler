@@ -23,10 +23,15 @@ struct HesseStudyResult {
     RooArgList                      params;
     std::map<std::string, double>   covariances;
 
-    bool is_sorted {false};
+    std::vector<std::pair<std::string, double>> sorted_covariances;
+    std::vector<std::string>                    sorted_names;
 
-    //void                          Sort() noexcept;
-    //std::map<std::string, double> GetNSorted(size_t n) const;
+    bool is_sorted {false};
+    void                                               Sort() noexcept;
+    const std::vector<std::pair<std::string, double>>& GetSorted() noexcept;
+    const std::vector<std::string>&                    GetSortedNames() noexcept;
+    const std::vector<std::pair<std::string, double>>& GetNBiggestImpact(size_t n) const noexcept;
+    const std::vector<std::pair<std::string, double>>& GetNSmallestImpact(size_t n) const noexcept;
     //std::vector<std::string> GetNSortedNames(size_t n) const;
     //std::vector<std::string>        np_names;
 
