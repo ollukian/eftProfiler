@@ -209,12 +209,6 @@ int main(int argc, char* argv[]) {
                 }
             }
 
-            EFT_PROF_DEBUG("status of arguments..");
-            EFT_PROF_DEBUG("Minos -> {}", isMinos);
-            EFT_PROF_DEBUG("Hesse -> {}", isHesse);
-            EFT_PROF_DEBUG("nps -> {}", refineNPs);
-            EFT_PROF_DEBUG("pois -> {}", refinePOIs);
-
             // check logic // TODO: to make an independent function to construct if from a string and to validate
             if (isHesse && isMinos) {
                 EFT_PROF_CRITICAL("Command line, key -errors, cannot use MINOS and HESSE at the same time, use on of them");
@@ -290,6 +284,26 @@ int main(int argc, char* argv[]) {
         settings.poi = config.poi;
         manager->Init(std::move(config));
         manager->DoFitAllNpFloat(std::move(settings));
+    }
+    else if (task == "compute_hesse_nps") {
+        eft::stats::FitManagerConfig config;
+        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+        auto manager = make_unique<eft::stats::FitManager>();
+
+        eft::stats::NpRankingStudySettings settings;
+
+        settings.poi                = config.poi;
+        settings.path_to_save_res   = config.res_path;
+        settings.poi_init_val       = config.poi_init_val;
+        settings.eps                = config.eps;
+        settings.retry = config.retry;
+        settings.strategy = config.strategy;
+        settings.reuse_nll = config.reuse_nll;
+        settings.fit_all_pois = config.fit_all_pois;
+        settings.fit_single_poi = config.fit_single_poi;
+
+        manager->Init(std::move(config));
+        manager->ComputeHesseNps(settings);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);

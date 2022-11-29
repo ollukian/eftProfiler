@@ -8,6 +8,7 @@
 #include "../Utils/FitUtils.h"
 #include "../Utils/StringUtils.h"
 #include "../Core/Logger.h"
+#include "Profiler.h"
 #include "../Test/test_runner.h"
 
 #include "../Vendors/spdlog/fmt/fmt.h"
@@ -511,6 +512,48 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
     }
 }
 
+HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& settings) {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Compute Hesse forNPS");
+    auto& data = GetData(settings.prePostFit);
+    auto* pdf  = GetPdf("pdf_total");
+    auto* globObs = GetListAsArgSet("paired_globs");
+    auto* nps = GetListAsArgSet("paired_nps");
+
+
+    EFT_PROF_INFO("set all POIs const");
+    SetAllPOIsConst();
+    // TODO: float all pois, if needed by a flag
+
+    fit::Fitter fitter;
+    fitter.SetNps(nps);
+    fitter.SetGlobs(globObs);
+
+    fit::FitSettings fitSettings;
+    fitSettings.pdf = const_cast<RooAbsPdf*>(pdf);
+    fitSettings.data = &data;
+    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
+    fitSettings.errors = settings.errors;
+    fitSettings.retry = settings.retry;
+    fitSettings.strategy = settings.strategy;
+    fitSettings.eps = settings.eps;
+    fitSettings.save_res = true;
+    // TODO: use one set of settings...
+
+
+    EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
+    auto fitRes = fitter.Fit(fitSettings);
+    EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
+    const RooArgList list_nps(*args_["np_all"]);
+    EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps wiht {} entries:", list_nps.size());
+    for (const auto np : list_nps) {
+        cout << np->GetName() << endl;
+    }
+    EFT_PROF_DEBUG("[ComputeHesseNps] extract results from RooFitResult");
+    auto res = HesseStudyResult::ExtractFromRooFitResult(*fitRes, list_nps);
+    return res;
+}
+
 void FitManager::SetAllNuisanceParamsConst() noexcept
 {
 
@@ -866,7 +909,7 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
 }
 
 void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
-    EFT_PROF_DEBUG("Process get command: {}", config.get);
+    //EFT_PROF_DEBUG("Process get command: {}", config.get);
     ASSERT_NOT(config.get.empty());
     string get_demand = config.get[0];
     bool get_count = false;

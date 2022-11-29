@@ -23,6 +23,7 @@
 namespace eft::stats {
 
 struct NpRankingStudySettings;
+struct HesseStudyResult;
 
 
 // Interface to the fit engine
@@ -38,6 +39,7 @@ public:
     virtual void DoGlobalFit() = 0;
     virtual void ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) = 0;
     virtual void DoFitAllNpFloat(const NpRankingStudySettings& settings) = 0;
+    virtual HesseStudyResult ComputeHesseNps(const NpRankingStudySettings& settings) = 0;
 
     //IFitManager() = default;
     virtual ~IFitManager() noexcept = default;

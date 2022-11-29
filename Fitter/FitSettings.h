@@ -26,6 +26,7 @@ struct FitSettings {
     uint8_t     strategy    = 0;
     double      eps         {};
     bool        reuse_nll   {true};
+    bool        save_res    {false};
 };
 
 } // eft::stats::fit

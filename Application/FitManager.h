@@ -11,6 +11,7 @@
 #include "IFitManager.h"
 #include "FitManagerConfig.h"
 #include "WorkspaceWrapper.h"
+#include "HesseStudyResult.h"
 #include <fstream>
 
 #include "../Core/Logger.h"
@@ -33,6 +34,7 @@ public:
     void DoGlobalFit() override;
     void ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) override;
     void DoFitAllNpFloat(const NpRankingStudySettings& settings) override;
+    HesseStudyResult ComputeHesseNps(const NpRankingStudySettings& settings) override;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;

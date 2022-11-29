@@ -259,6 +259,11 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 #endif
 
     EFT_PROF_INFO("[Minimizer] fit is finished");
+    if (settings.save_res) {
+        EFT_PROF_INFO("[Minimizer] required to save results as: {}", "fit_res");
+        return make_unique<RooFitResult>(*minim.save("fit_res", "fit_res"));
+    }
+    EFT_PROF_DEBUG("[Minimizer] not required to save results, leave function");
     return {};
 }
 
@@ -278,8 +283,7 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     std::unique_ptr<RooAbsReal> nll;
     nll.reset(CreatNll(settings));
     //settings.nll = nll;
-    Minimize(settings, nll.get());
-    return {};
+    return Minimize(settings, nll.get());;
     //auto res = Minimize(settings, nll.get());
     //return res;
     //FitResPtr to_return;
