@@ -783,10 +783,15 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 
 
 
-    if (config.fit_all_pois && config.fit_single_poi) {
-        EFT_PROF_CRITICAL("CommandLineArgs impossible to use \"fit_all_pois\" and \"fit_single_poi\" simultaneously");
-        return;
-        //hrow std::runtime_error("ERROR ^------- see the message above");
+//    if (config.fit_all_pois && config.fit_single_poi) {
+//        EFT_PROF_CRITICAL("CommandLineArgs impossible to use \"fit_all_pois\" and \"fit_single_poi\" simultaneously");
+//        return;
+//        //hrow std::runtime_error("ERROR ^------- see the message above");
+//    }
+
+    if (config.fit_all_pois) {
+        EFT_PROF_WARN("Set [fit_all_pois mode]: all available pois are to be fit");
+        config.fit_single_poi = false;
     }
 
     if (config.release)

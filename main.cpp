@@ -76,6 +76,7 @@ int main(int argc, char* argv[]) {
                 {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
                 {"bool",            "fit_all_pois",    "false",         "If fit all pois available in the Workspace"},
                 {"bool",            "fit_single_poi",  "true",          "If fix all pois available in the Workspace, apart from the one to fit"},
+                {"vector<string>",  "fit_pois",        "[POI]",         "x List of POIs to be float during each fit. Impact only on the [--poi] is reported"},
                 {"string",          "input",            "",             "Folder to read json results from (for plotting)"},
                 {"vector<string>",  "fileformat",       "pdf",          "Format(s) of the output plot"},
                 {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
