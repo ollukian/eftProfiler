@@ -22,7 +22,7 @@ HesseStudyResult::ExtractFromRooFitResult(const RooFitResult& res, const RooArgL
     EFT_PROF_INFO("Extract hesse study result from RooFitResult");
 
     EFT_PROF_DEBUG("Available {} params", params.size());
-    r//es.hess
+    //es.hess
     auto cov = res.reducedCovarianceMatrix(params);
     //EFT_PROF_DEBUG("Invert covariance", params.size());
     //cov.Invert();
