@@ -513,7 +513,7 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
 void FitManager::SetAllNuisanceParamsConst() noexcept
 {
 
-    if (args_["np"]->empty())
+    if (args_["np_all"]->empty())
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissConst]");
@@ -533,7 +533,7 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
 //    }
 
     //args_["np"]->Print("v");
-    for (const auto& np : *args_["np"]) {
+    for (const auto& np : *args_["np_all"]) {
         const string name = {np->GetTitle()};
         EFT_PROF_DEBUG("Set {} to const", name);
         dynamic_cast<RooRealVar *>(np)->setConstant(true);
@@ -545,11 +545,11 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
 
 void FitManager::SetAllNuisanceParamsFloat() noexcept {
 
-    if (args_["np"]->empty())
+    if (args_["np_all"]->empty())
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissFloat]");
-    for (const auto& np : *args_["np"]) {
+    for (const auto& np : *args_["np_all"]) {
         const string name = {np->GetTitle()};
         EFT_PROF_DEBUG("Set {} to float ==> {}", name, *dynamic_cast<RooRealVar *>(np));
         dynamic_cast<RooRealVar *>(np)->setConstant(false);

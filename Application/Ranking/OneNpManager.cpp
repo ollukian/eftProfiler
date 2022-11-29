@@ -10,6 +10,8 @@
 #include "../Fitter/Fitter.h"
 #include "FitSettings.h"
 
+#include "RooRealVar.h"
+
 namespace eft::stats::ranking {
 
 void OneNpManager::ResetNp() {
@@ -22,7 +24,24 @@ void OneNpManager::ResetNp() {
 void OneNpManager::ResetPoi()
 {
     EFT_PROF_TRACE("OneNpManager::ResetPoi");
-    ws_->FloatVal(poi_);
+    if (np_ranking_settings_.fit_all_pois) {
+        EFT_PROF_DEBUG("Fit all pois => float all of them");
+        for (auto poi : *pois_) {
+            auto poi_cast = dynamic_cast<RooRealVar*>(poi);
+            poi_cast->setConstant(false);
+            EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+        }
+    }
+    else {
+        EFT_PROF_DEBUG("Fit one poi => float only {}", poi_);
+        ws_->FloatVal(poi_);
+        EFT_PROF_DEBUG("Status of all pois:");
+        for (auto poi : *pois_) {
+            auto poi_cast = dynamic_cast<RooRealVar*>(poi);
+            EFT_PROF_DEBUG("using macro:", *poi_cast);
+            EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+        }
+    }
     ws_->SetVarVal(poi_, poi_init_value);
     ws_->SetVarErr(poi_, poi_init_error);
 }
@@ -81,6 +100,7 @@ void OneNpManager::RunPostFit(char sign)
 void OneNpManager::RunFreeFit()
 {
     EFT_PROF_INFO("[OneNpManager] run free fit");
+    ResetPoi(); // no reset np, since we know nothing about them yet
     RunFit();
     SaveResAs("free_fit");
 }

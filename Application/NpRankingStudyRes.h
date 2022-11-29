@@ -103,10 +103,12 @@ struct NpRankingStudySettings
     StudyType studyType {StudyType::NOTDEF};
     PrePostFit prePostFit {PrePostFit::OBSERVED};
     fit::Errors errors {fit::Errors::DEFAULT};
-    bool no_gamma {false};
+    bool no_gamma;
     double poi_init_val;
     double eps;
-    bool reuse_nll {true};
+    bool reuse_nll;
+    bool  fit_all_pois;
+    bool  fit_single_poi;
     size_t retry;
     size_t strategy;
 };

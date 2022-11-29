@@ -74,8 +74,8 @@ int main(int argc, char* argv[]) {
                 {"string",          "study_type",       "",             ""},
                 {"string",          "snapshot",         "",             "x Snapshot to be load before each fit"},
                 {"bool",            "no_gamma",        "false",         "If skip gamma-constrained systematics"},
-                {"bool",            "fit_all_pois",    "false",         "x If fit all pois available in the Workspace"},
-                {"bool",            "fit_single_poi",  "true",          "x If fix all pois available in the Workspace, apart from the one to fit"},
+                {"bool",            "fit_all_pois",    "false",         "If fit all pois available in the Workspace"},
+                {"bool",            "fit_single_poi",  "true",          "If fix all pois available in the Workspace, apart from the one to fit"},
                 {"string",          "input",            "",             "Folder to read json results from (for plotting)"},
                 {"vector<string>",  "fileformat",       "pdf",          "Format(s) of the output plot"},
                 {"vector<string>",  "ignore_name",      "",             "Patterns in the names of systematics to be ignored (not regex yet), just string.find()"},
@@ -252,6 +252,10 @@ int main(int argc, char* argv[]) {
         settings.retry = config.retry;
         settings.strategy = config.strategy;
         settings.reuse_nll = config.reuse_nll;
+        settings.fit_all_pois = config.fit_all_pois;
+        settings.fit_single_poi = config.fit_single_poi;
+
+
         if (config.res_path.empty())
             EFT_PROF_WARN("save res to default (in the root folder)");
         else
