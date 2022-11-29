@@ -306,7 +306,7 @@ int main(int argc, char* argv[]) {
         auto res = manager->ComputeHesseNps(settings);
         EFT_PROF_INFO("Sort result:");
         const auto sorted = res.GetSorted();
-        cout << res << endl;
+        cout << sorted << endl;
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);

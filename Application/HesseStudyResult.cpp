@@ -48,11 +48,11 @@ void HesseStudyResult::Sort() noexcept {
     std::sort(res.begin(),
               res.end(),
               [&](const auto& l, const auto& r) -> bool {
-                  EFT_PROF_DEBUG("compare=====");
-                  EFT_PROF_DEBUG("{}", l.first);
-                  EFT_PROF_DEBUG("{}", r.first);
-                  EFT_PROF_DEBUG("res: {}", (l.second < r.second));
-       return l.second < r.second;
+                  EFT_PROF_DEBUG("compare===== l > r");
+                  EFT_PROF_DEBUG("{:50} with impact {:10}", l.first, l.second);
+                  EFT_PROF_DEBUG("{:50} with impact {:10}", r.first, r.second);
+                  EFT_PROF_DEBUG("res: {}", (l.second > r.second));
+       return l.second > r.second;
     });
 
     sorted_names.clear();
