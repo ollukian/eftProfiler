@@ -157,9 +157,10 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
     file_with_ws_.reset(TFile::Open(std::move(path).c_str()));
     EFT_PROF_INFO("extract from the file");
     if (file_with_ws_) {
-        ws_ = std::make_unique<RooWorkspace>(
-                *dynamic_cast<RooWorkspace*>( file_with_ws_->Get( std::move(name).c_str() ) )
-                );
+//        ws_ = std::make_unique<RooWorkspace>(
+//                *dynamic_cast<RooWorkspace*>( file_with_ws_->Get( std::move(name).c_str() ) )
+//                );
+        ws_.reset(dynamic_cast<RooWorkspace*>(file_with_ws_->Get( std::move(name).c_str() )));
         //f_->Close();
         return true;
     }
