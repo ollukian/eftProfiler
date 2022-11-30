@@ -566,6 +566,7 @@ HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& setti
 
 void FitManager::PlotCovariances(const HesseStudyResult& res) const
 {
+    EFT_PROFILE_FN();
     using eft::utils::draw::Scene;
 
     shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
@@ -603,6 +604,11 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
         corr_per_np[par->GetName()] = corr;
     }
 
+    corr_with_poi->SetLabelSize(0.005);
+    corr_with_poi->Draw("H");
+    canvas->SaveAs("correlations_with_poi.pdf");
+    canvas->Clear();
+
     vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
     std::sort(sorted_corrs.begin(),
               sorted_corrs.end(),
@@ -616,17 +622,13 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
         cout << fmt::format("{:60} => {}", name, cor) << endl;
     }
 
-    corr_with_poi->SetLabelSize(0.005);
-    corr_with_poi->Draw("H");
-    canvas->SaveAs("correlations_with_poi.pdf");
-    canvas->Clear();
-
+    EFT_PROF_INFO("Fill corr with poi sorted");
     shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>("h_sorted", "h_sorted", res.covariances.size(), 0, res.covariances.size());
     for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
-
     //for (const auto& [name, cor] : sorted_corrs) {
         auto& name = sorted_corrs.at(idx).first;
         auto& corr = sorted_corrs.at(idx).second;
+        EFT_PROF_DEBUG("idx: {:3} ==> {:30} ==> {:30}", idx, name, corr);
         corr_with_poi->SetBinContent(idx, corr);
         corr_with_poi->GetXaxis()->SetBinLabel(idx, name.c_str());
     }
@@ -641,7 +643,7 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
 
 void FitManager::SetAllNuisanceParamsConst() noexcept
 {
-
+    EFT_PROFILE_FN();
     if (args_["np_all"]->empty())
         ExtractNP();
 
@@ -673,7 +675,7 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
 }
 
 void FitManager::SetAllNuisanceParamsFloat() noexcept {
-
+    EFT_PROFILE_FN();
     if (args_["np_all"]->empty())
         ExtractNP();
 
@@ -687,6 +689,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
 
 void FitManager::ExtractPOIs() noexcept
 {
+    EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["pois"] = (RooArgSet *) ws_->GetPOIs();
     // create list of pois in string format
@@ -703,7 +706,7 @@ void FitManager::ExtractPOIs() noexcept
 
 void FitManager::Init(FitManagerConfig&& config)
 {
-
+    EFT_PROFILE_FN();
     if (config.ws_name.empty()) {
         EFT_PROF_CRITICAL("ws_name is empty");
         throw std::logic_error("no ws_name set");
@@ -762,6 +765,7 @@ void FitManager::Init(FitManagerConfig&& config)
 
 void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
 
     // Use macros of a few kinds:
