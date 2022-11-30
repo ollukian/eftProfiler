@@ -40,8 +40,10 @@ HesseStudyResult::ExtractFromRooFitResult(const RooFitResult& res, const RooArgL
         covariances[std::move(np_name)] = np_cov;
     }
 
-
-    return {cov, params, std::move(covariances)};
+    HesseStudyResult hesseStudyResult {cov, params, std::move(covariances)};
+    hesseStudyResult.fitResult = dynamic_cast<RooFitResult*>(res.Clone());
+    return hesseStudyResult;
+    //return {cov, params, std::move(covariances)};
 }
 
 void HesseStudyResult::Sort() noexcept {

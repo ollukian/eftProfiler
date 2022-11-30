@@ -7,8 +7,8 @@
 
 #include "TMatrixDSym.h"
 #include "RooArgList.h"
+#include "RooFitResult.h"
 
-class RooFitResult;
 class RooRealVar;
 //class RooArgList;
 
@@ -22,11 +22,15 @@ struct HesseStudyResult {
     TMatrixDSym                     reducedCovMatrix;
     RooArgList                      params;
     std::map<std::string, double>   covariances;
+    std::string                     poi;
 
     std::vector<std::pair<std::string, double>> sorted_covariances;
     std::vector<std::string>                    sorted_names;
 
     bool is_sorted {false};
+    RooFitResult*                    fitResult;
+
+
     void                                               Sort() noexcept;
     const std::vector<std::pair<std::string, double>>& GetSorted() noexcept;
     const std::vector<std::string>&                    GetSortedNames() noexcept;

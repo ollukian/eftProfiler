@@ -568,13 +568,31 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     using eft::utils::draw::Scene;
 
     shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
-    Scene::Create(4000, 4000);
-    cov->Draw("colz");
+    auto canvas = Scene::Create(4000, 4000);
+    //Scene::Register(cov.get());
     for (size_t idx_np {0}; idx_np < cov->GetSize(); ++idx_np) {
         cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
         cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
     }
-    Scene::SaveAs("covariances.pdf");
+    cov->Draw("colz");
+    canvas->SaveAs("covariances.pdf");
+    canvas->Clear();
+    //Scene::SaveAs("covariances.pdf");
+
+    // get correlations between POI and other things
+    EFT_PROF_INFO("Extract correlations: poi <-> nps");
+    auto poi_var = ws_->GetVar(res.poi);
+    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
+    for (size_t idx_np {0}; idx_np < cov->GetSize(); ++idx_np) {
+        auto par = res.params.at(idx_np);
+        auto corr = res.fitResult->correlation(*poi_var, *par);
+        corr_with_poi->SetBinContent(idx_np + 1, corr);
+        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
+        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+    }
+    corr_with_poi->Draw("H");
+    canvas->SaveAs("correlations_with_poi.pdf");
+    //Scene::SaveAs()
 }
 
 void FitManager::SetAllNuisanceParamsConst() noexcept

@@ -309,6 +309,7 @@ int main(int argc, char* argv[]) {
         EFT_PROF_INFO("Sort result:");
         const auto sorted = res.GetSorted();
         EFT_PROF_INFO("Plot covariances:");
+        res.poi = settings.poi;
         manager->PlotCovariances(res);
     }
     else {
