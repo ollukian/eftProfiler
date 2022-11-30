@@ -564,7 +564,6 @@ HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& setti
 
 void FitManager::PlotCovariances(const HesseStudyResult& res) const
 {
-
     using eft::utils::draw::Scene;
 
     shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
@@ -578,6 +577,8 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
         cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
     }
     cov->SetLabelSize(0.005);
+    cov->GetXaxis()->SetLabelSize(0.005);
+    cov->GetYaxis()->SetLabelSize(0.005);
     EFT_PROF_INFO("All names are set, draw");
     cov->Draw("colz");
     EFT_PROF_INFO("drawn, save");
@@ -587,7 +588,6 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     //Scene::SaveAs("covariances.pdf");
 
     map<string, double> corr_per_np;
-
     // get correlations between POI and other things
     EFT_PROF_INFO("Extract correlations: poi <-> nps");
     auto poi_var = ws_->GetVar(res.poi);
@@ -606,7 +606,7 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
               sorted_corrs.end(),
               [](const auto& l, const auto& r) -> bool
     {
-        return l.second > r.second;
+        return abs(l.second) > abs(r.second);
     });
 
     EFT_PROF_INFO("Sorted corrs with poi:");
@@ -615,9 +615,25 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     }
 
     corr_with_poi->SetLabelSize(0.005);
-
     corr_with_poi->Draw("H");
     canvas->SaveAs("correlations_with_poi.pdf");
+    canvas->Clear();
+
+    shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>("h_sorted", "h_sorted", res.covariances.size(), 0, res.covariances.size());
+    for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
+
+    //for (const auto& [name, cor] : sorted_corrs) {
+        auto& name = sorted_corrs.at(idx).first;
+        auto& corr = sorted_corrs.at(idx).second;
+        corr_with_poi->SetBinContent(idx, corr);
+        corr_with_poi->GetXaxis()->SetBinLabel(idx, name.c_str());
+    }
+
+    corr_with_poi_sorted->SetLabelSize(0.005);
+    corr_with_poi_sorted->Draw("H");
+    canvas->SaveAs("correlations_with_poi_sorted.pdf");
+    canvas->Clear();
+
     //Scene::SaveAs()
 }
 
