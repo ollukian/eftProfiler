@@ -118,7 +118,7 @@ public:
 #endif // if 0 to screen
 private:
     std::shared_ptr<RooWorkspace>           ws_             {};
-    std::unique_ptr<RooStats::ModelConfig>  modelConfig_    {};
+    std::shared_ptr<RooStats::ModelConfig>  modelConfig_    {};
     std::unique_ptr<RooCategory>            channelList_    {};
     std::shared_ptr<TFile>                  file_with_ws_   {};
     mutable Categories                      categories_     {};
