@@ -570,7 +570,7 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
     EFT_PROF_INFO("Created cov matrix with size: [{}][{}]", res.reducedCovMatrix.GetNcols(), res.reducedCovMatrix.GetNrows());
     auto canvas = Scene::Create(4000, 4000);
-    Scene::Register(cov.get());
+    //Scene::Register(cov.get());
     for (size_t idx_np {0}; idx_np < cov->GetSize(); ++idx_np) {
         EFT_PROF_DEBUG("set label of bin: {:4} to {}", idx_np, res.params.at(idx_np)->GetName());
         cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
