@@ -240,11 +240,13 @@ void TestSceneBasicDrawableRegistering() {
             }
         }
 
-        auto hist_drawable_handle = Scene::Register(cov.get());
+        EFT_PROF_INFO("register hist");
+        auto hist_drawable_handle = Scene::Register(cov);
         ASSERT(hist_drawable_handle);
+        EFT_PROF_INFO("get hist as th2d");
         auto hist_drawable_handle_as_th2d = hist_drawable_handle->As<TH2D>();
         ASSERT_EQUAL(hist_drawable_handle_as_th2d->GetName(), cov->GetName());
-
+        EFT_PROF_INFO("compare hists");
         for (size_t idx_x {1}; idx_x <= 50; ++idx_x) {
             for (size_t idx_y {1}; idx_y <= 50; ++idx_y) {
                 ASSERT_EQUAL(cov->GetBinContent(idx_x, idx_y),
