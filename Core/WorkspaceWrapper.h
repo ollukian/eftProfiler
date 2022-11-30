@@ -117,10 +117,10 @@ public:
     bool LoadSnapshot(std::string name)  override;
 #endif // if 0 to screen
 private:
-    std::unique_ptr<RooWorkspace>           ws_             {};
+    std::shared_ptr<RooWorkspace>           ws_             {};
     std::unique_ptr<RooStats::ModelConfig>  modelConfig_    {};
     std::unique_ptr<RooCategory>            channelList_    {};
-    std::unique_ptr<TFile>                  file_with_ws_   {};
+    std::shared_ptr<TFile>                  file_with_ws_   {};
     mutable Categories                      categories_     {};
 
 
