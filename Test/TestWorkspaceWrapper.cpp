@@ -522,6 +522,7 @@ void Finalise() {
 }
 
 void TestWSreading() {
+    eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     //auto ws_ = new WorkspaceWrapper();
