@@ -16,6 +16,9 @@
 #include "../Fitter/ErrorsReEvaluation.h"
 #include "NpRankingStudyRes.h"
 
+#include "Logger.h"
+#include "Profiler.h"
+
 class IWorkspaceWrapper;
 class RooArgSet;
 class RooAbsPdf;
@@ -124,11 +127,13 @@ private:
 
 inline void OneNpManager::SetErrors(fit::Errors errors) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("[OneNpManager] set errors evaluation regime to DEFAULT");
     errors_ = errors;
 }
 
 OneNpManagerBuilder::operator OneNpManager() {
+    EFT_PROFILE_FN();
     if (CheckValidity())
         return result_;
     EFT_PROF_CRITICAL("OneNpManagerBuilder cannot create OneNpManager. See the messages above");
@@ -137,6 +142,7 @@ OneNpManagerBuilder::operator OneNpManager() {
 
 inline void OneNpManager::ResetToInitState()
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("ResetToInitState");
     LoadSnapshot(snapshot_init_values_name_);
     ResetNp();
@@ -145,12 +151,14 @@ inline void OneNpManager::ResetToInitState()
 
 inline void OneNpManager::SavePreFit(char sign)
 {
+    EFT_PROFILE_FN();
     std::string name {"prefit_"};
     name += sign;
     SaveResAs(std::move(name));
 }
 inline void OneNpManager::SavePostFit(char sign)
 {
+    EFT_PROFILE_FN();
     std::string name {"postfit_"};
     name += sign;
     SaveResAs(std::move(name));
@@ -158,31 +166,37 @@ inline void OneNpManager::SavePostFit(char sign)
 
 inline const StudyRes& OneNpManager::GetResult(const std::string& type) const
 {
+    EFT_PROFILE_FN();
     if (results_.find(type) != results_.end())
         return results_.at(type);
     return {};
 }
 inline void OneNpManager::SetNpPreferredValue(double val, double err)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("SetNpPreferredValue {} +- {}", val, err);
     np_found_in_data_value = val;
     np_found_in_data_error = err;
 }
 inline void OneNpManager::SetPoiPreferredValue(double val, double err) {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("SetPoiPreferredValue {} +- {}", val, err);
     poi_init_value = val;
     poi_init_error = err;
 }
 inline OneNpManagerBuilder OneNpManager::create() {
+    EFT_PROFILE_FN();
     return {};
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingNPs(const Nps& nps) noexcept {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("UsingNPs");
     result_.nps_ = nps;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingWS(IWorkspaceWrapper* ws) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("UsingWS");
     //result_.ws_ = std::make_shared<IWorkspaceWrapper>(ws);
     result_.ws_ = ws;
@@ -190,6 +204,7 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingWS(IWorkspaceWrapper* ws) 
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingSnapshotWithInitVals(std::string name) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("UsingSnapshotWithInitVals {}", name);
     result_.snapshot_init_values_name_ = std::move(name);
     return *this;
@@ -197,18 +212,21 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingSnapshotWithInitVals(std::
 
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingGlobalObservables(const Globs& globs) noexcept
 {
+    EFT_PROFILE_FN();
     result_.globs_ = globs;
     return *this;
 }
 
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingData(RooAbsData *data) noexcept
 {
+    EFT_PROFILE_FN();
     result_.data_ = data;
     return *this;
 }
 
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPdf(RooAbsPdf *pdf) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManagerBuilder::UsingPdf");
     result_.pdf_ = pdf;
     return *this;
@@ -216,6 +234,7 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPdf(RooAbsPdf *pdf) noexce
 
 inline OneNpManagerBuilder& OneNpManagerBuilder::ForPOI(Poi poi) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManagerBuilder::ForPOI");
     result_.poi_ = poi;
     return *this;
@@ -223,24 +242,28 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::ForPOI(Poi poi) noexcept
 
 inline OneNpManagerBuilder& OneNpManagerBuilder::ForNP(NP np) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManagerBuilder::ForNP");
     result_.np_ = np;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPOIs(RooArgSet* pois) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManagerBuilder::UsingPOIs");
     result_.pois_ = pois;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingErrors(fit::Errors errors) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManagerBuilder::UsingErrors");
     result_.errors_ = errors;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingFitSettings(NpRankingStudySettings settings) noexcept
 {
+    EFT_PROFILE_FN();
     result_.np_ranking_settings_ = settings;
     return *this;
 }

@@ -137,7 +137,7 @@ optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Ke
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
-        EFT_PROF_DEBUG("n such key found");
+        EFT_PROF_DEBUG("no value for the key: {:30} found", option);
         return nullopt;
     }
     EFT_PROF_TRACE("found: {} elems for key {}:", ops.at(option).size(), option);

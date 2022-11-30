@@ -7,6 +7,11 @@
 #include "Core/CommandLineArgs.h"
 #include "Test/Tester.h"
 #include "Core/Logger.h"
+#include "Profiler.h"
+
+#include "spdlog/fmt/bundled/format.h"
+#include "spdlog/fmt/bundled/core.h"
+#include "spdlog/fmt/bundled/color.h"
 
 #include "TError.h"
 #include "TStyle.h"
@@ -315,6 +320,23 @@ int main(int argc, char* argv[]) {
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);
         return 0;
+    }
+
+    if (commandLineArgs.HasKey("debug")) {
+        EFT_PROF_INFO("Statistics for function calls:");
+        fmt::print(cout, "| {:-^30} | {:-<10} | {:-<15} |\n", "-", "-", "-");
+        fmt::print(cout, "| {:^30} | {:<10} | {:<15} |\n", "Function", "Duration", "Avg duration");
+        fmt::print(cout, "| {:-^30} | {:-<10} | {:-<15} |\n", "-", "-", "-");
+        const auto& durations = eft::utils::Profiler::GetDurations();
+        const auto& avg_durations = eft::utils::Profiler::GetAvgDurations();
+        for (const auto& [name, duration]: durations) {
+            fmt::print(fmt::fg(fmt::color::light_green), "| {:^30} | {:10} | {:10} | \n",
+                       name,
+                       duration.count(),
+                       avg_durations.at(name).count()
+            );
+        }
+        fmt::print(cout, "| {:-^30} | {:-<10} | {:-<15} |\n", "-", "-", "-");
     }
 
     EFT_PROF_INFO("[Application] execution successfully finished");

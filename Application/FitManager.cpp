@@ -78,6 +78,7 @@ void FitManager::DoGlobalFit()
 }
 
 void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) {
+    EFT_PROFILE_FN();
     NpRankingStudyRes res;
     res.poi_name = settings.poi;
     res.statType = settings.statType;
@@ -404,6 +405,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
 
 void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetUpGlobObs(settings.prePostFit);
     //SetAllGlobObsTo(0, 0); // to find values for np preferred by data

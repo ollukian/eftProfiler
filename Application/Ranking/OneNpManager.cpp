@@ -15,6 +15,7 @@
 namespace eft::stats::ranking {
 
 void OneNpManager::ResetNp() {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManager::ResetNp");
     ws_->SetVarVal(np_, np_found_in_data_value);
     ws_->SetVarErr(np_, np_found_in_data_error);
@@ -23,6 +24,7 @@ void OneNpManager::ResetNp() {
 
 void OneNpManager::ResetPoi()
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManager::ResetPoi");
 
     EFT_PROF_INFO("Fix all pois const and to their init values");
@@ -57,11 +59,13 @@ void OneNpManager::ResetPoi()
 }
 void OneNpManager::LoadSnapshot(const std::string& name)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("OneNpManager::LoadSnapshot {}", name);
     ws_->raw()->loadSnapshot("tmp_nps");
 }
 void OneNpManager::VaryNpPrefit(char sign) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("OneNpManager::VaryNpPrefit vary {} on {}1", np_, sign);
     if (sign == '+')
         ws_->SetVarVal(np_, np_found_in_data_value + 1.);
@@ -73,6 +77,7 @@ void OneNpManager::VaryNpPrefit(char sign) noexcept
 }
 void OneNpManager::VaryNpPostfit(char sign) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("OneNpManager::VaryNpPostfit vary {} on {}sigma", np_, sign);
     if (sign == '+')
         ws_->SetVarVal(np_, np_found_in_data_value + np_found_in_data_error);
@@ -87,6 +92,7 @@ void OneNpManager::VaryNpPostfit(char sign) noexcept
 
 void OneNpManager::RunPreFit(char sign)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("[OneNpManager] run pre-fit for {}1", sign);
     ResetToInitState();
     VaryNpPrefit(sign);
@@ -98,6 +104,7 @@ void OneNpManager::RunPreFit(char sign)
 
 void OneNpManager::RunPostFit(char sign)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("[OneNpManager] run post-fit for {}sigma", sign);
     ResetToInitState();
     VaryNpPostfit(sign);
@@ -109,6 +116,7 @@ void OneNpManager::RunPostFit(char sign)
 
 void OneNpManager::RunFreeFit()
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("[OneNpManager] run free fit");
     ResetPoi(); // no reset np, since we know nothing about them yet
     RunFit();
@@ -117,6 +125,7 @@ void OneNpManager::RunFreeFit()
 
 void OneNpManager::RunFitFixingNpAtCentralValue()
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("[OneNpManager] run fit fixing np at its central value");
     ResetToInitState();
 
@@ -127,6 +136,7 @@ void OneNpManager::RunFitFixingNpAtCentralValue()
 
 void OneNpManager::RunFit()
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("Run Fit");
     fit::Fitter fitter;
 
@@ -165,6 +175,7 @@ void OneNpManager::RunFit()
 
 void OneNpManager::SaveResAs(std::string key)
 {
+    EFT_PROFILE_FN();
     StudyRes res;
     res.poi_name = poi_;
     res.np_name = np_;
@@ -179,8 +190,9 @@ void OneNpManager::SaveResAs(std::string key)
     results_[std::move(key)] = std::move(res);
 }
 
-    bool OneNpManagerBuilder::CheckValidity()
+bool OneNpManagerBuilder::CheckValidity()
 {
+    EFT_PROFILE_FN();
     if (result_.nps_ == nullptr) {
         EFT_PROF_CRITICAL("OneNpManagerBuilder no nps set");
         return false;
