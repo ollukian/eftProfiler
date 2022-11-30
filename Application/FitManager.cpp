@@ -624,15 +624,15 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
 
     EFT_PROF_INFO("Fill corr with poi sorted");
     shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>("h_sorted", "h_sorted", res.covariances.size(), 0, res.covariances.size());
+    EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", "idx", "name", "corr wit mu");
     for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
     //for (const auto& [name, cor] : sorted_corrs) {
         auto& name = sorted_corrs.at(idx).first;
         auto& corr = sorted_corrs.at(idx).second;
-        EFT_PROF_DEBUG("idx: {:3} ==> {:30} ==> {:30}", idx, name, corr);
-        corr_with_poi->SetBinContent(idx, corr);
-        corr_with_poi->GetXaxis()->SetBinLabel(idx, name.c_str());
+        EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", idx, name, corr);
+        corr_with_poi_sorted->SetBinContent(idx, corr);
+        corr_with_poi_sorted->GetXaxis()->SetBinLabel(idx, name.c_str());
     }
-
     corr_with_poi_sorted->SetLabelSize(0.005);
     corr_with_poi_sorted->Draw("H");
     canvas->SaveAs("correlations_with_poi_sorted.pdf");
