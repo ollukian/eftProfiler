@@ -61,9 +61,9 @@ void CreateWS(const string& filename)
     using RooStats::ModelConfig;
     using WS = RooWorkspace;
 
-    auto ws = new RooWorkspace("ws_test");
+    //auto ws = new RooWorkspace("ws_test");
     //auto ws = new RooWorkspace();
-    //auto ws = make_shared<RooWorkspace>("ws_test");
+    auto ws = make_shared<RooWorkspace>("ws_test");
     //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
     //RooRealVar mH("mH", "mH", 125.09);
     //RooRealVar width("width", "width", 2);
@@ -524,9 +524,9 @@ void Finalise() {
 void TestWSreading() {
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
-    auto ws_ = new WorkspaceWrapper();
-    //auto ws_ = std::make_shared<WorkspaceWrapper>();
-    ASSERT(ws_);
+    //auto ws_ = new WorkspaceWrapper();
+    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    ASSERT(ws_.get());
     ASSERT(std::filesystem::exists(path));
 
     bool is_set = false;
@@ -562,7 +562,9 @@ void TestLoading() {
 
 void TestWSGetters() {
     using namespace eft::utils::internal;
-    auto ws = LoadWS();
+    //auto ws = std::make_shared<WorkspaceWrapper>(*LoadWS());
+    auto ws = std::make_shared<WorkspaceWrapper>();
+    ws.reset(LoadWS());
 
     for (const string& glob_name : _test_globs_names_) {
         ASSERT(ws->GetVar(glob_name)->isConstant());
@@ -594,7 +596,8 @@ void TestWSGetters() {
 
 void TestWSSetters() {
     using namespace eft::utils::internal;
-    auto ws = LoadWS();
+    auto ws = std::make_shared<WorkspaceWrapper>();
+    ws.reset(LoadWS());
 
     const string poi_name = *_test_poi_names_.begin();
     const string one_np_name = *_test_np_names_.begin();
