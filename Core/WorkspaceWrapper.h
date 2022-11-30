@@ -120,6 +120,7 @@ private:
     std::unique_ptr<RooWorkspace>           ws_             {};
     std::unique_ptr<RooStats::ModelConfig>  modelConfig_    {};
     std::unique_ptr<RooCategory>            channelList_    {};
+    std::unique_ptr<TFile>                  file_with_ws_   {};
     mutable Categories                      categories_     {};
 
 
@@ -150,10 +151,11 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
     }
 
     //std::unique_ptr<TFile> f_ {TFile::Open(path.c_str())};
-    TFile* f_ = TFile::Open(std::move(path).c_str());
-    if (f_) {
+    //TFile* f_ = TFile::Open(std::move(path).c_str());
+    file_with_ws_.reset(TFile::Open(std::move(path).c_str()));
+    if (file_with_ws_) {
         ws_ = std::make_unique<RooWorkspace>(
-                *dynamic_cast<RooWorkspace*>( f_->Get( std::move(name).c_str() ) )
+                *dynamic_cast<RooWorkspace*>( file_with_ws_->Get( std::move(name).c_str() ) )
                 );
         //f_->Close();
         return true;

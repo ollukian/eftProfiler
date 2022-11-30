@@ -163,9 +163,6 @@ void TestDrawableCtor() {
 
 void TestSceneBasicDrawableRegistering() {
     {
-        EFT_PROF_CRITICAL("test #1");
-        eft::stats::Logger::SetFullPrinting();
-        EFT_PROF_INFO("TestSceneBasicDrawableRegistering");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
@@ -178,7 +175,6 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #2");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         EFT_PROF_CRITICAL("test #3  create box #1");
@@ -201,7 +197,6 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #4");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box_raw1 = Scene::AddBox(1, 2, 3, 4)->As<TBox>();
@@ -225,7 +220,6 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #5");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
 
@@ -240,13 +234,10 @@ void TestSceneBasicDrawableRegistering() {
             }
         }
 
-        EFT_PROF_INFO("register hist");
         auto hist_drawable_handle = Scene::Register(cov);
         ASSERT(hist_drawable_handle);
-        EFT_PROF_INFO("get hist as th2d");
         auto hist_drawable_handle_as_th2d = hist_drawable_handle->As<TH2D>();
         ASSERT_EQUAL(hist_drawable_handle_as_th2d->GetName(), cov->GetName());
-        EFT_PROF_INFO("compare hists");
         for (size_t idx_x {1}; idx_x <= 50; ++idx_x) {
             for (size_t idx_y {1}; idx_y <= 50; ++idx_y) {
                 ASSERT_EQUAL(cov->GetBinContent(idx_x, idx_y),
