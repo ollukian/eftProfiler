@@ -201,7 +201,7 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #3");
+        EFT_PROF_CRITICAL("test #4");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box_raw1 = Scene::AddBox(1, 2, 3, 4)->As<TBox>();
@@ -225,7 +225,7 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #3");
+        EFT_PROF_CRITICAL("test #5");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
 

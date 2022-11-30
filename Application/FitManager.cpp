@@ -577,6 +577,7 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
         cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
         cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
     }
+    cov->SetLabelSize(0.005);
     EFT_PROF_INFO("All names are set, draw");
     cov->Draw("colz");
     EFT_PROF_INFO("drawn, save");
@@ -584,6 +585,8 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     EFT_PROF_INFO("clear");
     canvas->Clear();
     //Scene::SaveAs("covariances.pdf");
+
+    map<string, double> corr_per_np;
 
     // get correlations between POI and other things
     EFT_PROF_INFO("Extract correlations: poi <-> nps");
@@ -595,7 +598,24 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
         corr_with_poi->SetBinContent(idx_np + 1, corr);
         corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
         EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+        corr_per_np[par->GetName()] = corr;
     }
+
+    vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
+    std::sort(sorted_corrs.begin(),
+              sorted_corrs.end(),
+              [](const auto& l, const auto& r) -> bool
+    {
+        return l.second > r.second;
+    });
+
+    EFT_PROF_INFO("Sorted corrs with poi:");
+    for (const auto& [name, cor] : sorted_corrs) {
+        cout << fmt::format("{:60} => {}", name, cor) << endl;
+    }
+
+    corr_with_poi->SetLabelSize(0.005);
+
     corr_with_poi->Draw("H");
     canvas->SaveAs("correlations_with_poi.pdf");
     //Scene::SaveAs()
