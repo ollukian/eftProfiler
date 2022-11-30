@@ -45,7 +45,7 @@ namespace eft::utils::draw {
 
 class Scene {
     //using Drawable = TObject;
-    using Object = std::unique_ptr<Drawable>;
+    using Object = std::shared_ptr<Drawable>;
     //using Object   = Drawable;
     using HistoPtr = std::shared_ptr<TH1D>;
 public:
@@ -68,8 +68,8 @@ public:
     static const std::vector<Object>& GetRegistry() noexcept { return objects_; }
     static inline Drawable* Register(Object& object) noexcept;
     static inline Drawable* Register(Drawable* object) noexcept;
-
     static inline Drawable* Register(TObject* object) noexcept;
+    static inline Drawable* Register(std::shared_ptr<TObject> obj);
 
     static inline void Clear() noexcept;
 
@@ -81,6 +81,7 @@ private:
     static void CreateLatex(LatexSettings settings, std::string name);
 private:
     static inline std::vector<Object>       objects_ {};
+    static inline std::set<std::shared_ptr<TObject>> owned_{};
     static inline std::unique_ptr<TCanvas>  canvas_ {};
     static inline std::shared_ptr<Latex>    latexDrawer {};
 
@@ -106,9 +107,18 @@ inline Drawable* Scene::Register(TObject* object) noexcept
 {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Register an object with name: {} to the scene from a ptr", object->GetName());
-    objects_.push_back(std::make_unique<Drawable>(object));
+    auto obj_ptr = std::make_shared<TObject>(*object);
+    owned_.insert(obj_ptr);
+    objects_.push_back(std::make_shared<Drawable>(obj_ptr));
+    //objects_.push_back(std::make_unique<Drawable>(object));
     //objects_.push_back(std::move(object));
     return objects_.back().get();
+}
+inline Drawable* Scene::Register(std::shared_ptr<TObject> obj)
+{
+    EFT_PROFILE_FN();
+    owned_.insert(obj);
+    objects_.push_back(std::make_shared<Drawable>(obj));
 }
 
 inline void Scene::Clear() noexcept {
@@ -119,6 +129,7 @@ inline void Scene::Clear() noexcept {
     latexDrawer.reset();
     histos_.clear();
     config_.reset();
+    owned_.clear();
 }
 
 //TObject& Scene::Register(TObject* obj) noexcept {
