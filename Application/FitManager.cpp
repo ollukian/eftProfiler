@@ -572,7 +572,7 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     auto canvas = make_shared<TCanvas>("c", "c", 4000, 4000);
     //auto canvas = Scene::Create(4000, 4000);
     //Scene::Register(cov.get());
-    for (size_t idx_np {0}; idx_np < cov->GetSize(); ++idx_np) {
+    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
         EFT_PROF_DEBUG("set label of bin: {:4} to {}", idx_np, res.params.at(idx_np)->GetName());
         cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
         cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
@@ -589,7 +589,7 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     EFT_PROF_INFO("Extract correlations: poi <-> nps");
     auto poi_var = ws_->GetVar(res.poi);
     shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
-    for (size_t idx_np {0}; idx_np < cov->GetSize(); ++idx_np) {
+    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
         auto par = res.params.at(idx_np);
         auto corr = res.fitResult->correlation(*poi_var, *par);
         corr_with_poi->SetBinContent(idx_np + 1, corr);

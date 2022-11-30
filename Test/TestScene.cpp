@@ -111,7 +111,7 @@ void TestDrawableCtor() {
 
     }
     {
-        auto box = std::make_shared<TBox>(1, 2, 3, 4);
+        auto box = std::make_shared<TBox>(1, 3, 2, 4);
         auto drawable = Drawable(box.get());
         ASSERT_EQUAL(drawable.As<TBox>()->GetX1(), 1);
         ASSERT_EQUAL(drawable.As<TBox>()->GetX2(), 2);
