@@ -11,6 +11,9 @@
 #include "Profiler.h"
 #include "../Test/test_runner.h"
 
+#include "Scene.h"
+#include "TH2D.h"
+
 #include "../Vendors/spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ostr.h"
 
@@ -548,14 +551,30 @@ HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& setti
     EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
     auto fitRes = fitter.Fit(fitSettings);
     EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
-    const RooArgList list_nps(*nps);
-    EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps wiht {} entries:", list_nps.size());
+    RooArgList list_nps(*nps);
+    list_nps.add(*ws_->GetVar(settings.poi));
+    EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps (and POI) with {} entries:", list_nps.size());
     for (const auto np : list_nps) {
         cout << np->GetName() << endl;
     }
     EFT_PROF_DEBUG("[ComputeHesseNps] extract results from RooFitResult");
     auto res = HesseStudyResult::ExtractFromRooFitResult(*fitRes, list_nps);
     return res;
+}
+
+void FitManager::PlotCovariances(const HesseStudyResult& res) const
+{
+
+    using eft::utils::draw::Scene;
+
+    shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
+    Scene::Create(4000, 4000);
+    cov->Draw("colz");
+    for (size_t idx_np {0}; idx_np < cov->GetSize(); ++idx_np) {
+        cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
+        cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
+    }
+    Scene::SaveAs("covariances.pdf");
 }
 
 void FitManager::SetAllNuisanceParamsConst() noexcept

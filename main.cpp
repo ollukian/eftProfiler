@@ -308,8 +308,8 @@ int main(int argc, char* argv[]) {
         auto res = manager->ComputeHesseNps(settings);
         EFT_PROF_INFO("Sort result:");
         const auto sorted = res.GetSorted();
-
-        //cout << sorted << endl;
+        EFT_PROF_INFO("Plot covariances:");
+        manager->PlotCovariances(res);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);

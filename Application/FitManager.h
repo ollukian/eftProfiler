@@ -35,6 +35,7 @@ public:
     void ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) override;
     void DoFitAllNpFloat(const NpRankingStudySettings& settings) override;
     HesseStudyResult ComputeHesseNps(const NpRankingStudySettings& settings) override;
+    void PlotCovariances(const HesseStudyResult& res) const;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;
