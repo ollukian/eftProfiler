@@ -69,6 +69,8 @@ public:
     static inline Drawable* Register(Object& object) noexcept;
     static inline Drawable* Register(Drawable* object) noexcept;
 
+    static inline Drawable* Register(TObject* object) noexcept;
+
     static inline void Clear() noexcept;
 
 private:
@@ -97,6 +99,15 @@ inline Drawable* Scene::Register(Scene::Object& object) noexcept {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Register an object with name: {} to the scene from a unique ptr", object->name);
     objects_.push_back(std::move(object));
+    return objects_.back().get();
+}
+
+inline Drawable* Scene::Register(TObject* object) noexcept
+{
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Register an object with name: {} to the scene from a ptr", object->GetName());
+    objects_.push_back(std::make_unique<Drawable>(object));
+    //objects_.push_back(std::move(object));
     return objects_.back().get();
 }
 

@@ -17,7 +17,7 @@
 namespace eft::utils::draw {
 
 struct Drawable {
-    std::unique_ptr<TObject> obj {};
+    std::shared_ptr<TObject> obj {};
     std::string draw_options;
     std::string name;
     bool should_be_drawn {true};
@@ -50,6 +50,11 @@ struct Drawable {
             , name(std::move(name_ext))
     {};
     explicit Drawable(TObject* ptr, std::string opt = "", std::string name_ext = "") noexcept
+            : obj(ptr)
+            , draw_options(std::move(opt))
+            , name(std::move(name_ext))
+    {};
+    explicit Drawable(std::shared_ptr<TObject>& ptr, std::string opt = "", std::string name_ext = "") noexcept
             : obj(ptr)
             , draw_options(std::move(opt))
             , name(std::move(name_ext))

@@ -108,6 +108,29 @@ void TestDrawableCtor() {
         ASSERT_NOT_EQUAL(box_1->As<TBox>()->GetY2(), box_2->As<TBox>()->GetY2());
 
     }
+    {
+        auto box = std::make_shared<TBox>(1, 2, 3, 4);
+        auto drawable = Drawable(box.get());
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX1(), 1);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX2(), 2);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY1(), 3);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY2(), 4);
+
+        box->SetX1(10);
+        box->SetX2(20);
+        box->SetY1(30);
+        box->SetY2(40);
+
+        ASSERT_EQUAL(box->GetX1(), 10);
+        ASSERT_EQUAL(box->GetX2(), 20);
+        ASSERT_EQUAL(box->GetY1(), 30);
+        ASSERT_EQUAL(box->GetY2(), 40);
+
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX1(), 10);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX2(), 20);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY1(), 30);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY2(), 40);
+    }
 }
 
 //void TestDrawableTemplateCreation() {
