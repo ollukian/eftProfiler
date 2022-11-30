@@ -69,6 +69,7 @@ public:
     static inline Drawable* Register(Object& object) noexcept;
     static inline Drawable* Register(Drawable* object) noexcept;
     static inline Drawable* Register(TObject* object) noexcept;
+    static inline Drawable* Register(std::unique_ptr<TObject> object) noexcept;
     static inline Drawable* Register(std::shared_ptr<TObject> obj);
 
     static inline void Clear() noexcept;
@@ -119,6 +120,15 @@ inline Drawable* Scene::Register(std::shared_ptr<TObject> obj)
     EFT_PROFILE_FN();
     owned_.insert(obj);
     objects_.push_back(std::make_shared<Drawable>(obj));
+    return objects_.back().get();
+}
+
+inline Drawable* Scene::Register(std::unique_ptr<TObject> obj) noexcept
+{
+    EFT_PROFILE_FN();
+    objects_.push_back(std::make_shared<Drawable>(obj.get()));
+    owned_.insert(std::move(obj));
+    return objects_.back().get();
 }
 
 inline void Scene::Clear() noexcept {

@@ -169,7 +169,7 @@ void TestSceneBasicDrawableRegistering() {
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
-        Scene::Register(box1);
+        Scene::Register(box1.get());
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 1u);
         ASSERT_EQUAL(reg[0]->name, "box1");
@@ -186,9 +186,9 @@ void TestSceneBasicDrawableRegistering() {
         EFT_PROF_CRITICAL("test #3  create box #2");
         auto box2 = Drawable::Create(new TBox(1, 1, 1, 1), "", "box2");
         EFT_PROF_CRITICAL("test #3  register box #1");
-        Scene::Register(box1);
+        Scene::Register(box1.get());
         EFT_PROF_CRITICAL("test #3  register box #2");
-        Scene::Register(box2);
+        Scene::Register(box2.get());
         EFT_PROF_CRITICAL("test #3  get reg");
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 2u);
