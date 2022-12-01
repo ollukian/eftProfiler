@@ -145,7 +145,7 @@ inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("Set ws, check path: {}", path);
+    EFT_PROF_DEBUG("Set ws, check path: {}", path);
     if (! std::filesystem::exists(path) ) {
         EFT_PROF_CRITICAL("Ws under [{}] doesn't exist", path);
         return false;
@@ -153,9 +153,9 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 
     //std::unique_ptr<TFile> f_ {TFile::Open(path.c_str())};
     //TFile* f_ = TFile::Open(std::move(path).c_str());
-    EFT_PROF_INFO("Set ws, reset ptr");
+    EFT_PROF_DEBUG("Set ws, reset ptr");
     file_with_ws_.reset(TFile::Open(std::move(path).c_str()));
-    EFT_PROF_INFO("extract from the file");
+    EFT_PROF_DEBUG("extract from the file");
     if (file_with_ws_) {
 //        ws_ = std::make_unique<RooWorkspace>(
 //                *dynamic_cast<RooWorkspace*>( file_with_ws_->Get( std::move(name).c_str() ) )
@@ -164,7 +164,7 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
         //f_->Close();
         return true;
     }
-    EFT_PROF_INFO("WorkspaceWrapper::SetWS leave the function");
+    EFT_PROF_TRACE("WorkspaceWrapper::SetWS leave the function");
     return false;
 }
 

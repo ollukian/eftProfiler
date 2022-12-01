@@ -192,14 +192,14 @@ inline OneNpManagerBuilder OneNpManager::create() {
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingNPs(const Nps& nps) noexcept {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("UsingNPs");
+    EFT_PROF_TRACE("UsingNPs");
     result_.nps_ = nps;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingWS(IWorkspaceWrapper* ws) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("UsingWS");
+    EFT_PROF_TRACE("UsingWS");
     //result_.ws_ = std::make_shared<IWorkspaceWrapper>(ws);
     result_.ws_ = ws;
     return *this;
@@ -207,7 +207,7 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingWS(IWorkspaceWrapper* ws) 
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingSnapshotWithInitVals(std::string name) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("UsingSnapshotWithInitVals {}", name);
+    EFT_PROF_TRACE("UsingSnapshotWithInitVals {}", name);
     result_.snapshot_init_values_name_ = std::move(name);
     return *this;
 }

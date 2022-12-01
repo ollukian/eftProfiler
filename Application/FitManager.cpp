@@ -587,7 +587,7 @@ void FitManager::Init(FitManagerConfig&& config)
         return;
     }
 
-    EFT_PROF_INFO("[FitManager] INIT DONE");
+    EFT_PROF_TRACE("[FitManager] INIT DONE");
 }
 
 void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept

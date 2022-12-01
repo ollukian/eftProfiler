@@ -153,19 +153,19 @@ void OneNpManager::RunFit()
         fitSettings_.strategy = np_ranking_settings_.strategy;
         fitSettings_.eps = np_ranking_settings_.eps;
         is_initiated_ = true;
+        EFT_PROF_INFO("Status of POIs before nll creation:");
+        for (auto poi : *pois_) {
+            auto poi_cast = dynamic_cast<RooRealVar*>(poi);
+            EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+            EFT_PROF_DEBUG("as macro: {}", *poi_cast);
+        }
     }
 
-    EFT_PROF_INFO("Status of POIs before nll creation:");
-    for (auto poi : *pois_) {
-        auto poi_cast = dynamic_cast<RooRealVar*>(poi);
-        EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
-        EFT_PROF_DEBUG("as macro: {}", *poi_cast);
-    }
 
     EFT_PROF_DEBUG("reuse_nll      => {}", np_ranking_settings_.reuse_nll);
     EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
     if ( ! np_ranking_settings_.reuse_nll || nll_ == nullptr) {
-        EFT_PROF_DEBUG("Need to create nll");
+        EFT_PROF_INFO("Need to create nll");
         nll_.reset(fitter.CreatNll(fitSettings_));
     }
     else {
@@ -231,7 +231,7 @@ bool OneNpManagerBuilder::CheckValidity()
     // do not check now
     // - POI
     // -
-    EFT_PROF_INFO("OneNpManagerBuilder the settings are correct. Create OneNpManager");
+    EFT_PROF_DEBUG("OneNpManagerBuilder the settings are correct. Create OneNpManager");
     return true;
 }
 
