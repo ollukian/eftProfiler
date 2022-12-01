@@ -196,7 +196,7 @@ namespace eft::plot {
         bool is_vertical = settings->vertical;
         size_t nb_bins = nb_systematics;
         if (is_vertical)
-            nb_bins += 3;
+            nb_bins += settings->empty_bins;
 
         auto histo                  = PlotterUtils::MakeHisto1D("histo", nb_bins);
         auto histo_neg              = PlotterUtils::MakeHisto1D("h_neg", nb_bins);
@@ -205,14 +205,7 @@ namespace eft::plot {
         auto histo_minus_one_var    = PlotterUtils::MakeHisto1D("h_-1_var", nb_bins);
         auto histo_plus_one_var     = PlotterUtils::MakeHisto1D("h_+1_var", nb_bins);
 
-        TGaxis::SetMaxDigits(3);
-        //TAxis::SetNoExponent(false);
-//        histo->GetYaxis()->SetNoExponent(false);
-//        histo_neg->GetYaxis()->SetNoExponent(false);
-//        histo_plus_sigma_var->GetYaxis()->SetNoExponent(false);
-//        histo_minus_sigma_var->GetYaxis()->SetNoExponent(false);
-//        histo_minus_one_var->GetYaxis()->SetNoExponent(false);
-//        histo_plus_one_var->GetYaxis()->SetNoExponent(false);
+        TGaxis::SetMaxDigits(settings->max_digits); // 3
 
         if ( ! settings->np_names.empty() ) {
             if (settings->np_names.size() != nb_systematics) {
@@ -235,7 +228,7 @@ namespace eft::plot {
             // to save space for labels
             size_t idx_bin = idx_syst;
             if (is_vertical) {
-                idx_bin += 3;
+                idx_bin += settings->empty_bins;
             }
 
             string bin_label = PlotterUtils::GetLabel(settings,
@@ -253,26 +246,23 @@ namespace eft::plot {
             //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
         }
 
-        const float range_high = settings->rmuh; //  0.002f;
-        const float range_low  = settings->rmul; // -0.002
+        //const float range_high = settings->rmuh; //  0.002f;
+        //const float range_low  = settings->rmul; // -0.002
+
+        float range_high = 1.5f * (res_for_plot_after_selector.at(0).impact_plus_one_var);
+        float range_low  = 1.5f * (res_for_plot_after_selector.at(0).impact_minus_one_var);
+
+        if (settings->rmuh != 0)
+            range_high = settings->rmuh;
+
+        if (settings->rmul != 0)
+            range_low = settings->rmul;
+
         //constexpr float scaling = (range_high - range_low) / 2.f;
         //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
         float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
         if (settings->np_scale > 1E-9)
             scaling = settings->np_scale;
-        //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value +  res_for_plot_after_selector.at(0).obs_error);
-        //const auto range_high = 1.5f * (res_for_plot_after_selector.at(0).obs_value);
-        //const auto range_low = -range_high;
-
-//        EFT_PROF_INFO("range_high: {}", range_high);
-//        EFT_PROF_INFO("range_low: {}", range_low);
-//        EFT_PROF_INFO("scaling: {}", scaling);
-//        EFT_PROF_INFO("[0]obs_value = {}", res_for_plot_after_selector.at(0).obs_value);
-//        EFT_PROF_INFO("[0]impact_plus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_plus_sigma_var);
-//        EFT_PROF_INFO("[0]impact_minus_sigma_var = {}", res_for_plot_after_selector.at(0).impact_minus_sigma_var);
-//        EFT_PROF_INFO("[0]impact_plus_one_var = {}", res_for_plot_after_selector.at(0).impact_plus_one_var);
-//        EFT_PROF_INFO("[0]impact_minus_one_var = {}", res_for_plot_after_selector.at(0).impact_minus_one_var);
-
 
         if (is_vertical)
             histo->GetXaxis()->LabelsOption("v");
@@ -287,11 +277,6 @@ namespace eft::plot {
             }
         }
 
-        //if (settings->vertical) {
-        //    histo->GetYaxis()->LabelsOption("h");
-        //}
-
-        //histo->GetYaxis()->SetRangeUser(-1.5, 1.5);
         histo->GetYaxis()->SetRangeUser(range_low, range_high);
         histo->GetYaxis()->SetTitleOffset(settings->mu_offset); // 1.4
         if (settings->mu_latex.empty())
@@ -461,7 +446,7 @@ namespace eft::plot {
         for (int idx_syst {0}; idx_syst != nb_systematics; ++idx_syst) {
             size_t idx_bin = idx_syst;
             if (is_vertical) {
-                idx_bin += 3;
+                idx_bin += settings->empty_bins;
             }
             EFT_PROF_DEBUG("[NpRankingPlotter]{Plot} set np pull {:3} with name {:40} to {:8} +- {:8}",
                            idx_syst,
@@ -487,7 +472,7 @@ namespace eft::plot {
 
         nb_bins = nb_systematics;
         if (is_vertical)
-            nb_bins += 3;
+            nb_bins += settings->empty_bins;
 
         // draw second axes for nps
         auto axis_nps = make_unique<TGaxis>(
@@ -599,8 +584,8 @@ namespace eft::plot {
         const float x_start_init = 0.3f;
 
         float x_start = x_start_init;
-        float x_size_one_block = 0.15f;
-        float dx_between_markers = 0.15f;
+        float x_size_one_block = settings->dx_legend; // 0.15
+        float dx_between_markers = settings->dx_legend;  // 0.15
 
         float y_start_multiplier = 0.05f;
         float y_end_multiplier   = 0.25f;
@@ -610,7 +595,6 @@ namespace eft::plot {
         TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_posfit_plus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
         TBox marker_posfit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
-
 
         marker_prefit_plus. SetLineColor(settings->color_prefit_plus);
         marker_prefit_minus.SetLineColor(settings->color_prefit_minus);
@@ -654,6 +638,7 @@ namespace eft::plot {
             EFT_PROF_WARN("draw latex -1 at {}, {}",x_start_init + dx_between_markers * 1,settings->rmuh * (y_end_multiplier + 0.1));
             EFT_PROF_WARN("draw latex +s at {}, {}",x_start_init + dx_between_markers * 2,settings->rmuh * (y_end_multiplier + 0.1));
             EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,settings->rmuh * (y_end_multiplier + 0.1));
+
 
 
             latex.SetNDC(false);
@@ -832,6 +817,10 @@ namespace eft::plot {
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, add_text_ndc);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, dy);
         EFT_GET_FROM_CONFIG(config, np_ranking_settings, h_draw_options);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, dx_legend);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, dy_legend);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, empty_bins);
+        EFT_GET_FROM_CONFIG(config, np_ranking_settings, max_digits);
 #undef EFT_GET_FROM_CONFIG
 #endif
 

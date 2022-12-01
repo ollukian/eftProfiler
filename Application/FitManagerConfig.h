@@ -50,8 +50,8 @@ struct FitManagerConfig {
     float                       tmargin             {0.03};
     float                       bmargin             {0.40};
     std::vector<size_t>         plt_size            {1200, 800};
-    float                       rmul                {-0.002};
-    float                       rmuh                {0.002};
+    float                       rmul                {0.};
+    float                       rmuh                {0.};
     float                       np_scale            {1E-9};
     float                       label_size          {0.02};
     std::vector<std::string>    fileformat          {"pdf"};
@@ -79,7 +79,11 @@ struct FitManagerConfig {
     std::vector<std::string>    add_text            {};
     std::vector<std::string>    add_text_ndc        {};
     std::vector<std::string>    h_draw_options      {};
-};
+    size_t                      empty_bins          {3};
+    float                       dx_legend           {0.15};
+    float                       dy_legend           {0.00};
+    size_t                      max_digits          {3};
+    };
 
 template<typename OStream>
 OStream& operator<<(OStream& os, const std::vector<std::basic_string<char>>& vec)

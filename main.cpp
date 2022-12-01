@@ -121,7 +121,11 @@ int main(int argc, char* argv[]) {
                 {"bool",            "silent",           "false",        R"(MUST me FIRST option. To prevent any output, except demanded: to use as wrapper around wc.)"},
                 {"bool",            "release",          "false",        R"(Set message level to "INFO". Available only for debugging during development)"},
                 {"string",          "get",              "",             R"(POI | NPS | GLOBS | CATS | PAIRED_NPS | PAIRED_GLOBS + [COUNT] <== prints them to stdout)"},
-                {"vector<string>",  "h_draw_options",   "H",            R"(Options for the draw of histograms. Note: [HBAR] is default for --vertical)"},
+                {"vector<string>",  "h_draw_options",   "H",            "Options for the draw of histograms. Note: [HBAR] is default for --vertical"},
+                {"size_t",          "empty_bins",       "3",            "Number of first empty bins, where the Legend and text will be written"},
+                {"float",           "dx_legend",        "0.15",         "x-distance between lines of legend in the units of the plot"},
+                {"float",           "dy_legend",        "0.00",         "y-distance between lines of legend in the units of the plot"},
+                {"size_t",          "max_digits",       "3",            "Maximum number of digits on the POI axis. If more, exponential form is used"},
         })
         {
             cout << fmt::format("|{:^16} | {:<20} | {:^15} | {:<80}|", options[0], options[1], options[2], options[3]) << endl;

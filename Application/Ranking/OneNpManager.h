@@ -96,6 +96,8 @@ private:
     IWorkspaceWrapper* ws_   {nullptr};
 
     NpRankingStudySettings np_ranking_settings_;
+    fit::FitSettings       fitSettings_;
+    bool is_initiated_ = false;
     //std::shared_ptr<IWorkspaceWrapper> ws_;
 private:
     OneNpManager() noexcept = default;
