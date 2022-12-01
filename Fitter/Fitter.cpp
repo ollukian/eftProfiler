@@ -53,10 +53,10 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
     minim.setPrintLevel( 1 );
     EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
-    RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
-    //RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
+    RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
     minim.setProfile(); /* print out time */
-    EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001", settings.eps);
+    EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001 = {}", settings.eps, settings.eps / 0.001);
     minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
     EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
@@ -84,7 +84,6 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 
     size_t retry = settings.retry;
     size_t strategy = settings.strategy;
-
     while (_status != 0 && _status != 1 && strategy < 2 && retry > 0)
     {
         EFT_PROF_INFO("Fit failed with status: {} using strategy {}, try again with strategy: {}",
