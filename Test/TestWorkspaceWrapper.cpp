@@ -542,6 +542,7 @@ void TestWSreading() {
     EFT_PROF_INFO("set model config");
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
 
+    EFT_PROF_INFO("get pois");
     const RooArgSet* pois  = ws_->GetPOIs();
     const RooArgSet* nps   = ws_->GetNp();
     const RooArgSet* globs = ws_->GetGlobObs();
@@ -561,9 +562,11 @@ void TestWSreading() {
     ASSERT_EQUAL(globs->getSize(),  3);
     ASSERT_EQUAL(obs->getSize(),    1);
     RooMsgService::instance().setGlobalKillBelow(level);
+    EFT_PROF_INFO("function is over, time to delete the ws");
 }
 
 void TestLoading() {
+    EFT_PROF_INFO("Try loading");
     ASSERT_NO_THROW(std::ignore = LoadWS()); // std::ignore to prevent warnings about [[nodiscard]]
     ASSERT(LoadWS()->raw());
 }

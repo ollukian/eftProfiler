@@ -245,6 +245,7 @@ inline RooAbsPdf* WorkspaceWrapper::GetPdfSigGivenCategory(const std::string& ca
 inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
 {
     EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("try to set model config with name: {}", name);
     auto _mc = ws_->obj( name.c_str() );
     if (! _mc) {
         EFT_PROF_CRITICAL("Model Config with name {} is not present in the WS", name);
@@ -254,6 +255,7 @@ inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
              _mc
             ))
             ;
+    EFT_PROF_DEBUG("Model config is set, leave setmodelconfig");
     return modelConfig_.get();
 }
 
