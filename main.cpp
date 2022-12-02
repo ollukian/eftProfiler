@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::Init(commandLineArgs);
     cout << "new logger is registered" << endl;
     eft::stats::Logger::SetRelease();
+    cout << "set release for the new logger" << endl;
 
     if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
