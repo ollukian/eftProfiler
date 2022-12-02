@@ -39,7 +39,7 @@ namespace eft::stats {
         static void Init(std::string name, std::string path = "");
         static void Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs);
 
-        static inline std::shared_ptr<spdlog::logger>& GetLogger();
+        static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept;
         static inline void SetSilent()       noexcept { logger_->set_level(spdlog::level::off); }
         static inline void SetFullPrinting() noexcept { logger_->set_level(spdlog::level::trace); }
         static inline void SetRelease()      noexcept { logger_->set_level(spdlog::level::info); }
@@ -47,17 +47,18 @@ namespace eft::stats {
         static inline void SetLevel(spdlog::level::level_enum level) noexcept { logger_->set_level(level); }
 
     private:
-        static std::shared_ptr<spdlog::logger> logger_;
-        static inline bool is_init_ {false};
-        static std::shared_ptr<spdlog::logger> logger_default_;
+        static inline std::shared_ptr<spdlog::logger> logger_;
+        static inline bool                            is_init_ {false};
+        static inline std::shared_ptr<spdlog::logger> logger_default_;
     };
+
+    inline std::shared_ptr<spdlog::logger>& Logger::GetLogger() noexcept {
+        if (is_init_)
+            return logger_;
+        return logger_default_;
+    }
 } // namespace eft
 
-inline std::shared_ptr<spdlog::logger>& eft::stats::Logger::GetLogger() {
-    if (is_init_)
-        return logger_;
-    return logger_default_;
-}
 
 #define EFT_PROF_TRACE(...)      ::eft::stats::Logger::GetLogger()->trace(__VA_ARGS__)
 #define EFT_PROF_INFO(...)       ::eft::stats::Logger::GetLogger()->info(__VA_ARGS__)
