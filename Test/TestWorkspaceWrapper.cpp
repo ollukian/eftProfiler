@@ -533,9 +533,13 @@ void TestWSreading() {
     ASSERT(std::filesystem::exists(path));
 
     bool is_set = false;
+    EFT_PROF_INFO("set ws");
     ASSERT_NO_THROW(is_set = ws_->SetWS(path, ws_name));
+    EFT_PROF_INFO("set ws DONE");
     ASSERT(is_set);
+    EFT_PROF_INFO("try extract variable n");
     ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 11);
+    EFT_PROF_INFO("set model config");
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
 
     const RooArgSet* pois  = ws_->GetPOIs();
