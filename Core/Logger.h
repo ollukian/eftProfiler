@@ -37,7 +37,7 @@ namespace eft::stats {
     public:
         static void Init();
         static void Init(std::string name, std::string path = "");
-        static void Init(const CommandLineArgs& commandLineArgs);
+        static void Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs);
 
         static inline std::shared_ptr<spdlog::logger>& GetLogger();
         static inline void SetSilent()       noexcept { logger_->set_level(spdlog::level::off); }

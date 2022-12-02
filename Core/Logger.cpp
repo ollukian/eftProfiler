@@ -3,6 +3,7 @@
 //
 
 #include "Logger.h"
+#include "CommandLineArgs.h"
 
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -64,18 +65,18 @@ void Logger::Init() {
 }
 
 
-void Logger::Init(const CommandLineArgs& commandLineArgs)
+void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
 {
-    if (commandLineArgs.HasKey("task")) {
+    if (commandLineArgs->HasKey("task")) {
         string task;
-        commandLineArgs.SetValIfArgExists("task", task);
+        commandLineArgs->SetValIfArgExists("task", task);
         if (task == "compute_ranking") {
             string poi;
             string log_path;
             size_t worker_id;
-            commandLineArgs.SetValIfArgExists("poi", poi);
-            commandLineArgs.SetValIfArgExists("worker_id", worker_id);
-            commandLineArgs.SetValIfArgExists("log_path", log_path);
+            commandLineArgs->SetValIfArgExists("poi", poi);
+            commandLineArgs->SetValIfArgExists("worker_id", worker_id);
+            commandLineArgs->SetValIfArgExists("log_path", log_path);
             string name = fmt::format("ranking_{}_worker_{}", poi, worker_id);
             Logger::Init(std::move(name), std::move(log_path));
         }
@@ -91,15 +92,15 @@ void Logger::Init(const CommandLineArgs& commandLineArgs)
     } // task
 
 
-    if (commandLineArgs.HasKey("release")) {
+    if (commandLineArgs->HasKey("release")) {
         eft::stats::Logger::SetRelease();
     }
 
-    if (commandLineArgs.HasKey("debug")) {
+    if (commandLineArgs->HasKey("debug")) {
         eft::stats::Logger::SetFullPrinting();
     }
 
-    if (commandLineArgs.HasKey("silent")) {
+    if (commandLineArgs->HasKey("silent")) {
         eft::stats::Logger::SetSilent();
     }
 
