@@ -23,11 +23,16 @@ int main(int argc, char* argv[]) {
     gErrorIgnoreLevel = kError;
     gStyle->SetHistMinimumZero(true);
 
+    cout << "init default" << endl;
     eft::stats::Logger::Init();
+    cout << "done init default" << endl;
+    cout << "create cmd line args" << endl;
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
+    cout << "cmd line args are created" << endl;
     //CommandLineArgs commandLineArgs(argc, argv);
-
+    cout << "init new logger" << endl;
     eft::stats::Logger::Init(commandLineArgs);
+    cout << "new logger is registered" << endl;
     eft::stats::Logger::SetRelease();
 
     if (argc >= 2 && string(argv[1]) == "--test") {

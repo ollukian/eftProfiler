@@ -63,6 +63,7 @@ void Logger::Init() {
 
 void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
 {
+    cout << "init logger from a ptr to cmdline args" << endl;
     if (commandLineArgs->HasKey("task")) {
         string task;
         commandLineArgs->SetValIfArgExists("task", task);
@@ -74,7 +75,9 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
             commandLineArgs->SetValIfArgExists("worker_id", worker_id);
             commandLineArgs->SetValIfArgExists("log_path", log_path);
             string name = fmt::format("ranking_{}_worker_{}", poi, worker_id);
+            cout << "name of the new looger: [" << name << "]" << endl;
             Logger::Init(std::move(name), std::move(log_path));
+            cout << "new logger is created" << endl;
         }
         else if (task == "plot_ranking") {
             string poi;
