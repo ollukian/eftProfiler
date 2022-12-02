@@ -53,6 +53,7 @@ namespace eft::stats {
     };
 
     inline std::shared_ptr<spdlog::logger>& Logger::GetLogger() noexcept {
+        std::cout << "GetLogger. Is_init? ==> " << is_init_ << std::endl;
         if (is_init_)
             return logger_;
         return logger_default_;

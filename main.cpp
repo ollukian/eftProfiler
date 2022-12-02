@@ -33,6 +33,8 @@ int main(int argc, char* argv[]) {
     cout << "init new logger" << endl;
     eft::stats::Logger::Init(commandLineArgs);
     cout << "new logger is registered" << endl;
+    cout << "check that it is accessible" << endl;
+    EFT_PROF_INFO("this info is written to the new one");
     eft::stats::Logger::SetRelease();
     cout << "set release for the new logger" << endl;
 
