@@ -14,10 +14,6 @@ using namespace std;
 
 namespace eft::stats {
 
-    shared_ptr<spdlog::logger> Logger::logger_;
-
-    // TODO: add a logger for traces and durations - only for debugging;
-
 void Logger::Init(string name, string path)
 {
 
