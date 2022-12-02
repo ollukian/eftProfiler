@@ -75,7 +75,7 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
     string logger_name;
     commandLineArgs->SetValIfArgExists("log_path", log_path);
     commandLineArgs->SetValIfArgExists("logger_name", logger_name);
-
+    cout << "let's see if it has key task" << endl;
     if (commandLineArgs->HasKey("task")) {
         string task;
         commandLineArgs->SetValIfArgExists("task", task);
@@ -94,13 +94,13 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
             string name = fmt::format("plot_ranking_{}", std::move(poi));
             Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
-        else {
-            string name = fmt::format("eft_{}", task);
-            cout << "name of the new looger: [" << logger_name << "]" << endl;
-            Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
-        }
     } // task
-
+    else { // no task is specified
+        cout << "no, no task is specified" << endl;
+        string name = fmt::format("profiler");
+        cout << "name of the new loger: [" << logger_name << "]" << endl;
+        Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
+    }
     cout << "in init from cmd line: is_init ==> " << is_init_ << endl;
 
     if (commandLineArgs->HasKey("release")) {
