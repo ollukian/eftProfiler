@@ -38,7 +38,7 @@ namespace eft::stats {
     class Logger {
     public:
         static void Init();
-        static void Init(std::string name, std::string path = "");
+        static void Init(std::string name, std::string path = "", std::string logger_name = "");
         static void Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs);
 
         static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept;

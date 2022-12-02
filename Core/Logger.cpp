@@ -14,10 +14,11 @@ using namespace std;
 
 namespace eft::stats {
 
-void Logger::Init(string name, string path)
+void Logger::Init(string name, string path, string logger_name)
 {
 
     if (logger_default_) {
+        cout << "drop default logger" << endl;
         spdlog::drop("eft_profiler_default");
     }
 
@@ -33,12 +34,18 @@ void Logger::Init(string name, string path)
     //logSinks[0]->set_level(spdlog::level::debug);
     //logSinks[1]->set_level(spdlog::level::trace);
 
-    logger_ = std::make_shared<spdlog::logger>("eft_profiler", begin(logSinks), end(logSinks));
+    if (logger_name.empty())
+        logger_ = std::make_shared<spdlog::logger>("eft_profiler", begin(logSinks), end(logSinks));
+    else
+        logger_ = std::make_shared<spdlog::logger>(std::move(logger_name), begin(logSinks), end(logSinks));
+
     spdlog::register_logger(logger_);
     logger_->set_level(spdlog::level::trace);
     logger_->flush_on(spdlog::level::trace);
 
+    cout << "set is_init to true" << endl;
     is_init_ = true;
+    cout << "is set_init == true ==> " << is_init_ << endl;
 }
 
 void Logger::Init() {
@@ -64,32 +71,37 @@ void Logger::Init() {
 void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
 {
     cout << "init logger from a ptr to cmdline args" << endl;
+    string log_path;
+    string logger_name;
+    commandLineArgs->SetValIfArgExists("log_path", log_path);
+    commandLineArgs->SetValIfArgExists("logger_name", logger_name);
+
     if (commandLineArgs->HasKey("task")) {
         string task;
         commandLineArgs->SetValIfArgExists("task", task);
         if (task == "compute_ranking") {
             string poi;
-            string log_path;
             size_t worker_id;
             commandLineArgs->SetValIfArgExists("poi", poi);
             commandLineArgs->SetValIfArgExists("worker_id", worker_id);
-            commandLineArgs->SetValIfArgExists("log_path", log_path);
             string name = fmt::format("ranking_{}_worker_{}", poi, worker_id);
             cout << "name of the new looger: [" << name << "]" << endl;
-            Logger::Init(std::move(name), std::move(log_path));
+            Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
             cout << "new logger is created" << endl;
         }
         else if (task == "plot_ranking") {
             string poi;
-            string log_path;
             string name = fmt::format("plot_ranking_{}", std::move(poi));
-            Logger::Init(std::move(name), std::move(log_path));
+            Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
         else {
-            Logger::Init(std::move(task), "");
+            string name = fmt::format("eft_{}", task);
+            cout << "name of the new looger: [" << logger_name << "]" << endl;
+            Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
     } // task
 
+    cout << "in init from cmd line: is_init ==> " << is_init_ << endl;
 
     if (commandLineArgs->HasKey("release")) {
         eft::stats::Logger::SetRelease();
