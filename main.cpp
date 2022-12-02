@@ -23,20 +23,10 @@ int main(int argc, char* argv[]) {
     gErrorIgnoreLevel = kError;
     gStyle->SetHistMinimumZero(true);
 
-    cout << "init default" << endl;
     eft::stats::Logger::Init();
-    cout << "done init default" << endl;
-    cout << "create cmd line args" << endl;
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
-    cout << "cmd line args are created" << endl;
-    //CommandLineArgs commandLineArgs(argc, argv);
-    cout << "init new logger" << endl;
     eft::stats::Logger::Init(commandLineArgs);
-    cout << "new logger is registered" << endl;
-    cout << "check that it is accessible" << endl;
-    EFT_PROF_INFO("this info is written to the new one");
     eft::stats::Logger::SetRelease();
-    cout << "set release for the new logger" << endl;
 
     if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
@@ -57,6 +47,8 @@ int main(int argc, char* argv[]) {
         for (const auto& options : std::vector<std::array<string, 4>>{
                 {"",                "",                 "",             "WARNING: x in front of the comment: not supported yet"},
                 {"string",          "task",             "",             "compute_ranking | plot_ranking | compute_unconstrained"},
+                {"string",          "log_path",         "",             "x Path to save log files"},
+                {"string",          "log_name",         "eft_profiler", "x name of the logger"},
                 {"string",          "ws_path",          "",             ""},
                 {"string",          "ws_name",          "combWS",       "Name of the workspace in the file"},
                 {"string",          "model_config",     "ModelConfig",  "Name of the RooStats::ModelConfig in the file"},
