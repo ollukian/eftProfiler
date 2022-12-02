@@ -18,7 +18,6 @@ void Logger::Init(string name, string path, string logger_name)
 {
 
     if (logger_default_) {
-        cout << "drop default logger" << endl;
         spdlog::drop("eft_profiler_default");
     }
 
