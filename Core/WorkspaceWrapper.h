@@ -148,24 +148,26 @@ inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
     EFT_PROF_DEBUG("Set ws, check path: {}", path);
     if (! std::filesystem::exists(path) ) {
         EFT_PROF_CRITICAL("Ws under [{}] doesn't exist", path);
+        throw std::runtime_error("Impossible to extract ws");
         return false;
     }
 
     //std::unique_ptr<TFile> f_ {TFile::Open(path.c_str())};
     //TFile* f_ = TFile::Open(std::move(path).c_str());
     EFT_PROF_DEBUG("Set ws, reset ptr");
-    file_with_ws_.reset(TFile::Open(std::move(path).c_str()));
+    file_with_ws_.reset(TFile::Open(path.c_str()));
+    //file_with_ws_ = std::make_shared<TFile>( *TFile::Open(path.c_str()) );
     EFT_PROF_DEBUG("extract from the file");
-    if (file_with_ws_) {
-//        ws_ = std::make_unique<RooWorkspace>(
-//                *dynamic_cast<RooWorkspace*>( file_with_ws_->Get( std::move(name).c_str() ) )
-//                );
-        ws_.reset(dynamic_cast<RooWorkspace*>(file_with_ws_->Get( std::move(name).c_str() )));
-        //f_->Close();
-        return true;
+    EFT_PROF_DEBUG("check that ws exists under this name");
+    auto ptr = file_with_ws_->Get( name.c_str() );
+    if (! ptr) {
+        EFT_PROF_CRITICAL("In the file: [{}] there is no ws with name: [{}]",
+                          path, name);
+        throw std::runtime_error("Impossible to extract ws");
     }
-    EFT_PROF_TRACE("WorkspaceWrapper::SetWS leave the function");
-    return false;
+
+    ws_.reset(dynamic_cast<RooWorkspace*>( ptr ));
+    return true;
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)

@@ -522,6 +522,8 @@ void Finalise() {
 }
 
 void TestWSreading() {
+    auto level = RooMsgService::instance().globalKillBelow();
+    RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
@@ -554,6 +556,7 @@ void TestWSreading() {
     ASSERT_EQUAL(nps->getSize(),    3);
     ASSERT_EQUAL(globs->getSize(),  3);
     ASSERT_EQUAL(obs->getSize(),    1);
+    RooMsgService::instance().setGlobalKillBelow(level);
 }
 
 void TestLoading() {

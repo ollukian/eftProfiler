@@ -43,9 +43,7 @@ void Logger::Init(string name, string path, string logger_name)
     logger_->set_level(spdlog::level::trace);
     logger_->flush_on(spdlog::level::trace);
 
-    cout << "set is_init to true" << endl;
     is_init_ = true;
-    cout << "is set_init == true ==> " << is_init_ << endl;
 }
 
 void Logger::Init() {
