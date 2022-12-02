@@ -38,6 +38,7 @@ public:
     using EntriesSelector = std::function<bool(NpInfoForPlot)>;
 
     void                            ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs);
+    void  inline                    ReadSettingsFromCommandLine(const std::shared_ptr<CommandLineArgs>& cmdLineArgs) noexcept;
     void                            SetCallBack(EntriesSelector selector) noexcept  { callback_ = std::move(selector); }
     void                            ReadValues(const std::filesystem::path& path);
     void                            Plot(const std::unique_ptr<RankingPlotterSettings>& settings) noexcept;
@@ -90,6 +91,10 @@ NpRankingPlotter::CreateLambdaForMatchingNpNames(const std::vector<std::string>&
             return res;
         });
     };
+}
+
+void NpRankingPlotter::ReadSettingsFromCommandLine(const std::shared_ptr<CommandLineArgs>& cmdLineArgs) noexcept {
+    ReadSettingsFromCommandLine(cmdLineArgs.get());
 }
 
 

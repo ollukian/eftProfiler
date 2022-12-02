@@ -24,7 +24,8 @@ int main(int argc, char* argv[]) {
     gStyle->SetHistMinimumZero(true);
 
     eft::stats::Logger::Init();
-    CommandLineArgs commandLineArgs(argc, argv);
+    auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
+    //CommandLineArgs commandLineArgs(argc, argv);
 
     eft::stats::Logger::Init(commandLineArgs);
     eft::stats::Logger::SetRelease();
@@ -35,7 +36,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    if (commandLineArgs.HasKey("h") || commandLineArgs.HasKey("help"))
+    if (commandLineArgs->HasKey("h") || commandLineArgs->HasKey("help"))
     {
         cout << "for task, use one of the following:" << endl;
         for (const auto& task : {"compute_ranking, plot_ranking, compute_unconstrained"}) {
@@ -126,14 +127,14 @@ int main(int argc, char* argv[]) {
     }
 
     string task;
-    if (commandLineArgs.SetValIfArgExists("task", task)) {
+    if (commandLineArgs->SetValIfArgExists("task", task)) {
         EFT_PROF_INFO("Set task: {}", task);
     }
 
-    if (commandLineArgs.HasKey("get")) {
+    if (commandLineArgs->HasKey("get")) {
         eft::stats::FitManagerConfig config;
         auto manager = make_unique<eft::stats::FitManager>();
-        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+        eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
         manager->Init(std::move(config));
         return 0;
     }
@@ -144,7 +145,7 @@ int main(int argc, char* argv[]) {
         auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
-        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+        eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
         settings.poi = config.poi;
@@ -268,7 +269,7 @@ int main(int argc, char* argv[]) {
         string poi;
 
         eft::plot::NpRankingPlotter plotter;
-        plotter.ReadSettingsFromCommandLine(&commandLineArgs);
+        plotter.ReadSettingsFromCommandLine(commandLineArgs);
         plotter.ReadValues(plotter.np_ranking_settings->input);
         plotter.Plot(plotter.np_ranking_settings);
     }
@@ -278,7 +279,7 @@ int main(int argc, char* argv[]) {
         auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManagerConfig config;
 
-        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+        eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
 
         eft::stats::NpRankingStudySettings settings;
 
@@ -288,7 +289,7 @@ int main(int argc, char* argv[]) {
     }
     else if (task == "compute_hesse_nps") {
         eft::stats::FitManagerConfig config;
-        eft::stats::FitManager::ReadConfigFromCommandLine(commandLineArgs, config);
+        eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
         auto manager = make_unique<eft::stats::FitManager>();
 
         eft::stats::NpRankingStudySettings settings;
@@ -317,7 +318,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    if (commandLineArgs.HasKey("debug")) {
+    if (commandLineArgs->HasKey("debug")) {
         EFT_PROF_INFO("Statistics for function calls:");
         fmt::print(cout, "| {:-^30} | {:-<10} | {:-<15} |\n", "-", "-", "-");
         fmt::print(cout, "| {:^30} | {:<10} | {:<15} |\n", "Function", "Duration", "Avg duration");
