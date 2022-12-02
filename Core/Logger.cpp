@@ -17,26 +17,93 @@ namespace eft::stats {
 
     // TODO: add a logger for traces and durations - only for debugging;
 
-    void Logger::Init(size_t worker_id)
-    {
+void Logger::Init(string name, string path)
+{
 
-        const std::string log_filename = "eft_log_worker_" + to_string(worker_id) + ".log";
-
-        vector<spdlog::sink_ptr> logSinks;
-        logSinks.emplace_back(make_shared<spdlog::sinks::stdout_color_sink_mt>());
-        logSinks.emplace_back(make_shared<spdlog::sinks::basic_file_sink_mt>(log_filename, true));
-
-        logSinks[0]->set_pattern("%^[%T] %n: %v%$"); // in console
-        logSinks[1]->set_pattern("[%T] [%l] %n: %v"); // out
-
-        //logSinks[0]->set_level(spdlog::level::debug);
-        //logSinks[1]->set_level(spdlog::level::trace);
-
-        logger_ = std::make_shared<spdlog::logger>("eft_profiler", begin(logSinks), end(logSinks));
-        spdlog::register_logger(logger_);
-        logger_->set_level(spdlog::level::trace);
-        logger_->flush_on(spdlog::level::trace);
+    if (logger_default_) {
+        spdlog::drop("eft_profiler_default");
     }
+
+    const std::string log_filename = std::move(path) + "eft_log_" + std::move(name) + ".log";
+
+    vector<spdlog::sink_ptr> logSinks;
+    logSinks.emplace_back(make_shared<spdlog::sinks::stdout_color_sink_mt>());
+    logSinks.emplace_back(make_shared<spdlog::sinks::basic_file_sink_mt>(log_filename, true));
+
+    logSinks[0]->set_pattern("%^[%T] %n: %v%$"); // in console
+    logSinks[1]->set_pattern("[%T] [%l] %n: %v"); // out
+
+    //logSinks[0]->set_level(spdlog::level::debug);
+    //logSinks[1]->set_level(spdlog::level::trace);
+
+    logger_ = std::make_shared<spdlog::logger>("eft_profiler", begin(logSinks), end(logSinks));
+    spdlog::register_logger(logger_);
+    logger_->set_level(spdlog::level::trace);
+    logger_->flush_on(spdlog::level::trace);
+
+    is_init_ = true;
+}
+
+void Logger::Init() {
+    // default logger
+    const std::string log_filename = "defaul_eft_profiler_logger.log";
+    vector<spdlog::sink_ptr> logSinks;
+    logSinks.emplace_back(make_shared<spdlog::sinks::stdout_color_sink_mt>());
+    logSinks.emplace_back(make_shared<spdlog::sinks::basic_file_sink_mt>(log_filename, true));
+
+    logSinks[0]->set_pattern("%^[%T] %n: %v%$"); // in console
+    logSinks[1]->set_pattern("[%T] [%l] %n: %v"); // out
+
+    //logSinks[0]->set_level(spdlog::level::debug);
+    //logSinks[1]->set_level(spdlog::level::trace);
+
+    logger_default_ = std::make_shared<spdlog::logger>("eft_profiler_default", begin(logSinks), end(logSinks));
+    spdlog::register_logger(logger_default_);
+    logger_default_->set_level(spdlog::level::trace);
+    logger_default_->flush_on(spdlog::level::trace);
+}
+
+
+void Logger::Init(const CommandLineArgs& commandLineArgs)
+{
+    if (commandLineArgs.HasKey("task")) {
+        string task;
+        commandLineArgs.SetValIfArgExists("task", task);
+        if (task == "compute_ranking") {
+            string poi;
+            string log_path;
+            size_t worker_id;
+            commandLineArgs.SetValIfArgExists("poi", poi);
+            commandLineArgs.SetValIfArgExists("worker_id", worker_id);
+            commandLineArgs.SetValIfArgExists("log_path", log_path);
+            string name = fmt::format("ranking_{}_worker_{}", poi, worker_id);
+            Logger::Init(std::move(name), std::move(log_path));
+        }
+        else if (task == "plot_ranking") {
+            string poi;
+            string log_path;
+            string name = fmt::format("plot_ranking_{}", std::move(poi));
+            Logger::Init(std::move(name), std::move(log_path));
+        }
+        else {
+            Logger::Init(std::move(task), "");
+        }
+    } // task
+
+
+    if (commandLineArgs.HasKey("release")) {
+        eft::stats::Logger::SetRelease();
+    }
+
+    if (commandLineArgs.HasKey("debug")) {
+        eft::stats::Logger::SetFullPrinting();
+    }
+
+    if (commandLineArgs.HasKey("silent")) {
+        eft::stats::Logger::SetSilent();
+    }
+
+}
 
 
     /*

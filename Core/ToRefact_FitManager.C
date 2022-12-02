@@ -89,6 +89,7 @@ namespace stats {
     //**************************************************************************************************
     inline void FitManager::AddModelConfig(const string& name) {
         modelConfig_ = dynamic_cast<RooStats::ModelConfig*>( ws_->obj(name.c_str() ) );
+        modelConfig_->
     }
     //**************************************************************************************************
     inline void FitManager::PlotDSandPdfGivenCats(const std::vector<std::string>& cats) {

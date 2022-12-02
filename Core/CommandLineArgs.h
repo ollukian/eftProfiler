@@ -45,7 +45,7 @@ public:
     inline bool HasKey(const Key& key) const noexcept;
 
     template<typename T>
-    bool SetValIfArgExists(const std::string& key, T& val);
+    bool SetValIfArgExists(const std::string& key, T& val) const;
 
     [[nodiscard]]
     const auto& GetOps() const noexcept { return ops; }
@@ -108,7 +108,7 @@ struct is_smart_pointer<T, typename std::enable_if<std::is_same<typename std::re
 //inline constexpr bool is_smart_pointer_v<is_smart_pointer<T>::value> = true;
 
 template<typename T>
-bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
+bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val) const
 {
     EFT_PROFILE_FN();
     //EFT_PROF_DEBUG("[CommandLineArgs] try to get value for key: {}", key);

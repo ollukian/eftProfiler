@@ -24,24 +24,15 @@ int main(int argc, char* argv[]) {
     gStyle->SetHistMinimumZero(true);
 
     eft::stats::Logger::Init();
+    CommandLineArgs commandLineArgs(argc, argv);
+
+    eft::stats::Logger::Init(commandLineArgs);
     eft::stats::Logger::SetRelease();
 
     if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         EFT_RUN_TESTS();
         return 0;
-    }
-    else if (argc >= 2 && string(argv[1]) == "--silent") {
-        eft::stats::Logger::SetSilent();
-    }
-    CommandLineArgs commandLineArgs(argc, argv);
-
-    if (commandLineArgs.HasKey("release")) {
-        eft::stats::Logger::SetRelease();
-    }
-
-    if (commandLineArgs.HasKey("debug")) {
-        eft::stats::Logger::SetFullPrinting();
     }
 
     if (commandLineArgs.HasKey("h") || commandLineArgs.HasKey("help"))
