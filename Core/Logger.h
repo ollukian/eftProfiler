@@ -28,6 +28,8 @@
 #include <deque>
 #include <list>
 
+#include <iostream>
+
 //#include "CommandLineArgs.h"
 class CommandLineArgs;
 
