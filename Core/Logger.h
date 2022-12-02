@@ -28,8 +28,8 @@
 #include <deque>
 #include <list>
 
-#include "CommandLineArgs.h"
-
+//#include "CommandLineArgs.h"
+class CommandLineArgs;
 
 namespace eft::stats {
 
@@ -48,7 +48,7 @@ namespace eft::stats {
 
     private:
         static std::shared_ptr<spdlog::logger> logger_;
-        static bool is_init_ {false};
+        static inline bool is_init_ {false};
         static std::shared_ptr<spdlog::logger> logger_default_;
     };
 } // namespace eft
