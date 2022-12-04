@@ -156,6 +156,8 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
             //.UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
             .UsingFitSettings(settings);
 
+    npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
+
     EFT_PROF_DEBUG("Nps before free fit:");
     for (const auto np : *nps) {
         auto np_var = dynamic_cast<RooRealVar*>(np);
@@ -165,6 +167,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
                        np_var->getError(),
                        np_var->isConstant());
     }
+
     npManager.RunFreeFit();
     EFT_PROF_DEBUG("Nps after free fit:");
     for (const auto np : *nps) {
@@ -185,7 +188,6 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     res.np_err = np_err_free;
 
     npManager.SetNpPreferredValue(np_val_free, np_err_free);
-    npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
 
     EFT_PROF_DEBUG("Nps before RunFitFixingNpAtCentralValue:");
     for (const auto np : *nps) {
