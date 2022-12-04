@@ -171,7 +171,15 @@ inline void FitManager::ExtractNP()      noexcept
     //real_np->Print("v");
     //args_["np"] = real_np;
 
-    EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]", args_["np_all"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]:", args_["np_all"]->size());
+    for (const auto np : *args_["np_all"]) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
     //EFT_PROF_INFO("[FitManager] Extracted {} real_np to args[np]",     args_["np"]->size());
 }
 inline void FitManager::ExtractObs() noexcept
