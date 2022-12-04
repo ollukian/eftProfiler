@@ -119,6 +119,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
         EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps with globs and obs", workerId);
         ws_->raw()->saveSnapshot("tmp_nps", *args, true);
     }
+    eft::stats::Logger::SetFullPrinting();
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} do unconditional fit", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} before uncond fit: {} +- {}",
