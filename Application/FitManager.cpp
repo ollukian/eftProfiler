@@ -127,6 +127,16 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
                   ws()->GetParErr(settings.poi)
     );
 
+    EFT_PROF_DEBUG("Nps:");
+    for (const auto np : *nps) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
+
     RooAbsData& data = GetData(settings.prePostFit);
     auto pdf = GetPdf("pdf_total");
 
@@ -145,7 +155,25 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
             //.UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
             .UsingFitSettings(settings);
 
+    EFT_PROF_DEBUG("Nps before free fit:");
+    for (const auto np : *nps) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
     npManager.RunFreeFit();
+    EFT_PROF_DEBUG("Nps after free fit:");
+    for (const auto np : *nps) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);
@@ -158,7 +186,25 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     npManager.SetNpPreferredValue(np_val_free, np_err_free);
     npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
 
+    EFT_PROF_DEBUG("Nps before RunFitFixingNpAtCentralValue:");
+    for (const auto np : *nps) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
     npManager.RunFitFixingNpAtCentralValue();
+    EFT_PROF_DEBUG("Nps after RunFitFixingNpAtCentralValue:");
+    for (const auto np : *nps) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
     EFT_PROF_INFO("Now we're only interested in central values of the POI => set error type to default");
     npManager.SetErrors(fit::Errors::DEFAULT);
     npManager.RunPreFit('+');

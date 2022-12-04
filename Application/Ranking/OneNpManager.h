@@ -23,6 +23,9 @@ class IWorkspaceWrapper;
 class RooArgSet;
 class RooAbsPdf;
 class RooAbsData;
+
+#include "RooRealVar.h"
+
 //class RooAbsReal;
 
 namespace eft::stats::ranking {
@@ -146,7 +149,25 @@ inline void OneNpManager::ResetToInitState()
 {
     EFT_PROFILE_FN();
     EFT_PROF_TRACE("ResetToInitState");
+    EFT_PROF_DEBUG("Nps before loading snapshot:");
+    for (const auto np : *nps_) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
     LoadSnapshot(snapshot_init_values_name_);
+    EFT_PROF_DEBUG("Nps after loading snapshot:");
+    for (const auto np : *nps_) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
     ResetNp();
     ResetPoi();
 }
