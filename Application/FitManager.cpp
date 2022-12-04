@@ -583,6 +583,7 @@ void FitManager::ExtractPOIs() noexcept
 void FitManager::Init(FitManagerConfig&& config)
 {
     EFT_PROFILE_FN();
+    eft::stats::Logger::SetFullPrinting();
     if (config.ws_name.empty()) {
         EFT_PROF_CRITICAL("ws_name is empty");
         throw std::logic_error("no ws_name set");
