@@ -290,6 +290,7 @@ int main(int argc, char* argv[]) {
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else if (task == "compute_hesse_nps") {
+        EFT_PROF_INFO("Compute hesse nps");
         eft::stats::FitManagerConfig config;
         eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
         auto manager = make_unique<eft::stats::FitManager>();
