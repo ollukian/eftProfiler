@@ -24,7 +24,7 @@ int main(int argc, char* argv[]) {
     gStyle->SetHistMinimumZero(true);
 
     eft::stats::Logger::Init();
-    eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::info);
+    eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
     eft::stats::Logger::SetRelease();
