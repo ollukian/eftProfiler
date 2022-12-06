@@ -24,12 +24,13 @@ int main(int argc, char* argv[]) {
     gStyle->SetHistMinimumZero(true);
 
     eft::stats::Logger::Init();
-    eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
+    eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::info);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
     eft::stats::Logger::SetRelease();
 
-    if (argc >= 2 && string(argv[1]) == "--test") {
+    if (commandLineArgs->HasKey("test")) {
+    //if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         EFT_RUN_TESTS();
         return 0;
@@ -308,11 +309,13 @@ int main(int argc, char* argv[]) {
 
         manager->Init(std::move(config));
         auto res = manager->ComputeHesseNps(settings);
-        EFT_PROF_INFO("Sort result:");
-        const auto sorted = res.GetSorted();
         EFT_PROF_INFO("Plot covariances:");
         res.poi = settings.poi;
+        manager->ExtractCorrelations(res);
+        EFT_PROF_INFO("Sort result:");
+        const auto sorted = res.GetSorted();
         manager->PlotCovariances(res);
+        manager->PrintSuggestedNpsRanking("suggested_covariances.txt", res);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);

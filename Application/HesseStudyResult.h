@@ -22,9 +22,12 @@ struct HesseStudyResult {
     TMatrixDSym                     reducedCovMatrix;
     RooArgList                      params;
     std::map<std::string, double>   covariances;
+    std::map<std::string, double>   corr_per_np;
     std::string                     poi;
 
     std::vector<std::pair<std::string, double>> sorted_covariances;
+    std::vector<std::pair<std::string, double>> sorted_correlations;
+    std::vector<std::pair<std::string, double>> correlations_per_nb_np;
     std::vector<std::string>                    sorted_names;
 
     bool is_sorted {false};

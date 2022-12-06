@@ -54,12 +54,24 @@ void HesseStudyResult::Sort() noexcept {
     std::sort(res.begin(),
               res.end(),
               [&](const auto& l, const auto& r) -> bool {
-                  EFT_PROF_DEBUG("compare===== l > r");
-                  EFT_PROF_DEBUG("{:50} with impact {:10}", l.first, l.second);
-                  EFT_PROF_DEBUG("{:50} with impact {:10}", r.first, r.second);
-                  EFT_PROF_DEBUG("res: {}", (l.second > r.second));
+                  //EFT_PROF_DEBUG("compare===== l > r");
+                  //EFT_PROF_DEBUG("{:50} with impact {:10}", l.first, l.second);
+                  //EFT_PROF_DEBUG("{:50} with impact {:10}", r.first, r.second);
+                  //EFT_PROF_DEBUG("res: {}", (l.second > r.second));
        return l.second > r.second;
     });
+
+    vector<pair<string, double>> res_corrs {corr_per_np.begin(), corr_per_np.end()};
+    std::sort(res_corrs.begin(),
+              res_corrs.end(),
+              [&](const auto& l, const auto& r) -> bool {
+                  //EFT_PROF_DEBUG("compare===== l > r");
+                  //EFT_PROF_DEBUG("{:50} with impact {:10}", l.first, l.second);
+                  //EFT_PROF_DEBUG("{:50} with impact {:10}", r.first, r.second);
+                  //EFT_PROF_DEBUG("res: {}", (l.second > r.second));
+                  return l.second > r.second;
+              });
+
 
     sorted_names.clear();
     sorted_names.reserve(res.size());
@@ -72,6 +84,7 @@ void HesseStudyResult::Sort() noexcept {
 
     is_sorted = true;
     sorted_covariances = std::move(res);
+    sorted_correlations = std::move(res_corrs);
 }
 
 const std::vector<std::pair<std::string, double>>& HesseStudyResult::GetSorted() noexcept {

@@ -36,6 +36,9 @@ public:
     void DoFitAllNpFloat(const NpRankingStudySettings& settings) override;
     HesseStudyResult ComputeHesseNps(const NpRankingStudySettings& settings) override;
     void PlotCovariances(const HesseStudyResult& res) const;
+    void ExtractCorrelations(HesseStudyResult& res) const;
+    void PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const;
+    void PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) const;
 
     inline void SetNpNames(std::string name) const noexcept override;
     inline void SetObsNames(std::string name) const noexcept override;
@@ -186,7 +189,15 @@ inline void FitManager::ExtractObs() noexcept
 {
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
-    EFT_PROF_DEBUG("Extracted {} Observables:", args_["obs"]->size());
+    EFT_PROF_INFO("Extracted {} Observables to args[obs]:", args_["obs"]->size());
+    for (const auto& obs : *args_["obs"]) {
+        auto obs_var = dynamic_cast<RooRealVar*>(obs);
+        EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
+                       obs_var->GetName(),
+                       obs_var->getVal(),
+                       obs_var->getError(),
+                       obs_var->isConstant());
+    }
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
@@ -233,6 +244,10 @@ inline void FitManager::ExtractDataTotal(std::string name)
 {
     assert(ws_ != nullptr);
     data_["ds_total"] = ws_->GetData(name);
+    if (data_["ds_total"] == nullptr) {
+        EFT_PROF_CRITICAL("No data: [{}] is present, terminate", name);
+        throw std::runtime_error("");
+    }
 }
 
 inline void FitManager::ExtractPdfTotal(std::string name) {

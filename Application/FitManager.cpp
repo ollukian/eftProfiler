@@ -466,18 +466,25 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     canvas->Clear();
     //Scene::SaveAs("covariances.pdf");
 
-    map<string, double> corr_per_np;
-    // get correlations between POI and other things
-    EFT_PROF_INFO("Extract correlations: poi <-> nps");
-    auto poi_var = ws_->GetVar(res.poi);
+//    map<string, double> corr_per_np;
+//    // get correlations between POI and other things
+//    EFT_PROF_INFO("Extract correlations: poi <-> nps");
+//    auto poi_var = ws_->GetVar(res.poi);
+//    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
+//    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+//        auto par = res.params.at(idx_np);
+//        auto corr = res.fitResult->correlation(*poi_var, *par);
+//        corr_with_poi->SetBinContent(idx_np + 1, corr);
+//        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
+//        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+//        corr_per_np[par->GetName()] = corr;
+//    }
+
     shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
-    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
-        auto par = res.params.at(idx_np);
-        auto corr = res.fitResult->correlation(*poi_var, *par);
-        corr_with_poi->SetBinContent(idx_np + 1, corr);
-        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
-        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
-        corr_per_np[par->GetName()] = corr;
+    //for (const auto& [np, corr] : res.correlations_per_nb_np) {
+    for (size_t idx_np {0}; idx_np < res.correlations_per_nb_np.size(); ++idx_np) {
+        corr_with_poi->SetBinContent(idx_np + 1, res.correlations_per_nb_np.at(idx_np).second);
+        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, res.correlations_per_nb_np.at(idx_np).first.c_str());
     }
 
     corr_with_poi->SetLabelSize(0.005);
@@ -485,7 +492,8 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     canvas->SaveAs("correlations_with_poi.pdf");
     canvas->Clear();
 
-    vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
+    //vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
+    vector<pair<string, double>> sorted_corrs {res.corr_per_np.begin(), res.corr_per_np.end()};
     std::sort(sorted_corrs.begin(),
               sorted_corrs.end(),
               [](const auto& l, const auto& r) -> bool
@@ -515,6 +523,48 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     canvas->Clear();
 
     //Scene::SaveAs()
+}
+
+void FitManager::ExtractCorrelations(HesseStudyResult& res) const
+{
+    EFT_PROFILE_FN();
+    map<string, double> corr_per_np;
+    std::vector<std::pair<std::string, double>> correlations_per_nb_np;
+    // get correlations between POI and other things
+    EFT_PROF_INFO("Extract correlations: poi <-> nps");
+    auto poi_var = ws_->GetVar(res.poi);
+    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+        auto par = res.params.at(idx_np);
+        auto corr = res.fitResult->correlation(*poi_var, *par);
+        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+        corr_per_np[par->GetName()] = corr;
+        correlations_per_nb_np.emplace_back(par->GetName(), corr);
+    }
+    res.corr_per_np = std::move(corr_per_np);
+    res.correlations_per_nb_np = std::move(correlations_per_nb_np);
+}
+
+void FitManager::PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const
+{
+    EFT_PROFILE_FN();
+    ofstream fs(path);
+    if ( ! fs.is_open() ) {
+        EFT_PROF_CRITICAL("Cannot open file: [{}] for writing. Print only to stdout", path);
+        PrintSuggestedNpsRankingStream(cout, res);
+    }
+    else {
+        PrintSuggestedNpsRankingStream(fs, res);
+        PrintSuggestedNpsRankingStream(cout, res);
+    }
+}
+
+void FitManager::PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) const
+{
+    //TODO: change by a json encoding
+    os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps";
+    for (const auto& [np, corr] : res.sorted_correlations) {
+        os << fmt::format("{:50} {}", np, corr) << endl;
+    }
 }
 
 void FitManager::SetAllNuisanceParamsConst() noexcept
@@ -583,7 +633,7 @@ void FitManager::ExtractPOIs() noexcept
 void FitManager::Init(FitManagerConfig&& config)
 {
     EFT_PROFILE_FN();
-    eft::stats::Logger::SetFullPrinting();
+    //eft::stats::Logger::SetFullPrinting();
     if (config.ws_name.empty()) {
         EFT_PROF_CRITICAL("ws_name is empty");
         throw std::logic_error("no ws_name set");
