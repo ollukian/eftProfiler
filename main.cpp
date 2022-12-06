@@ -27,6 +27,7 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
+    cout << "logger is init from cmdline" << endl;
     eft::stats::Logger::SetRelease();
 
     if (commandLineArgs->HasKey("test")) {
@@ -128,17 +129,17 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    string task;
-    if (commandLineArgs->SetValIfArgExists("task", task)) {
-        EFT_PROF_INFO("Set task: {}", task);
-    }
-
     if (commandLineArgs->HasKey("get")) {
         eft::stats::FitManagerConfig config;
         auto manager = make_unique<eft::stats::FitManager>();
         eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
         manager->Init(std::move(config));
         return 0;
+    }
+
+    string task;
+    if (commandLineArgs->SetValIfArgExists("task", task)) {
+        EFT_PROF_INFO("Set task: {}", task);
     }
 
     if (task == "compute_ranking") {
