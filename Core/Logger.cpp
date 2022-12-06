@@ -16,7 +16,7 @@ namespace eft::stats {
 
 void Logger::Init(string name, string path, string logger_name)
 {
-
+    cout << "logger init with name, path, logger_name" << endl;
     if (logger_default_) {
         spdlog::drop("eft_profiler_default");
     }
@@ -67,10 +67,12 @@ void Logger::Init() {
 
 void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
 {
+    cout << "logger init" << endl;
     string log_path;
     string logger_name;
     commandLineArgs->SetValIfArgExists("log_path", log_path);
     commandLineArgs->SetValIfArgExists("logger_name", logger_name);
+    cout << "logger init: check if key task is here" << endl;
     if (commandLineArgs->HasKey("task")) {
         string task;
         commandLineArgs->SetValIfArgExists("task", task);
@@ -89,10 +91,12 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
         }
     } // task
     else { // no task is specified
+        cout << "logger init: no key task is not here" << endl;
         string name = fmt::format("profiler");
         Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
     }
 
+    cout << "logger init: check if cmd has release, debug or silent" << endl;
     if (commandLineArgs->HasKey("release")) {
         eft::stats::Logger::SetRelease();
     }
