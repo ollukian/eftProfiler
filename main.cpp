@@ -30,13 +30,14 @@ int main(int argc, char* argv[]) {
     cout << "logger is init from cmdline" << endl;
     eft::stats::Logger::SetRelease();
     cout << "logger is set to release" << endl;
-
+    cout << "check if cmd has ket test" << endl;
     if (commandLineArgs->HasKey("test")) {
     //if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         EFT_RUN_TESTS();
         return 0;
     }
+    cout << "no, key test is present" << endl;
 
     if (commandLineArgs->HasKey("h") || commandLineArgs->HasKey("help"))
     {
