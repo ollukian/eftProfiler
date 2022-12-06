@@ -29,6 +29,7 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::Init(commandLineArgs);
     cout << "logger is init from cmdline" << endl;
     eft::stats::Logger::SetRelease();
+    cout << "logger is set to release" << endl;
 
     if (commandLineArgs->HasKey("test")) {
     //if (argc >= 2 && string(argv[1]) == "--test") {
@@ -138,9 +139,11 @@ int main(int argc, char* argv[]) {
     }
 
     string task;
+    cout << "try to read task" << endl;
     if (commandLineArgs->SetValIfArgExists("task", task)) {
         EFT_PROF_INFO("Set task: {}", task);
     }
+    cout << "task is read to: " << task << endl;
 
     if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
@@ -291,7 +294,10 @@ int main(int argc, char* argv[]) {
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else if (task == "compute_hesse_nps") {
+        cout << "compute hesse nps" << endl;
+        cout << "try to put info message" << endl;
         EFT_PROF_INFO("Compute hesse nps");
+        cout << "after this info message" << endl;
         eft::stats::FitManagerConfig config;
         eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
         auto manager = make_unique<eft::stats::FitManager>();
