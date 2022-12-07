@@ -58,7 +58,7 @@ void HesseStudyResult::Sort() noexcept {
                   //EFT_PROF_DEBUG("{:50} with impact {:10}", l.first, l.second);
                   //EFT_PROF_DEBUG("{:50} with impact {:10}", r.first, r.second);
                   //EFT_PROF_DEBUG("res: {}", (l.second > r.second));
-       return l.second > r.second;
+       return abs(l.second) > abs(r.second);
     });
 
     vector<pair<string, double>> res_corrs {corr_per_np.begin(), corr_per_np.end()};
@@ -69,7 +69,7 @@ void HesseStudyResult::Sort() noexcept {
                   //EFT_PROF_DEBUG("{:50} with impact {:10}", l.first, l.second);
                   //EFT_PROF_DEBUG("{:50} with impact {:10}", r.first, r.second);
                   //EFT_PROF_DEBUG("res: {}", (l.second > r.second));
-                  return l.second > r.second;
+                  return abs(l.second) > abs(r.second);
               });
 
 

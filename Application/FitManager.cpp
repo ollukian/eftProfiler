@@ -547,6 +547,7 @@ void FitManager::ExtractCorrelations(HesseStudyResult& res) const
 void FitManager::PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const
 {
     EFT_PROFILE_FN();
+    EFT_PROF_INFO("Print suggested nps ranking to: [{}]", path);
     ofstream fs(path);
     if ( ! fs.is_open() ) {
         EFT_PROF_CRITICAL("Cannot open file: [{}] for writing. Print only to stdout", path);
@@ -561,7 +562,7 @@ void FitManager::PrintSuggestedNpsRanking(std::string path, const HesseStudyResu
 void FitManager::PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) const
 {
     //TODO: change by a json encoding
-    os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps";
+    os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps" << endl;
     for (const auto& [np, corr] : res.sorted_correlations) {
         os << fmt::format("{:50} {}", np, corr) << endl;
     }
