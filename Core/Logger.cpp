@@ -89,6 +89,10 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
             string name = fmt::format("plot_ranking_{}", std::move(poi));
             Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
+        else {
+            string name = fmt::format("eft_{}", std::move(task));
+            Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
+        }
     } // task
     else { // no task is specified
         cout << "logger init: no key task is not here" << endl;
