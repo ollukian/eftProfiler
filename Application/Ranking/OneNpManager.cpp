@@ -144,26 +144,25 @@ void OneNpManager::RunFit()
     fitter.SetGlobs(globs_);
 
     if ( ! is_initiated_ ) {
-        fitSettings_.pdf = pdf_;
-        fitSettings_.data = data_;
-        fitSettings_.pois = pois_;
-        fitSettings_.errors = errors_;
-        fitSettings_.nps = nps_;
-        fitSettings_.retry = np_ranking_settings_.retry;
-        fitSettings_.strategy = np_ranking_settings_.strategy;
+        fitSettings_.pdf        = pdf_;
+        fitSettings_.data       = data_;
+        fitSettings_.pois       = pois_;
+        fitSettings_.errors     = errors_;
+        fitSettings_.nps        = nps_;
+        fitSettings_.retry      = np_ranking_settings_.retry;
+        fitSettings_.strategy   = np_ranking_settings_.strategy;
         fitSettings_.eps = np_ranking_settings_.eps;
         is_initiated_ = true;
         EFT_PROF_INFO("Status of POIs before nll creation:");
         for (auto poi : *pois_) {
             auto poi_cast = dynamic_cast<RooRealVar*>(poi);
             EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
-            EFT_PROF_DEBUG("as macro: {}", *poi_cast);
         }
     }
 
+    // errors may change from run to run
+    fitSettings_.errors = errors_;
 
-    EFT_PROF_DEBUG("reuse_nll      => {}", np_ranking_settings_.reuse_nll);
-    EFT_PROF_DEBUG("nll == nullptr => {}", nll_ == nullptr);
     if ( ! np_ranking_settings_.reuse_nll || nll_ == nullptr) {
         EFT_PROF_INFO("Need to create nll");
         nll_.reset(fitter.CreatNll(fitSettings_));
