@@ -67,12 +67,10 @@ void Logger::Init() {
 
 void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
 {
-    cout << "logger init" << endl;
     string log_path;
     string logger_name;
     commandLineArgs->SetValIfArgExists("log_path", log_path);
     commandLineArgs->SetValIfArgExists("logger_name", logger_name);
-    cout << "logger init: check if key task is here" << endl;
     if (commandLineArgs->HasKey("task")) {
         string task;
         commandLineArgs->SetValIfArgExists("task", task);
@@ -95,12 +93,10 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
         }
     } // task
     else { // no task is specified
-        cout << "logger init: no key task is not here" << endl;
         string name = fmt::format("profiler");
         Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
     }
 
-    cout << "logger init: check if cmd has release, debug or silent" << endl;
     if (commandLineArgs->HasKey("release")) {
         eft::stats::Logger::SetRelease();
     }
@@ -112,7 +108,6 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
     if (commandLineArgs->HasKey("silent")) {
         eft::stats::Logger::SetSilent();
     }
-
 }
 
 

@@ -27,18 +27,13 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
-    cout << "logger is init from cmdline" << endl;
     eft::stats::Logger::SetRelease();
-    cout << "logger is set to release" << endl;
-    cout << "check if cmd has ket test" << endl;
     if (commandLineArgs->HasKey("test")) {
     //if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         EFT_RUN_TESTS();
         return 0;
     }
-    cout << "no, key test is present" << endl;
-
     if (commandLineArgs->HasKey("h") || commandLineArgs->HasKey("help"))
     {
         cout << "for task, use one of the following:" << endl;
@@ -140,11 +135,9 @@ int main(int argc, char* argv[]) {
     }
 
     string task;
-    cout << "try to read task" << endl;
     if (commandLineArgs->SetValIfArgExists("task", task)) {
         EFT_PROF_INFO("Set task: {}", task);
     }
-    cout << "task is read to: " << task << endl;
 
     if (task == "compute_ranking") {
         EFT_PROF_INFO("Compute ranking");
@@ -295,10 +288,7 @@ int main(int argc, char* argv[]) {
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else if (task == "compute_hesse_nps") {
-        cout << "compute hesse nps" << endl;
-        cout << "try to put info message" << endl;
         EFT_PROF_INFO("Compute hesse nps");
-        cout << "after this info message" << endl;
         eft::stats::FitManagerConfig config;
         eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
         auto manager = make_unique<eft::stats::FitManager>();

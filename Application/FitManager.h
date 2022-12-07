@@ -190,14 +190,14 @@ inline void FitManager::ExtractObs() noexcept
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
     EFT_PROF_INFO("Extracted {} Observables to args[obs]:", args_["obs"]->size());
-    for (const auto& obs : *args_["obs"]) {
-        auto obs_var = dynamic_cast<RooRealVar*>(obs);
-        EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
-                       obs_var->GetName(),
-                       obs_var->getVal(),
-                       obs_var->getError(),
-                       obs_var->isConstant());
-    }
+//    for (const auto& obs : *args_["obs"]) {
+//        auto obs_var = dynamic_cast<RooRealVar*>(obs);
+//        EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
+//                       obs_var->GetName(),
+//                       obs_var->getVal(),
+//                       obs_var->getError(),
+//                       obs_var->isConstant());
+//    }
 }
 inline void FitManager::ExtractGlobObs()     noexcept
 {
