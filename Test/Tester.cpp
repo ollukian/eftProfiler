@@ -82,6 +82,6 @@ void Tester::InitSetTests() {
     EFT_RUN_TESTFILE(ColourUtils);
     EFT_RUN_TESTFILE(PlotterUtils);
     EFT_RUN_TESTFILE(CommandLineArguments); // problems with vec<string> ==> argv convertion
-    EFT_RUN_TESTFILE(WorkSpaceWrapper);
-    EFT_RUN_TESTFILE(Scene);
+    //EFT_RUN_TESTFILE(WorkSpaceWrapper);
+    //EFT_RUN_TESTFILE(Scene);
 }
