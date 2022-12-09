@@ -57,6 +57,7 @@ int main(int argc, char* argv[]) {
                 {"string",          "res_path",         ".",            "path where to save the resulting json file"},
                 {"string",          "poi",              "cHG",          "POI name in the workspace"},
                 {"vector<string>",  "errors",           "",             "Minos nps | Minos pois | Minos | Hesse"},
+                {"string",          "np_name",          "",             "Name of the Np to compute ranking for."},
                 {"size_t",          "worker_id",        "0",            ""},
                 {"size_t",          "top",              "20",           "number of pois to plot"},
                 {"double",          "eps",              "1E-3",         "Fit precision"},
