@@ -66,7 +66,7 @@ void OneNpManager::LoadSnapshot(const std::string& name)
 void OneNpManager::VaryNpPrefit(char sign) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_DEBUG("OneNpManager::VaryNpPrefit vary {} on {}1", np_, sign);
+    EFT_PROF_INFO("OneNpManager::VaryNpPrefit vary {} on {}1", np_, sign);
     if (sign == '+')
         ws_->SetVarVal(np_, np_found_in_data_value + 1.);
     else if (sign == '-')
@@ -78,7 +78,7 @@ void OneNpManager::VaryNpPrefit(char sign) noexcept
 void OneNpManager::VaryNpPostfit(char sign) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_DEBUG("OneNpManager::VaryNpPostfit vary {} on {}sigma", np_, sign);
+    EFT_PROF_INFO("OneNpManager::VaryNpPostfit vary {} on {}sigma", np_, sign);
     if (sign == '+')
         ws_->SetVarVal(np_, np_found_in_data_value + np_found_in_data_error);
         //ws_->VaryParNbSigmas(np_, +1.f);

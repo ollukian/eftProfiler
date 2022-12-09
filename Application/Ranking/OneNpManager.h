@@ -79,14 +79,14 @@ private:
     void LoadSnapshot(const std::string& name);
 private:
     std::map<std::string, StudyRes> results_;
-    std::string snapshot_init_values_name_;
+    std::string                     snapshot_init_values_name_;
     //std::unique_ptr<RooAbsReal> nll_ {nullptr};
-    std::shared_ptr<RooAbsReal> nll_ {nullptr};
+    std::shared_ptr<RooAbsReal>     nll_ {nullptr};
 
-    double np_found_in_data_value {0.};
-    double np_found_in_data_error {0.};
-    double poi_init_value {1.};
-    double poi_init_error {0.};
+    double np_found_in_data_value   {0.};
+    double np_found_in_data_error   {0.};
+    double poi_init_value           {1.};
+    double poi_init_error           {0.};
 
     mutable Poi   poi_;
     mutable NP    np_;

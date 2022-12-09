@@ -88,23 +88,41 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     auto *nps = GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
     auto *non_gamma_nps = GetListAsArgSet("non_gamma_nps");
 
-    if(settings.no_gamma) {
-        res.np_name = non_gamma_nps->operator[](workerId)->GetName();
-        EFT_PROF_INFO("No-gamma option ==> choose NP number from the non-gamma list. Deal with {} ==> {}",
-                      workerId,
-                      res.np_name);
+    if (settings.np_name.empty()) { // if np_name to be deduced from worker_id
+        EFT_PROF_WARN("Name of Nuissance parameter is not set directly, it will be deduced from worker_id");
+        if (settings.no_gamma) {
+            res.np_name = non_gamma_nps->operator[](workerId)->GetName();
+            EFT_PROF_INFO("No-gamma option ==> choose NP number from the non-gamma list. Deal with {} ==> {}",
+                          workerId,
+                          res.np_name);
+        } else {
+            res.np_name = nps->operator[](workerId)->GetName();
+            res.np_name = non_gamma_nps->operator[](workerId)->GetName();
+            EFT_PROF_INFO("All nps, including gamma ==> choose NP number from the full list. Deal with {} ==> {}",
+                          workerId,
+                          res.np_name);
+        }
     }
     else {
-        res.np_name = nps->operator[](workerId)->GetName();
-        res.np_name = non_gamma_nps->operator[](workerId)->GetName();
-        EFT_PROF_INFO("All nps, including gamma ==> choose NP number from the full list. Deal with {} ==> {}",
-                      workerId,
-                      res.np_name);
+        EFT_PROF_WARN("Name of Nuissance parameter is directly set");
+        res.np_name = settings.np_name;
+
+        workerId = 0;
+        bool is_found = false;
+        while (nps->operator[](workerId)->GetName() != res.np_name) {
+            workerId++;
+            is_found = true;
+        }
+        if (is_found) {
+            EFT_PROF_INFO("Corresponded worker id: {}", workerId);
+        }
+        else {
+            EFT_PROF_INFO("Didn't find the np: {} in the np list", res.np_name);
+            throw std::runtime_error("");
+        }
     }
     //res.np_name = nps->operator[](workerId)->GetName();
     {
-        //auto* globObs = GetListAsArgSet("paired_globs");
-        //auto* nps = GetListAsArgSet("paired_nps");
         if (settings.prePostFit != PrePostFit::POSTFIT) {
             EFT_PROF_INFO("For study type set pois to init values and globs to 0");
             SetAllPoisTo(settings.poi_init_val, 0);
@@ -131,7 +149,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     EFT_PROF_DEBUG("Nps:");
     for (const auto np : *nps) {
         auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+        EFT_PROF_TRACE("{:40}, {} +- {}, const => {}",
                        np_var->GetName(),
                        np_var->getVal(),
                        np_var->getError(),
@@ -158,56 +176,20 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
 
     npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
 
-    EFT_PROF_DEBUG("Nps before free fit:");
-    for (const auto np : *nps) {
-        auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-                       np_var->GetName(),
-                       np_var->getVal(),
-                       np_var->getError(),
-                       np_var->isConstant());
-    }
-
     npManager.RunFreeFit();
-    EFT_PROF_DEBUG("Nps after free fit:");
-    for (const auto np : *nps) {
-        auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-                       np_var->GetName(),
-                       np_var->getVal(),
-                       np_var->getError(),
-                       np_var->isConstant());
-    }
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);
-    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
-    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
+    //res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
+    //res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
 
     res.np_val = np_val_free;
     res.np_err = np_err_free;
 
     npManager.SetNpPreferredValue(np_val_free, np_err_free);
 
-    EFT_PROF_DEBUG("Nps before RunFitFixingNpAtCentralValue:");
-    for (const auto np : *nps) {
-        auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-                       np_var->GetName(),
-                       np_var->getVal(),
-                       np_var->getError(),
-                       np_var->isConstant());
-    }
     npManager.RunFitFixingNpAtCentralValue();
-    EFT_PROF_DEBUG("Nps after RunFitFixingNpAtCentralValue:");
-    for (const auto np : *nps) {
-        auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-                       np_var->GetName(),
-                       np_var->getVal(),
-                       np_var->getError(),
-                       np_var->isConstant());
-    }
+
     EFT_PROF_INFO("Now we're only interested in central values of the POI => set error type to default");
     npManager.SetErrors(fit::Errors::DEFAULT);
     npManager.RunPreFit('+');
@@ -216,6 +198,9 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     npManager.RunPostFit('-');
 
     // TODO: get NpRankingStudyRes directly from the NpManager
+    res.poi_free_fit_val = npManager.GetResult("free_fit").poi_val;
+    res.poi_free_fit_err = npManager.GetResult("free_fit").poi_err;
+
     res.poi_fixed_np_val = npManager.GetResult("fixed_np_fit").poi_val;
     res.poi_fixed_np_err = npManager.GetResult("fixed_np_fit").poi_err;
 
@@ -710,6 +695,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 #endif
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, res_path);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, worker_id);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_name);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ws_path);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ws_name);
@@ -800,16 +786,15 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 
 
 
-//    if (config.fit_all_pois && config.fit_single_poi) {
-//        EFT_PROF_CRITICAL("CommandLineArgs impossible to use \"fit_all_pois\" and \"fit_single_poi\" simultaneously");
-//        return;
-//        //hrow std::runtime_error("ERROR ^------- see the message above");
-//    }
-
     if (config.fit_all_pois) {
         EFT_PROF_WARN("Set [fit_all_pois mode]: all available pois are to be fit");
         config.fit_single_poi = false;
     }
+
+    if (config.res_path.empty())
+        EFT_PROF_WARN("save res to default (in the root folder)");
+    else
+        EFT_PROF_INFO("save res to: {}", config.res_path);
 
     if (config.release)
         eft::stats::Logger::SetRelease();

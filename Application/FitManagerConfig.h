@@ -21,6 +21,7 @@ struct FitManagerConfig {
     std::string                 comb_data           {"combData"};
     std::string                 res_path;
     std::string                 poi                 {"cHG"};
+    std::string                 np_name             ;
     std::vector<std::string>    errors;
     size_t                      worker_id           {0};
     double                      eps                 {1E-3}; // to be divided on 1000 later on
