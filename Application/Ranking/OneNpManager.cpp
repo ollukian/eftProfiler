@@ -50,7 +50,7 @@ void OneNpManager::ResetPoi()
         EFT_PROF_DEBUG("Status of all pois:");
         for (auto poi : *pois_) {
             auto poi_cast = dynamic_cast<RooRealVar*>(poi);
-            EFT_PROF_DEBUG("using macro:", *poi_cast);
+            //EFT_PROF_DEBUG("using macro:", *poi_cast);
             EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
         }
     }

@@ -446,7 +446,8 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     EFT_PROF_INFO("All names are set, draw");
     cov->Draw("colz");
     EFT_PROF_INFO("drawn, save");
-    canvas->SaveAs("covariances.pdf");
+    string name_covs = fmt::format("covariances_with_{}_float.pdf", res.poi);
+    canvas->SaveAs(name_covs.c_str());
     EFT_PROF_INFO("clear");
     canvas->Clear();
     //Scene::SaveAs("covariances.pdf");
@@ -474,7 +475,8 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
 
     corr_with_poi->SetLabelSize(0.005);
     corr_with_poi->Draw("H");
-    canvas->SaveAs("correlations_with_poi.pdf");
+    string name_to_save = fmt::format("correlations_with_{}.pdf", res.poi);
+    canvas->SaveAs(name_to_save.c_str());
     canvas->Clear();
 
     //vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
@@ -504,7 +506,9 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     }
     corr_with_poi_sorted->SetLabelSize(0.005);
     corr_with_poi_sorted->Draw("H");
-    canvas->SaveAs("correlations_with_poi_sorted.pdf");
+    string name_to_save_sorted = fmt::format("correlations_with_{}_sorted.pdf", res.poi);
+    canvas->SaveAs(name_to_save_sorted.c_str());
+    //canvas->SaveAs("correlations_with_poi_sorted.pdf");
     canvas->Clear();
 
     //Scene::SaveAs()

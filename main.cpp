@@ -206,7 +206,8 @@ int main(int argc, char* argv[]) {
         EFT_PROF_INFO("Sort result:");
         const auto sorted = res.GetSorted();
         manager->PlotCovariances(res);
-        manager->PrintSuggestedNpsRanking("suggested_covariances.txt", res);
+        string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
+        manager->PrintSuggestedNpsRanking(std::move(name_to_save), res);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);

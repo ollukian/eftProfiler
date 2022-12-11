@@ -45,27 +45,32 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
         throw std::runtime_error("no nll is set for minimisation");
     }
 
-    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
+    static bool isPrinted {false};
+    if ( ! isPrinted ) {
+        EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
+        EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
+        EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
+        EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
+        EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001 = {}", settings.eps, settings.eps / 0.001);
+        EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
+        EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
+        EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
+        isPrinted = true;
+    }
+    //EFT_PROF_INFO("[Minimizer] max function calls: {}", max_function_calls);
     //RooMinimizerWrapper minim(*settings.nll);
     RooMinimizerWrapper minim(*nll);
-    EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     minim.setStrategy( settings.strategy );
-    EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
     minim.setPrintLevel( 1 );
-    EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
     //RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
     minim.setProfile(); /* print out time */
-    EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001 = {}", settings.eps, settings.eps / 0.001);
     minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
-    EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
-    EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
     minim.optimizeConst( 2 );
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
     size_t max_function_calls = 5000 * settings.pdf->getVariables()->getSize();
     minim.setMaxFunctionCalls(max_function_calls);
-    EFT_PROF_INFO("[Minimizer] max function calls: {}", max_function_calls);
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
@@ -73,7 +78,6 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
       _status += minim.simplex();
       }*/
 
-    EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
     minim.setMinimizerType( "Minuit2" );
 
     // retry taken from:
@@ -262,7 +266,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
         EFT_PROF_INFO("[Minimizer] required to save results as: {}", "fit_res");
         return make_unique<RooFitResult>(*minim.save("fit_res", "fit_res"));
     }
-    EFT_PROF_DEBUG("[Minimizer] not required to save results, leave function");
+    //EFT_PROF_DEBUG("[Minimizer] not required to save results, leave function");
     return {};
 }
 

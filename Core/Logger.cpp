@@ -76,10 +76,12 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
         commandLineArgs->SetValIfArgExists("task", task);
         if (task == "compute_ranking") {
             string poi;
+            string np_name;
             size_t worker_id;
             commandLineArgs->SetValIfArgExists("poi", poi);
             commandLineArgs->SetValIfArgExists("worker_id", worker_id);
-            string name = fmt::format("ranking_{}_worker_{}", poi, worker_id);
+            commandLineArgs->SetValIfArgExists("np_name", np_name);
+            string name = fmt::format("ranking_{}_worker_{}_{}", poi, worker_id, np_name);
             Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
         else if (task == "plot_ranking") {
