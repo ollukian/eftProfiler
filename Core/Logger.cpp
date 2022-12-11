@@ -89,6 +89,12 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
             string name = fmt::format("plot_ranking_{}", std::move(poi));
             Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
+        else if (task == "compute_hesse_nps") {
+            string poi;
+            commandLineArgs->SetValIfArgExists("poi", poi);
+            string name = fmt::format("compute_hesse_nps_for_{}", std::move(poi));
+            Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
+        }
         else {
             string name = fmt::format("eft_{}", std::move(task));
             Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
