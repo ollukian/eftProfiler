@@ -84,6 +84,7 @@ struct FitManagerConfig {
     float                       dx_legend           {0.15};
     float                       dy_legend           {0.00};
     size_t                      max_digits          {3};
+    bool                        draw_impact         {false};
     };
 
 template<typename OStream>

@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 #include <spdlog/fmt/fmt.h>
 #include "spdlog/fmt/ostr.h"
@@ -176,6 +177,7 @@ inline void WorkspaceWrapper::FixValConst(const std::string& poi)
     EFT_PROF_DEBUG("Set {:30} const", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FixValConst variable {} is not present in the WS", poi);
+        throw std::runtime_error("");
         return;
     }
     ws_->var( poi.c_str() )->setConstant(true);
@@ -195,7 +197,8 @@ inline void WorkspaceWrapper::FloatVal(const std::string& poi)
     EFT_PROF_DEBUG("Set {:30} float", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FloatVal variable {} is not present in the WS", poi);
-        return;
+        throw std::logic_error("");
+        //return;
     }
     ws_->var( poi.c_str() )->setConstant(false);
 }
@@ -212,11 +215,19 @@ inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
 {
     EFT_PROFILE_FN();
     EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:30} to {}", name, val);
+    if (GetVar(name) == nullptr) {
+        EFT_PROF_CRITICAL("SetVarVal[{}] this var is not present", name);
+        throw std::logic_error("");
+    }
     ws_->var( name.c_str() )->setVal(val);
 }
 inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 {
     EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:30} to {}", name, err);
+    if (GetVar(name) == nullptr) {
+        EFT_PROF_CRITICAL("SetVarErr[{}] this var is not present", name);
+        throw std::logic_error("");
+    }
     ws_->var( name.c_str() )->setError(err);
 }
 

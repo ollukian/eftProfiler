@@ -57,6 +57,7 @@ struct RankingPlotterSettings {
     float                       dx_legend;
     float                       dy_legend;
     size_t                      max_digits;
+    bool                        draw_impact;
 };
 
 } // plot

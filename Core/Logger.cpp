@@ -92,7 +92,7 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
         else if (task == "compute_hesse_nps") {
             string poi;
             commandLineArgs->SetValIfArgExists("poi", poi);
-            string name = fmt::format("compute_hesse_nps_for_{}", std::move(poi));
+            string name = fmt::format("compute_hesse_nps_{}", std::move(poi));
             Logger::Init(std::move(name), std::move(log_path), std::move(logger_name));
         }
         else {

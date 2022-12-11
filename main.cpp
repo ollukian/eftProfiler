@@ -119,6 +119,7 @@ int main(int argc, char* argv[]) {
                 {"float",           "dx_legend",        "0.15",         "x-distance between lines of legend in the units of the plot"},
                 {"float",           "dy_legend",        "0.00",         "y-distance between lines of legend in the units of the plot"},
                 {"size_t",          "max_digits",       "3",            "Maximum number of digits on the POI axis. If more, exponential form is used"},
+                {"bool",            "draw_impact",      "false",        "To draw impact being quadratic difference of the total error on the POI (free fit and with this NP fixed)"},
         })
         {
             cout << fmt::format("|{:^16} | {:<20} | {:^15} | {:<80}|", options[0], options[1], options[2], options[3]) << endl;

@@ -397,20 +397,25 @@ namespace eft::plot {
                 histo_plus_sigma_var->Draw("HBAR same");
                 histo_minus_sigma_var->Draw("HBAR same");
             //} else {
-                histo->Draw("H same");
-                histo_neg->Draw("H same");
+                //histo->Draw("H same");
+                //histo_neg->Draw("H same");
 
                 histo_plus_one_var->Draw("H same");
                 histo_minus_one_var->Draw("H same");
                 histo_plus_sigma_var->Draw("H same");
                 histo_minus_sigma_var->Draw("H same");
+
+            if (settings->draw_impact) {
+                histo       ->Draw("H same");
+                histo_neg   ->Draw("H same");
+            }
             //}
         } else {
             string draw_options = StringUtils::Join(' ', settings->h_draw_options);
             draw_options += " same";
 
-            for (auto* h : {&histo,
-                                  &histo_neg,
+            for (auto* h : {// &histo,
+                                  // &histo_neg,
                                   &histo_plus_sigma_var,
                                   &histo_plus_one_var,
                                   &histo_minus_sigma_var,
@@ -418,6 +423,12 @@ namespace eft::plot {
             {
                 (*h)->Draw(draw_options.c_str());
             } // over all the histograms
+
+            if (settings->draw_impact) {
+                histo       ->Draw(draw_options.c_str());
+                histo_neg   ->Draw(draw_options.c_str());
+            }
+
         } // if draw options are forces
 
 

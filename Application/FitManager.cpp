@@ -764,6 +764,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, silent);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, release);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, save_prelim);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, draw_impact);
 #undef EFT_ADD_BOOL_OPTIONS
 
     // vectors
