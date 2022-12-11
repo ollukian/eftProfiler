@@ -494,7 +494,12 @@ void FitManager::PlotCovariances(const HesseStudyResult& res) const
     }
 
     EFT_PROF_INFO("Fill corr with poi sorted");
-    shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>("h_sorted", "h_sorted", res.covariances.size(), 0, res.covariances.size());
+    const string h_name = fmt::format("Correlations of NPs with {}", res.poi);
+    shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>(h_name.c_str(),
+                                                              h_name.c_str(),
+                                                              res.covariances.size(),
+                                                              0,
+                                                              res.covariances.size());
     EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", "idx", "name", "corr wit mu");
     for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
     //for (const auto& [name, cor] : sorted_corrs) {

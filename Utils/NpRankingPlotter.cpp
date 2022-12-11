@@ -252,15 +252,26 @@ namespace eft::plot {
         float range_high = 1.5f * (res_for_plot_after_selector.at(0).impact_plus_one_var);
         float range_low  = 1.5f * (res_for_plot_after_selector.at(0).impact_minus_one_var);
 
-        if (settings->rmuh != 0)
+        if (abs(settings->rmuh) < 1E-9)
+            settings->rmuh = 1.5f * (res_for_plot_after_selector.at(0).impact_plus_one_var);
+        else
             range_high = settings->rmuh;
 
-        if (settings->rmul != 0)
+        if (abs(settings->rmul) < 1E-9)
+            settings->rmul = 1.5f * (res_for_plot_after_selector.at(0).impact_minus_one_var);
+        else
             range_low = settings->rmul;
+
+//        if (settings->rmuh != 0)
+//            range_high = settings->rmuh;
+//
+//        if (settings->rmul != 0)
+//            range_low = settings->rmul;
 
         //constexpr float scaling = (range_high - range_low) / 2.f;
         //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
-        float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
+        float scaling = abs(range_high);
+        //float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
         if (settings->np_scale > 1E-9)
             scaling = settings->np_scale;
 
