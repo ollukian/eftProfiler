@@ -255,8 +255,8 @@ namespace eft::plot {
         }
 
 
-        float range_high = 1.5f * (res_for_plot_after_selector.at(0).impact_plus_one_var);
-        float range_low  = 1.5f * (res_for_plot_after_selector.at(0).impact_minus_one_var);
+        float range_high =   1.5f * abs((res_for_plot_after_selector.at(0).impact_plus_one_var));
+        float range_low  = - 1.5f * abs((res_for_plot_after_selector.at(0).impact_minus_one_var));
 
         if (settings->rmuh != 0)
             range_high = settings->rmuh;
@@ -265,13 +265,8 @@ namespace eft::plot {
 
 
         float scaling = abs(range_high) / 1.5f;
-        cout << "scaling: " << scaling << endl;
-        cout << "range_low: " << range_low << endl;
-        cout << "range_high: " << range_high << endl;
         if (settings->np_scale > 1e-8)
             scaling = settings->np_scale;
-
-        cout << "scaling: " << scaling << endl;
 
         if (is_vertical)
             histo->GetXaxis()->LabelsOption("v");
