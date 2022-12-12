@@ -271,6 +271,8 @@ namespace eft::plot {
         if (settings->np_scale != 0)
             scaling = settings->np_scale;
 
+        cout << "scaling: " << scaling << endl;
+
         if (is_vertical)
             histo->GetXaxis()->LabelsOption("v");
 
@@ -475,6 +477,7 @@ namespace eft::plot {
             graph_nps_obs->SetBinError(idx_bin   + 1,  res_for_plot_after_selector.at(idx_syst).obs_error);
         }
 
+        cout << "scaling: " << scaling << endl;
         graph_nps_obs->Scale(scaling);
         //histo_plus_sigma_var->Scale(scaling);
         //histo_minus_sigma_var->Scale(scaling);
