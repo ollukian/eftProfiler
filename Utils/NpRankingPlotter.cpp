@@ -268,7 +268,7 @@ namespace eft::plot {
         cout << "scaling: " << scaling << endl;
         cout << "range_low: " << range_low << endl;
         cout << "range_high: " << range_high << endl;
-        if (settings->np_scale != 0)
+        if (settings->np_scale > 1e-8)
             scaling = settings->np_scale;
 
         cout << "scaling: " << scaling << endl;
