@@ -418,7 +418,7 @@ namespace eft::plot {
             string draw_options = StringUtils::Join(' ', settings->h_draw_options);
             draw_options += " same";
 
-            for (auto* h : {// &histo,
+            for (auto* h : { &histo,
                                   // &histo_neg,
                                   &histo_plus_sigma_var,
                                   &histo_plus_one_var,
