@@ -519,7 +519,7 @@ namespace eft::plot {
         axis_nps->SetTitleSize(0.02);
         axis_nps->Draw();
 
-        TBox box {0.02f, 0.99 * settings->rmul, (settings->empty_bins - 0.03), 0.99 * settings->rmuh};
+        TBox box {0.02f, 0.99 * range_low, (settings->empty_bins - 0.03), 0.99 * range_high};
         box.SetFillColor(kWhite);
 
         if (is_vertical)
