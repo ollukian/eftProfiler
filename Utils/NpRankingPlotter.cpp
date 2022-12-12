@@ -243,8 +243,10 @@ namespace eft::plot {
 
             histo->GetXaxis()->SetBinLabel(idx_bin + 1, bin_label.c_str());
 
-            histo->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact);
-            histo_neg->SetBinContent(idx_bin + 1, - res_for_plot_after_selector[idx_syst].impact);
+            if (settings->draw_impact) {
+                histo->SetBinContent(idx_bin + 1, res_for_plot_after_selector[ idx_syst ].impact);
+                histo_neg->SetBinContent(idx_bin + 1, -res_for_plot_after_selector[ idx_syst ].impact);
+            }
             histo_plus_sigma_var ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_plus_sigma_var);
             histo_minus_sigma_var->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_minus_sigma_var);
             histo_plus_one_var   ->SetBinContent(idx_bin + 1, res_for_plot_after_selector[idx_syst].impact_plus_one_var);
@@ -252,33 +254,18 @@ namespace eft::plot {
             //EFT_PROF_DEBUG("NpRankingPlotter::Plot set {:2} to {}", idx_syst, res_for_plot_after_selector[idx_syst].impact);
         }
 
-        //const float range_high = settings->rmuh; //  0.002f;
-        //const float range_low  = settings->rmul; // -0.002
 
         float range_high = 1.5f * (res_for_plot_after_selector.at(0).impact_plus_one_var);
         float range_low  = 1.5f * (res_for_plot_after_selector.at(0).impact_minus_one_var);
 
-        if (abs(settings->rmuh) < 1E-9)
-            settings->rmuh = 1.5f * (res_for_plot_after_selector.at(0).impact_plus_one_var);
-        else
+        if (settings->rmuh != 0)
             range_high = settings->rmuh;
+        if (settings->rmul != 0)
+            range_low  = settings->rmul;
 
-        if (abs(settings->rmul) < 1E-9)
-            settings->rmul = 1.5f * (res_for_plot_after_selector.at(0).impact_minus_one_var);
-        else
-            range_low = settings->rmul;
 
-//        if (settings->rmuh != 0)
-//            range_high = settings->rmuh;
-//
-//        if (settings->rmul != 0)
-//            range_low = settings->rmul;
-
-        //constexpr float scaling = (range_high - range_low) / 2.f;
-        //const double scaling = abs(res_for_plot_after_selector.at(0).obs_value);
-        float scaling = abs(range_high);
-        //float scaling = abs(res_for_plot_after_selector.at(0).impact_plus_one_var);
-        if (settings->np_scale > 1E-9)
+        float scaling = abs(range_high) / 1.5f;
+        if (settings->np_scale != 0)
             scaling = settings->np_scale;
 
         if (is_vertical)
@@ -619,10 +606,12 @@ namespace eft::plot {
         float y_end_multiplier   = 0.25f;
         float dy_text = 0.05f;
 
-        TBox marker_prefit_plus  {x_start, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
-        TBox marker_prefit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
-        TBox marker_posfit_plus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
-        TBox marker_posfit_minus {x_start += dx_between_markers, settings->rmuh * y_start_multiplier,  x_start += x_size_one_block, settings->rmuh * y_end_multiplier};
+
+
+        TBox marker_prefit_plus  {x_start, range_high * y_start_multiplier,  x_start += x_size_one_block, range_high * y_end_multiplier};
+        TBox marker_prefit_minus {x_start += dx_between_markers, range_high * y_start_multiplier,  x_start += x_size_one_block, range_high * y_end_multiplier};
+        TBox marker_posfit_plus {x_start += dx_between_markers, range_high * y_start_multiplier,  x_start += x_size_one_block, range_high * y_end_multiplier};
+        TBox marker_posfit_minus {x_start += dx_between_markers, range_high * y_start_multiplier,  x_start += x_size_one_block, range_high * y_end_multiplier};
 
         marker_prefit_plus. SetLineColor(settings->color_prefit_plus);
         marker_prefit_minus.SetLineColor(settings->color_prefit_minus);
@@ -662,19 +651,19 @@ namespace eft::plot {
             marker_posfit_plus.Draw();
             marker_posfit_minus.Draw();
 
-            EFT_PROF_WARN("draw latex +1 at {}, {}",x_start_init + dx_between_markers * 0,settings->rmuh * (y_end_multiplier + 0.1));
-            EFT_PROF_WARN("draw latex -1 at {}, {}",x_start_init + dx_between_markers * 1,settings->rmuh * (y_end_multiplier + 0.1));
-            EFT_PROF_WARN("draw latex +s at {}, {}",x_start_init + dx_between_markers * 2,settings->rmuh * (y_end_multiplier + 0.1));
-            EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,settings->rmuh * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex +1 at {}, {}",x_start_init + dx_between_markers * 0,range_high * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex -1 at {}, {}",x_start_init + dx_between_markers * 1,range_high * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex +s at {}, {}",x_start_init + dx_between_markers * 2,range_high * (y_end_multiplier + 0.1));
+            EFT_PROF_WARN("draw latex -s at {}, {}",x_start_init + dx_between_markers * 3,range_high * (y_end_multiplier + 0.1));
 
 
 
             latex.SetNDC(false);
             latex.SetTextAlign(12);
-            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 0, settings->rmuh * (y_end_multiplier + dy_text), "+1 impact (#theta = #hat{#theta} + 1)");
-            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 1, settings->rmuh * (y_end_multiplier + dy_text), "-1 impact (#theta = #hat{#theta} - 1)");
-            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 2, settings->rmuh * (y_end_multiplier + dy_text), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
-            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 3, settings->rmuh * (y_end_multiplier + dy_text), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 0, range_high * (y_end_multiplier + dy_text), "+1 impact (#theta = #hat{#theta} + 1)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 1, range_high * (y_end_multiplier + dy_text), "-1 impact (#theta = #hat{#theta} - 1)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 2, range_high * (y_end_multiplier + dy_text), "+#sigma impact (#theta = #hat{#theta} + #sigma)");
+            latex.DrawLatex(x_start_init + (dx_between_markers + x_size_one_block) * 3, range_high * (y_end_multiplier + dy_text), "-#sigma impact (#theta = #hat{#theta} - #sigma)");
             latex.SetNDC(true);
             latex.SetTextAlign(11); // default
         }
@@ -684,7 +673,7 @@ namespace eft::plot {
 
         if (is_vertical) {
             x_selection_info = x_start_init + (dx_between_markers + x_size_one_block) * 4;
-            y_selection_info = settings->rmuh * (y_start_multiplier);
+            y_selection_info = range_high * (y_start_multiplier);
             latex.SetNDC(false);
             latex.SetTextAlign(12);
             latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
