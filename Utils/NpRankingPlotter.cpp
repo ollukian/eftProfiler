@@ -146,10 +146,16 @@ namespace eft::plot {
                      std::back_inserter(res_for_plot_after_selector),
                      [&](const NpInfoForPlot& info) {
                          bool res = callback_(info);
-                         EFT_PROF_INFO("Does np: {:60} for poi: {} pass name selection ==> result: {}",
-                                       info.name,
-                                       info.poi,
-                                       res);
+                         if (res) {
+                             EFT_PROF_INFO("{:70} for poi: {} passes      name selection",
+                                           info.name,
+                                           info.poi);
+                         }
+                         else {
+                             EFT_PROF_WARN("{:70} for poi: {} DOESNT pass name selection",
+                                           info.name,
+                                           info.poi);
+                         }
                          return res;
                      }
         );
@@ -700,7 +706,10 @@ namespace eft::plot {
         for (const std::string& fileformat : settings->fileformat) {
             string name = stem_name + '.' + fileformat;
 
-            eft::utils::draw::Scene::SaveAs(name);
+            //if (settings->out_dir.empty())
+            //    eft::utils::draw::Scene::SaveAs(name);
+            //else
+            eft::utils::draw::Scene::SaveAs(settings->out_dir + name);
             //canvas->SaveAs(std::move(name).c_str());
         }
     }
@@ -889,7 +898,7 @@ namespace eft::plot {
         });
 
         callbacks.emplace_back(std::move([&](const NpInfoForPlot& info) -> bool {
-            bool res = info.name.find("gamma") == std::string::npos;
+            bool res = info.name.find("gamma_stat") == std::string::npos;
             EFT_PROF_DEBUG("callback [{:12}][{:10}] for POI: {:10}, np: {:20} result: {}",
                            "no gamma",
                            info.poi,
