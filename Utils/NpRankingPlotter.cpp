@@ -698,7 +698,7 @@ namespace eft::plot {
             //if (settings->out_dir.empty())
             //    eft::utils::draw::Scene::SaveAs(name);
             //else
-            eft::utils::draw::Scene::SaveAs(settings->out_dir + name);
+            eft::utils::draw::Scene::SaveAs(settings->out_dir + "//" + name);
             //canvas->SaveAs(std::move(name).c_str());
         }
     }
