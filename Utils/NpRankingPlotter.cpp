@@ -265,6 +265,9 @@ namespace eft::plot {
 
 
         float scaling = abs(range_high) / 1.5f;
+        cout << "scaling: " << scaling << endl;
+        cout << "range_low: " << range_low << endl;
+        cout << "range_high: " << range_high << endl;
         if (settings->np_scale != 0)
             scaling = settings->np_scale;
 
