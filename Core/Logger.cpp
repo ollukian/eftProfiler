@@ -16,7 +16,6 @@ namespace eft::stats {
 
 void Logger::Init(string name, string path, string logger_name)
 {
-    cout << "logger init with name, path, logger_name" << endl;
     if (logger_default_) {
         spdlog::drop("eft_profiler_default");
     }
@@ -110,6 +109,7 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
     }
 
     if (commandLineArgs->HasKey("debug")) {
+        cout << "has key debug => set full printing" << endl;
         eft::stats::Logger::SetFullPrinting();
     }
 
