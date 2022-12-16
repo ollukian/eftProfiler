@@ -109,7 +109,6 @@ void Logger::Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs)
     }
 
     if (commandLineArgs->HasKey("debug")) {
-        cout << "has key debug => set full printing" << endl;
         eft::stats::Logger::SetFullPrinting();
     }
 

@@ -29,7 +29,7 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
-    eft::stats::Logger::SetRelease();
+    //eft::stats::Logger::SetRelease();
     if (commandLineArgs->HasKey("test")) {
     //if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
