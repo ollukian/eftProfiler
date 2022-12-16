@@ -24,7 +24,7 @@ public:
     void PrintMissingNps(std::ostream& os, const std::string& separator = " \n");
     void ComputeMissingNPs() noexcept;
 private:
-    std::shared_ptr<MissingNpsProcessorSettings> settings_;
+    std::shared_ptr<MissingNpsProcessorSettings> settings_ {};
     std::set<std::string> all_nps_;
     std::set<std::string> present_nps_;
     std::set<std::string> missing_nps_;
