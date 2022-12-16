@@ -166,7 +166,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
             .UsingNPs(nps)
             .ForNP(res.np_name)
             .UsingErrors(settings.errors)
-            .UsingWS(ws_.get())
+            .UsingWS(ws_)
             .UsingSnapshotWithInitVals("tmp_nps")
             .ForPOI(res.poi_name)
             .UsingPOIs(const_cast<RooArgSet*>(ws_->GetPOIs()))
