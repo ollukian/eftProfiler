@@ -107,7 +107,7 @@ public:
 
     inline const std::vector<std::string>& GetListPOIs() const noexcept override;
 
-    inline IWorkspaceWrapper* ws() override { return ws_.get(); }
+    inline IWorkspaceWrapper* ws() override { return ws_; }
 private:
     DataClosure data_{};
     FuncClosure funcs_{};
@@ -221,7 +221,8 @@ inline void FitManager::ExtractCats() noexcept
 
 inline void FitManager::SetWsWrapper() noexcept
 {
-    ws_ = std::make_unique<WorkspaceWrapper>();
+    ws_ = new WorkspaceWrapper();
+    //ws_ = std::make_unique<WorkspaceWrapper>();
 }
 
 inline void FitManager::SetWS(std::string path, std::string name)
