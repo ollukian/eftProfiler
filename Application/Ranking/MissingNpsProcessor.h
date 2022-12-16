@@ -17,6 +17,8 @@ namespace eft::stats::ranking {
 
 class MissingNpsProcessor {
 public:
+    MissingNpsProcessor() = default;
+
     void ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs);
     //void ReadNpFiles();
     void PrintMissingNps(std::ostream& os, const std::string& separator = " \n");

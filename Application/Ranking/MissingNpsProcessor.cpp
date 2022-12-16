@@ -26,8 +26,11 @@ void MissingNpsProcessor::ReadSettingsFromCommandLine(CommandLineArgs *cmdLineAr
     FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
     settings_->path_files = config.input;
     eft::stats::NpRankingStudySettings settings;
+    EFT_PROF_TRACE("get settings from config");
     settings.GetFromConfig(&config);
+    EFT_PROF_TRACE("init managet from config");
     manager->Init(std::move(config));
+    EFT_PROF_TRACE("get paired nps");
     auto paired_nps = manager->GetListAsArgSet("paired_nps");
 
     EFT_PROF_DEBUG("MissingNpsProcessor: Get list of names of all nps");
@@ -57,6 +60,7 @@ void MissingNpsProcessor::ReadSettingsFromCommandLine(CommandLineArgs *cmdLineAr
 
 void MissingNpsProcessor::PrintMissingNps(std::ostream& os, const std::string& separator)
 {
+    EFT_PROF_TRACE("MissingNpsProcessor::PrintMissingNps");
     if (missing_nps_.empty()) {
         EFT_PROF_CRITICAL("No missing nps found");
         return;
