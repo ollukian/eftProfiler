@@ -117,8 +117,8 @@ private:
 
     std::vector<std::string> pois_;
 
-    std::unique_ptr<IWorkspaceWrapper> ws_ {};
-    //IWorkspaceWrapper* ws_ = nullptr;
+    //std::unique_ptr<IWorkspaceWrapper> ws_ {};
+    IWorkspaceWrapper* ws_ = nullptr;
 
     mutable std::string np_names{};
     mutable std::string obs_names{};
