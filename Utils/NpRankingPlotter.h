@@ -42,6 +42,8 @@ public:
     void                            SetCallBack(EntriesSelector selector) noexcept  { callback_ = std::move(selector); }
     void                            ReadValues(const std::filesystem::path& path);
     void                            Plot(const std::unique_ptr<RankingPlotterSettings>& settings) noexcept;
+    inline const std::vector<NpInfoForPlot>& GetResForPlot() const noexcept { return res_for_plot_; }
+    inline const std::vector<NpInfoForPlot>& GetResForPlot()       noexcept { return res_for_plot_; }
 private:
     NpRankingStudyRes               ReadValuesOneFile(const std::filesystem::path& path);
     void                            RegisterRes(const NpRankingStudyRes& res) noexcept;

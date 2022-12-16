@@ -9,6 +9,8 @@
 #include "Core/Logger.h"
 #include "Profiler.h"
 
+#include "Application/Ranking/MissingNpsProcessor.h"
+
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
 #include "spdlog/fmt/bundled/color.h"
@@ -86,8 +88,8 @@ int main(int argc, char* argv[]) {
                 {"string",          "color_postfit_minus","kGreen",     "Colour for -sigma variation. Formats: kBlue | RGB(r, g, b) | RGBA(r, g, b, a) || x in [0..255]"},
                 {"string",          "color_np",         "kBlack",       "x Colour for NP graph.    Formats: kBlue | RGB(x, y, z) | RGBA(x, y, z, a) || x in [0..255]"},
                 {"bool",            "reuse_nll",        "true",         "Do not create new nll for each fit in the impact study (pre-, post-fits, initial fit)"},
-                {"float",           "rmul",             "-0.002",       "LOW  value for the POI axis on the ranking plot"},
-                {"float",           "rmuh",             " 0.002",       "HIGH value for the POI axis on the ranking plot"},
+                {"float",           "rmul",             "[-1.5 * impact#1]", "LOW  value for the POI axis on the ranking plot"},
+                {"float",           "rmuh",             "[ 1.5 * impact#1]", "HIGH value for the POI axis on the ranking plot"},
                 {"float",           "np_scale",         "[post fit of top np]", "Force scale at which +- 1 for np axis is drawn wrt to the POI axis"},
                 {"bool",            "save_prelim",      "false",        "x To force saving results after each fit stage (free, fixed np, pre-fit, post-fit)"},
                 {"string",          "out_dir",          "figures",      "Directory to save result plot"},
@@ -105,8 +107,8 @@ int main(int argc, char* argv[]) {
                 {"float",           "mu_offset",        "",             "Offset of the POI label"},
                 {"float",           "np_offset",        "",             "Offset of the NP label"},
                 {"string",          "mu_latex",         "[POI]",        "Name of the POI to be printed on the 3rd line in TLatex format."},
-                {"vector<string>",  "np_names",         "",             R"(Either list (Ex: cute_np1 cool_np2 #mu_latex ...) or "file:my_filename.txt" - to read from file)"},
-                {"float",           "text_size",        "0.030",        R"(Size of the: energy, dataset title, POI, luminosity)"},
+                {"vector<string>",  "np_names",         "",             R"(Labels for bins. Either list (Ex: cute_np1 cool_np2 #mu_latex ...) or "file:my_filename.txt" - to read from file)"},
+                {"float",           "text_size",        "0.030",        R"(Text size of the: energy, dataset title, POI, luminosity)"},
                 {"float",           "text_font",        "42",           R"(Font of the: energy, dataset title, POI, luminosity)"},
                 {"float",           "dy",               "0.03",         R"(Distance between text lines)"},
                 {"vector<string>",  "add_text",         "",             R"(x [x y text [size][font]] to be added. Ex: "2 4 abc" or: "1 2 xyz 27 34")"},
@@ -209,6 +211,12 @@ int main(int argc, char* argv[]) {
         manager->PlotCovariances(res);
         string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
         manager->PrintSuggestedNpsRanking(std::move(name_to_save), res);
+    }
+    else if (task == "get_missing_nps") {
+        eft::stats::ranking::MissingNpsProcessor missingNpsProcessor;
+        missingNpsProcessor.ReadSettingsFromCommandLine(commandLineArgs.get());
+        missingNpsProcessor.ComputeMissingNPs();
+        missingNpsProcessor.PrintMissingNps(cout, " \\ \n");
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);

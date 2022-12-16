@@ -97,7 +97,6 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
                           res.np_name);
         } else {
             res.np_name = nps->operator[](workerId)->GetName();
-            res.np_name = non_gamma_nps->operator[](workerId)->GetName();
             EFT_PROF_INFO("All nps, including gamma ==> choose NP number from the full list. Deal with {} ==> {}",
                           workerId,
                           res.np_name);

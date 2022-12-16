@@ -5,6 +5,7 @@ set(app_source_files
         FitManagerConfig.h RankingPlotterSettings.h
         Ranking/OneNpManager.cpp Ranking/OneNpManager.h
         Ranking/StudyRes.cpp Ranking/StudyRes.h
+        Ranking/MissingNpsProcessor.cpp
         HesseStudyResult.cpp HesseStudyResult.h)
 
 include_directories(../Vendors)

@@ -44,23 +44,14 @@ namespace eft::plot {
             return;
         }
         EFT_PROF_INFO("Read result files from {}", path.string());
-        //cout << "[NpRankingPlotter] read values from: " << path.string() << endl;
 
         for (const auto& entry : fs::directory_iterator{path}) {
             const auto filenameStr = entry.path().filename().string();
-            //cout << filenameStr;
             if (entry.is_directory()) {
                 EFT_PROF_INFO("{} is a directory, skip it", filenameStr);
             }
             else if (entry.is_regular_file()) {
-                //EFT_PROF_DEBUG();
-                //cout << " ==> is a regular file, try to parse it" << endl;
                 RegisterRes(ReadValuesOneFile(entry));
-                //if (callback(res)) {
-                //    EFT_PROF_INFO("NpRankingPlotter::ReadValues passes selection set by the callback. Register it");
-                //    RegisterRes(res);
-                //}
-                ///RegisterRes(ReadValuesOneFile(entry), callback);
             }
         }
 
@@ -69,19 +60,14 @@ namespace eft::plot {
     NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
     {
         const string filename = path.string();
-        //cout << fmt::format("[ReadValuesOneFile] read from {}", filename) << endl;
         const string extension = path.extension().string();
-        //cout << fmt::format("[ReadValuesOneFile] extension: [{}]", extension);
         if (extension != ".json") {
             cout << fmt::format(" NOT [.json]") << endl;
             return {};
         }
 
-        //cout << " => is [.json]" << endl;
-        //cout << "[ReadValuesOneFile] try to open: " << filename << endl;
         ifstream ifs(filename);
         if ( ! ifs.is_open() ) {
-            //cout << "[ReadValuesOneFile] cannot open: " << filename << endl;
             throw std::runtime_error("error opening: " + filename);
         }
 
@@ -118,10 +104,8 @@ namespace eft::plot {
         }
 
         EFT_PROF_DEBUG("[ReadValueOneFile] read res for poi: {:10}, np: {:30}", res.poi_name, res.np_name);
-        //cout << setw(4) << j << endl;
         np_study_res_[res.np_name] = res;
         return res;
-        //RegisterRes(np_study_res_[res.np_name]);
     }
 
     void NpRankingPlotter::Plot(const unique_ptr<RankingPlotterSettings>& settings) noexcept
