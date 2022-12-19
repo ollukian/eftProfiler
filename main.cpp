@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     if (commandLineArgs->HasKey("h") || commandLineArgs->HasKey("help"))
     {
         cout << "for task, use one of the following:" << endl;
-        for (const auto& task : {"compute_ranking, plot_ranking, compute_unconstrained"}) {
+        for (const auto& task : {"compute_ranking", "plot_ranking", "compute_unconstrained", "get_missing_nps"}) {
             cout << '\t' << task << endl;
         }
         cout << "* Available keys" << endl;
@@ -219,7 +219,7 @@ int main(int argc, char* argv[]) {
         missingNpsProcessor.PrintMissingNps(cout, " \\ \n");
     }
     else {
-        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained]", task);
+        EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);
         return 0;
     }
 

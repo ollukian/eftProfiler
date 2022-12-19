@@ -76,11 +76,11 @@ void MissingNpsProcessor::ComputeMissingNPs() noexcept {
     EFT_PROF_DEBUG("Loop over a list with {} nps", all_nps_.size());
     for (const auto& np : all_nps_) {
         if (present_nps_.count(np) == 0) {
-            EFT_PROF_DEBUG("Check: {:60} ==> ADD");
+            EFT_PROF_DEBUG("Check: {:60} ==> ADD", np);
             missing_nps_.insert(np);
         }
         else {
-            EFT_PROF_DEBUG("Check: {:60} ==> ALREADY");
+            EFT_PROF_DEBUG("Check: {:60} ==> ALREADY", np);
         }
     }
     EFT_PROF_INFO("Found {} missing nps", missing_nps_.size());

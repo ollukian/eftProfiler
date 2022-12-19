@@ -5,7 +5,7 @@ submit_one_worker()
   echo "#!/bin/sh" > "${current_script}"
   echo "####################################################################################################################" >> "${current_script}"
   echo "# script automatically created by run_remote version @ 8Dec22 / Lukianchuk Aleksei lukianchuk.aleksei@gmail.com  ##" >> "${current_script}"
-  echo "# eftProfiler version 1.0.5 @ 29Nov22                                                                             ##" >> "${current_script}"
+  echo "# eftProfiler version 1.1.0 @ 16Dec22                                                                             ##" >> "${current_script}"
   echo "####################################################################################################################" >> "${current_script}"
   echo "# script is called from: ${PWD} with the following settings:                                                      ##" >> "${current_script}"
   echo "# save path to:    ${EFT_SAVE_RES_TO}                                                                             ##" >> "${current_script}"

@@ -4,8 +4,8 @@ submit_one_worker()
   current_script=/sps/atlas/o/ollukian/scratch/script_suggest_ranking_${POI}.sh
   echo "#!/bin/sh" > "${current_script}"
   echo "####################################################################################################################" >> "${current_script}"
-  echo "# script automatically created by run_remote version @ 11Dec22 / Lukianchuk Aleksei lukianchuk.aleksei@gmail.com  ##" >> "${current_script}"
-  echo "# eftProfiler version 1.0.7 @ 11Dec22                                                                             ##" >> "${current_script}"
+  echo "# script automatically created by run_remote version @ 16Dec22 / Lukianchuk Aleksei lukianchuk.aleksei@gmail.com  ##" >> "${current_script}"
+  echo "# eftProfiler version 1.1.0 @ 16Dec22                                                                             ##" >> "${current_script}"
   echo "####################################################################################################################" >> "${current_script}"
   echo "# Script will make a prediction on the most important nps to start ranking from. It is based on the computing of  ##" >> "${current_script}"
   echo "# the correlation coefficients between the POI and all nps (via Hessian) in a free fit.                           ##" >> "${current_script}"
@@ -22,7 +22,7 @@ submit_one_worker()
 
   echo "cd ${EFT_PROFILER_PATH}" >> "${current_script}"
 
-  echo "sh job_script.sh --task compute_hesse_nps --poi ${POI} --errors ${EFT_ERRORS_HANDLING} --poi_init_val ${POI_INIT_VAL} --ws_path ${WS_PATH} --comb_pdf ${PDF_NAME} --strategy ${STRATEGY} ${OTHER_OPTIONS}"  >> "${current_script}"
+  echo "sh job_script.sh --task compute_hesse_nps --poi ${POI} --poi_init_val ${POI_INIT_VAL} --ws_path ${WS_PATH} --comb_pdf ${PDF_NAME} --strategy ${STRATEGY} ${OTHER_OPTIONS}"  >> "${current_script}"
 
   echo "source ${current_script}"
   sbatch --mail-user lukianchuk@lal.in2p3.fr --mail-type=END,FAIL -L sps --mem 20G --export=ALL --job-name "sug_${POI}" --output "/sps/atlas/o/ollukian/scratch/Log_${POI}_suggest_ranking.OU" --error "/sps/atlas/o/ollukian/scratch/Log_${POI}_suggest_ranking.ER" "${current_script}"
