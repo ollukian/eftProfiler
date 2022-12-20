@@ -222,20 +222,13 @@ CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
 
     manager->Init(config);
 
-    //EFT_PROF_WARN("check pdf: {}", config.comb_pdf);
-    //assert(manager->GetPdf(config.comb_pdf) != nullptr);
-    EFT_PROF_WARN("check globs");
-    assert(manager->GetListAsArgSet("paired_globs"));
-    EFT_PROF_WARN("check nps");
-    assert(manager->GetListAsArgSet("paired_nps"));
-
     // pdf_total is a key to the total pdf, which is extracted by the manager
     SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf("pdf_total")))
     .SetWS(ws_)
     .SetGlobs(manager->GetListAsArgSet("paired_globs"))
     .SetNPs(manager->GetListAsArgSet("paired_nps"))
     .SetData(&manager->GetData(settings_.prePostFit))
-    .SetPOIs(manager->GetListAsArgSet("pois"))
+    .SetPOIs(const_cast<RooArgSet *>(ws_->GetPOIs()))
     .SetPOI(ws_->GetVar(settings_.poi))
     .SetPOIname(settings_.poi);
 
