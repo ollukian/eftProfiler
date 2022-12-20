@@ -461,7 +461,11 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         auto idx_2 = GetIdx(names2, np_name);
         EFT_PROF_DEBUG("Idx for: {:60} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
-            auto weight = (idx_2 - idx_1) / idx_1;
+
+            float weight = 1.f;
+            if (idx_1 != 0)
+                weight = static_cast<float>((idx_2 - idx_1)) / idx_1;
+
             if (settings->weighted)
                 h->Fill(idx_1 + 1, idx_2 + 1, weight);
             else
