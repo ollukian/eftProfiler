@@ -229,7 +229,8 @@ CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
     EFT_PROF_WARN("check nps");
     assert(manager->GetListAsArgSet("paired_nps"));
 
-    SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf(config.comb_pdf)))
+    // pdf_total is a key to the total_pdf
+    SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf("pdf_total")))
     .SetWS(ws_)
     .SetGlobs(manager->GetListAsArgSet("paired_globs"))
     .SetNPs(manager->GetListAsArgSet("paired_nps"))
