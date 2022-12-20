@@ -454,12 +454,12 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     vector<pair<string, float>> not_guessed;
     not_guessed.reserve(nb_bins);
 
-    EFT_PROF_INFO("Idx for: {:40} ==> {:3} & {:3}", "np_name", settings->label1, settings->label2);
+    EFT_PROF_INFO("Idx for: {:60} ==> {:3} & {:3}", "np_name", settings->label1, settings->label2);
     for (size_t idx {0}; idx < nb_bins; ++idx) {
         auto np_name = names1.at(idx);
         auto idx_1 = idx;
         auto idx_2 = GetIdx(names2, np_name);
-        EFT_PROF_DEBUG("Idx for: {:40} ==> {:3} & {:3}", np_name, idx_1, idx_2);
+        EFT_PROF_DEBUG("Idx for: {:60} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
             h->Fill(idx_1 + 1, idx_2 + 1, 1);
             h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
