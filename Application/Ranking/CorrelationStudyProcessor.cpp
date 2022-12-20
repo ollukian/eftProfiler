@@ -2,9 +2,8 @@
 // Created by Aleksei Lukianchuk on 20-Dec-22.
 //
 
+#include "Core.h"
 #include "CorrelationStudyProcessor.h"
-#include "Profiler.h"
-#include "Logger.h"
 #include "IWorkspaceWrapper.h"
 #include "../../Fitter/Fitter.h"
 #include "../../Utils/Scene.h"
@@ -13,6 +12,8 @@
 #include "../Core/EftRootDrawingPreCompHeaders.h"
 
 #include "../FitManager.h"
+
+#include "CorrelationStudyPlotSettings.h"
 
 #include <fstream>
 #include <iostream>
@@ -283,6 +284,102 @@ bool CorrelationStudyProcessor::VerifyConsistency() const {
 
     return true;
 
+}
+
+CorrelationStudyProcessor::NpCorrelations
+CorrelationStudyProcessor::GetSortedCorrelationsFromFile(const std::string& path, const std::string& version)
+{
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("GetSortedCorrelationsFromFile from {}, encoding: {}", path, version);
+    if (version == "v1")
+        return GetSortedCorrelationsFromFileV1(path);
+    else
+        throw std::runtime_error("Encoding only in v1 is currently available");
+}
+
+CorrelationStudyProcessor::NpCorrelations
+CorrelationStudyProcessor::GetSortedCorrelationsFromFileV1(const std::string& path)
+{
+    // particular implementation for the v1 encoding (from 01Dec22)
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Read sorted correlation from {}", path);
+    ifstream fs(path);
+    if ( ! fs.is_open() )
+        throw std::runtime_error(fmt::format("cannot open: {}", path));
+
+    string header_line;
+    string poi_line;
+    string np_name;
+    double corr = 0.;
+    string line;
+
+    getline(fs, header_line);
+    fs >> poi_line >> corr;
+    EFT_PROF_DEBUG("poi: {}, corr: {}", poi_line, corr);
+    vector<pair<string, double>> res;
+
+    while (getline(fs, line)) {
+        stringstream ss{line};
+        ss >> np_name >> corr;
+        EFT_PROF_DEBUG("Read: {}, parsed as: np: {:40}, cor: {}", line, np_name, corr);
+        res.emplace_back(std::move(np_name), corr);
+    }
+    EFT_PROF_INFO("Read {} values", res.size());
+    for (const auto& [name, corr_] : res) {
+        EFT_PROF_DEBUG("{:40} ==> {}", name, corr_);
+    }
+    return res;
+}
+
+CorrelationStudyProcessor::NpCorrelations
+CorrelationStudyProcessor::FromVecNpInfo(const std::vector<NpInfoForPlot>& infos, const std::string& field) {
+    EFT_PROFILE_FN();
+    NpCorrelations res;
+    EFT_PROF_INFO("Convert vector<NpInfoForPlot> to NpCorrelations, using: {} field for impact", field);
+    EFT_PROF_INFO("Available {} pairs np <==> corr", infos.size());
+    for (const auto& np_info : infos) {
+        if (field == "+sigma")
+            res.emplace_back(np_info.name, np_info.impact_plus_sigma_var);
+        else if (field == "-sigma")
+            res.emplace_back(np_info.name, np_info.impact_minus_sigma_var);
+        else if (field == "+1")
+            res.emplace_back(np_info.name, np_info.impact_plus_one_var);
+        else if (field == "-1")
+            res.emplace_back(np_info.name, np_info.impact_minus_one_var);
+        else {
+            EFT_PROF_CRITICAL("Field: [{}] is not know. Use: {+sigma, -sigma, +1, -1}");
+            throw std::runtime_error("");
+        }
+    }
+    EFT_PROF_INFO("As a result: {} pairs", res.size());
+
+    return res;
+};
+
+void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<CorrelationStudyPlotSettings>& settings)
+{
+    EFT_PROFILE_FN();
+
+    using eft::utils::draw::Scene;
+
+    size_t nb_bins = settings->correlations1.size();
+    ASSERT_EQUAL(nb_bins, settings->correlations2.size());
+
+    auto corrs1 = settings->correlations1;
+    auto corrs2 = settings->correlations2;
+
+    Scene::Create();
+    auto h = make_shared<TH2D>("h", "h",
+                               nb_bins,
+                               0,
+                               nb_bins,
+                               nb_bins,
+                               0,
+                               nb_bins);
+
+//    for (size_t idx {0}; idx < nb_bins; ++idx) {
+//        h->SetBinContent(corrs1.at(idx).)
+//    }
 }
 
 } // ranking

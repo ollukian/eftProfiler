@@ -125,37 +125,6 @@ namespace eft::plot {
                       res_for_plot_.size(),
                       settings->top);
 
-//        vector<stats::NpInfoForPlot> res_for_plot_after_selector;
-//        res_for_plot_after_selector.reserve(res_for_plot_.size());
-//
-//        size_t total_nb_systematics_in_folder = res_for_plot_.size();
-//
-//        // TODO: wrap by "GetSelected"
-//        EFT_PROF_INFO("Select entries passing selectors");
-//        {
-//            EFT_LOG_DURATION("Selecting results");
-//            std::copy_if(res_for_plot_.begin(),
-//                         res_for_plot_.end(),
-//                         std::back_inserter(res_for_plot_after_selector),
-//                         [ & ](const NpInfoForPlot& info) {
-//                             bool res = callback_(info);
-//                             if(res) {
-//                                 EFT_PROF_INFO("{:70} for poi: {} passes      name selection",
-//                                               info.name,
-//                                               info.poi);
-//                             } else {
-//                                 EFT_PROF_WARN("{:70} for poi: {} DOESNT pass name selection",
-//                                               info.name,
-//                                               info.poi);
-//                             }
-//                             return res;
-//                         }
-//            );
-//        }
-//
-//        res_for_plot_after_selector.shrink_to_fit();
-
-
         EFT_PROF_INFO("Select entries passing the selectors");
         auto res_for_plot_after_selector = GetSelected();
 
@@ -170,27 +139,6 @@ namespace eft::plot {
 
         EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact (quadratic sum of post-fit impacts)");
         SortEntries(res_for_plot_after_selector);
-
-//        {
-//            EFT_LOG_DURATION("Sorting results");
-//            std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
-//                      [ & ](const NpInfoForPlot& l, const NpInfoForPlot& r) {
-//                          return ((l.impact_plus_sigma_var * l.impact_plus_sigma_var)
-//                                  +
-//                                  (l.impact_minus_sigma_var * l.impact_minus_sigma_var))
-//                                 >
-//                                 ((r.impact_plus_sigma_var * r.impact_plus_sigma_var)
-//                                  +
-//                                  (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
-//
-//                      }
-//            );
-//        }
-
-//        EFT_PROF_DEBUG("impacts after sorting:");
-//        for (const auto& res : res_for_plot_after_selector) {
-//            EFT_PROF_DEBUG("{:30} ==> {:5}", res.name, res.impact);
-//        }
 
         size_t nb_systematics = settings->top;
         if (nb_systematics > res_for_plot_after_selector.size())

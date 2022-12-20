@@ -3,7 +3,8 @@ set(core_source_files
         CommandLineArgs.cpp
         Logger.cpp
         Profiler.cpp
-        EfPreCompHeaders.cpp)
+        EfPreCompHeaders.cpp
+        Core.cpp)
 
 add_library(core ${core_source_files})
 #target_link_libraries(core modules)

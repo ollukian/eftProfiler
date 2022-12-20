@@ -123,6 +123,7 @@ int main(int argc, char* argv[]) {
                 {"float",           "dy_legend",        "0.00",         "y-distance between lines of legend in the units of the plot"},
                 {"size_t",          "max_digits",       "3",            "Maximum number of digits on the POI axis. If more, exponential form is used"},
                 {"bool",            "draw_impact",      "false",        "To draw impact being quadratic difference of the total error on the POI (free fit and with this NP fixed)"},
+                {"string",          "suggestions",      "",             "File with suggestions, to read ranking from Hesse from"},
         })
         {
             cout << fmt::format("|{:^16} | {:<20} | {:^15} | {:<80}|", options[0], options[1], options[2], options[3]) << endl;
@@ -202,7 +203,17 @@ int main(int argc, char* argv[]) {
         missingNpsProcessor.PrintMissingNps(cout, " \\ \n");
     }
     else if (task == "compare_ratings") {
+        using eft::stats::ranking::CorrelationStudyProcessor;
+        using eft::plot::NpRankingPlotter;
 
+        NpRankingPlotter plotter;
+        plotter.ReadSettingsFromCommandLine(commandLineArgs);
+        plotter.ReadValues(plotter.np_ranking_settings->input);
+        auto res_from_computation_vec = plotter.GetSelectedSorted();
+        auto res_from_computation = CorrelationStudyProcessor::FromVecNpInfo(res_from_computation_vec);
+        string path_suggestion;
+        commandLineArgs->SetValIfArgExists("suggestions", path_suggestion);
+        auto res_from_correlation = CorrelationStudyProcessor::GetSortedCorrelationsFromFile(path_suggestion);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

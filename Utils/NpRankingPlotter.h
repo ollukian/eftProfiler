@@ -45,22 +45,30 @@ public:
     void  inline                    ReadSettingsFromCommandLine(const std::shared_ptr<CommandLineArgs>& cmdLineArgs) noexcept;
     void                            ReadValues(const std::filesystem::path& path);
     void                            Plot(const std::unique_ptr<RankingPlotterSettings>& settings) noexcept;
+    [[nodiscard]]
     inline const std::vector<NpInfoForPlot>& GetResForPlot() const noexcept { return res_for_plot_; }
+    [[nodiscard]]
     inline const std::vector<NpInfoForPlot>& GetResForPlot()       noexcept { return res_for_plot_; }
 
+    [[nodiscard]]
     std::vector<NpInfoForPlot>          GetSelected(const EntriesSelector& selector) const noexcept;
+    [[nodiscard]]
     inline std::vector<NpInfoForPlot>   GetSelected() const noexcept;
 
-    inline std::vector<stats::NpInfoForPlot>
+    inline void                         SortEntries(std::vector<NpInfoForPlot>& entries) const noexcept;
+    inline static void                  SortEntries(std::vector<NpInfoForPlot>& entries, const EntriesSorter& sorter);
+
+    [[nodiscard]]
+    inline std::vector<NpInfoForPlot>   GetSelectedSorted(const EntriesSelector& selector) const noexcept;
+    [[nodiscard]]
+    inline std::vector<NpInfoForPlot>   GetSelectedSorted(const EntriesSorter& sorter)     const noexcept;
+    [[nodiscard]]
+    inline std::vector<NpInfoForPlot>   GetSelectedSorted()                                const noexcept;
+    [[nodiscard]]
+    inline std::vector<NpInfoForPlot>
             GetSelectedSorted(const EntriesSelector& selector,
                               const EntriesSorter& sorter) const noexcept;
 
-    inline std::vector<stats::NpInfoForPlot> GetSelectedSorted(const EntriesSelector& selector) const noexcept;
-    inline std::vector<stats::NpInfoForPlot> GetSelectedSorted(const EntriesSorter& sorter)     const noexcept;
-    inline std::vector<stats::NpInfoForPlot> GetSelectedSorted()                                const noexcept;
-
-    inline void        SortEntries(std::vector<NpInfoForPlot>& entries) const noexcept;
-    inline static void SortEntries(std::vector<NpInfoForPlot>& entries, const EntriesSorter& sorter);
 private:
     NpRankingStudyRes               ReadValuesOneFile(const std::filesystem::path& path);
     void                            RegisterRes(const NpRankingStudyRes& res) noexcept;

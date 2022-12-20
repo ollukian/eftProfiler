@@ -15,19 +15,34 @@ class RooRealVar;
 class RooArgSet;
 class CommandLineArgs;
 
+struct CorrelationStudyPlotSettings;
+
 
 namespace eft::stats::ranking {
 
 class CorrelationStudyProcessor {
 public:
+
+    using NP = std::string;
+    using Correlation = double;
+    using NpCorrelations = std::vector<std::pair<NP, Correlation>>;
+
     CorrelationStudyProcessor() = default;
     explicit CorrelationStudyProcessor(CommandLineArgs* cmdLine);
+
+    static NpCorrelations GetSortedCorrelationsFromFile(const std::string& path, const std::string& version = "v1");
+    static NpCorrelations GetSortedCorrelationsFromFileV1(const std::string& path) ;
+
+    static NpCorrelations FromVecNpInfo(const std::vector<NpInfoForPlot>& infos, const std::string& field = "+sigma");
+
+    static void DrawCorrsComparison(const std::shared_ptr<CorrelationStudyPlotSettings>& settings);
 
     HesseStudyResult ComputeHesseNps();
     void             PlotCovariances(const HesseStudyResult& res) const;
     void             ExtractCorrelations(HesseStudyResult& res) const;
+
     void             PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const;
-    static void      PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) ;
+    static void      PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res);
 public:
     inline CorrelationStudyProcessor& SetPdf(RooAbsPdf* pdf) noexcept;
     inline CorrelationStudyProcessor& SetData(RooAbsData* data) noexcept;
@@ -83,7 +98,7 @@ inline CorrelationStudyProcessor& CorrelationStudyProcessor::SetPOIname(const st
 inline CorrelationStudyProcessor& CorrelationStudyProcessor::SetWS(IWorkspaceWrapper* ws) noexcept {
     ws_ = ws;
     return *this;
-};
+}
 
 } // eft::stats::ranking
 
