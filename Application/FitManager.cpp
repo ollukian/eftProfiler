@@ -792,6 +792,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text_ndc);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, get);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, h_draw_options);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, plt_size);
 #undef EFT_ADD_VEC_OPTION
 
 
