@@ -6,7 +6,7 @@
 #include "Profiler.h"
 #include "Logger.h"
 #include "IWorkspaceWrapper.h"
-#include "../include/../Fitter/Fitter.h"
+#include "../../Fitter/Fitter.h"
 #include "../../Utils/Scene.h"
 
 #include "../Core/EftRooFitPreCompHeaders.h"
