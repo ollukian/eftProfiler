@@ -72,8 +72,8 @@ public:
     virtual const ArgsClosure& GetArgsClosure() const noexcept = 0;
     virtual const FuncClosure& GetFuncClosure() const noexcept = 0;
 
-    virtual const RooAbsData* GetData(std::string&& name) const = 0;
-    virtual const RooAbsPdf*  GetPdf (std::string&& name) const = 0;
+    virtual const RooAbsData* GetData(std::string name) const = 0;
+    virtual const RooAbsPdf*  GetPdf (std::string name) const = 0;
 
     virtual const std::vector<std::string>& GetListPOIs() const noexcept= 0;
 

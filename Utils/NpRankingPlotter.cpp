@@ -679,12 +679,7 @@ namespace eft::plot {
         const string stem_name = eft::utils::PlotterUtils::FormName(settings);
         for (const std::string& fileformat : settings->fileformat) {
             string name = stem_name + '.' + fileformat;
-
-            //if (settings->out_dir.empty())
-            //    eft::utils::draw::Scene::SaveAs(name);
-            //else
             eft::utils::draw::Scene::SaveAs(settings->out_dir + "//" + name);
-            //canvas->SaveAs(std::move(name).c_str());
         }
     }
 

@@ -10,6 +10,7 @@
 #include "Profiler.h"
 
 #include "Application/Ranking/MissingNpsProcessor.h"
+#include "Application/Ranking/CorrelationStudyProcessor.h"
 
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
@@ -183,40 +184,53 @@ int main(int argc, char* argv[]) {
         manager->DoFitAllNpFloat(std::move(settings));
     }
     else if (task == "compute_hesse_nps") {
+        using eft::stats::ranking::CorrelationStudyProcessor;
         EFT_PROF_INFO("Compute hesse nps");
-        eft::stats::FitManagerConfig config;
-        eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
-        auto manager = make_unique<eft::stats::FitManager>();
 
-        eft::stats::NpRankingStudySettings settings;
+        //eft::stats::FitManagerConfig config;
+        //eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
+        //auto manager = make_unique<eft::stats::FitManager>();
+//
+//        eft::stats::NpRankingStudySettings settings;
+//
+//        settings.poi                = config.poi;
+//        settings.path_to_save_res   = config.res_path;
+//        settings.poi_init_val       = config.poi_init_val;
+//        settings.eps                = config.eps;
+//        settings.retry = config.retry;
+//        settings.strategy = config.strategy;
+//        settings.reuse_nll = config.reuse_nll;
+//        settings.fit_all_pois = config.fit_all_pois;
+//        settings.fit_single_poi = config.fit_single_poi;
+//        settings.errors = eft::stats::fit::Errors::HESSE;
+//
+//        manager->Init(std::move(config));
 
-        settings.poi                = config.poi;
-        settings.path_to_save_res   = config.res_path;
-        settings.poi_init_val       = config.poi_init_val;
-        settings.eps                = config.eps;
-        settings.retry = config.retry;
-        settings.strategy = config.strategy;
-        settings.reuse_nll = config.reuse_nll;
-        settings.fit_all_pois = config.fit_all_pois;
-        settings.fit_single_poi = config.fit_single_poi;
-        settings.errors = eft::stats::fit::Errors::HESSE;
-
-        manager->Init(std::move(config));
-        auto res = manager->ComputeHesseNps(settings);
-        EFT_PROF_INFO("Plot covariances:");
-        res.poi = settings.poi;
-        manager->ExtractCorrelations(res);
-        EFT_PROF_INFO("Sort result:");
+        CorrelationStudyProcessor correlationStudyProcessor(commandLineArgs.get());
+        auto res = correlationStudyProcessor.ComputeHesseNps();
+        correlationStudyProcessor.ExtractCorrelations(res);
         const auto sorted = res.GetSorted();
-        manager->PlotCovariances(res);
+        correlationStudyProcessor.PlotCovariances(res);
         string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
-        manager->PrintSuggestedNpsRanking(std::move(name_to_save), res);
+        correlationStudyProcessor.PrintSuggestedNpsRanking(std::move(name_to_save), res);
+        //auto res = manager->ComputeHesseNps(settings);
+        //EFT_PROF_INFO("Plot covariances:");
+        //res.poi = settings.poi;
+//        manager->ExtractCorrelations(res);
+//        EFT_PROF_INFO("Sort result:");
+//        const auto sorted = res.GetSorted();
+//        manager->PlotCovariances(res);
+//        string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
+//        manager->PrintSuggestedNpsRanking(std::move(name_to_save), res);
     }
     else if (task == "get_missing_nps") {
         eft::stats::ranking::MissingNpsProcessor missingNpsProcessor;
         missingNpsProcessor.ReadSettingsFromCommandLine(commandLineArgs.get());
         missingNpsProcessor.ComputeMissingNPs();
         missingNpsProcessor.PrintMissingNps(cout, " \\ \n");
+    }
+    else if (task == "compare_ratings") {
+
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

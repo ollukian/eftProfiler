@@ -26,7 +26,7 @@ public:
     //FitManager(FitManagerConfig&& config) noexcept;
     ~FitManager() noexcept override = default;
 
-    void Init(FitManagerConfig&& config);
+    void Init(FitManagerConfig config);
     static void ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept;
 
     void ProcessGetCommand(const FitManagerConfig& config);
@@ -101,9 +101,9 @@ public:
     RooArgSet* GetListAsArgSet(const std::string& name) const;
 
     [[nodiscard]]
-    inline const RooAbsData* GetData(std::string&& name) const override {return data_.at(name);}
+    inline const RooAbsData* GetData(std::string name) const override {return data_.at(std::move(name));}
     [[nodiscard]]
-    inline const RooAbsPdf*  GetPdf (std::string&& name) const override {return funcs_.at(name);}
+    inline const RooAbsPdf*  GetPdf (std::string name) const override {return funcs_.at(std::move(name));}
 
     inline const std::vector<std::string>& GetListPOIs() const noexcept override;
 

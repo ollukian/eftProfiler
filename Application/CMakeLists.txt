@@ -1,14 +1,15 @@
 set(app_source_files
-        IFitManager.cpp IFitManager.h
-        FitManager.cpp FitManager.h
-        NpRankingStudyRes.cpp NpRankingStudyRes.h
-        FitManagerConfig.h RankingPlotterSettings.h
-        Ranking/OneNpManager.cpp Ranking/OneNpManager.h
-        Ranking/StudyRes.cpp Ranking/StudyRes.h
+        IFitManager.cpp
+        FitManager.cpp
+        NpRankingStudyRes.cpp
+        Ranking/OneNpManager.cpp
+        Ranking/StudyRes.cpp
         Ranking/MissingNpsProcessor.cpp
-        HesseStudyResult.cpp HesseStudyResult.h)
+        HesseStudyResult.cpp
+        Ranking/CorrelationStudyProcessor.cpp)
 
 include_directories(../Vendors)
+include_directories(../Core)
 
 add_library(app ${app_source_files})
 

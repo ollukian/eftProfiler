@@ -624,7 +624,7 @@ void FitManager::ExtractPOIs() noexcept
     for (const auto& poi : pois_) { EFT_PROF_DEBUG("[{}]", poi); }
 }
 
-void FitManager::Init(FitManagerConfig&& config)
+void FitManager::Init(FitManagerConfig config)
 {
     EFT_PROFILE_FN();
     //eft::stats::Logger::SetFullPrinting();

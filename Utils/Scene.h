@@ -9,6 +9,7 @@
 #include "Profiler.h"
 
 class TH1D;
+class TH2D;
 class TBox;
 class TMarker;
 class TLegend;
