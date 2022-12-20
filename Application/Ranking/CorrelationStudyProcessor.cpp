@@ -463,7 +463,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         if (idx_2 != -1) {
             auto weight = (idx_2 - idx_1) / idx_1;
             if (settings->weighted)
-                h->Fill(idx_1 + 1, idx_2 + 1, weighted);
+                h->Fill(idx_1 + 1, idx_2 + 1, weight);
             else
                 h->Fill(idx_1 + 1, idx_2 + 1, 1);
 
