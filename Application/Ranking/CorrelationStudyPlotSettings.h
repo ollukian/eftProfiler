@@ -31,6 +31,7 @@ struct CorrelationStudyPlotSettings {
 
     std::vector<size_t> plt_size {4000, 4000};
     float label_size {0.20};
+    bool weighted {false};
 
     void FormSortedNames();
 };

@@ -461,7 +461,12 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         auto idx_2 = GetIdx(names2, np_name);
         EFT_PROF_DEBUG("Idx for: {:60} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
-            h->Fill(idx_1 + 1, idx_2 + 1, 1);
+            auto weight = (idx_2 - idx_1) / idx_1;
+            if (settings->weighted)
+                h->Fill(idx_1 + 1, idx_2 + 1, weighted);
+            else
+                h->Fill(idx_1 + 1, idx_2 + 1, 1);
+
             h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
             h->GetYaxis()->SetBinLabel(idx_1 + 1, names2.at(idx).c_str());
             if (idx_1 < nb_bins && idx_2 < nb_bins)

@@ -246,6 +246,9 @@ int main(int argc, char* argv[]) {
 
         plotSettings->label_size = plotter.np_ranking_settings->label_size;
 
+        if (commandLineArgs->HasKey("weighted"))
+            plotSettings->weighted = true;
+
         //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
         //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);

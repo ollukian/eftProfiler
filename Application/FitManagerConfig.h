@@ -40,6 +40,7 @@ struct FitManagerConfig {
     std::vector<std::string>    get                 ;
     // PLOTTING
     bool                        vertical            {false};
+    bool                        weighted            {false}; // for comparison
     std::string                 color_prefit_plus   {"kBlue"};
     std::string                 color_prefit_minus  {"kGreen"};
     std::string                 color_postfit_plus  {"kBlue"};
@@ -62,7 +63,7 @@ struct FitManagerConfig {
     std::string                 out_dir             {"figures"};
     std::string                 output              {};
     std::string                 input               {};
-    std::string                 suggestions         {};
+    std::string                 suggestions         {}; // for suggestions
     std::vector<std::string>    remove_prefix       {};
     std::vector<std::string>    remove_suffix       {};
     std::vector<std::string>    replace             {};
