@@ -439,16 +439,16 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     Scene::SetLeftMargin(settings->lmargin);
     Scene::SetRightMargin(settings->rmargin);
     Scene::SetBottomMargin(settings->bmargin);
-    Scene::SetTopMargin(settings->bmargin);
+    Scene::SetTopMargin(settings->tmargin);
 
 
     auto h = make_shared<TH2D>("h", "h",
                                nb_bins,
-                               0,
+                               1,
+                               nb_bins + 1,
                                nb_bins,
-                               nb_bins,
-                               0,
-                               nb_bins);
+                               1,
+                               nb_bins + 1);
 
     size_t nb_guessed {0};
 
@@ -460,8 +460,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         EFT_PROF_DEBUG("Idx for: {:40} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
             h->Fill(idx_1 + 1, idx_2 + 1, 1);
-            h->GetXaxis()->SetBinLabel(idx_1, np_name.c_str());
-            h->GetYaxis()->SetBinLabel(idx_1, names2.at(idx).c_str());
+            h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
+            h->GetYaxis()->SetBinLabel(idx_1 + 1, names2.at(idx).c_str());
             if (idx_1 < nb_bins && idx_2 < nb_bins)
                 nb_guessed++;
         }
