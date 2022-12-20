@@ -229,9 +229,11 @@ int main(int argc, char* argv[]) {
         plotSettings->correlations2 = std::move(res_from_correlation);
         plotSettings->label1 = "From Computation";
         plotSettings->label2 = "From Correlation matrix";
-        plotSettings->name_to_save = plotter.np_ranking_settings->output;
+        if ( ! plotter.np_ranking_settings->output.empty() )
+            plotSettings->name_to_save = plotter.np_ranking_settings->output;
         plotSettings->np_nps_plot = plotter.np_ranking_settings->top;
-        plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
+        //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
+        //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
         // in this way, we apply the same selection to the read values
        // auto res_from_computation_after_selector = plotter.GetSelected(res_from_computation_before_selector);
