@@ -529,7 +529,7 @@ void TestWSreading() {
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();
     //auto ws_ = std::make_shared<WorkspaceWrapper>();
-    ASSERT(ws_.get());
+    ASSERT(ws_);
     ASSERT(std::filesystem::exists(path));
 
     bool is_set = false;
@@ -573,9 +573,10 @@ void TestLoading() {
 
 void TestWSGetters() {
     using namespace eft::utils::internal;
-    auto ws = std::make_shared<WorkspaceWrapper>(*LoadWS());
+    auto ws = LoadWS();
+    //auto ws = std::make_shared<WorkspaceWrapper>(*LoadWS());
     //auto ws = std::make_shared<WorkspaceWrapper>();
-    ws.reset(LoadWS());
+    //ws.reset(LoadWS());
 
     for (const string& glob_name : _test_globs_names_) {
         ASSERT(ws->GetVar(glob_name)->isConstant());
