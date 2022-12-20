@@ -412,7 +412,9 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     using eft::utils::draw::Scene;
 
     size_t nb_bins = settings->correlations1.size();
-    ASSERT_EQUAL(nb_bins, settings->correlations2.size());
+    //ASSERT_EQUAL(nb_bins, settings->correlations2.size());
+    if (settings->correlations2.size() < nb_bins)
+        nb_bins = settings->correlations2.size();
 
     const auto& corrs1 = settings->correlations1;
     const auto& corrs2 = settings->correlations2;
@@ -441,7 +443,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         if (idx_2 != -1) {
             h->Fill(idx_1 + 1, idx_2 + 1, 1);
             h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
-            h->GetYaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
+            h->GetYaxis()->SetBinLabel(idx_1 + 1, names2.at(idx).c_str());
         }
         else {
             EFT_PROF_WARN("NP: {:50} is not present in the second list", np_name);
