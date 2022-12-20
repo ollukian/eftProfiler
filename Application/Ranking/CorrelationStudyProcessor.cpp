@@ -461,13 +461,10 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         auto idx_2 = GetIdx(names2, np_name);
         EFT_PROF_DEBUG("Idx for: {:60} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
-
-            float weight = 1.f;
-            if (idx_1 != 0)
-                weight = static_cast<float>((idx_2 - idx_1)) / idx_1;
-
-            if (settings->weighted)
+            if (settings->weighted) {
+                auto weight = static_cast<float>((idx_2 - idx_1)) / nb_bins;
                 h->Fill(idx_1 + 1, idx_2 + 1, weight);
+            }
             else
                 h->Fill(idx_1 + 1, idx_2 + 1, 1);
 
@@ -502,7 +499,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
                   "idx in the guessed list (list #2)",
                   "idx in the obtained list (#1");
     for (const auto& [name, idx_2] : not_guessed) {
-        EFT_PROF_INFO("{:60} ==> {:3}", name, idx_2, GetIdx(settings->sorted_names_1, name));
+        EFT_PROF_INFO("{:60} ==> {:3} | {}", name, idx_2, GetIdx(settings->sorted_names_1, name));
     }
 
 }
