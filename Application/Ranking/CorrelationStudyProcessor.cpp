@@ -223,14 +223,22 @@ CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
     manager->Init(config);
 
     // pdf_total is a key to the total pdf, which is extracted by the manager
-    SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf("pdf_total")))
-    .SetWS(ws_)
-    .SetGlobs(manager->GetListAsArgSet("paired_globs"))
-    .SetNPs(manager->GetListAsArgSet("paired_nps"))
-    .SetData(&manager->GetData(settings_.prePostFit))
-    .SetPOIs(const_cast<RooArgSet *>(ws_->GetPOIs()))
-    .SetPOI(ws_->GetVar(settings_.poi))
-    .SetPOIname(settings_.poi);
+    SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf("pdf_total")));
+    EFT_PROF_CRITICAL("step 1");
+    SetWS(ws_);
+    EFT_PROF_CRITICAL("step 2");
+    SetGlobs(manager->GetListAsArgSet("paired_globs"));
+    EFT_PROF_CRITICAL("step 3");
+    SetNPs(manager->GetListAsArgSet("paired_nps"));
+    EFT_PROF_CRITICAL("step 4");
+    SetData(&manager->GetData(settings_.prePostFit));
+    EFT_PROF_CRITICAL("step 5");
+    SetPOIs(const_cast<RooArgSet *>(ws_->GetPOIs()));
+    EFT_PROF_CRITICAL("step 6");
+    SetPOI(ws_->GetVar(settings_.poi));
+    EFT_PROF_CRITICAL("step 7");
+    SetPOIname(settings_.poi);
+    EFT_PROF_CRITICAL("it's ok");
 
     if ( ! VerifyConsistency() ) {
         EFT_PROF_CRITICAL("Problem with initialising CorrelationStudyProcessor ^---");

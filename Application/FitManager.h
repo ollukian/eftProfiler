@@ -88,6 +88,7 @@ public:
     void CreateAsimovData(PrePostFit studyType) noexcept override;
 
     inline RooAbsData& GetData(PrePostFit studyType) noexcept override;
+    //inline RooAbsData* GetDataPtr(PrePostFit studyType) noexcept;
     inline void        SetUpGlobObs(PrePostFit studyType) noexcept override;
 
     [[nodiscard]]
@@ -451,6 +452,7 @@ inline RooAbsData& FitManager::GetData(PrePostFit studyType) noexcept
     EFT_PROF_TRACE("[FitManager]{GetData} POSTFIT, return data_[ \"asimov_postfit\" ]");
     return *data_[ "asimov_postfit" ];
 }
+
 inline void FitManager::SetUpGlobObs(PrePostFit studyType) noexcept
 {
     EFT_PROF_TRACE("[FitManager]{SetUpGlobObs}");
