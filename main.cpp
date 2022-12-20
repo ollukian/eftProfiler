@@ -233,10 +233,16 @@ int main(int argc, char* argv[]) {
             plotSettings->name_to_save = plotter.np_ranking_settings->output;
         plotSettings->np_nps_plot = plotter.np_ranking_settings->top;
 
-        plotSettings->lmargin = plotter.np_ranking_settings->lmargin;
-        plotSettings->rmargin = plotter.np_ranking_settings->rmargin;
-        plotSettings->tmargin = plotter.np_ranking_settings->tmargin;
-        plotSettings->bmargin = plotter.np_ranking_settings->bmargin;
+        if (plotter.np_ranking_settings->lmargin != 0.1f)
+            plotSettings->lmargin = plotter.np_ranking_settings->lmargin;
+        if (plotter.np_ranking_settings->rmargin != 0.05f)
+            plotSettings->rmargin = plotter.np_ranking_settings->rmargin;
+        if (plotter.np_ranking_settings->tmargin != 0.03f)
+            plotSettings->tmargin = plotter.np_ranking_settings->tmargin;
+        if (plotter.np_ranking_settings->bmargin != 0.4f)
+            plotSettings->bmargin = plotter.np_ranking_settings->bmargin;
+        if (plotter.np_ranking_settings->plt_size != vector<size_t>{1200, 800})
+            plotSettings->plt_size = plotter.np_ranking_settings->plt_size;
         //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
         //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
