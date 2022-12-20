@@ -225,7 +225,7 @@ CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
     // pdf_total is a key to the total pdf, which is extracted by the manager
     SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf("pdf_total")));
     EFT_PROF_CRITICAL("step 1");
-    SetWS(ws_);
+    SetWS(manager->ws());
     EFT_PROF_CRITICAL("step 2");
     SetGlobs(manager->GetListAsArgSet("paired_globs"));
     EFT_PROF_CRITICAL("step 3");

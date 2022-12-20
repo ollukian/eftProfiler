@@ -524,7 +524,7 @@ void Finalise() {
 void TestWSreading() {
     auto level = RooMsgService::instance().globalKillBelow();
     RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
-    eft::stats::Logger::SetFullPrinting();
+    //eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();

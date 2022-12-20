@@ -49,6 +49,8 @@ public:
     inline void SetWS(std::string path, std::string name) override;
     inline void SetModelConfig(std::string name) override;
 
+    inline IWorkspaceWrapper* GetWs() const noexcept {return ws_; }
+
     inline void ExtractNP()      noexcept override;
     inline void ExtractObs()     noexcept override;
     inline void ExtractGlobObs() noexcept override;
