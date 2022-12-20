@@ -222,6 +222,13 @@ CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
 
     manager->Init(config);
 
+    EFT_PROF_WARN("check pdf: {}", config.comb_pdf);
+    assert(manager->GetPdf(config.comb_pdf) != nullptr);
+    EFT_PROF_WARN("check globs");
+    assert(manager->GetListAsArgSet("paired_globs"));
+    EFT_PROF_WARN("check nps");
+    assert(manager->GetListAsArgSet("paired_nps"));
+
     SetPdf(const_cast<RooAbsPdf *>(manager->GetPdf(config.comb_pdf)))
     .SetWS(ws_)
     .SetGlobs(manager->GetListAsArgSet("paired_globs"))
