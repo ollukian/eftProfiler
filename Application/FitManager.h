@@ -101,9 +101,17 @@ public:
     RooArgSet* GetListAsArgSet(const std::string& name) const;
 
     [[nodiscard]]
-    inline const RooAbsData* GetData(std::string name) const override {return data_.at(std::move(name));}
+    inline const RooAbsData* GetData(std::string name) const override {
+        if (data_.find(name) != data_.end())
+            return data_.at(std::move(name));
+        throw std::runtime_error("There is no data stored with name: " + name);
+    }
     [[nodiscard]]
-    inline const RooAbsPdf*  GetPdf (std::string name) const override {return funcs_.at(std::move(name));}
+    inline const RooAbsPdf*  GetPdf (std::string name) const override {
+        if (funcs_.find(name) != funcs_.end())
+            return funcs_.at(std::move(name));
+        throw std::runtime_error("There is no pdf stored with name: " + name);
+    }
 
     inline const std::vector<std::string>& GetListPOIs() const noexcept override;
 
