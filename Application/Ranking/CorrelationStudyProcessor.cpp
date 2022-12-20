@@ -64,6 +64,7 @@ HesseStudyResult CorrelationStudyProcessor::ComputeHesseNps() {
     }
     EFT_PROF_DEBUG("[ComputeHesseNps] extract results from RooFitResult");
     auto res = HesseStudyResult::ExtractFromRooFitResult(*fitRes, list_nps);
+    res.poi = poi_name_;
     return res;
 }
 
@@ -168,7 +169,7 @@ void CorrelationStudyProcessor::ExtractCorrelations(HesseStudyResult& res) const
     std::vector<std::pair<std::string, double>> correlations_per_nb_np;
     // get correlations between POI and other things
     EFT_PROF_INFO("Extract correlations: poi <-> nps");
-    auto poi_var = ws_->GetVar(res.poi);
+    auto poi_var = ws_->GetVar(poi_name_);
     for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
         auto par = res.params.at(idx_np);
         auto corr = res.fitResult->correlation(*poi_var, *par);
