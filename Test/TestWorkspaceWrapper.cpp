@@ -88,7 +88,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create lumi block..");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
     ws->factory( "lumi_kappa[1.045]" );
-    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
+    ws->factory( "expr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
     ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
     ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
     //EFT_PROF_INFO("Create lumi block DONE");
@@ -97,7 +97,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create efficiency block..");
     ws->factory( "efficiency_nom[0.1, 0.05, 0.15]" );
     ws->factory( "efficiency_kappa[1.10]" );
-    ws->factory( "cexpr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
+    ws->factory( "expr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
     ws->factory( "prod::efficiency(efficiency_nom,alpha_efficiency)" );
     ws->factory( "Gaussian::constr_efficiency(beta_efficiency,glob_efficiency[0,-5,5],1)" );
     //EFT_PROF_INFO("Create efficiency block DONE");
@@ -107,7 +107,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create background block..");
     ws->factory( "nbkg_nom[10.0, 5.0, 15.0]" );
     ws->factory( "nbkg_kappa[1.10]" );
-    ws->factory( "cexpr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
+    ws->factory( "expr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
     ws->factory( "prod::nbkg(nbkg_nom,alpha_lumi,alpha_nbkg)" );
     ws->factory( "Gaussian::constr_nbkg(beta_nbkg,glob_nbkg[0,-5,5],1)" );
 
