@@ -462,7 +462,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         EFT_PROF_DEBUG("Idx for: {:60} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
             if (settings->weighted) {
-                auto weight = static_cast<float>((idx_2 - idx_1)) / nb_bins;
+                auto weight = static_cast<float>(idx_2 - idx_1) / nb_bins;
+                EFT_PROF_DEBUG("weight: {:4} - {:4} / {:4} = {:4}", idx_2, idx_1, nb_bins, weight);
                 h->Fill(idx_1 + 1, idx_2 + 1, weight);
             }
             else
@@ -494,12 +495,12 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
 
     EFT_PROF_INFO("Guessed {} nps out of {} ==> {} fraction", nb_guessed, nb_bins, (float) nb_guessed / (float) nb_bins);
     EFT_PROF_INFO("Not guessed ones:");
-    EFT_PROF_INFO("{:60} ==> {:3} {}",
+    EFT_PROF_INFO("{:60} ==> {:5} | {}",
                   "np_name",
                   "idx in the guessed list (list #2)",
                   "idx in the obtained list (#1");
     for (const auto& [name, idx_2] : not_guessed) {
-        EFT_PROF_INFO("{:60} ==> {:3} | {}", name, idx_2, GetIdx(settings->sorted_names_1, name));
+        EFT_PROF_INFO("{:60} ==> {:5} | {}", name, idx_2, GetIdx(settings->sorted_names_1, name));
     }
 
 }
