@@ -481,7 +481,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     Scene::SaveAs(settings->name_to_save);
     Scene::Clear();
 
-    EFT_PROF_INFO("Guessed {} nps out of {} ==> {} fraction", nb_guessed, nb_bins, (float) nb_bins / (float) nb_guessed);
+    EFT_PROF_INFO("Guessed {} nps out of {} ==> {} fraction", nb_guessed, nb_bins, (float) nb_guessed / (float) nb_bins);
 }
 
 } // ranking
