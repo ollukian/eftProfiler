@@ -19,6 +19,11 @@ struct CorrelationStudyPlotSettings {
     std::vector<std::string> sorted_names_1;
     std::vector<std::string> sorted_names_2;
 
+    std::string name_to_save {"Comparison.pdf"};
+    std::string draw_options {"colz"};
+
+    size_t np_nps_plot;
+
     void FormSortedNames();
 };
 

@@ -416,6 +416,9 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     if (settings->correlations2.size() < nb_bins)
         nb_bins = settings->correlations2.size();
 
+    if (settings->np_nps_plot < nb_bins)
+        nb_bins = settings->np_nps_plot;
+
     const auto& corrs1 = settings->correlations1;
     const auto& corrs2 = settings->correlations2;
 
@@ -439,7 +442,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         auto np_name = names1.at(idx);
         auto idx_1 = idx;
         auto idx_2 = GetIdx(names2, np_name);
-        EFT_PROF_DEBUG("Get idx for: {:40} in list2 ==> {}", np_name, idx_2);
+        EFT_PROF_DEBUG("Idx for: {:40} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
             h->Fill(idx_1 + 1, idx_2 + 1, 1);
             h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
@@ -453,8 +456,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     h->GetXaxis()->SetTitle(settings->label1.c_str());
     h->GetYaxis()->SetTitle(settings->label2.c_str());
 
-    h->Draw("colz");
-    Scene::SaveAs(fmt::format("Comparison.pdf"));
+    h->Draw(settings->draw_options.c_str());
+    Scene::SaveAs(settings->name_to_save);
     Scene::Clear();
 }
 
