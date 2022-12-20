@@ -433,7 +433,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     if (settings->sorted_names_1.empty())
         settings->FormSortedNames();
 
-    Scene::Create(3200, 3200);
+    auto canvas = Scene::Create(settings->plt_size[0], settings->plt_size[1]);
+    canvas->SetGrid();
 
     Scene::SetLeftMargin(settings->lmargin);
     Scene::SetRightMargin(settings->rmargin);
@@ -467,6 +468,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
 
     h->GetXaxis()->SetTitle(settings->label1.c_str());
     h->GetYaxis()->SetTitle(settings->label2.c_str());
+
+    h->SetLabelSize(settings->label_size);
 
     h->Draw("colz");
     Scene::SaveAs(settings->name_to_save);

@@ -30,6 +30,7 @@ struct CorrelationStudyPlotSettings {
     float                       bmargin             {0.20};
 
     std::vector<size_t> plt_size {4000, 4000};
+    float label_size {0.20};
 
     void FormSortedNames();
 };

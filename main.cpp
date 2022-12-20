@@ -243,6 +243,9 @@ int main(int argc, char* argv[]) {
             plotSettings->bmargin = plotter.np_ranking_settings->bmargin;
         if (plotter.np_ranking_settings->plt_size != vector<size_t>{1200, 800})
             plotSettings->plt_size = plotter.np_ranking_settings->plt_size;
+
+        plotSettings->label_size = plotter.np_ranking_settings->label_size;
+
         //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
         //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
