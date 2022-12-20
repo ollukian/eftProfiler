@@ -6,7 +6,8 @@ set(app_source_files
         Ranking/StudyRes.cpp
         Ranking/MissingNpsProcessor.cpp
         HesseStudyResult.cpp
-        Ranking/CorrelationStudyProcessor.cpp)
+        Ranking/CorrelationStudyProcessor.cpp
+        Ranking/CorrelationStudyPlotSettings.cpp)
 
 include_directories(../Vendors)
 include_directories(../Core)

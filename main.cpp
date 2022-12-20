@@ -1,5 +1,6 @@
 #include <iostream>
 #include <NpRankingStudyRes.h>
+#include <Ranking/CorrelationStudyPlotSettings.h>
 
 #include "Core/WorkspaceWrapper.h"
 #include "Application/FitManager.h"
@@ -205,15 +206,32 @@ int main(int argc, char* argv[]) {
     else if (task == "compare_ratings") {
         using eft::stats::ranking::CorrelationStudyProcessor;
         using eft::plot::NpRankingPlotter;
+        using eft::stats::ranking::SelectorSettings;
 
         NpRankingPlotter plotter;
         plotter.ReadSettingsFromCommandLine(commandLineArgs);
         plotter.ReadValues(plotter.np_ranking_settings->input);
         auto res_from_computation_vec = plotter.GetSelectedSorted();
         auto res_from_computation = CorrelationStudyProcessor::FromVecNpInfo(res_from_computation_vec);
+
         string path_suggestion;
         commandLineArgs->SetValIfArgExists("suggestions", path_suggestion);
-        auto res_from_correlation = CorrelationStudyProcessor::GetSortedCorrelationsFromFile(path_suggestion);
+        auto res_from_correlation_before_selector = CorrelationStudyProcessor::GetSortedCorrelationsFromFile(path_suggestion);
+        SelectorSettings selectorSetting;
+        selectorSetting.poi = plotter.np_ranking_settings->poi;
+        selectorSetting.selector = plotter.GetSelector();
+        auto res_from_correlation
+            = CorrelationStudyProcessor::ApplySelector(res_from_correlation_before_selector,
+                                                       selectorSetting);
+
+        auto plotSettings = std::make_shared<CorrelationStudyPlotSettings>();
+        plotSettings->correlations1 = std::move(res_from_computation);
+        plotSettings->correlations2 = std::move(res_from_correlation);
+        plotSettings->label1 = "From Computation";
+        plotSettings->label2 = "From Correlation matrix";
+        CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
+        // in this way, we apply the same selection to the read values
+       // auto res_from_computation_after_selector = plotter.GetSelected(res_from_computation_before_selector);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

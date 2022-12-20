@@ -870,19 +870,19 @@ void NpRankingPlotter::ReadNpNamesFromFile(const std::string& path) const
     np_ranking_settings->np_names = utils::FileSystemUtils::ReadLines(path).value();
 }
 
-vector<NpInfoForPlot> NpRankingPlotter::GetSelected(const EntriesSelector& selector) const noexcept {
+vector<NpInfoForPlot>
+NpRankingPlotter::GetSelected(const vector<NpInfoForPlot>& entries,
+                              const NpRankingPlotter::EntriesSelector& selector) noexcept
+{
     EFT_PROFILE_FN();
-    ASSERT_NOT_EQUAL(res_for_plot_.size(), 0);
-
+    ASSERT_NOT_EQUAL(entries.size(), 0);
     vector<stats::NpInfoForPlot> res_for_plot_after_selector;
-    res_for_plot_after_selector.reserve(res_for_plot_.size());
-
-    size_t total_nb_systematics_in_folder = res_for_plot_.size();
+    res_for_plot_after_selector.reserve(entries.size());
 
     {
         EFT_LOG_DURATION("Selecting results");
-        std::copy_if(res_for_plot_.begin(),
-                     res_for_plot_.end(),
+        std::copy_if(entries.begin(),
+                     entries.end(),
                      std::back_inserter(res_for_plot_after_selector),
                      [ & ](const NpInfoForPlot& info) {
                          bool res = selector(info);
@@ -901,6 +901,45 @@ vector<NpInfoForPlot> NpRankingPlotter::GetSelected(const EntriesSelector& selec
     }
     res_for_plot_after_selector.shrink_to_fit();
     return res_for_plot_after_selector;
+}
+
+vector<NpInfoForPlot> NpRankingPlotter::GetSelected(const vector<NpInfoForPlot>& entries) const noexcept {
+    EFT_PROFILE_FN();
+    return GetSelected(entries, callback_);
+}
+
+vector<NpInfoForPlot> NpRankingPlotter::GetSelected(const EntriesSelector& selector) const noexcept {
+    EFT_PROFILE_FN();
+    return GetSelected(res_for_plot_, selector);
+//    ASSERT_NOT_EQUAL(res_for_plot_.size(), 0);
+//
+//    vector<stats::NpInfoForPlot> res_for_plot_after_selector;
+//    res_for_plot_after_selector.reserve(res_for_plot_.size());
+//
+//    size_t total_nb_systematics_in_folder = res_for_plot_.size();
+//
+//    {
+//        EFT_LOG_DURATION("Selecting results");
+//        std::copy_if(res_for_plot_.begin(),
+//                     res_for_plot_.end(),
+//                     std::back_inserter(res_for_plot_after_selector),
+//                     [ & ](const NpInfoForPlot& info) {
+//                         bool res = selector(info);
+//                         if(res) {
+//                             EFT_PROF_INFO("{:70} for poi: {} passes      name selection",
+//                                           info.name,
+//                                           info.poi);
+//                         } else {
+//                             EFT_PROF_WARN("{:70} for poi: {} DOESNT pass name selection",
+//                                           info.name,
+//                                           info.poi);
+//                         }
+//                         return res;
+//                     }
+//        );
+//    }
+//    res_for_plot_after_selector.shrink_to_fit();
+//    return res_for_plot_after_selector;
 }
 
 

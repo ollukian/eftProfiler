@@ -41,6 +41,9 @@ public:
     void                            SetCallBack(EntriesSelector selector) noexcept  { callback_ = std::move(selector); }
     void                            SetSorter(EntriesSorter sorter) noexcept {sorter_ = std::move(sorter);}
 
+    [[nodiscard]] auto GetSelector() const noexcept { return callback_;}
+    [[nodiscard]] auto GetSorter()   const noexcept { return sorter_;}
+
     void                            ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs);
     void  inline                    ReadSettingsFromCommandLine(const std::shared_ptr<CommandLineArgs>& cmdLineArgs) noexcept;
     void                            ReadValues(const std::filesystem::path& path);
@@ -51,19 +54,25 @@ public:
     inline const std::vector<NpInfoForPlot>& GetResForPlot()       noexcept { return res_for_plot_; }
 
     [[nodiscard]]
+    inline std::vector<NpInfoForPlot>   GetSelected() const noexcept;
+    [[nodiscard]]
     std::vector<NpInfoForPlot>          GetSelected(const EntriesSelector& selector) const noexcept;
     [[nodiscard]]
-    inline std::vector<NpInfoForPlot>   GetSelected() const noexcept;
+    std::vector<NpInfoForPlot>          GetSelected(const std::vector<NpInfoForPlot>& entries) const noexcept;
+    [[nodiscard]]
+    static  std::vector<NpInfoForPlot> GetSelected(const std::vector<NpInfoForPlot>& entries,
+                                                   const EntriesSelector& selector)  noexcept;
+
 
     inline void                         SortEntries(std::vector<NpInfoForPlot>& entries) const noexcept;
-    inline static void                  SortEntries(std::vector<NpInfoForPlot>& entries, const EntriesSorter& sorter);
-
+    inline static void                  SortEntries(std::vector<NpInfoForPlot>& entries,
+                                                    const EntriesSorter& sorter);
+    [[nodiscard]]
+    inline std::vector<NpInfoForPlot>   GetSelectedSorted()                                const noexcept;
     [[nodiscard]]
     inline std::vector<NpInfoForPlot>   GetSelectedSorted(const EntriesSelector& selector) const noexcept;
     [[nodiscard]]
     inline std::vector<NpInfoForPlot>   GetSelectedSorted(const EntriesSorter& sorter)     const noexcept;
-    [[nodiscard]]
-    inline std::vector<NpInfoForPlot>   GetSelectedSorted()                                const noexcept;
     [[nodiscard]]
     inline std::vector<NpInfoForPlot>
             GetSelectedSorted(const EntriesSelector& selector,

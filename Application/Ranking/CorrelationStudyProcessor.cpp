@@ -356,6 +356,55 @@ CorrelationStudyProcessor::FromVecNpInfo(const std::vector<NpInfoForPlot>& infos
     return res;
 };
 
+CorrelationStudyProcessor::NpCorrelations
+CorrelationStudyProcessor::ApplySelector(const CorrelationStudyProcessor::NpCorrelations& corrs,
+                                         const SelectorSettings& selectorSettings)
+                                          noexcept
+{
+    EFT_PROFILE_FN();
+    NpCorrelations res;
+    const auto& poi = selectorSettings.poi;
+    const auto& selector = selectorSettings.selector;
+
+    for (const auto& [np_name, corr] : corrs) {
+        NpInfoForPlot info;
+        info.name = np_name;
+        info.poi = poi;
+        bool is_passing = selector(std::move(info));
+        EFT_PROF_DEBUG("Result of applysing selector to: {:50} -> ", is_passing);
+        if (is_passing)
+            res.emplace_back(np_name, corr);
+    }
+
+    return res;
+}
+
+//vector<NpInfoForPlot>
+//CorrelationStudyProcessor::ToVecNpInfo(const CorrelationStudyProcessor::NpCorrelations& infos,
+//                                       const std::string& field)
+//{
+//    EFT_PROFILE_FN();
+//    vector<NpInfoForPlot> res;
+//    res.reserve(infos.size());
+//
+//
+//    for (const auto& [np_name, corr] : infos) {
+//        NpInfoForPlot info;
+//        if (field == "+sigma")
+//            info.impact_plus_sigma_var = co);
+//        else if (field == "-sigma")
+//            info.impact_minus_sigma_var = co);
+//        else if (field == "+1")
+//            info.impact_plus_one_var = co);
+//        else if (field == "-1")
+//            info.impact_minus_one_var = co);
+//        else {
+//            EFT_PROF_CRITICAL("Field: [{}] is not know. Use: {+sigma, -sigma, +1, -1}");
+//            throw std::runtime_error("");
+//        }
+//    }
+//}
+
 void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<CorrelationStudyPlotSettings>& settings)
 {
     EFT_PROFILE_FN();
@@ -365,10 +414,17 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     size_t nb_bins = settings->correlations1.size();
     ASSERT_EQUAL(nb_bins, settings->correlations2.size());
 
-    auto corrs1 = settings->correlations1;
-    auto corrs2 = settings->correlations2;
+    const auto& corrs1 = settings->correlations1;
+    const auto& corrs2 = settings->correlations2;
 
-    Scene::Create();
+
+    const auto& names1 = settings->sorted_names_1;
+    const auto& names2 = settings->sorted_names_2;
+
+    if (settings->sorted_names_1.empty())
+        settings->FormSortedNames();
+
+    Scene::Create(3200, 3200);
     auto h = make_shared<TH2D>("h", "h",
                                nb_bins,
                                0,
@@ -377,9 +433,27 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
                                0,
                                nb_bins);
 
-//    for (size_t idx {0}; idx < nb_bins; ++idx) {
-//        h->SetBinContent(corrs1.at(idx).)
-//    }
+    for (size_t idx {0}; idx < nb_bins; ++idx) {
+        auto np_name = names1.at(idx);
+        auto idx_1 = idx;
+        auto idx_2 = GetIdx(names2, np_name);
+        EFT_PROF_DEBUG("Get idx for: {:40} in list2 ==> {}", np_name, idx_2);
+        if (idx_2 != -1) {
+            h->Fill(idx_1 + 1, idx_2 + 1, 1);
+            h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
+            h->GetYaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
+        }
+        else {
+            EFT_PROF_WARN("NP: {:50} is not present in the second list", np_name);
+        }
+    }
+
+    h->GetXaxis()->SetTitle(settings->label1.c_str());
+    h->GetYaxis()->SetTitle(settings->label2.c_str());
+
+    h->Draw("colz");
+    Scene::SaveAs(fmt::format("Comparison.pdf"));
+    Scene::Clear();
 }
 
 } // ranking
