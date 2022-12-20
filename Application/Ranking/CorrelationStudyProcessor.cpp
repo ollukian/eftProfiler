@@ -451,6 +451,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
                                nb_bins + 1);
 
     size_t nb_guessed {0};
+    vector<pair<string, float>> not_guessed;
+    not_guessed.reserve(nb_bins);
 
     EFT_PROF_INFO("Idx for: {:40} ==> {:3} & {:3}", "np_name", settings->label1, settings->label2);
     for (size_t idx {0}; idx < nb_bins; ++idx) {
@@ -464,6 +466,9 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
             h->GetYaxis()->SetBinLabel(idx_1 + 1, names2.at(idx).c_str());
             if (idx_1 < nb_bins && idx_2 < nb_bins)
                 nb_guessed++;
+            else {
+                not_guessed.emplace_back(np_name, idx_2);
+            }
         }
         else {
             EFT_PROF_WARN("NP: {:50} is not present in the second list", np_name);
@@ -482,6 +487,12 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     Scene::Clear();
 
     EFT_PROF_INFO("Guessed {} nps out of {} ==> {} fraction", nb_guessed, nb_bins, (float) nb_guessed / (float) nb_bins);
+    EFT_PROF_INFO("Not guessed ones:");
+    EFT_PROF_INFO("{:60} ==> {:3}", "np_name", "idx in the guessed list (list #2): {}", settings->label2);
+    for (const auto& [name, idx_2] : not_guessed) {
+        EFT_PROF_INFO("{:60} ==> {:3}", name, idx_2);
+    }
+
 }
 
 } // ranking
