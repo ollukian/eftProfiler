@@ -490,7 +490,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     h->GetXaxis()->SetLabelSize(settings->label_size);
     h->GetYaxis()->SetLabelSize(settings->label_size);
 
-    h->Draw("colz");
+    h->Draw("colz1");
     Scene::SaveAs(settings->name_to_save);
     Scene::Clear();
 
