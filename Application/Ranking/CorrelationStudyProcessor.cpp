@@ -483,7 +483,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         }
     }
 
-    h->GetZaxis()->SetRangeUser(-1., 1.);
+    h->GetZaxis()->SetRangeUser(0., 1.);
 
     h->GetXaxis()->SetTitle(settings->label1.c_str());
     h->GetYaxis()->SetTitle(settings->label2.c_str());
