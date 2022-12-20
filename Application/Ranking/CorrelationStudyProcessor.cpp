@@ -462,7 +462,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
             h->Fill(idx_1 + 1, idx_2 + 1, 1);
             h->GetXaxis()->SetBinLabel(idx_1, np_name.c_str());
             h->GetYaxis()->SetBinLabel(idx_1, names2.at(idx).c_str());
-            nb_guessed++;
+            if (idx_1 < nb_bins && idx_2 < nb_bins)
+                nb_guessed++;
         }
         else {
             EFT_PROF_WARN("NP: {:50} is not present in the second list", np_name);
@@ -472,6 +473,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     h->GetXaxis()->SetTitle(settings->label1.c_str());
     h->GetYaxis()->SetTitle(settings->label2.c_str());
 
+    h->GetXaxis()->LabelsOption("v");
     h->GetXaxis()->SetLabelSize(settings->label_size);
     h->GetYaxis()->SetLabelSize(settings->label_size);
 

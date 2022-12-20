@@ -24,10 +24,10 @@ struct CorrelationStudyPlotSettings {
 
     size_t np_nps_plot;
 
-    float                       rmargin             {0.05};
-    float                       lmargin             {0.20};
-    float                       tmargin             {0.03};
-    float                       bmargin             {0.20};
+    float                       rmargin             {0.10};
+    float                       lmargin             {0.25};
+    float                       tmargin             {0.05};
+    float                       bmargin             {0.25};
 
     std::vector<size_t> plt_size {4000, 4000};
     float label_size {0.20};
