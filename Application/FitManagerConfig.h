@@ -62,6 +62,7 @@ struct FitManagerConfig {
     std::string                 out_dir             {"figures"};
     std::string                 output              {};
     std::string                 input               {};
+    std::string                 suggestions         {};
     std::vector<std::string>    remove_prefix       {};
     std::vector<std::string>    remove_suffix       {};
     std::vector<std::string>    replace             {};

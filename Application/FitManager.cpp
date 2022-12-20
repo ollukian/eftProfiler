@@ -748,6 +748,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dx_legend);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dy_legend);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, max_digits);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, suggestions);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
