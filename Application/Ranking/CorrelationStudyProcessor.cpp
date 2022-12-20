@@ -493,9 +493,12 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
 
     EFT_PROF_INFO("Guessed {} nps out of {} ==> {} fraction", nb_guessed, nb_bins, (float) nb_guessed / (float) nb_bins);
     EFT_PROF_INFO("Not guessed ones:");
-    EFT_PROF_INFO("{:60} ==> {:3}", "np_name", "idx in the guessed list (list #2): {}", settings->label2);
+    EFT_PROF_INFO("{:60} ==> {:3} {}",
+                  "np_name",
+                  "idx in the guessed list (list #2)",
+                  "idx in the obtained list (#1");
     for (const auto& [name, idx_2] : not_guessed) {
-        EFT_PROF_INFO("{:60} ==> {:3}", name, idx_2);
+        EFT_PROF_INFO("{:60} ==> {:3}", name, idx_2, GetIdx(settings->sorted_names_1, name));
     }
 
 }
