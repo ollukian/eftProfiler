@@ -527,8 +527,8 @@ void TestWSreading() {
     eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
-    //auto ws_ = new WorkspaceWrapper();
-    auto ws_ = std::make_shared<WorkspaceWrapper>();
+    auto ws_ = new WorkspaceWrapper();
+    //auto ws_ = std::make_shared<WorkspaceWrapper>();
     ASSERT(ws_.get());
     ASSERT(std::filesystem::exists(path));
 
@@ -573,8 +573,8 @@ void TestLoading() {
 
 void TestWSGetters() {
     using namespace eft::utils::internal;
-    //auto ws = std::make_shared<WorkspaceWrapper>(*LoadWS());
-    auto ws = std::make_shared<WorkspaceWrapper>();
+    auto ws = std::make_shared<WorkspaceWrapper>(*LoadWS());
+    //auto ws = std::make_shared<WorkspaceWrapper>();
     ws.reset(LoadWS());
 
     for (const string& glob_name : _test_globs_names_) {
@@ -607,8 +607,9 @@ void TestWSGetters() {
 
 void TestWSSetters() {
     using namespace eft::utils::internal;
-    auto ws = std::make_shared<WorkspaceWrapper>();
-    ws.reset(LoadWS());
+    //auto ws = std::make_shared<WorkspaceWrapper>();
+    //ws.reset(LoadWS());
+    auto ws = LoadWS();
 
     const string poi_name = *_test_poi_names_.begin();
     const string one_np_name = *_test_np_names_.begin();
