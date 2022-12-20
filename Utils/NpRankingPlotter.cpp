@@ -6,6 +6,7 @@
 #include <spdlog/fmt/fmt.h>
 
 #include "../Core/Logger.h"
+#include "../Core/Profiler.h"
 #include "NpRankingPlotter.h"
 #include "../Application/FitManager.h"
 #include "../Utils/FileSystemUtils.h"
@@ -37,6 +38,7 @@ namespace eft::plot {
 
     void NpRankingPlotter::ReadValues(const std::filesystem::path& path)
     {
+        EFT_PROFILE_FN();
         namespace fs = std::filesystem;
 
         if (path.empty()) {
@@ -59,6 +61,7 @@ namespace eft::plot {
 
     NpRankingStudyRes NpRankingPlotter::ReadValuesOneFile(const std::filesystem::path& path)
     {
+        EFT_PROFILE_FN();
         const string filename = path.string();
         const string extension = path.extension().string();
         if (extension != ".json") {
@@ -77,6 +80,7 @@ namespace eft::plot {
         NpRankingStudyRes res;
 
         try {
+            EFT_LOG_DURATION("Reading result from JSON");
             res = j.get<NpRankingStudyRes>();
         }
         catch (nlohmann::json::type_error& e) {
@@ -110,7 +114,7 @@ namespace eft::plot {
 
     void NpRankingPlotter::Plot(const unique_ptr<RankingPlotterSettings>& settings) noexcept
     {
-
+        EFT_PROFILE_FN();
         gStyle->SetOptTitle(0);
         gStyle->SetOptStat(0000000);
 
@@ -125,24 +129,26 @@ namespace eft::plot {
         size_t total_nb_systematics_in_folder = res_for_plot_.size();
 
         // TODO: wrap by "GetSelected"
-        std::copy_if(res_for_plot_.begin(),
-                     res_for_plot_.end(),
-                     std::back_inserter(res_for_plot_after_selector),
-                     [&](const NpInfoForPlot& info) {
-                         bool res = callback_(info);
-                         if (res) {
-                             EFT_PROF_INFO("{:70} for poi: {} passes      name selection",
-                                           info.name,
-                                           info.poi);
+        {
+            EFT_LOG_DURATION("Selecting results");
+            std::copy_if(res_for_plot_.begin(),
+                         res_for_plot_.end(),
+                         std::back_inserter(res_for_plot_after_selector),
+                         [ & ](const NpInfoForPlot& info) {
+                             bool res = callback_(info);
+                             if(res) {
+                                 EFT_PROF_INFO("{:70} for poi: {} passes      name selection",
+                                               info.name,
+                                               info.poi);
+                             } else {
+                                 EFT_PROF_WARN("{:70} for poi: {} DOESNT pass name selection",
+                                               info.name,
+                                               info.poi);
+                             }
+                             return res;
                          }
-                         else {
-                             EFT_PROF_WARN("{:70} for poi: {} DOESNT pass name selection",
-                                           info.name,
-                                           info.poi);
-                         }
-                         return res;
-                     }
-        );
+            );
+        }
 
         res_for_plot_after_selector.shrink_to_fit();
 
@@ -157,19 +163,21 @@ namespace eft::plot {
 
         EFT_PROF_INFO("[NpRankingPlotter] Sort entries by their impact (quadratic sum of post-fit impacts)");
 
-        std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
-                  [&](const NpInfoForPlot& l, const NpInfoForPlot& r)
-                  {
-                      return ((l.impact_plus_sigma_var * l.impact_plus_sigma_var)
-                              +
-                              (l.impact_minus_sigma_var * l.impact_minus_sigma_var))
-                             >
-                             ((r.impact_plus_sigma_var * r.impact_plus_sigma_var)
-                              +
-                              (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
+        {
+            EFT_LOG_DURATION("Sorting results");
+            std::sort(res_for_plot_after_selector.begin(), res_for_plot_after_selector.end(),
+                      [ & ](const NpInfoForPlot& l, const NpInfoForPlot& r) {
+                          return ((l.impact_plus_sigma_var * l.impact_plus_sigma_var)
+                                  +
+                                  (l.impact_minus_sigma_var * l.impact_minus_sigma_var))
+                                 >
+                                 ((r.impact_plus_sigma_var * r.impact_plus_sigma_var)
+                                  +
+                                  (r.impact_minus_sigma_var * r.impact_minus_sigma_var));
 
-                  }
-        );
+                      }
+            );
+        }
 
 //        EFT_PROF_DEBUG("impacts after sorting:");
 //        for (const auto& res : res_for_plot_after_selector) {
@@ -684,6 +692,7 @@ namespace eft::plot {
     }
 
     void NpRankingPlotter::RegisterRes(const NpRankingStudyRes& res) noexcept {
+        EFT_PROFILE_FN();
         EFT_PROF_TRACE("[NpPlotter]{RegisterRes} register: {}", res.np_name);
         auto info = ComputeInfoForPlot(res);
         res_for_plot_.push_back(std::move(info));
@@ -691,6 +700,7 @@ namespace eft::plot {
 
     NpInfoForPlot NpRankingPlotter::ComputeInfoForPlot(const NpRankingStudyRes& res) noexcept
     {
+        EFT_PROFILE_FN();
         NpInfoForPlot info;
         info.name = res.np_name;
         info.poi = res.poi_name;
@@ -769,6 +779,7 @@ namespace eft::plot {
     }
 
     void NpRankingPlotter::ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs) {
+        EFT_PROFILE_FN();
         EFT_PROF_INFO("NpRankingPlotter::ReadSettingsFromCommandLine");
 
         eft::stats::FitManagerConfig config;
@@ -898,6 +909,7 @@ namespace eft::plot {
 
 void NpRankingPlotter::ReadNpNamesFromFile(const std::string& path) const
 {
+    EFT_PROFILE_FN();
     EFT_PROF_INFO("Read np names from: {}", path);
     np_ranking_settings->np_names = utils::FileSystemUtils::ReadLines(path).value();
 }

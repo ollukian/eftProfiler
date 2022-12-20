@@ -187,25 +187,6 @@ int main(int argc, char* argv[]) {
         using eft::stats::ranking::CorrelationStudyProcessor;
         EFT_PROF_INFO("Compute hesse nps");
 
-        //eft::stats::FitManagerConfig config;
-        //eft::stats::FitManager::ReadConfigFromCommandLine(*commandLineArgs, config);
-        //auto manager = make_unique<eft::stats::FitManager>();
-//
-//        eft::stats::NpRankingStudySettings settings;
-//
-//        settings.poi                = config.poi;
-//        settings.path_to_save_res   = config.res_path;
-//        settings.poi_init_val       = config.poi_init_val;
-//        settings.eps                = config.eps;
-//        settings.retry = config.retry;
-//        settings.strategy = config.strategy;
-//        settings.reuse_nll = config.reuse_nll;
-//        settings.fit_all_pois = config.fit_all_pois;
-//        settings.fit_single_poi = config.fit_single_poi;
-//        settings.errors = eft::stats::fit::Errors::HESSE;
-//
-//        manager->Init(std::move(config));
-
         CorrelationStudyProcessor correlationStudyProcessor(commandLineArgs.get());
         auto res = correlationStudyProcessor.ComputeHesseNps();
         correlationStudyProcessor.ExtractCorrelations(res);
@@ -213,15 +194,6 @@ int main(int argc, char* argv[]) {
         correlationStudyProcessor.PlotCovariances(res);
         string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
         correlationStudyProcessor.PrintSuggestedNpsRanking(std::move(name_to_save), res);
-        //auto res = manager->ComputeHesseNps(settings);
-        //EFT_PROF_INFO("Plot covariances:");
-        //res.poi = settings.poi;
-//        manager->ExtractCorrelations(res);
-//        EFT_PROF_INFO("Sort result:");
-//        const auto sorted = res.GetSorted();
-//        manager->PlotCovariances(res);
-//        string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
-//        manager->PrintSuggestedNpsRanking(std::move(name_to_save), res);
     }
     else if (task == "get_missing_nps") {
         eft::stats::ranking::MissingNpsProcessor missingNpsProcessor;
