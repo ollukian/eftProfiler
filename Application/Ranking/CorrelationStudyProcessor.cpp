@@ -450,6 +450,8 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
                                0,
                                nb_bins);
 
+    size_t nb_guessed {0};
+
     EFT_PROF_INFO("Idx for: {:40} ==> {:3} & {:3}", "np_name", settings->label1, settings->label2);
     for (size_t idx {0}; idx < nb_bins; ++idx) {
         auto np_name = names1.at(idx);
@@ -458,8 +460,9 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         EFT_PROF_DEBUG("Idx for: {:40} ==> {:3} & {:3}", np_name, idx_1, idx_2);
         if (idx_2 != -1) {
             h->Fill(idx_1 + 1, idx_2 + 1, 1);
-            h->GetXaxis()->SetBinLabel(idx_1 + 1, np_name.c_str());
-            h->GetYaxis()->SetBinLabel(idx_1 + 1, names2.at(idx).c_str());
+            h->GetXaxis()->SetBinLabel(idx_1, np_name.c_str());
+            h->GetYaxis()->SetBinLabel(idx_1, names2.at(idx).c_str());
+            nb_guessed++;
         }
         else {
             EFT_PROF_WARN("NP: {:50} is not present in the second list", np_name);
@@ -469,11 +472,14 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
     h->GetXaxis()->SetTitle(settings->label1.c_str());
     h->GetYaxis()->SetTitle(settings->label2.c_str());
 
-    h->SetLabelSize(settings->label_size);
+    h->GetXaxis()->SetLabelSize(settings->label_size);
+    h->GetYaxis()->SetLabelSize(settings->label_size);
 
     h->Draw("colz");
     Scene::SaveAs(settings->name_to_save);
     Scene::Clear();
+
+    EFT_PROF_INFO("Guessed {} nps out of {} ==> {} fraction", nb_guessed, nb_bins, (float) nb_bins / (float) nb_guessed);
 }
 
 } // ranking
