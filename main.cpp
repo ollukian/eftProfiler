@@ -232,6 +232,11 @@ int main(int argc, char* argv[]) {
         if ( ! plotter.np_ranking_settings->output.empty() )
             plotSettings->name_to_save = plotter.np_ranking_settings->output;
         plotSettings->np_nps_plot = plotter.np_ranking_settings->top;
+
+        plotSettings->lmargin = plotter.np_ranking_settings->lmargin;
+        plotSettings->rmargin = plotter.np_ranking_settings->rmargin;
+        plotSettings->tmargin = plotter.np_ranking_settings->tmargin;
+        plotSettings->bmargin = plotter.np_ranking_settings->bmargin;
         //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
         //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);

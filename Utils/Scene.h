@@ -55,6 +55,11 @@ public:
     static void SaveAs(const std::string& name) noexcept;
 
     static TCanvas* Create(size_t width = 800, size_t height = 1200);
+    static TCanvas* SetRightMargin  (float val) { canvas_->SetRightMargin(val);  return canvas_.get(); } // 0.10
+    static TCanvas* SetLeftMargin   (float val) { canvas_->SetLeftMargin(val);   return canvas_.get(); } // 0.10
+    static TCanvas* SetTopMargin    (float val) { canvas_->SetTopMargin(val);    return canvas_.get(); } // 0.05
+    static TCanvas* SetBottomMargin (float val) { canvas_->SetBottomMargin(val); return canvas_.get(); } // 0.4
+
     static Drawable*  AddBox(float xl, float yl, float xh, float yr);
     static Drawable*  AddLine(float xl, float yl, float xh, float yh, uint16_t colour = kBlack);
     //static TH1D*    AddHisto(size_t nb_bins, double low, double high);
@@ -84,7 +89,8 @@ private:
 private:
     static inline std::vector<Object>       objects_ {};
     static inline std::set<std::shared_ptr<TObject>> owned_{};
-    static inline std::unique_ptr<TCanvas>  canvas_ {};
+    //static inline std::unique_ptr<TCanvas>  canvas_ {};
+    static inline std::shared_ptr<TCanvas>  canvas_ {};
     static inline std::shared_ptr<Latex>    latexDrawer {};
 
     static inline std::map<std::string, HistoPtr> histos_;

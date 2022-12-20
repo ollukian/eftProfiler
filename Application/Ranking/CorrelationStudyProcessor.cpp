@@ -322,7 +322,8 @@ CorrelationStudyProcessor::GetSortedCorrelationsFromFileV1(const std::string& pa
         stringstream ss{line};
         ss >> np_name >> corr;
         EFT_PROF_DEBUG("Read: {}, parsed as: np: {:40}, cor: {}", line, np_name, corr);
-        res.emplace_back(std::move(np_name), corr);
+        if ( ! np_name.empty() )
+            res.emplace_back(std::move(np_name), corr);
     }
     EFT_PROF_INFO("Read {} values", res.size());
     for (const auto& [name, corr_] : res) {
@@ -409,6 +410,9 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
 {
     EFT_PROFILE_FN();
 
+    gStyle->SetOptTitle(0);
+    gStyle->SetOptStat(0000000);
+
     using eft::utils::draw::Scene;
 
     size_t nb_bins = settings->correlations1.size();
@@ -430,6 +434,13 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
         settings->FormSortedNames();
 
     Scene::Create(3200, 3200);
+
+    Scene::SetLeftMargin(settings->lmargin)
+        ->SetRightMargin(settings->rmargin)
+        ->SetBottomMarging(settings->bmargin)
+        ->SetTopMarging(settings->bmargin);
+
+
     auto h = make_shared<TH2D>("h", "h",
                                nb_bins,
                                0,

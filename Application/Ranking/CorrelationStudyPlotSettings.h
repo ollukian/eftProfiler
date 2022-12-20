@@ -24,6 +24,11 @@ struct CorrelationStudyPlotSettings {
 
     size_t np_nps_plot;
 
+    float                       rmargin             {0.05};
+    float                       lmargin             {0.10};
+    float                       tmargin             {0.03};
+    float                       bmargin             {0.40};
+
     void FormSortedNames();
 };
 
