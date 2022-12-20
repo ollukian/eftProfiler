@@ -435,10 +435,10 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
 
     Scene::Create(3200, 3200);
 
-    Scene::SetLeftMargin(settings->lmargin)
-        ->SetRightMargin(settings->rmargin)
-        ->SetBottomMarging(settings->bmargin)
-        ->SetTopMarging(settings->bmargin);
+    Scene::SetLeftMargin(settings->lmargin);
+    Scene::SetRightMargin(settings->rmargin);
+    Scene::SetBottomMargin(settings->bmargin);
+    Scene::SetTopMargin(settings->bmargin);
 
 
     auto h = make_shared<TH2D>("h", "h",
@@ -449,6 +449,7 @@ void CorrelationStudyProcessor::DrawCorrsComparison(const shared_ptr<Correlation
                                0,
                                nb_bins);
 
+    EFT_PROF_INFO("Idx for: {:40} ==> {:3} & {:3}", "np_name", settings->label1, settings->label2);
     for (size_t idx {0}; idx < nb_bins; ++idx) {
         auto np_name = names1.at(idx);
         auto idx_1 = idx;
