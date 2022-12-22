@@ -377,189 +377,189 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
     }
 }
 
-HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& settings) {
-    EFT_PROFILE_FN();
-    EFT_PROF_INFO("Compute Hesse forNPS");
-    auto& data = GetData(settings.prePostFit);
-    auto* pdf  = GetPdf("pdf_total");
-    auto* globObs = GetListAsArgSet("paired_globs");
-    auto* nps = GetListAsArgSet("paired_nps");
-
-
-    EFT_PROF_INFO("set all POIs const");
-    SetAllPOIsConst();
-
-    EFT_PROF_INFO("Float required poi: {}", settings.poi);
-    ws_->FloatVal(settings.poi);
-
-    // TODO: float all pois, if needed by a flag!!!!
-
-    fit::Fitter fitter;
-    fitter.SetNps(nps);
-    fitter.SetGlobs(globObs);
-
-    fit::FitSettings fitSettings;
-    fitSettings.pdf = const_cast<RooAbsPdf*>(pdf);
-    fitSettings.data = &data;
-    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
-    fitSettings.errors = settings.errors;
-    fitSettings.retry = settings.retry;
-    fitSettings.strategy = settings.strategy;
-    fitSettings.eps = settings.eps;
-    fitSettings.save_res = true;
-    // TODO: use one set of settings...
-
-
-    EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
-    auto fitRes = fitter.Fit(fitSettings);
-    EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
-    RooArgList list_nps(*nps);
-    list_nps.add(*ws_->GetVar(settings.poi));
-    EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps (and POI) with {} entries:", list_nps.size());
-    for (const auto np : list_nps) {
-        cout << np->GetName() << endl;
-    }
-    EFT_PROF_DEBUG("[ComputeHesseNps] extract results from RooFitResult");
-    auto res = HesseStudyResult::ExtractFromRooFitResult(*fitRes, list_nps);
-    return res;
-}
-
-void FitManager::PlotCovariances(const HesseStudyResult& res) const
-{
-    EFT_PROFILE_FN();
-    using eft::utils::draw::Scene;
-
-    shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
-    EFT_PROF_INFO("Created cov matrix with size: [{}][{}]", res.reducedCovMatrix.GetNcols(), res.reducedCovMatrix.GetNrows());
-    auto canvas = make_shared<TCanvas>("c", "c", 4000, 4000);
-    //auto canvas = Scene::Create(4000, 4000);
-    //Scene::Register(cov.get());
-    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
-        EFT_PROF_DEBUG("set label of bin: {:4} to {}", idx_np, res.params.at(idx_np)->GetName());
-        cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
-        cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
-    }
-    cov->SetLabelSize(0.005);
-    cov->GetXaxis()->SetLabelSize(0.005);
-    cov->GetYaxis()->SetLabelSize(0.005);
-    EFT_PROF_INFO("All names are set, draw");
-    cov->Draw("colz");
-    EFT_PROF_INFO("drawn, save");
-    string name_covs = fmt::format("covariances_with_{}_float.pdf", res.poi);
-    canvas->SaveAs(name_covs.c_str());
-    EFT_PROF_INFO("clear");
-    canvas->Clear();
-    //Scene::SaveAs("covariances.pdf");
-
+//HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& settings) {
+//    EFT_PROFILE_FN();
+//    EFT_PROF_INFO("Compute Hesse forNPS");
+//    auto& data = GetData(settings.prePostFit);
+//    auto* pdf  = GetPdf("pdf_total");
+//    auto* globObs = GetListAsArgSet("paired_globs");
+//    auto* nps = GetListAsArgSet("paired_nps");
+//
+//
+//    EFT_PROF_INFO("set all POIs const");
+//    SetAllPOIsConst();
+//
+//    EFT_PROF_INFO("Float required poi: {}", settings.poi);
+//    ws_->FloatVal(settings.poi);
+//
+//    // TODO: float all pois, if needed by a flag!!!!
+//
+//    fit::Fitter fitter;
+//    fitter.SetNps(nps);
+//    fitter.SetGlobs(globObs);
+//
+//    fit::FitSettings fitSettings;
+//    fitSettings.pdf = const_cast<RooAbsPdf*>(pdf);
+//    fitSettings.data = &data;
+//    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
+//    fitSettings.errors = settings.errors;
+//    fitSettings.retry = settings.retry;
+//    fitSettings.strategy = settings.strategy;
+//    fitSettings.eps = settings.eps;
+//    fitSettings.save_res = true;
+//    // TODO: use one set of settings...
+//
+//
+//    EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
+//    auto fitRes = fitter.Fit(fitSettings);
+//    EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
+//    RooArgList list_nps(*nps);
+//    list_nps.add(*ws_->GetVar(settings.poi));
+//    EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps (and POI) with {} entries:", list_nps.size());
+//    for (const auto np : list_nps) {
+//        cout << np->GetName() << endl;
+//    }
+//    EFT_PROF_DEBUG("[ComputeHesseNps] extract results from RooFitResult");
+//    auto res = HesseStudyResult::ExtractFromRooFitResult(*fitRes, list_nps);
+//    return res;
+//}
+//
+//void FitManager::PlotCovariances(const HesseStudyResult& res) const
+//{
+//    EFT_PROFILE_FN();
+//    using eft::utils::draw::Scene;
+//
+//    shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
+//    EFT_PROF_INFO("Created cov matrix with size: [{}][{}]", res.reducedCovMatrix.GetNcols(), res.reducedCovMatrix.GetNrows());
+//    auto canvas = make_shared<TCanvas>("c", "c", 4000, 4000);
+//    //auto canvas = Scene::Create(4000, 4000);
+//    //Scene::Register(cov.get());
+//    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+//        EFT_PROF_DEBUG("set label of bin: {:4} to {}", idx_np, res.params.at(idx_np)->GetName());
+//        cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
+//        cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
+//    }
+//    cov->SetLabelSize(0.005);
+//    cov->GetXaxis()->SetLabelSize(0.005);
+//    cov->GetYaxis()->SetLabelSize(0.005);
+//    EFT_PROF_INFO("All names are set, draw");
+//    cov->Draw("colz");
+//    EFT_PROF_INFO("drawn, save");
+//    string name_covs = fmt::format("covariances_with_{}_float.pdf", res.poi);
+//    canvas->SaveAs(name_covs.c_str());
+//    EFT_PROF_INFO("clear");
+//    canvas->Clear();
+//    //Scene::SaveAs("covariances.pdf");
+//
+////    map<string, double> corr_per_np;
+////    // get correlations between POI and other things
+////    EFT_PROF_INFO("Extract correlations: poi <-> nps");
+////    auto poi_var = ws_->GetVar(res.poi);
+////    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
+////    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+////        auto par = res.params.at(idx_np);
+////        auto corr = res.fitResult->correlation(*poi_var, *par);
+////        corr_with_poi->SetBinContent(idx_np + 1, corr);
+////        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
+////        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+////        corr_per_np[par->GetName()] = corr;
+////    }
+//
+//    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
+//    //for (const auto& [np, corr] : res.correlations_per_nb_np) {
+//    for (size_t idx_np {0}; idx_np < res.correlations_per_nb_np.size(); ++idx_np) {
+//        corr_with_poi->SetBinContent(idx_np + 1, res.correlations_per_nb_np.at(idx_np).second);
+//        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, res.correlations_per_nb_np.at(idx_np).first.c_str());
+//    }
+//
+//    corr_with_poi->SetLabelSize(0.005);
+//    corr_with_poi->Draw("H");
+//    string name_to_save = fmt::format("correlations_with_{}.pdf", res.poi);
+//    canvas->SaveAs(name_to_save.c_str());
+//    canvas->Clear();
+//
+//    //vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
+//    vector<pair<string, double>> sorted_corrs {res.corr_per_np.begin(), res.corr_per_np.end()};
+//    std::sort(sorted_corrs.begin(),
+//              sorted_corrs.end(),
+//              [](const auto& l, const auto& r) -> bool
+//    {
+//        return abs(l.second) > abs(r.second);
+//    });
+//
+//    EFT_PROF_INFO("Sorted corrs with poi:");
+//    for (const auto& [name, cor] : sorted_corrs) {
+//        cout << fmt::format("{:60} => {}", name, cor) << endl;
+//    }
+//
+//    EFT_PROF_INFO("Fill corr with poi sorted");
+//    const string h_name = fmt::format("Correlations of NPs with {}", res.poi);
+//    shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>(h_name.c_str(),
+//                                                              h_name.c_str(),
+//                                                              res.covariances.size(),
+//                                                              0,
+//                                                              res.covariances.size());
+//    EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", "idx", "name", "corr wit mu");
+//    for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
+//    //for (const auto& [name, cor] : sorted_corrs) {
+//        auto& name = sorted_corrs.at(idx).first;
+//        auto& corr = sorted_corrs.at(idx).second;
+//        EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", idx, name, corr);
+//        corr_with_poi_sorted->SetBinContent(idx, corr);
+//        corr_with_poi_sorted->GetXaxis()->SetBinLabel(idx, name.c_str());
+//    }
+//    corr_with_poi_sorted->SetLabelSize(0.005);
+//    corr_with_poi_sorted->Draw("H");
+//    string name_to_save_sorted = fmt::format("correlations_with_{}_sorted.pdf", res.poi);
+//    canvas->SaveAs(name_to_save_sorted.c_str());
+//    //canvas->SaveAs("correlations_with_poi_sorted.pdf");
+//    canvas->Clear();
+//
+//    //Scene::SaveAs()
+//}
+//
+//void FitManager::ExtractCorrelations(HesseStudyResult& res) const
+//{
+//    EFT_PROFILE_FN();
 //    map<string, double> corr_per_np;
+//    std::vector<std::pair<std::string, double>> correlations_per_nb_np;
 //    // get correlations between POI and other things
 //    EFT_PROF_INFO("Extract correlations: poi <-> nps");
 //    auto poi_var = ws_->GetVar(res.poi);
-//    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
 //    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
 //        auto par = res.params.at(idx_np);
 //        auto corr = res.fitResult->correlation(*poi_var, *par);
-//        corr_with_poi->SetBinContent(idx_np + 1, corr);
-//        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
 //        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
 //        corr_per_np[par->GetName()] = corr;
+//        correlations_per_nb_np.emplace_back(par->GetName(), corr);
 //    }
-
-    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
-    //for (const auto& [np, corr] : res.correlations_per_nb_np) {
-    for (size_t idx_np {0}; idx_np < res.correlations_per_nb_np.size(); ++idx_np) {
-        corr_with_poi->SetBinContent(idx_np + 1, res.correlations_per_nb_np.at(idx_np).second);
-        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, res.correlations_per_nb_np.at(idx_np).first.c_str());
-    }
-
-    corr_with_poi->SetLabelSize(0.005);
-    corr_with_poi->Draw("H");
-    string name_to_save = fmt::format("correlations_with_{}.pdf", res.poi);
-    canvas->SaveAs(name_to_save.c_str());
-    canvas->Clear();
-
-    //vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
-    vector<pair<string, double>> sorted_corrs {res.corr_per_np.begin(), res.corr_per_np.end()};
-    std::sort(sorted_corrs.begin(),
-              sorted_corrs.end(),
-              [](const auto& l, const auto& r) -> bool
-    {
-        return abs(l.second) > abs(r.second);
-    });
-
-    EFT_PROF_INFO("Sorted corrs with poi:");
-    for (const auto& [name, cor] : sorted_corrs) {
-        cout << fmt::format("{:60} => {}", name, cor) << endl;
-    }
-
-    EFT_PROF_INFO("Fill corr with poi sorted");
-    const string h_name = fmt::format("Correlations of NPs with {}", res.poi);
-    shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>(h_name.c_str(),
-                                                              h_name.c_str(),
-                                                              res.covariances.size(),
-                                                              0,
-                                                              res.covariances.size());
-    EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", "idx", "name", "corr wit mu");
-    for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
-    //for (const auto& [name, cor] : sorted_corrs) {
-        auto& name = sorted_corrs.at(idx).first;
-        auto& corr = sorted_corrs.at(idx).second;
-        EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", idx, name, corr);
-        corr_with_poi_sorted->SetBinContent(idx, corr);
-        corr_with_poi_sorted->GetXaxis()->SetBinLabel(idx, name.c_str());
-    }
-    corr_with_poi_sorted->SetLabelSize(0.005);
-    corr_with_poi_sorted->Draw("H");
-    string name_to_save_sorted = fmt::format("correlations_with_{}_sorted.pdf", res.poi);
-    canvas->SaveAs(name_to_save_sorted.c_str());
-    //canvas->SaveAs("correlations_with_poi_sorted.pdf");
-    canvas->Clear();
-
-    //Scene::SaveAs()
-}
-
-void FitManager::ExtractCorrelations(HesseStudyResult& res) const
-{
-    EFT_PROFILE_FN();
-    map<string, double> corr_per_np;
-    std::vector<std::pair<std::string, double>> correlations_per_nb_np;
-    // get correlations between POI and other things
-    EFT_PROF_INFO("Extract correlations: poi <-> nps");
-    auto poi_var = ws_->GetVar(res.poi);
-    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
-        auto par = res.params.at(idx_np);
-        auto corr = res.fitResult->correlation(*poi_var, *par);
-        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
-        corr_per_np[par->GetName()] = corr;
-        correlations_per_nb_np.emplace_back(par->GetName(), corr);
-    }
-    res.corr_per_np = std::move(corr_per_np);
-    res.correlations_per_nb_np = std::move(correlations_per_nb_np);
-}
-
-void FitManager::PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const
-{
-    EFT_PROFILE_FN();
-    EFT_PROF_INFO("Print suggested nps ranking to: [{}]", path);
-    ofstream fs(path);
-    if ( ! fs.is_open() ) {
-        EFT_PROF_CRITICAL("Cannot open file: [{}] for writing. Print only to stdout", path);
-        PrintSuggestedNpsRankingStream(cout, res);
-    }
-    else {
-        PrintSuggestedNpsRankingStream(fs, res);
-        PrintSuggestedNpsRankingStream(cout, res);
-    }
-}
-
-void FitManager::PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) const
-{
-    //TODO: change by a json encoding
-    os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps" << endl;
-    for (const auto& [np, corr] : res.sorted_correlations) {
-        os << fmt::format("{:50} {}", np, corr) << endl;
-    }
-}
+//    res.corr_per_np = std::move(corr_per_np);
+//    res.correlations_per_nb_np = std::move(correlations_per_nb_np);
+//}
+//
+//void FitManager::PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const
+//{
+//    EFT_PROFILE_FN();
+//    EFT_PROF_INFO("Print suggested nps ranking to: [{}]", path);
+//    ofstream fs(path);
+//    if ( ! fs.is_open() ) {
+//        EFT_PROF_CRITICAL("Cannot open file: [{}] for writing. Print only to stdout", path);
+//        PrintSuggestedNpsRankingStream(cout, res);
+//    }
+//    else {
+//        PrintSuggestedNpsRankingStream(fs, res);
+//        PrintSuggestedNpsRankingStream(cout, res);
+//    }
+//}
+//
+//void FitManager::PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) const
+//{
+//    //TODO: change by a json encoding
+//    os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps" << endl;
+//    for (const auto& [np, corr] : res.sorted_correlations) {
+//        os << fmt::format("{:50} {}", np, corr) << endl;
+//    }
+//}
 
 void FitManager::SetAllNuisanceParamsConst() noexcept
 {

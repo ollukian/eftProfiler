@@ -207,12 +207,29 @@ int main(int argc, char* argv[]) {
         using eft::stats::ranking::CorrelationStudyProcessor;
         using eft::plot::NpRankingPlotter;
         using eft::stats::ranking::SelectorSettings;
+        using eft::plot::NpInfoForPlot;
 
         NpRankingPlotter plotter;
         plotter.ReadSettingsFromCommandLine(commandLineArgs);
         plotter.ReadValues(plotter.np_ranking_settings->input);
         auto res_from_computation_vec = plotter.GetSelectedSorted();
         auto res_from_computation = CorrelationStudyProcessor::FromVecNpInfo(res_from_computation_vec);
+
+        // Get ordering based on the "prefit" sorting
+        NpRankingPlotter::EntriesSorter sorter_prefit { [&](const NpInfoForPlot&l, const NpInfoForPlot& r) -> bool {
+            return ((l.impact_plus_one_var * l.impact_plus_one_var)
+                    +
+                    (l.impact_minus_one_var * l.impact_minus_one_var))
+                   >
+                   ((r.impact_plus_one_var * r.impact_plus_one_var)
+                    +
+                    (r.impact_minus_one_var * r.impact_minus_one_var));
+        }  };
+
+        auto res_from_computation_prefit_vec = plotter.GetSelected();
+        plotter.SortEntries(res_from_computation_prefit_vec, sorter_prefit);
+        auto res_from_computation_prefit = CorrelationStudyProcessor::FromVecNpInfo(res_from_computation_prefit_vec);
+
 
         string path_suggestion;
         commandLineArgs->SetValIfArgExists("suggestions", path_suggestion);
@@ -227,7 +244,7 @@ int main(int argc, char* argv[]) {
         auto plotSettings = std::make_shared<CorrelationStudyPlotSettings>();
         plotSettings->correlations1 = std::move(res_from_computation);
         plotSettings->correlations2 = std::move(res_from_correlation);
-        plotSettings->label1 = "From Computation";
+        plotSettings->label1 = "Computation: Post-fit";
         plotSettings->label2 = "From Correlation matrix";
         if ( ! plotter.np_ranking_settings->output.empty() )
             plotSettings->name_to_save = plotter.np_ranking_settings->output;
@@ -251,9 +268,13 @@ int main(int argc, char* argv[]) {
 
         //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
         //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
+        plotSettings->name_to_save = fmt::format("PostFit_{}_nps", plotSettings->np_nps_plot);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
-        // in this way, we apply the same selection to the read values
-       // auto res_from_computation_after_selector = plotter.GetSelected(res_from_computation_before_selector);
+
+        plotSettings->correlations1 = std::move(res_from_computation_prefit);
+        plotSettings->label1 = "Computation: Pre-fit";
+        plotSettings->name_to_save = fmt::format("PreFit_{}_nps", plotSettings->np_nps_plot);
+        CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

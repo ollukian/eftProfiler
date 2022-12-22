@@ -199,6 +199,7 @@ void CorrelationStudyProcessor::PrintSuggestedNpsRanking(std::string path, const
 
 void CorrelationStudyProcessor::PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res)
 {
+    EFT_PROFILE_FN();
     //TODO: change by a json encoding
     os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps" << endl;
     for (const auto& [np, corr] : res.sorted_correlations) {
@@ -207,6 +208,7 @@ void CorrelationStudyProcessor::PrintSuggestedNpsRankingStream(std::ostream& os,
 }
 
 CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
+    EFT_PROFILE_FN();
     eft::stats::FitManagerConfig config;
     eft::stats::FitManager::ReadConfigFromCommandLine(*cmd, config);
     auto manager = make_unique<eft::stats::FitManager>();
@@ -249,6 +251,7 @@ CorrelationStudyProcessor::CorrelationStudyProcessor(CommandLineArgs *cmd) {
 }
 
 bool CorrelationStudyProcessor::VerifyConsistency() const {
+    EFT_PROFILE_FN();
     if (pdf_ == nullptr) {
         EFT_PROF_CRITICAL("CorrelationStudyProcessor pdf is nullptr");
         return false;
