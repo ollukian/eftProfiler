@@ -268,12 +268,12 @@ int main(int argc, char* argv[]) {
 
         //if ( ! plotter.np_ranking_settings->h_draw_options.empty() )
         //    plotSettings->draw_options = eft::StringUtils::Join(' ', plotter.np_ranking_settings->h_draw_options);
-        plotSettings->name_to_save = fmt::format("PostFit_{}_nps", plotSettings->np_nps_plot);
+        plotSettings->name_to_save = fmt::format("PostFit_{}_nps.pdf", plotSettings->np_nps_plot);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
 
         plotSettings->correlations1 = std::move(res_from_computation_prefit);
         plotSettings->label1 = "Computation: Pre-fit";
-        plotSettings->name_to_save = fmt::format("PreFit_{}_nps", plotSettings->np_nps_plot);
+        plotSettings->name_to_save = fmt::format("PreFit_{}_nps.pdf", plotSettings->np_nps_plot);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
     }
     else {
