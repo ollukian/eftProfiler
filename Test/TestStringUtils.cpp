@@ -34,7 +34,24 @@ void TestJoin()
         const Sentence expected{"one"};
         ASSERT_EQUAL(expected, obtained);
     }
-
+    {
+        Words words {};
+        const auto obtained = SU::Join(' ', words);
+        const Sentence expected {};
+        ASSERT(obtained.empty());
+    }
+    {
+        Words words {"one"};
+        const auto obtained = SU::Join("__", words);
+        const Sentence expected{"one"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+    {
+        Words words {"one", "two"};
+        const auto obtained = SU::Join("__", words);
+        const Sentence expected{"one__two"};
+        ASSERT_EQUAL(expected, obtained);
+    }
 }
 void TestStrip()
 {

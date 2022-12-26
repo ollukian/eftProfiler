@@ -187,14 +187,14 @@ std::string TestRes::PrettyDuration() const noexcept {
 }
 
 #define ASSERT(x) {                         \
-  ostringstream __os;                       \
+  std::ostringstream __os;                  \
   __os << #x << " is false, "               \
     << __FILE__ << ":" << __LINE__;         \
   Assert(x, __os.str());                    \
 }
 
 #define ASSERT_NOT(x) {                    \
-  ostringstream __os;                      \
+  std::ostringstream __os;                 \
   __os << #x << " is true, "               \
     << __FILE__ << ":" << __LINE__;        \
   Assert(!(x), __os.str());                \

@@ -51,6 +51,9 @@ public:
     template <typename Container>
     static inline std::string    Join(char c, const Container& cont);
 
+    template <typename Container>
+    static inline std::string    Join(std::string line, const Container& cont);
+
     static inline void          ToLowCase(std::string& s) noexcept;
     static inline void          ToUpperCase(std::string& s) noexcept;
     static inline std::string          ToLowCaseCopy(std::string s) noexcept;
@@ -186,6 +189,19 @@ std::string StringUtils::Join(char c, const Container& cont) {
     os << *rbegin(cont);
     return os.str();
 }
+
+template <typename Container>
+std::string StringUtils::Join(std::string line, const Container& cont) {
+    EFT_PROFILE_FN();
+    std::ostringstream os;
+    for (const auto& item : Head(cont, cont.size() - 1)) {
+        os << item << line;
+    }
+    os << *rbegin(cont);
+    return os.str();
+}
+
+
 
 std::string StringUtils::Strip(const std::string& s) {
     EFT_PROFILE_FN();

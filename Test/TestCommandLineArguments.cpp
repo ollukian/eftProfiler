@@ -11,61 +11,52 @@
 
 using namespace std;
 
-static vector<vector<char>> vstrings;
-static vector<const char*>  cstrings;
+//static vector<vector<char>> vstrings;
+//static vector<const char*>  cstrings;
 
 // helpers to emulate argc & argv passed to the command line
-vector<vector<char>> ConvertToArgcAgv(istringstream& s)
-{
-    string as_string{s.str()};
-    as_string = "Test_to_emulate_executable_name " + as_string;
-    EFT_PROF_INFO("convert {} to argc, argv", as_string);
-    auto components = eft::StringUtils::Split(as_string, ' ');
+//vector<vector<char>> ConvertToArgcAgv(istringstream& s)
+//{
+//    string as_string{s.str()};
+//    as_string = "Test_to_emulate_executable_name " + as_string;
+//    EFT_PROF_INFO("convert {} to argc, argv", as_string);
+//    auto components = eft::StringUtils::Split(as_string, ' ');
+//
+//    vector<vector<char>> vstrings;
+//
+//    size_t nb_components = components.size();
+//    vstrings.reserve(nb_components);
+//
+//    for (size_t idx {}; idx < nb_components; ++idx) {
+//        vstrings.emplace_back(components[idx].begin(), components[idx].end());
+//        vstrings.back().push_back('\0');
+//    }
+//    return vstrings;
+//}
+//
+//vector<vector<char>> ConvertToArgcAgv(const vector<string>& s)
+//{
+//    string joined = eft::StringUtils::Join(' ', s);
+//    istringstream is{joined};
+//    return ConvertToArgcAgv(is);
+//}
 
-    vector<vector<char>> vstrings;
-
-    size_t nb_components = components.size();
-    vstrings.reserve(nb_components);
-
-    for (size_t idx {}; idx < nb_components; ++idx) {
-        vstrings.emplace_back(components[idx].begin(), components[idx].end());
-        vstrings.back().push_back('\0');
-    }
-    EFT_PROF_INFO("argv:");
-    for (size_t idx {0}; idx != nb_components; ++idx) {
-        size_t nb_chars_line {vstrings[idx].size()};
-        //fmt::print(fmt::fg(fmt::color::aqua), "Arg#{} ==> [", idx);
-        for (size_t idx_char {0}; idx_char < nb_chars_line; ++idx_char) {
-            //fmt::print(fmt::fg(fmt::color::aqua), "{}", vstrings[idx][idx_char]);
-        }
-        //fmt::print(fmt::fg(fmt::color::aqua), "]\n");
-    }
-    return vstrings;
-}
-
-vector<vector<char>> ConvertToArgcAgv(const vector<string>& s)
-{
-    string joined = eft::StringUtils::Join(' ', s);
-    istringstream is{joined};
-    return ConvertToArgcAgv(is);
-}
-
-void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char**& argv) {
-    //static vector<vector<char>> vstrings;
-    //static vector<const char*>  cstrings;
-
-    vstrings.clear();
-    cstrings.clear();
-
-    vstrings = ConvertToArgcAgv(arguments);
-    cstrings.reserve(vstrings.size());
-
-    for(auto& s: vstrings)
-        cstrings.push_back(s.data());
-
-    argv = const_cast<char **>(cstrings.data());
-    argc = cstrings.size();
-}
+//void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char**& argv) {
+//    //static vector<vector<char>> vstrings;
+//    //static vector<const char*>  cstrings;
+//
+//    vstrings.clear();
+//    cstrings.clear();
+//
+//    vstrings = ConvertToArgcAgv(arguments);
+//    cstrings.reserve(vstrings.size());
+//
+//    for(auto& s: vstrings)
+//        cstrings.push_back(s.data());
+//
+//    argv = const_cast<char **>(cstrings.data());
+//    argc = cstrings.size();
+//}
 
 void TestBasicArgParsing() {
     {
