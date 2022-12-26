@@ -90,8 +90,8 @@ private:
 
     mutable Poi   poi_;
     mutable NP    np_;
-    mutable Nps   nps_;
-    mutable Globs globs_;
+    mutable Nps   nps_       {nullptr};
+    mutable Globs globs_     {nullptr};
     RooAbsData*  data_       {nullptr};
     RooAbsPdf*   pdf_        {nullptr};
     RooArgSet*  pois_        {nullptr};
@@ -133,7 +133,7 @@ private:
 inline void OneNpManager::SetErrors(fit::Errors errors) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("[OneNpManager] set errors evaluation regime to DEFAULT");
+    EFT_PROF_INFO("OneNpManagerBuilder::SetErrors evaluation regime to {}", errors);
     errors_ = errors;
 }
 
@@ -148,26 +148,26 @@ OneNpManagerBuilder::operator OneNpManager() {
 inline void OneNpManager::ResetToInitState()
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("ResetToInitState");
-    EFT_PROF_DEBUG("Nps before loading snapshot:");
-    for (const auto np : *nps_) {
-        auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-                       np_var->GetName(),
-                       np_var->getVal(),
-                       np_var->getError(),
-                       np_var->isConstant());
-    }
+    EFT_PROF_TRACE("OneNpManagerBuilder::ResetToInitState");
+//    EFT_PROF_DEBUG("Nps before loading snapshot:");
+//    for (const auto np : *nps_) {
+//        auto np_var = dynamic_cast<RooRealVar*>(np);
+//        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+//                       np_var->GetName(),
+//                       np_var->getVal(),
+//                       np_var->getError(),
+//                       np_var->isConstant());
+//    }
     LoadSnapshot(snapshot_init_values_name_);
-    EFT_PROF_DEBUG("Nps after loading snapshot:");
-    for (const auto np : *nps_) {
-        auto np_var = dynamic_cast<RooRealVar*>(np);
-        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-                       np_var->GetName(),
-                       np_var->getVal(),
-                       np_var->getError(),
-                       np_var->isConstant());
-    }
+//    EFT_PROF_DEBUG("Nps after loading snapshot:");
+//    for (const auto np : *nps_) {
+//        auto np_var = dynamic_cast<RooRealVar*>(np);
+//        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
+//                       np_var->GetName(),
+//                       np_var->getVal(),
+//                       np_var->getError(),
+//                       np_var->isConstant());
+//    }
     ResetNp();
     ResetPoi();
 }
@@ -197,13 +197,13 @@ inline const StudyRes& OneNpManager::GetResult(const std::string& type) const
 inline void OneNpManager::SetNpPreferredValue(double val, double err)
 {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("SetNpPreferredValue {} +- {}", val, err);
+    EFT_PROF_INFO("OneNpManagerBuilder::SetNpPreferredValue {} +- {}", val, err);
     np_found_in_data_value = val;
     np_found_in_data_error = err;
 }
 inline void OneNpManager::SetPoiPreferredValue(double val, double err) {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("SetPoiPreferredValue {} +- {}", val, err);
+    EFT_PROF_INFO("OneNpManagerBuilder::SetPoiPreferredValue {} +- {}", val, err);
     poi_init_value = val;
     poi_init_error = err;
 }
@@ -213,14 +213,14 @@ inline OneNpManagerBuilder OneNpManager::create() {
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingNPs(const Nps& nps) noexcept {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("UsingNPs");
+    EFT_PROF_TRACE("OneNpManagerBuilder::UsingNPs");
     result_.nps_ = nps;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingWS(IWorkspaceWrapper* ws) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("UsingWS");
+    EFT_PROF_TRACE("OneNpManagerBuilder::UsingWS");
     //result_.ws_ = std::make_shared<IWorkspaceWrapper>(ws);
     result_.ws_ = ws;
     return *this;
@@ -228,7 +228,7 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingWS(IWorkspaceWrapper* ws) 
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingSnapshotWithInitVals(std::string name) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("UsingSnapshotWithInitVals {}", name);
+    EFT_PROF_TRACE("OneNpManagerBuilder::UsingSnapshotWithInitVals {}", name);
     result_.snapshot_init_values_name_ = std::move(name);
     return *this;
 }
@@ -258,16 +258,16 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPdf(RooAbsPdf *pdf) noexce
 inline OneNpManagerBuilder& OneNpManagerBuilder::ForPOI(Poi poi) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("OneNpManagerBuilder::ForPOI");
-    result_.poi_ = poi;
+    EFT_PROF_INFO("OneNpManagerBuilder::ForPOI [{}]", poi);
+    result_.poi_ = std::move(poi);
     return *this;
 }
 
 inline OneNpManagerBuilder& OneNpManagerBuilder::ForNP(NP np) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("OneNpManagerBuilder::ForNP");
-    result_.np_ = np;
+    EFT_PROF_INFO("OneNpManagerBuilder::ForNP [{}]", np);
+    result_.np_ = std::move(np);
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPOIs(RooArgSet* pois) noexcept
@@ -280,14 +280,14 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPOIs(RooArgSet* pois) noex
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingErrors(fit::Errors errors) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("OneNpManagerBuilder::UsingErrors");
+    EFT_PROF_INFO("OneNpManagerBuilder::UsingErrors [{}]", errors);
     result_.errors_ = errors;
     return *this;
 }
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingFitSettings(NpRankingStudySettings settings) noexcept
 {
     EFT_PROFILE_FN();
-    result_.np_ranking_settings_ = settings;
+    result_.np_ranking_settings_ = std::move(settings);
     return *this;
 }
 
