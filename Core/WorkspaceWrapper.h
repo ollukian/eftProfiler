@@ -48,6 +48,9 @@ public:
 
     inline void FixValConst(const std::string& poi) override;
     inline void FixValConst(const std::vector<std::string>& pois) override;
+    inline void FixValConst(RooArgSet* vals) override;
+
+
     //inline void FixValConst(std::initializer_list<std::vector<std::string>> pois) override;
 
     //inline void FixAllPois()   noexcept override;
@@ -55,6 +58,7 @@ public:
 
     inline void FloatVal(const std::string& poi) override;
     inline void FloatVals(const std::vector<std::string>& pois) override;
+    inline void FloatVals(RooArgSet* vals) override;
     //inline void FloatVals(std::initializer_list<std::vector<std::string>> pois) override;
 
     inline void SetVarVal(const std::string& name, double val) override;
@@ -188,6 +192,30 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
     EFT_PROFILE_FN();
     for (const auto& poi : pois) {
         FixValConst(poi);
+    }
+}
+
+inline void WorkspaceWrapper::FixValConst(RooArgSet* vals)  {
+    EFT_PROFILE_FN();
+    if (vals == nullptr) {
+        EFT_PROF_CRITICAL("FixValConst nullpts provided");
+        throw std::runtime_error("");
+    }
+    for (auto val : * vals) {
+        dynamic_cast<RooRealVar*>(val)->setConstant(true);
+        EFT_PROF_DEBUG("Set {:30} const", val->GetName());
+    }
+}
+
+inline void WorkspaceWrapper::FloatVals(RooArgSet* vals)  {
+    EFT_PROFILE_FN();
+    if (vals == nullptr) {
+        EFT_PROF_CRITICAL("FloatVals nullpts provided");
+        throw std::runtime_error("");
+    }
+    for (auto val : * vals) {
+        dynamic_cast<RooRealVar*>(val)->setConstant(false);
+        EFT_PROF_DEBUG("Set {:30} float", val->GetName());
     }
 }
 

@@ -39,9 +39,11 @@ public:
 
     virtual void FixValConst(const std::string& poi)  = 0;
     virtual void FixValConst(const std::vector<std::string>& pois) = 0;
+    virtual void FixValConst(RooArgSet* vals)  = 0;
 
     virtual void FloatVal(const std::string& poi)  = 0;
     virtual void FloatVals(const std::vector<std::string>& pois) = 0;
+    virtual void FloatVals(RooArgSet* vals)  = 0;
 
     virtual void SetVarVal(const std::string& name, double val) = 0;
     virtual void SetVarErr(const std::string& name, double err) = 0;
@@ -84,6 +86,7 @@ public:
     virtual const RooArgSet* GetGlobObs() const = 0;
     virtual const RooArgSet* GetPOIs() const = 0;
     virtual const Categories& GetCats() const = 0;
+
     virtual RooRealVar* GetVar(const std::string& name) = 0;
 
     virtual RooDataSet*      GetData(const std::string& name) = 0;
