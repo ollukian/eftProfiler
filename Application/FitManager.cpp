@@ -108,7 +108,18 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
 
         workerId = 0;
         bool is_found = false;
-        while (nps->operator[](workerId)->GetName() != res.np_name) {
+
+        RooArgSet* nps_to_use = nullptr;
+        if (settings.no_gamma) {
+            EFT_PROF_WARN("Choose np number from the NON-GAMMA list");
+            nps_to_use = non_gamma_nps;
+        }
+        else {
+            EFT_PROF_WARN("Choose np number from the FULL list (including gamma-nps)");
+            nps_to_use = nps;
+        }
+
+        while (nps_to_use->operator[](workerId)->GetName() != res.np_name) {
             workerId++;
             is_found = true;
         }

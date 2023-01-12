@@ -19,7 +19,7 @@ submit_one_worker()
   echo "####################################################################################################################" >> "${current_script}"
 
   echo "cd ${EFT_PROFILER_PATH}" >> "${current_script}"
-  echo "sh job_script.sh --task compute_ranking --np_name ${NP_NAME} --poi_init_val ${POI_INIT_VAL} --worker_id ${worker_id} --poi ${POI} --res_path ${EFT_SAVE_RES_TO} --ws_path ${WS_PATH} --comb_pdf ${PDF_NAME} --strategy ${STRATEGY} ${OTHER_OPTIONS}" >> "${current_script}"
+  echo "sh job_script.sh --task compute_ranking --np_name ${NP_NAME} --poi_init_val ${POI_INIT_VAL} --worker_id ${worker_id} --poi ${POI} --res_path ${EFT_SAVE_RES_TO} --ws_path ${WS_PATH} --comb_pdf ${PDF_NAME} --strategy ${STRATEGY} --errors ${EFT_ERRORS_HANDLING} ${OTHER_OPTIONS}" >> "${current_script}"
 
   echo "source ${current_script}"
   sbatch --mail-user lukianchuk@lal.in2p3.fr --mail-type=END,FAIL -L sps --mem 20G --export=ALL --job-name "${POI}_${NP_NAME}" --output "/sps/atlas/o/ollukian/scratch/Log_${POI}_${NP_NAME}.OU" --error "/sps/atlas/o/ollukian/scratch/Log_${POI}_${NP_NAME}.ER" "${current_script}"
