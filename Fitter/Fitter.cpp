@@ -21,6 +21,14 @@ namespace eft::stats::fit {
 RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
     EFT_PROF_TRACE("[CreateNll]");
     TStopwatch timer;
+
+    if (globs_ == nullptr && settings.globalObs != nullptr) {
+        globs_ = settings.globalObs;
+    }
+    if (nps_ == nullptr && settings.nps != nullptr) {
+        nps_ = settings.nps;
+    }
+
     RooAbsReal* nll = settings.pdf->createNLL(*settings.data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
