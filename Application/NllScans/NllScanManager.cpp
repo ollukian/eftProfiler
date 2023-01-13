@@ -221,6 +221,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     for (const auto& poi : list) {
         pois_to_float->add(*ws_->GetVar(poi));
     }
+    return *this;
 }
  NllScanManager& NllScanManager::SetPOIsFullList(const std::vector<std::string>& list) {
     if (ws_ == nullptr) {
@@ -231,6 +232,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     for (const auto& poi : list) {
         all_pois->add(*ws_->GetVar(poi));
     }
+    return *this;
 }
 
 } // eft::stats::scans
