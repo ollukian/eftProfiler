@@ -152,7 +152,9 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     auto *non_gamma_nps = manager->GetListAsArgSet("non_gamma_nps");
 
     vector<string> pois_to_float;
+    EFT_PROF_CRITICAL("try to set up pois_to_float");
     cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
+    EFT_PROF_CRITICAL("pois_to_float are set");
 
     scanManager
             .SetWorkerId(1)
@@ -161,6 +163,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetGlobs(globObs)
             .SetNPs(nps)
             .SetGridType(GridType::EQUIDISTANT);
+    EFT_PROF_CRITICAL("before leaving init function");
     return scanManager;
 }
 

@@ -287,6 +287,7 @@ int main(int argc, char* argv[]) {
         string pois;
 
         NllScanManager scanManager = NllScanManager::InitFromCommandLine(commandLineArgs);
+        EFT_PROF_CRITICAL("after init from cmdline");
         PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
         //cout << "poi1: " << poi1 << endl;
 
