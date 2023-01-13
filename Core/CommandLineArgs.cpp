@@ -127,6 +127,7 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
     //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
     }
+    EFT_PROF_TRACE("found: {} elems for key {}:", ops.at(option).size(), option);
     return ops.at(option);
 }
 

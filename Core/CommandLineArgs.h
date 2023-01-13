@@ -161,8 +161,8 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val) const
         }
         else if constexpr(std::is_same_v<std::vector<std::string>, std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
-            //val = GetVals(key).value();
-            val = val_opt.value();
+            val = GetVals(key).value();
+            //val = val_opt.value();
             return true;
             // TODO: to do the same with arrays and other containers. decay_type ?
             // TODO: add unfolding of a vector by looping over it and extracting components
