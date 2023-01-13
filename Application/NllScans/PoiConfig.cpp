@@ -67,17 +67,105 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
     auto tokens = eft::StringUtils::Split(params, ':');
     EFT_PROF_DEBUG("obtained {} tokens from: [{}]", tokens.size(), s);
 
-    for (const auto& token : tokens) {
-        stringstream ss {token};
-        string token_name;
-        string token_vals;
-        ss >> token_name;
+    PoiConfig res {name};
 
-        auto vals = ss.str();
-        EFT_PROF_DEBUG("token: [{}] has name: [{}] with vals: [{}]", token, token_name, vals);
+    for (const auto& token : tokens) {
+        //stringstream ss {token};
+        string token_name = token.substr(0, token.find(' '));
+        string token_vals = token.substr(token_name.length(), token.length());
+        eft::StringUtils::Trim(token_name);
+        eft::StringUtils::Trim(token_vals);
+
+        EFT_PROF_DEBUG("token: [{}] has name: [{}] with vals: [{}]", token, token_name, token_vals);
+
+        if (token_vals[0] == '[') {
+            eft::StringUtils::RemovePrefix(token_vals, "[");
+            eft::StringUtils::RemoveSuffix(token_vals, "[");
+            EFT_PROF_DEBUG("need to remove [] symbols from the token vals... => {}", token_vals);
+        }
+
+        auto vals = eft::StringUtils::Split(token_vals);
+        EFT_PROF_DEBUG("Found: {} vals: {}", vals.size(), eft::StringUtils::Join('|', vals));
+
+        if (token_name == "val") {
+            if (vals.size() == 2) {
+                double val;
+                double err;
+
+                try {
+                    val = stod(vals[0]);
+                    err = stod(vals[1]);
+                }
+                catch (...) {
+                    EFT_PROF_CRITICAL("Error in parsing: {} as two floats", token_vals);
+                    throw std::runtime_error("");
+                }
+
+                res.WithCentralVal(val).WithCentralErr(err);
+            }
+            else if (vals.size() == 1) {
+                EFT_PROF_CRITICAL("Error: for val 2 values must be given: value and error");
+            }
+        }
+        else if (token_name == "grid") {
+            if (vals.size() == 2) {
+                int nb_points_grid;
+                string grid_type;
+                try {
+                    nb_points_grid = stoi(vals[0]);
+                    grid_type = vals[1];
+                }
+                catch (...) {
+                    EFT_PROF_CRITICAL("Error in parsing: {} as an int and string", token_vals);
+                    throw std::runtime_error("");
+                }
+                res.WithGridSize(nb_points_grid);
+            }
+            else if (vals.size() == 1) {
+                int nb_points_grid;
+                try {
+                    nb_points_grid = stoi(vals[0]);
+                }
+                catch (...) {
+                    EFT_PROF_CRITICAL("Error in parsing: {} as an int", token_vals);
+                    throw std::runtime_error("");
+                }
+                res.WithGridSize(nb_points_grid);
+            }
+        }
+        else if (token_name == "range") {
+            if (vals.size() == 2) {
+                string r1 = vals[0];
+                string r2 = vals[1];
+                if (r1.back() == 's') {
+                    eft::StringUtils::RemoveSuffix(r1, "s");
+                    auto val1 = stod(r1);
+                    res.WithRangeSigmasLow(val1);
+                }
+                else {
+                    auto val1 = stod(r1);
+                    res.WithRangeLow(val1);
+                }
+
+                if (r2.back() == 's') {
+                    eft::StringUtils::RemoveSuffix(r2, "s");
+                    auto val2 = stod(r2);
+                    res.WithRangeSigmasHigh(val2);
+                }
+                else {
+                    auto val2 = stod(r2);
+                    res.WithRangeHigh(val2);
+                }
+            }
+        }
+        else if (token_name == "at") {
+            float val = stod(token_vals);
+            res.ToTestAt(val);
+        }
+
     }
 
-    return {};
+    return res;
 
     // reads POI configuration from a string
     // Configuration of the string:
