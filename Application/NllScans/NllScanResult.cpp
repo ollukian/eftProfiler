@@ -11,8 +11,8 @@ namespace eft::stats::scans {
 void to_json(nlohmann::json& j, const NllScanResult& res) {
     j = nlohmann::json {
             {"config_version",      res.version},
-            {"config_version",      res.nll_val},
-            {"config_version",      res.fit_status},
+            {"nll_val",             res.nll_val},
+            {"fit_status",          res.fit_status},
             {"pois",                res.poi_configs},
     };
 }
