@@ -84,7 +84,9 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     minim.setStrategy( settings.strategy );
     minim.setPrintLevel( 1 );
     //RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
-    RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
+    //RooFit::MsgLevel::
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
+    RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::PROGRESS);
     minim.setProfile(); /* print out time */
     minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );

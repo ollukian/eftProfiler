@@ -70,6 +70,7 @@ double NllScanManager::GetPointAtGrid(double low, double  high, size_t size_grid
         case GridType::USER_DEFINED:
             throw std::runtime_error("cannot set up grid for a user-defined grid");
     }
+    return 0;
 }
 
 double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t size_grid, size_t nb_point) {
@@ -197,6 +198,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetData(&manager->GetData(PrePostFit::OBSERVED))
             .SetPDF(pdf_to_use)
             .SetGridType(GridType::EQUIDISTANT);
+
     EFT_PROF_CRITICAL("before leaving init function");
 
     if ( scanManager.fitSettings_.nps == nullptr) {
