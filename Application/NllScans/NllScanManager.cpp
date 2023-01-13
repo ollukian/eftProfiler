@@ -113,6 +113,15 @@ void NllScanManager::RunScan() {
 
     EFT_PROF_INFO("Create Nll");
     fit::Fitter fitter;
+    if (fitSettings_.nps == nullptr) {
+        EFT_PROF_CRITICAL("nps are nullptr before create nll");
+    }
+    if (fitSettings_.globalObs == nullptr) {
+        EFT_PROF_CRITICAL("globalObs are nullptr before create nll");
+    }
+    if (fitSettings_.pdf == nullptr) {
+        EFT_PROF_CRITICAL("pdf are nullptr before create nll");
+    }
     auto nll = fitter.CreatNll(fitSettings_);
 
     EFT_PROF_INFO("Minimise Nll");
@@ -188,6 +197,17 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetPDF(pdf_to_use)
             .SetGridType(GridType::EQUIDISTANT);
     EFT_PROF_CRITICAL("before leaving init function");
+
+    if ( scanManager.fitSettings_.nps == nullptr) {
+        EFT_PROF_CRITICAL("fitsettiings.nps == nullptr in the init");
+    }
+    if ( scanManager.fitSettings_.globalObs == nullptr) {
+        EFT_PROF_CRITICAL("fitsettiings.globs == nullptr in the init");
+    }
+    if ( scanManager.fitSettings_.pdf == nullptr) {
+        EFT_PROF_CRITICAL("fitsettiings.pdf == nullptr in the init");
+    }
+
     return scanManager;
 }
 
