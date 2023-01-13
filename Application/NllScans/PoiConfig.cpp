@@ -60,7 +60,11 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
         "at"
     };
 
-    auto tokens = eft::StringUtils::Split(s, ':');
+    auto name_params = eft::StringUtils::Split(s, '(');
+    const auto& name = name_params[0];
+    auto params = name_params[1];
+
+    auto tokens = eft::StringUtils::Split(params, ':');
     EFT_PROF_DEBUG("obtained {} tokens from: [{}]", tokens.size(), s);
 
     for (const auto& token : tokens) {
@@ -68,10 +72,9 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
         string token_name;
         string token_vals;
         ss >> token_name;
-        EFT_PROF_DEBUG("token: [{}] has name: [{}]", token, token_name);
 
         auto vals = ss.str();
-        EFT_PROF_DEBUG("token vals: [{}]", vals);
+        EFT_PROF_DEBUG("token: [{}] has name: [{}] with vals: [{}]", token, token_name, vals);
     }
 
     return {};
