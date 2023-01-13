@@ -19,12 +19,12 @@
 #include <random>
 
 class Tester;
-std::vector<std::vector<char>> ConvertToArgcAgv(const std::vector<std::string>& s);
-std::vector<std::vector<char>> ConvertToArgcAgv(std::istringstream& s);
-void GetArgcArgvFromVecCharStars(std::istringstream& arguments, int& argc, char**& argv);
+//std::vector<std::vector<char>> ConvertToArgcAgv(const std::vector<std::string>& s);
+//std::vector<std::vector<char>> ConvertToArgcAgv(std::istringstream& s);
+//void GetArgcArgvFromVecCharStars(std::istringstream& arguments, int& argc, char**& argv);
 
-static inline std::vector<std::vector<char>> vstrings;
-static inline std::vector<const char*>       cstrings;
+//static inline std::vector<std::vector<char>> vstrings;
+//static inline std::vector<const char*>       cstrings;
 
 class Tester {
 
