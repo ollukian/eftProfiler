@@ -294,14 +294,16 @@ int main(int argc, char* argv[]) {
 
         commandLineArgs->SetValIfArgExists("pois", pois);
         if (! pois.empty() ) {
+            EFT_PROF_CRITICAL("read POIs from cmdline");
             PoiConfig poi2 = PoiConfig::readFromString(pois);
             cout << "poi2 (from the command line): " << endl << poi2 << endl;
             scanManager.AddPoi(poi2);
         }
         else {
+            EFT_PROF_CRITICAL("read POIs from default expression");
             scanManager.AddPoi(poi1);
         }
-
+        EFT_PROF_CRITICAL("before run scan");
         scanManager.RunScan();
 
     }
