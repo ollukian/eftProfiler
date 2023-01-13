@@ -150,7 +150,8 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     EFT_PROFILE_FN();
 
     eft::stats::FitManagerConfig config;
-    auto manager = make_unique<eft::stats::FitManager>();
+    //auto manager = make_unique<eft::stats::FitManager>();
+    auto manager = new FitManager{};
     eft::stats::FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
     manager->Init(std::move(config));
 
