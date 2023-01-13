@@ -53,6 +53,7 @@ public:
     const auto& GetKeys() const noexcept { return keys;}
 
     void ReportStatus() const noexcept;
+    void AddKey(Key key);
 private:
     std::map<Key, Vals> ops;
     mutable std::set<Key> _requested_keys; // to track down that all keys have been asked for
@@ -62,7 +63,6 @@ private:
     bool ParseInput(int argc, char* argv[]);
     [[nodiscard]]
     static inline Key TrimKey(const Key& key) noexcept;
-    void AddKey(Key key);
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 

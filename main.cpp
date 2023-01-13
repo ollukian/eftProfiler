@@ -281,6 +281,9 @@ int main(int argc, char* argv[]) {
     else if (task == "nll_scan") {
         using namespace eft::stats::scans;
 
+        commandLineArgs->AddKey("pois");
+        commandLineArgs->AddKey("pois_float");
+
         NllScanManager scanManager = NllScanManager::InitFromCommandLine(commandLineArgs);
         PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
         //cout << "poi1: " << poi1 << endl;
