@@ -151,6 +151,13 @@ void TestRemovePrefix()
         SU::RemovePrefix(s, prefix);
         ASSERT_EQUAL(s, s_res);
     }
+    {
+        string s {"[text"};
+        const string prefix {"["};
+        const string s_res{"text"};
+        SU::RemovePrefix(s, prefix);
+        ASSERT_EQUAL(s, s_res);
+    }
 }
 void TestRemoveSuffix()
 {
@@ -194,6 +201,13 @@ void TestRemoveSuffix()
         string s {"abcd"};
         const string suffix {"a"};
         const string s_res{"abcd"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"text]"};
+        const string suffix {"]"};
+        const string s_res{"text"};
         SU::RemoveSuffix(s, suffix);
         ASSERT_EQUAL(s, s_res);
     }
