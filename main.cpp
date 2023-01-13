@@ -284,7 +284,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("pois");
         commandLineArgs->RegisterKey("pois_float");
         vector<string> pois_float;
-        string pois;
+        vector<string> pois;
 
         NllScanManager scanManager = NllScanManager::InitFromCommandLine(commandLineArgs);
         EFT_PROF_CRITICAL("after init from cmdline");
@@ -295,7 +295,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->SetValIfArgExists("pois", pois);
         if (! pois.empty() ) {
             EFT_PROF_CRITICAL("read POIs from cmdline");
-            PoiConfig poi2 = PoiConfig::readFromString(pois);
+            PoiConfig poi2 = PoiConfig::readFromString(eft::StringUtils::Join(' ', pois));
             cout << "poi2 (from the command line): " << endl << poi2 << endl;
             scanManager.AddPoi(poi2);
         }
