@@ -20,6 +20,7 @@ void from_json(const nlohmann::json& j, PoiConfig& config);
 
 class PoiConfig {
     friend class PoiConfigBuilder;
+    friend std::ostream& operator << (std::ostream& os, const PoiConfig& config);
 public:
     explicit PoiConfig(std::string name_) noexcept : name(std::move(name_)) {}
     PoiConfig() = default;

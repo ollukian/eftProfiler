@@ -191,5 +191,14 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
     //          value               => exact position at which to probe this POI, without using the grid
 }
 
+std::ostream& operator << (std::ostream& os, const PoiConfig& config) {
+    return os << config.name << "| fit_value: ("
+        << config.central_val << " +- "
+        << config.central_err << ") grid: "
+        << config.grid_size << " points, scan range: ["
+        << config.range_scan_low << ", "
+        << config.range_scan_high << "]";
+}
+
 
 } // eft::stats::scans

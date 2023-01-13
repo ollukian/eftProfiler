@@ -284,9 +284,12 @@ int main(int argc, char* argv[]) {
         NllScanManager scanManager;
         PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
 
+        cout << "poi1: " << poi1 << endl;
+
         string pois;
         commandLineArgs->SetValIfArgExists("pois", pois);
         PoiConfig poi2 = PoiConfig::readFromString(pois);
+        cout << "poi2 (from the command line): " << endl << poi1 << endl;
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);
