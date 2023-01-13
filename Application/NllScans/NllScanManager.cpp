@@ -167,14 +167,25 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     EFT_PROF_CRITICAL("pois_to_float are set");
 
 
+
+    auto pdf_to_use = dynamic_cast<RooAbsPdf*>(pdf->clone());
+    //auto nps_to_use = dynamic_cast<RooArgSet*>(nps->clone());
+    //auto globs_to_use = dynamic_cast<RooArgSet*>(globObs->clone());
+
+    auto nps_to_use = new RooArgSet{};
+    nps_to_use->add(*nps);
+
+    auto globs_to_use = new RooArgSet{};
+    globs_to_use->add(*globObs);
+
     scanManager
             .SetWorkerId(1)
             .SetWS(manager->GetWs())
             .SetPOIsToFloat(pois_to_float)
-            .SetGlobs(globObs)
-            .SetNPs(nps)
+            .SetGlobs(globs_to_use)
+            .SetNPs(nps_to_use)
             .SetData(&manager->GetData(PrePostFit::OBSERVED))
-            .SetPDF(pdf)
+            .SetPDF(pdf_to_use)
             .SetGridType(GridType::EQUIDISTANT);
     EFT_PROF_CRITICAL("before leaving init function");
     return scanManager;
