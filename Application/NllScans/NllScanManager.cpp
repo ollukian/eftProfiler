@@ -131,6 +131,10 @@ void NllScanManager::RunScan() {
     auto found_nll = nll->getVal();
     EFT_PROF_INFO("nll value: {}", found_nll);
 
+    res_ = NllScanResult{};
+    res_.nll_val = found_nll;
+    res_.poi_configs = pois_;
+
     //if ()
 }
 
@@ -235,6 +239,45 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
         all_pois->add(*ws_->GetVar(poi));
     }
     return *this;
+}
+
+void NllScanManager::SaveRes() const {
+    EFT_PROFILE_FN();
+
+
+    //std::filesystem::path path_res = settings.path_to_save_res;
+    std::filesystem::path path_res = "NllScans";
+    size_t scan_dimension = pois_.size();
+
+    if ( !std::filesystem::exists(path_res) ) {
+        EFT_PROF_INFO("Required path directory {} needs to be created", path_res);
+        std::filesystem::create_directories(path_res);
+    }
+
+    const string name = fmt::format("{}/res__{}D__worker_{}__{}_at_{}.json",
+                                    path_res.string(),
+                                    scan_dimension,
+                                    worker_id,
+                                    pois_[0].Name(),
+                                    pois_[0].Value()
+    );
+
+    nlohmann::json j;
+    j = res_;
+    ofstream f_res;
+    f_res.exceptions(ofstream::failbit | ofstream::badbit);
+
+    try {
+        f_res.open(name);
+        f_res << setw(4) << j << endl;
+        cout << "duplicate to the console:" << endl;
+        cout << setw(4) << j << endl;
+    }
+    catch (...) {
+        cout << "impossible to open: " << name << endl;
+        cout << "print to console:" << endl;
+        cout << setw(4) << j << endl;
+    }
 }
 
 } // eft::stats::scans

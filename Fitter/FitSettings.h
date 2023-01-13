@@ -26,8 +26,8 @@ struct  FitSettings {
     RooAbsReal* nll         {nullptr};
     Errors      errors      {Errors::DEFAULT};
     uint8_t     retry       {0};
-    uint8_t     strategy    {0};
-    double      eps         {};
+    uint8_t     strategy    {1};
+    double      eps         {1E-3};
     bool        reuse_nll   {true};
     bool        save_res    {false};
 };

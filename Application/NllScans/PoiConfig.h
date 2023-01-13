@@ -28,6 +28,7 @@ public:
 
     //static void PrintHelp(std::ostream& os);
     inline PoiConfig& ToTestAt(float val_ = 0.) noexcept { val = val_; is_defined = true; return *this; }
+    inline PoiConfig& WithName(std::string name_) noexcept { name = std::move(name_); return *this; }
     inline PoiConfig& WithCentralVal(float val_ = 0.) noexcept { central_val = val_; return *this; }
     inline PoiConfig& WithCentralErr(float err_ = 0.) noexcept { central_err = err_; return *this; }
     inline PoiConfig& WithVersionOfConfig(std::string ver = "v1") noexcept { version = std::move(ver); return *this; }

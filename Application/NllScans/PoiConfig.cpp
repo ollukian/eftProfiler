@@ -20,10 +20,8 @@ void to_json(nlohmann::json& j, const PoiConfig& config) {
     j = nlohmann::json {
             {"config_version",      config.Version()},
             {"poi_name",            config.Name()},
-            //{"poi_val",             config.},
-            //{"poi_central_val",     config.central_val},
-            //{"poi_central_err",     config.central_err},
-            //{"grid_size",           config.},
+            {"value",               config.Value()},
+            {"grid_size",           config.GridSize()},
             {"range_scan_low",      config.ScanRangeLow()},
             {"range_scan_high",     config.ScanRangeHigh() },
             //{"range_scan_sigmas",   config.range_scan_sigmas },
@@ -31,7 +29,34 @@ void to_json(nlohmann::json& j, const PoiConfig& config) {
 }
 
 void from_json(const nlohmann::json& j, PoiConfig& config) {
-    throw std::runtime_error("from_json[POIConfig] is not implemented");
+    string version;
+    string poi_name;
+    float value;
+    size_t grid_size;
+    float range_scan_low;
+    float range_scan_high;
+
+    j.at("config_version").get_to(version);
+
+    if (version == "v1") {
+        j.at("poi_name").get_to(poi_name);
+        j.at("value").get_to(value);
+        j.at("grid_size").get_to(grid_size);
+        j.at("range_scan_low").get_to(range_scan_low);
+        j.at("range_scan_high").get_to(range_scan_high);
+
+        config.WithVersionOfConfig(std::move(version))
+                .WithGridSize(grid_size)
+                .WithRangeLow(range_scan_low)
+                .WithRangeHigh(range_scan_high)
+                .ToTestAt(value)
+                .WithName(std::move(poi_name));
+    }
+    else {
+        throw std::runtime_error(fmt::format("from_config[POIconfig] only version v1 is implemented"));
+    }
+
+    //throw std::runtime_error("from_json[POIConfig] is not implemented");
 //    j.at("config_version").get_to(config.version);
 //    if (config.Version() == "v1") {
 //        j.at("poi_name").get_to(config.name);

@@ -305,6 +305,7 @@ int main(int argc, char* argv[]) {
         }
         EFT_PROF_CRITICAL("before run scan");
         scanManager.RunScan();
+        scanManager.SaveRes();
 
     }
     else {
