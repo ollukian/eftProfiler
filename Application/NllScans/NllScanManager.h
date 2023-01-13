@@ -29,13 +29,15 @@ class NllScanManager {
 public:
     void RunScan();
 
-    inline NllScanManager& SetWorkerId(size_t id)       noexcept { worker_id = id; return *this; }
-    inline NllScanManager& SetPOIsToFloat(RooArgSet* pois) noexcept { pois_to_float = pois; return *this; }
+    bool ParseConfig(std::string path, std::string format);
+
+    inline NllScanManager& SetWorkerId(size_t id)           noexcept { worker_id = id; return *this; }
+    inline NllScanManager& SetPOIsToFloat(RooArgSet* pois)  noexcept { pois_to_float = pois; return *this; }
     inline NllScanManager& SetPOIsFullList(RooArgSet* pois) noexcept { all_pois = pois; return *this; }
-    inline NllScanManager& SetWS(IWorkspaceWrapper* ws) noexcept { ws_ = ws; return *this; }
-    inline NllScanManager& SetGlobs(RooArgSet* globs)   noexcept { fitSettings.globalObs = globs; return *this; }
-    inline NllScanManager& SetNPs(RooArgSet* nps)       noexcept { fitSettings.nps = nps; return *this; }
-    inline NllScanManager& SetGridType(GridType grid)   noexcept { gridType_ = grid; return *this; }
+    inline NllScanManager& SetWS(IWorkspaceWrapper* ws)     noexcept { ws_ = ws; return *this; }
+    inline NllScanManager& SetGlobs(RooArgSet* globs)       noexcept { fitSettings_.globalObs = globs; return *this; }
+    inline NllScanManager& SetNPs(RooArgSet* nps)           noexcept { fitSettings_.nps = nps; return *this; }
+    inline NllScanManager& SetGridType(GridType grid)       noexcept { gridType_ = grid; return *this; }
 
     inline PoiConfig& AddPoi(std::string name) { pois_.emplace_back(std::move(name)); return pois_.back();}
 
@@ -63,7 +65,7 @@ private:
     size_t                  worker_id   {0};
     //size_t                  size_grid_1d {0};
     GridType                gridType_    {GridType::EQUIDISTANT};
-    fit::FitSettings        fitSettings;
+    fit::FitSettings        fitSettings_;
     IWorkspaceWrapper* ws_   {nullptr};
     RooArgSet*              pois_to_float {nullptr};
     RooArgSet*              all_pois {nullptr};

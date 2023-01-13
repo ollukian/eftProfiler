@@ -13,6 +13,8 @@
 #include "Application/Ranking/MissingNpsProcessor.h"
 #include "Application/Ranking/CorrelationStudyProcessor.h"
 
+#include "Application/NllScans/NllScanManager.h"
+
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
 #include "spdlog/fmt/bundled/color.h"
@@ -275,6 +277,12 @@ int main(int argc, char* argv[]) {
         plotSettings->label1 = "Computation: Pre-fit";
         plotSettings->name_to_save = fmt::format("PreFit_{}_nps.pdf", plotSettings->np_nps_plot);
         CorrelationStudyProcessor::DrawCorrsComparison(plotSettings);
+    }
+    else if (task == "nll_scan") {
+        using namespace eft::stats::scans;
+
+        NllScanManager scanManager;
+        PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

@@ -337,16 +337,16 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
     fitter.Fit(fitSettings);
     EFT_PROF_WARN("[DoFitAllNpFloat] after fit");
-    //auto fitRes = fitter.Fit(fitSettings);
-    //auto nll = fitter.CreatNll(fitSettings);
-    //auto fitRes = fitter.Minimize(fitSettings);
+    //auto fitRes = fitter.Fit(fitSettings_);
+    //auto nll = fitter.CreatNll(fitSettings_);
+    //auto fitRes = fitter.Minimize(fitSettings_);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
     //res.ExtractPoiValErr(ws_, res.poi_name);
-    //res.nll = fitSettings.nll->getVal();
+    //res.nll = fitSettings_.nll->getVal();
 
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_free_fit_val, res.poi_free_fit_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
@@ -409,20 +409,20 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
 //    fitter.SetNps(nps);
 //    fitter.SetGlobs(globObs);
 //
-//    fit::FitSettings fitSettings;
-//    fitSettings.pdf = const_cast<RooAbsPdf*>(pdf);
-//    fitSettings.data = &data;
-//    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
-//    fitSettings.errors = settings.errors;
-//    fitSettings.retry = settings.retry;
-//    fitSettings.strategy = settings.strategy;
-//    fitSettings.eps = settings.eps;
-//    fitSettings.save_res = true;
+//    fit::FitSettings fitSettings_;
+//    fitSettings_.pdf = const_cast<RooAbsPdf*>(pdf);
+//    fitSettings_.data = &data;
+//    fitSettings_.pois = args_["pois"]; // TODO: wrap around by a function
+//    fitSettings_.errors = settings.errors;
+//    fitSettings_.retry = settings.retry;
+//    fitSettings_.strategy = settings.strategy;
+//    fitSettings_.eps = settings.eps;
+//    fitSettings_.save_res = true;
 //    // TODO: use one set of settings...
 //
 //
 //    EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
-//    auto fitRes = fitter.Fit(fitSettings);
+//    auto fitRes = fitter.Fit(fitSettings_);
 //    EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
 //    RooArgList list_nps(*nps);
 //    list_nps.add(*ws_->GetVar(settings.poi));

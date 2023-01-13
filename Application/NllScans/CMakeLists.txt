@@ -3,6 +3,7 @@ set(nll_source_files
         PoiConfig.cpp
         NllScanManager.cpp
         Grid.cpp
+        PoiConfigBuilder.cpp
         )
 
 include_directories(../../Vendors)

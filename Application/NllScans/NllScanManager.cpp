@@ -23,36 +23,19 @@ double NllScanManager::GetPointAtGrid(PoiConfig& config) const {
     EFT_PROFILE_FN();
     EFT_PROF_DEBUG("Get point at grid for a Poi Config");
 
-    bool use_sigmas = false;
-    double low;
-    double high;
+    double low  = config.ScanRangeLow();
+    double high = config.ScanRangeHigh();
+    EFT_PROF_DEBUG("compute from range. low = {}, high = {}", low, high);
 
-    if (config.range_scan_low == 0 && config.range_scan_high == 0)
-        use_sigmas = true;
-
-    if (use_sigmas) {
-        double val = config.central_val;
-        double err = config.central_err;
-        double sig = config.range_scan_sigmas;
-
-        low  = val - sig * err;
-        high = val + sig * err;
-        EFT_PROF_DEBUG("compute from sigmas. nb sigma: {} => low = {}, high = {}", sig, low, high);
-    }
-    else {
-        low  = config.range_scan_low;
-        high = config.range_scan_high;
-        EFT_PROF_DEBUG("compute from range. low = {}, high = {}", low, high);
-    }
-    return GetPointAtGridHermite(low, high, config.grid_size, worker_id);
+    return GetPointAtGridHermite(low, high, config.GridSize(), worker_id);
 }
 
 void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
     EFT_PROFILE_FN();
     for (auto& poi : pois_) {
-        EFT_PROF_INFO("Dealing with: {}", poi.name);
+        EFT_PROF_INFO("Dealing with: {}", poi.Name());
         if (gridType_ != GridType::USER_DEFINED) {
-            poi.val = GetPointAtGrid(poi);
+            poi.ToTestAt(GetPointAtGrid(poi));
         }
     }
 }
@@ -60,7 +43,7 @@ void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
 void NllScanManager::SetPOIsToTheRequiredGridPosition() {
     EFT_PROFILE_FN();
     for (const auto& poi : pois_) {
-        ws_->SetVarVal(poi.name, poi.val);
+        ws_->SetVarVal(poi.Name(), poi.Value());
     }
 }
 
@@ -112,7 +95,16 @@ void NllScanManager::RunScan() {
     //if ()
 }
 
+bool NllScanManager::ParseConfig(std::string path, std::string format) {
+    EFT_PROFILE_FN();
+}
 
+double NllScanManager::GetPointAtGridHermite(double low, double high, size_t size_grid, size_t nb_point) {
+    EFT_PROFILE_FN();
+
+    throw std::runtime_error("GetPointAtGridHermite is not implemented");
+
+    return 0;
 }
 
 } // eft::stats::scans
