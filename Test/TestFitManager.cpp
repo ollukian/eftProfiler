@@ -33,6 +33,52 @@
 using namespace std;
 using namespace eft::stats;
 
+static vector<vector<char>> vstrings;
+static vector<const char*>  cstrings;
+
+// helpers to emulate argc & argv passed to the command line
+vector<vector<char>> ConvertToArgcAgv(istringstream& s)
+{
+    string as_string{s.str()};
+    as_string = "Test_to_emulate_executable_name " + as_string;
+    EFT_PROF_INFO("convert {} to argc, argv", as_string);
+    auto components = eft::StringUtils::Split(as_string, ' ');
+
+    vector<vector<char>> vstrings;
+
+    size_t nb_components = components.size();
+    vstrings.reserve(nb_components);
+
+    for (size_t idx {}; idx < nb_components; ++idx) {
+        vstrings.emplace_back(components[idx].begin(), components[idx].end());
+        vstrings.back().push_back('\0');
+    }
+    return vstrings;
+}
+
+vector<vector<char>> ConvertToArgcAgv(const vector<string>& s)
+{
+    string joined = eft::StringUtils::Join(' ', s);
+    istringstream is{joined};
+    return ConvertToArgcAgv(is);
+}
+
+void GetArgcArgvFromVecCharStars(istringstream& arguments, int& argc, char**& argv) {
+    //static vector<vector<char>> vstrings;
+    //static vector<const char*>  cstrings;
+
+    vstrings.clear();
+    cstrings.clear();
+
+    vstrings = ConvertToArgcAgv(arguments);
+    cstrings.reserve(vstrings.size());
+
+    for(auto& s: vstrings)
+        cstrings.push_back(s.data());
+
+    argv = const_cast<char **>(cstrings.data());
+    argc = cstrings.size();
+}
 
 //EFT_BEGIN_TESTFILE(FitManager)
 
