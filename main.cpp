@@ -281,15 +281,23 @@ int main(int argc, char* argv[]) {
     else if (task == "nll_scan") {
         using namespace eft::stats::scans;
 
-        NllScanManager scanManager;
+        NllScanManager scanManager = NllScanManager::InitFromCommandLine(commandLineArgs);
         PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
-
-        cout << "poi1: " << poi1 << endl;
+        //cout << "poi1: " << poi1 << endl;
 
         string pois;
         commandLineArgs->SetValIfArgExists("pois", pois);
-        PoiConfig poi2 = PoiConfig::readFromString(pois);
-        cout << "poi2 (from the command line): " << endl << poi1 << endl;
+        if (! pois.empty() ) {
+            PoiConfig poi2 = PoiConfig::readFromString(pois);
+            cout << "poi2 (from the command line): " << endl << poi2 << endl;
+            scanManager.AddPoi(poi2);
+        }
+        else {
+            scanManager.AddPoi(poi1);
+        }
+
+        scanManager.RunScan();
+
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

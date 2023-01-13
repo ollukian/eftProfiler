@@ -8,8 +8,15 @@
 #include "IWorkspaceWrapper.h"
 #include "../../Fitter/Fitter.h"
 
+#include "CommandLineArgs.h"
+
+#include "FitManager.h"
+#include "FitManagerConfig.h"
+
 
 namespace eft::stats::scans {
+
+using namespace std;
 
 
 //void NllScanManager::ComputeScanPointAtGrid() {
@@ -44,6 +51,13 @@ void NllScanManager::SetPOIsToTheRequiredGridPosition() {
     EFT_PROFILE_FN();
     for (const auto& poi : pois_) {
         ws_->SetVarVal(poi.Name(), poi.Value());
+    }
+}
+
+void NllScanManager::FixGridPOIs() {
+    EFT_PROFILE_FN();
+    for (const auto& poi : pois_) {
+        ws_->FixValConst(poi.Name());
     }
 }
 
@@ -83,14 +97,29 @@ double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t
 void NllScanManager::RunScan() {
     EFT_PROFILE_FN();
 
-    EFT_PROF_INFO("Fix all POIs (later on, needed ones will be float)");
-    ws_->FixValConst(all_pois);
+    if (all_pois != nullptr) {
+        EFT_PROF_INFO("Fix all POIs (later on, needed ones will be float)");
+        ws_->FixValConst(all_pois);
+    }
 
     EFT_PROF_INFO("Float required POIs (which are allowed to by a research)");
     ws_->FloatVals(pois_to_float);
 
     EFT_PROF_INFO("Set up the grid by forcing all POIs to bet at the required values");
     SetPOIsToTheRequiredGridPosition();
+
+    EFT_PROF_INFO("Fix GRID POIs to be const");
+    FixGridPOIs();
+
+    EFT_PROF_INFO("Create Nll");
+    fit::Fitter fitter;
+    auto nll = fitter.CreatNll(fitSettings_);
+
+    EFT_PROF_INFO("Minimise Nll");
+    fitter.Minimize(fitSettings_, nll);
+
+    EFT_PROF_INFO("nll value:");
+    nll->getVal();
 
     //if ()
 }
@@ -105,6 +134,33 @@ double NllScanManager::GetPointAtGridHermite(double low, double high, size_t siz
     throw std::runtime_error("GetPointAtGridHermite is not implemented");
 
     return 0;
+}
+
+NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<CommandLineArgs>& cmdLineArgs) {
+    EFT_PROFILE_FN();
+
+    eft::stats::FitManagerConfig config;
+    auto manager = make_unique<eft::stats::FitManager>();
+    eft::stats::FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
+    manager->Init(std::move(config));
+
+    NllScanManager scanManager;
+
+    auto *globObs = manager->GetListAsArgSet("paired_globs");
+    auto *nps = manager->GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
+    auto *non_gamma_nps = manager->GetListAsArgSet("non_gamma_nps");
+
+    vector<string> pois_to_float;
+    cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
+
+    scanManager
+            .SetWorkerId(1)
+            .SetWS(manager->GetWs())
+            .SetPOIsToFloat(pois_to_float)
+            .SetGlobs(globObs)
+            .SetNPs(nps)
+            .SetGridType(GridType::EQUIDISTANT);
+    return scanManager;
 }
 
 } // eft::stats::scans
