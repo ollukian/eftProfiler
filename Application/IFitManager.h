@@ -73,7 +73,7 @@ public:
     virtual const FuncClosure& GetFuncClosure() const noexcept = 0;
 
     virtual const RooAbsData* GetData(std::string name) const = 0;
-    virtual const RooAbsPdf*  GetPdf (std::string name) const = 0;
+    virtual RooAbsPdf * GetPdf (std::string name) const = 0;
 
     virtual const std::vector<std::string>& GetListPOIs() const noexcept= 0;
 

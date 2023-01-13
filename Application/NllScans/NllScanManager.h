@@ -41,6 +41,8 @@ public:
     inline NllScanManager& SetWS(IWorkspaceWrapper* ws)     noexcept { ws_ = ws; return *this; }
     inline NllScanManager& SetGlobs(RooArgSet* globs)       noexcept { fitSettings_.globalObs = globs; return *this; }
     inline NllScanManager& SetNPs(RooArgSet* nps)           noexcept { fitSettings_.nps = nps; return *this; }
+    inline NllScanManager& SetData(RooAbsData* data)           noexcept { fitSettings_.data = data; return *this; }
+    inline NllScanManager& SetPDF(RooAbsPdf* pdf)           noexcept { fitSettings_.pdf = pdf; return *this; }
     inline NllScanManager& SetGridType(GridType grid)       noexcept { gridType_ = grid; return *this; }
 
     inline PoiConfig& AddPoi(std::string name) { pois_.emplace_back(std::move(name)); return pois_.back();}

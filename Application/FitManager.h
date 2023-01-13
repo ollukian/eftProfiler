@@ -111,7 +111,7 @@ public:
         throw std::runtime_error("There is no data stored with name: " + name);
     }
     [[nodiscard]]
-    inline const RooAbsPdf*  GetPdf (std::string name) const override {
+    inline RooAbsPdf * GetPdf (std::string name) const override {
         EFT_PROFILE_FN();
         if (funcs_.find(name) != funcs_.end())
             return funcs_.at(std::move(name));

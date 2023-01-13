@@ -156,12 +156,15 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
     EFT_PROF_CRITICAL("pois_to_float are set");
 
+
     scanManager
             .SetWorkerId(1)
             .SetWS(manager->GetWs())
             .SetPOIsToFloat(pois_to_float)
             .SetGlobs(globObs)
             .SetNPs(nps)
+            .SetData(&manager->GetData(PrePostFit::OBSERVED))
+            .SetPDF(manager->GetPdf("pdf_total"))
             .SetGridType(GridType::EQUIDISTANT);
     EFT_PROF_CRITICAL("before leaving init function");
     return scanManager;
