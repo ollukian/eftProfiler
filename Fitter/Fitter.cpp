@@ -29,6 +29,19 @@ RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
         nps_ = settings.nps;
     }
 
+    if (nps_ == nullptr) {
+        EFT_PROF_CRITICAL("nps are nullptr!");
+    }
+    if (globs_ == nullptr) {
+        EFT_PROF_CRITICAL("globs are nullptr!");
+    }
+    if (settings.pdf == nullptr) {
+        EFT_PROF_CRITICAL("pdf is nullptr!");
+    }
+    if ( !settings.data->valid() ) {
+        EFT_PROF_CRITICAL("data is not valid");
+    }
+
     RooAbsReal* nll = settings.pdf->createNLL(*settings.data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
