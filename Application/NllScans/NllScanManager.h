@@ -74,7 +74,7 @@ private:
     //size_t                  size_grid_1d {0};
     GridType                gridType_    {GridType::EQUIDISTANT};
     fit::FitSettings        fitSettings_;
-    IWorkspaceWrapper* ws_   {nullptr};
+    IWorkspaceWrapper* ws_  {nullptr};
     RooArgSet*              pois_to_float {nullptr};
     RooArgSet*              all_pois {nullptr};
 };

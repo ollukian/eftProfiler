@@ -128,8 +128,8 @@ void NllScanManager::RunScan() {
     EFT_PROF_INFO("Minimise Nll");
     fitter.Minimize(fitSettings_, nll);
 
-    EFT_PROF_INFO("nll value:");
-    nll->getVal();
+    auto found_nll = nll->getVal();
+    EFT_PROF_INFO("nll value: {}", found_nll);
 
     //if ()
 }
