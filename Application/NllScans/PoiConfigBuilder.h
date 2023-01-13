@@ -14,7 +14,7 @@ class PoiConfigBuilder {
 public:
     PoiConfig buildFromString(const std::string& line);
     double ParseValueToken(std::string token);
-    double ParseRangeToken(std::string token)
+    double ParseRangeToken(std::string token);
 private:
 
 };
