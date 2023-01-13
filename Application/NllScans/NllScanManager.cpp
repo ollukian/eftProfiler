@@ -12,12 +12,12 @@
 namespace eft::stats::scans {
 
 
-void NllScanManager::ComputeScanPointAtGrid() {
-    EFT_PROFILE_FN();
-
-    EFT_PROF_INFO("Compute scan point (value of each poi) to compute the Nll at");
-    IdentifyScanPointCoordinateAllPois();
-}
+//void NllScanManager::ComputeScanPointAtGrid() {
+//    EFT_PROFILE_FN();
+//
+//    EFT_PROF_INFO("Compute scan point (value of each poi) to compute the Nll at");
+//    IdentifyScanPointCoordinateAllPois();
+//}
 
 double NllScanManager::GetPointAtGrid(PoiConfig& config) const {
     EFT_PROFILE_FN();
