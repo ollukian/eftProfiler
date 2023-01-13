@@ -147,9 +147,9 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
 
     NllScanManager scanManager;
 
-    auto globObs = manager->GetListAsArgSet("paired_globs");
-    auto nps = manager->GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
-    auto pdf = manager->GetPdf("pdf_total");
+    auto globObs = (RooArgSet*) manager->GetListAsArgSet("paired_globs")->clone("globs");
+    auto nps = (RooArgSet*) manager->GetListAsArgSet("paired_nps")->clone("nps"); // TODO: refactor to get nps
+    auto pdf = (RooAbsPdf*) manager->GetPdf("pdf_total")->clone("pdf");
 
     if (nps == nullptr) {
         EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine nps are nullptr");
