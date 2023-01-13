@@ -147,9 +147,19 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
 
     NllScanManager scanManager;
 
-    auto *globObs = manager->GetListAsArgSet("paired_globs");
-    auto *nps = manager->GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
-    auto *non_gamma_nps = manager->GetListAsArgSet("non_gamma_nps");
+    auto globObs = manager->GetListAsArgSet("paired_globs");
+    auto nps = manager->GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
+    auto pdf = manager->GetPdf("pdf_total");
+
+    if (nps == nullptr) {
+        EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine nps are nullptr");
+    }
+    if (globObs == nullptr) {
+        EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine globs are nullptr");
+    }
+    if (pdf == nullptr) {
+        EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine pdf is nullptr");
+    }
 
     vector<string> pois_to_float;
     EFT_PROF_CRITICAL("try to set up pois_to_float");
@@ -164,7 +174,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetGlobs(globObs)
             .SetNPs(nps)
             .SetData(&manager->GetData(PrePostFit::OBSERVED))
-            .SetPDF(manager->GetPdf("pdf_total"))
+            .SetPDF(pdf)
             .SetGridType(GridType::EQUIDISTANT);
     EFT_PROF_CRITICAL("before leaving init function");
     return scanManager;
