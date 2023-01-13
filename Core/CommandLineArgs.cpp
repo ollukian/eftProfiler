@@ -147,6 +147,10 @@ optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Ke
     return "";
 }
 
+void CommandLineArgs::RegisterKey(const Key& key) const noexcept {
+    _requested_keys.insert(key);
+}
+
 void CommandLineArgs::ReportStatus() const noexcept
 {
     EFT_PROFILE_FN();

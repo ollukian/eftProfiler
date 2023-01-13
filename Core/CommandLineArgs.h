@@ -53,13 +53,14 @@ public:
     const auto& GetKeys() const noexcept { return keys;}
 
     void ReportStatus() const noexcept;
-    void AddKey(Key key);
+    void RegisterKey(const Key& key) const noexcept;
 private:
     std::map<Key, Vals> ops;
     mutable std::set<Key> _requested_keys; // to track down that all keys have been asked for
     mutable std::set<Key> _parsed_keys;   // to track down that all keys have been asked for
     Keys keys;
 private:
+    void AddKey(Key key);
     bool ParseInput(int argc, char* argv[]);
     [[nodiscard]]
     static inline Key TrimKey(const Key& key) noexcept;
