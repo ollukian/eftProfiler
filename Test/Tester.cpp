@@ -82,7 +82,7 @@ vector<vector<char>> ConvertToArgcAgv(istringstream& s)
     EFT_PROF_INFO("convert {} to argc, argv", as_string);
     auto components = eft::StringUtils::Split(as_string, ' ');
 
-    vector<vector<char>> vstrings;
+    //vector<vector<char>> vstrings;
 
     size_t nb_components = components.size();
     vstrings.reserve(nb_components);
