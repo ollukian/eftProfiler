@@ -69,7 +69,9 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
 
     PoiConfig res {name};
 
-    for (const auto& token : tokens) {
+    for (auto& token : tokens) {
+
+        eft::StringUtils::Trim(token);
         //stringstream ss {token};
         string token_name = token.substr(0, token.find(' '));
         string token_vals = token.substr(token_name.length(), token.length());
