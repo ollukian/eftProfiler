@@ -22,6 +22,7 @@ class PoiConfig {
     friend class PoiConfigBuilder;
 public:
     explicit PoiConfig(std::string name_) noexcept : name(std::move(name_)) {}
+    PoiConfig() = default;
     static PoiConfig readFromString(const std::string& s);
 
     //static void PrintHelp(std::ostream& os);

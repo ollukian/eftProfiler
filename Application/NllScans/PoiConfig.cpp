@@ -74,6 +74,8 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
         EFT_PROF_DEBUG("token vals: [{}]", vals);
     }
 
+    return {};
+
     // reads POI configuration from a string
     // Configuration of the string:
     //      POI_NAME(setting_name value : setting_name2 value2 : ...)
