@@ -282,13 +282,17 @@ int main(int argc, char* argv[]) {
         using namespace eft::stats::scans;
 
         commandLineArgs->AddKey("pois");
+        string pois;
         commandLineArgs->AddKey("pois_float");
+        vector<string> pois_float;
+        commandLineArgs->SetValIfArgExists("pois", pois);
+        commandLineArgs->SetValIfArgExists("pois_float", pois_float);
 
         NllScanManager scanManager = NllScanManager::InitFromCommandLine(commandLineArgs);
         PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
         //cout << "poi1: " << poi1 << endl;
 
-        string pois;
+
         commandLineArgs->SetValIfArgExists("pois", pois);
         if (! pois.empty() ) {
             PoiConfig poi2 = PoiConfig::readFromString(pois);

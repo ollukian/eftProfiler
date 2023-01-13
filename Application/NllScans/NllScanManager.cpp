@@ -126,6 +126,7 @@ void NllScanManager::RunScan() {
 
 bool NllScanManager::ParseConfig(std::string path, std::string format) {
     EFT_PROFILE_FN();
+    return true;
 }
 
 double NllScanManager::GetPointAtGridHermite(double low, double high, size_t size_grid, size_t nb_point) {
