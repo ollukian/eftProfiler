@@ -163,4 +163,25 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     return scanManager;
 }
 
+ NllScanManager& NllScanManager::SetPOIsToFloat(const std::vector<std::string>& list) {
+    if (ws_ == nullptr) {
+        EFT_PROF_CRITICAL("Seet WS before calling to SetPOIsToFloat[strings]");
+        throw std::runtime_error("");
+    }
+    pois_to_float = new RooArgSet();
+    for (const auto& poi : list) {
+        pois_to_float->add(*ws_->GetVar(poi));
+    }
+}
+ NllScanManager& NllScanManager::SetPOIsFullList(const std::vector<std::string>& list) {
+    if (ws_ == nullptr) {
+        EFT_PROF_CRITICAL("Seet WS before calling to SetPOIsFullList[strings]");
+        throw std::runtime_error("");
+    }
+    all_pois = new RooArgSet();
+    for (const auto& poi : list) {
+        all_pois->add(*ws_->GetVar(poi));
+    }
+}
+
 } // eft::stats::scans
