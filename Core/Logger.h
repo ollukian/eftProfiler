@@ -20,29 +20,46 @@
 
 #include <set>
 #include <map>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
 #include <vector>
 #include <string>
 #include <deque>
 #include <list>
 
 
+//#include "CommandLineArgs.h"
+class CommandLineArgs;
+
 namespace eft::stats {
 
-    class Logger {
-    public:
-        static void Init(size_t worker_id = 0);
+class Logger {
+public:
+    static void Init();
+    static void Init(std::string name, std::string path = "", std::string logger_name = "");
+    static void Init(const std::shared_ptr<CommandLineArgs>& commandLineArgs);
 
-        static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept { return logger_; }
-        static inline void SetSilent()       noexcept { logger_->set_level(spdlog::level::off); }
-        static inline void SetFullPrinting() noexcept { logger_->set_level(spdlog::level::trace); }
-        static inline void SetRelease()      noexcept { logger_->set_level(spdlog::level::info); }
-        static inline void SetDebug()        noexcept { logger_->set_level(spdlog::level::debug); }
-        static inline void SetLevel(spdlog::level::level_enum level) noexcept { logger_->set_level(level); }
+    static inline std::shared_ptr<spdlog::logger>& GetLogger() noexcept;
+    static inline void SetSilent()       noexcept { logger_->set_level(spdlog::level::off); }
+    static inline void SetFullPrinting() noexcept { logger_->set_level(spdlog::level::trace); }
+    static inline void SetRelease()      noexcept { logger_->set_level(spdlog::level::info); }
+    static inline void SetDebug()        noexcept { logger_->set_level(spdlog::level::debug); }
+    static inline void SetLevel(spdlog::level::level_enum level) noexcept { logger_->set_level(level); }
 
-    private:
-        static std::shared_ptr<spdlog::logger> logger_;
-    };
+private:
+    static inline std::shared_ptr<spdlog::logger> logger_;
+    static inline bool                            is_init_ {false};
+    static inline std::shared_ptr<spdlog::logger> logger_default_;
+};
+
+inline std::shared_ptr<spdlog::logger>& Logger::GetLogger() noexcept {
+    if (is_init_)
+        return logger_;
+    return logger_default_;
+}
 } // namespace eft
+
 
 #define EFT_PROF_TRACE(...)      ::eft::stats::Logger::GetLogger()->trace(__VA_ARGS__)
 #define EFT_PROF_INFO(...)       ::eft::stats::Logger::GetLogger()->info(__VA_ARGS__)
@@ -108,6 +125,20 @@ OStream& operator << (OStream& os, const std::set<T>& s) {
     return os << '}';
 }
 
+template<typename OStream, class T>
+OStream& operator << (OStream& os, const std::unordered_set<T>& s) {
+    os << '{';
+    bool first = true;
+    for (const auto& x : s) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << x;
+    }
+    return os << '}';
+}
+
 template<typename OStream, class K, class V>
 OStream& operator << (OStream& os, const std::map<K, V>& m) {
     os << '{';
@@ -120,6 +151,25 @@ OStream& operator << (OStream& os, const std::map<K, V>& m) {
         os << kv.first << ": " << kv.second;
     }
     return os << '}';
+}
+
+template<typename OStream, class K, class V>
+OStream& operator << (OStream& os, const std::unordered_map<K, V>& m) {
+    os << '{';
+    bool first = true;
+    for (const auto& kv : m) {
+        if (!first) {
+            os << ", ";
+        }
+        first = false;
+        os << kv.first << ": " << kv.second;
+    }
+    return os << '}';
+}
+
+template<typename OStream, class K, class V>
+OStream& operator << (OStream& os, const std::pair<K, V>& pair) {
+   return os << '{' << pair.first << ", " << pair.second << '}';
 }
 
 

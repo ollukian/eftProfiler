@@ -8,7 +8,11 @@
 #include "../Utils/FitUtils.h"
 #include "../Utils/StringUtils.h"
 #include "../Core/Logger.h"
+#include "Profiler.h"
 #include "../Test/test_runner.h"
+
+#include "Scene.h"
+#include "TH2D.h"
 
 #include "../Vendors/spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ostr.h"
@@ -76,6 +80,7 @@ void FitManager::DoGlobalFit()
 }
 
 void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) {
+    EFT_PROFILE_FN();
     NpRankingStudyRes res;
     res.poi_name = settings.poi;
     res.statType = settings.statType;
@@ -85,14 +90,51 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     auto *nps = GetListAsArgSet("paired_nps"); // TODO: refactor to get nps
     auto *non_gamma_nps = GetListAsArgSet("non_gamma_nps");
 
-    if(settings.no_gamma)
-        res.np_name = non_gamma_nps->operator[](workerId)->GetName();
-    else
-        res.np_name = nps->operator[](workerId)->GetName();
+    if (settings.np_name.empty()) { // if np_name to be deduced from worker_id
+        EFT_PROF_WARN("Name of Nuissance parameter is not set directly, it will be deduced from worker_id");
+        if (settings.no_gamma) {
+            res.np_name = non_gamma_nps->operator[](workerId)->GetName();
+            EFT_PROF_INFO("No-gamma option ==> choose NP number from the non-gamma list. Deal with {} ==> {}",
+                          workerId,
+                          res.np_name);
+        } else {
+            res.np_name = nps->operator[](workerId)->GetName();
+            EFT_PROF_INFO("All nps, including gamma ==> choose NP number from the full list. Deal with {} ==> {}",
+                          workerId,
+                          res.np_name);
+        }
+    }
+    else {
+        EFT_PROF_WARN("Name of Nuissance parameter is directly set");
+        res.np_name = settings.np_name;
+
+        workerId = 0;
+        bool is_found = false;
+
+        RooArgSet* nps_to_use = nullptr;
+        if (settings.no_gamma) {
+            EFT_PROF_WARN("Choose np number from the NON-GAMMA list");
+            nps_to_use = non_gamma_nps;
+        }
+        else {
+            EFT_PROF_WARN("Choose np number from the FULL list (including gamma-nps)");
+            nps_to_use = nps;
+        }
+
+        while (nps_to_use->operator[](workerId)->GetName() != res.np_name) {
+            workerId++;
+            is_found = true;
+        }
+        if (is_found) {
+            EFT_PROF_INFO("Corresponded worker id: {}", workerId);
+        }
+        else {
+            EFT_PROF_INFO("Didn't find the np: {} in the np list", res.np_name);
+            throw std::runtime_error("");
+        }
+    }
     //res.np_name = nps->operator[](workerId)->GetName();
     {
-        //auto* globObs = GetListAsArgSet("paired_globs");
-        //auto* nps = GetListAsArgSet("paired_nps");
         if (settings.prePostFit != PrePostFit::POSTFIT) {
             EFT_PROF_INFO("For study type set pois to init values and globs to 0");
             SetAllPoisTo(settings.poi_init_val, 0);
@@ -107,6 +149,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
         EFT_PROF_TRACE("[ComputeNpRanking] worker: {} save snapshot tmp_nps with globs and obs", workerId);
         ws_->raw()->saveSnapshot("tmp_nps", *args, true);
     }
+    eft::stats::Logger::SetFullPrinting();
     EFT_PROF_TRACE("[ComputeNpRanking] worker: {}", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] worker: {} do unconditional fit", workerId);
     EFT_PROF_INFO("[ComputeNpRanking] {} before uncond fit: {} +- {}",
@@ -114,179 +157,16 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
                   ws()->GetParVal(settings.poi),
                   ws()->GetParErr(settings.poi)
     );
-    DoFitAllNpFloat(settings);
-    {
-//    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
-//    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
-//
-//    const auto np_val_after_free_fit = ws()->GetParVal(res.np_name);
-//    const auto np_err_after_free_fit = ws()->GetParErr(res.np_name);
-//    res.np_val = np_val_after_free_fit;
-//    res.np_err = np_err_after_free_fit;
-//    EFT_PROF_DEBUG("[ComputeNpRanking] worker: {} load snapshot tmp_nps after free fit", workerId);
-//    ws_->raw()->loadSnapshot("tmp_nps");
-//    EFT_PROF_INFO("[ComputeNpRanking] worker: {} unconditional fit is done, fit required np", workerId);
-//    EFT_PROF_INFO("[ComputeNpRanking] {} after uncond fit: {} +- {}",
-//                  settings.poi,
-//                  ws()->GetParVal(settings.poi),
-//                  ws()->GetParErr(settings.poi)
-//                  );
-//    //SetUpGlobObs(settings.prePostFit);
-//    RooAbsData& data = GetData(settings.prePostFit);
-//    //auto pdf = GetPdf("pdf_total");
-//    //RooAbsData& data = *data_["ds_total"];
-//    RooAbsPdf*  pdf = funcs_["pdf_total"];
-//
-//    fit::FitSettings fitSettings;
-//    fitSettings.pdf = pdf;
-//    fitSettings.data = &data;
-//    fitSettings.pois = args_["pois"]; // TODO: wrap around by a function
-//    fitSettings.errors = settings.errors;
-//    fitSettings.nps = nps;
-//
-//    fit::Fitter fitter;
-//    fitter.SetNps(nps);
-//    fitter.SetGlobs(globObs);
-//
-//    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, set all POIs const", workerId);
-//    SetAllPOIsConst();
-//    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, float single POI: {}", workerId, res.poi_name);
-//    ws_->FloatVal(res.poi_name);
-//    ws_->SetVarVal(res.poi_name, 0.f);
-//    ws_->SetVarErr(res.poi_name,  0.f);
-//
-//
-//    EFT_PROF_INFO("[ComputeNpRanking] worker: {}, Fix single np: {} = {} +- {} to const",
-//                  workerId,
-//                  res.np_name,
-//                  ws()->GetParVal(settings.poi),
-//                  ws()->GetParErr(settings.poi));
-//    ws_->raw()->loadSnapshot("tmp_nps");
-//    ws_->FixValConst(res.np_name);
-//    ws()->SetVarVal(res.np_name, np_val_after_free_fit);
-//    ws()->SetVarErr(res.np_name, np_err_after_free_fit);
-//    EFT_PROF_DEBUG("[ComputeNpRanking] np: {} = {} +- {}", res.np_name, np_val_after_free_fit, np_err_after_free_fit);
-//
-//    EFT_PROF_INFO("[ComputeNpRanking] create nll with np: {} fixed", res.np_name);
-//
-//    fitSettings.nll = fitter.CreatNll(fitSettings);
-//    //auto fitRes = fitter.Fit(&data, pdf);
-//    auto fitRes = fitter.Minimize(fitSettings);
-//    EFT_PROF_INFO("[ComputeNpRanking] minimization nll with {} fixed is DONE", res.np_name);
-//
-//    // TODO: create:
-//    //  * [] create: print results
-//    //  * [] create: prepare nps, globs and so on
-//    //res.ExtractPoiValErr(ws_, res.poi_name);
-//    res.poi_fixed_np_val = ws()->GetParVal(res.poi_name);
-//    res.poi_fixed_np_err = ws()->GetParErr(res.poi_name);
-//    res.np_val = np_val_after_free_fit;
-//    res.np_err = np_err_after_free_fit;
-//    //res.ExtractNPValErr(ws_, res.np_name);
-//    //res.nll     = nll->getVal();
-//
-//    EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, poi: {} +- {}", res.poi_fixed_np_val, res.poi_fixed_np_err);
-//    //EFT_PROF_INFO("[ComputeNpRanking] after fixed np fit, nll: {}", res.nll);
-//
-//    const auto poi_val = ws()->GetParVal(res.poi_name);
-//    const auto poi_err = ws()->GetParErr(res.poi_name);
-//
-//    const auto np_val = np_val_after_free_fit;
-//    const auto np_err = np_err_after_free_fit;
-//
-//    // + sigma var
-//    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1 sigma", res.np_name);
-//    ws_->raw()->loadSnapshot("tmp_nps");
-//    ws_->FixValConst(res.np_name);
-//    //SetAllNuisanceParamsErrorsTo(0);
-//    //SetAllNuisanceParamsToValue(0);
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//
-//    ws()->VaryParNbSigmas(res.np_name, +1.f);
-//    ws_->SetVarVal(res.poi_name, 0.f);
-//    fitter.Minimize(fitSettings);
-//    EFT_PROF_INFO("[ComputeNpRanking] after +1 sigma variation of {}", res.np_name);
-//    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
-//                  ws()->GetParVal(res.poi_name),
-//                  ws()->GetParErr(res.poi_name)
-//                  );
-//
-//    //const auto poi_val_plus_sigma = ws()->GetParVal(res.poi_name);
-//    //const auto poi_err_plus_sigma = ws()->GetParErr(res.poi_name);
-//    res.poi_plus_sigma_variation_val = ws()->GetParVal(res.poi_name);
-//    res.poi_plus_sigma_variation_err = ws()->GetParErr(res.poi_name);
-//
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//
-//
-//    // -1 sigma variation
-//    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1 sigma", res.np_name);
-//    //SetAllNuisanceParamsErrorsTo(0);
-//    //SetAllNuisanceParamsToValue(0);
-//    ws_->raw()->loadSnapshot("tmp_nps");
-//    ws_->FixValConst(res.np_name);
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//    ws()->VaryParNbSigmas(res.np_name, -1.f);
-//    ws_->SetVarVal(res.poi_name, 0.f);
-//    fitter.Minimize(fitSettings);
-//    EFT_PROF_INFO("[ComputeNpRanking] after -1 sigma variation of {}", res.np_name);
-//    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
-//                  ws()->GetParVal(res.poi_name),
-//                  ws()->GetParErr(res.poi_name)
-//    );
-//
-//    res.poi_minus_sigma_variation_val = ws()->GetParVal(res.poi_name);
-//    res.poi_minus_sigma_variation_err = ws()->GetParErr(res.poi_name);
-//
-//    // + 1 variation
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//
-//    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on +1", res.np_name);
-//    //SetAllNuisanceParamsErrorsTo(0);
-//    //SetAllNuisanceParamsToValue(0);
-//    ws_->raw()->loadSnapshot("tmp_nps");
-//    ws_->FixValConst(res.np_name);
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//    ws()->SetVarVal(res.np_name, np_val + 1.);
-//    ws_->SetVarVal(res.poi_name, 0.f);
-//    fitter.Minimize(fitSettings);
-//    EFT_PROF_INFO("[ComputeNpRanking] after +1 variation of {}", res.np_name);
-//    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
-//                  ws()->GetParVal(res.poi_name),
-//                  ws()->GetParErr(res.poi_name)
-//    );
-//
-//    res.poi_plus_one_variation_val = ws()->GetParVal(res.poi_name);
-//    res.poi_plus_one_variation_err = ws()->GetParErr(res.poi_name);
-//
-//    // - 1 variation
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//
-//    EFT_PROF_INFO("[ComputeNpRanking] compute impact after varying {} on -1", res.np_name);
-//    //SetAllNuisanceParamsErrorsTo(0);
-//    //SetAllNuisanceParamsToValue(0);
-//    ws_->raw()->loadSnapshot("tmp_nps");
-//    ws_->FixValConst(res.np_name);
-//    ws()->SetVarVal(res.np_name, np_val);
-//    ws()->SetVarErr(res.np_name, np_err);
-//    ws()->SetVarVal(res.np_name, np_val - 1.);
-//    ws_->SetVarVal(res.poi_name, 0.f);
-//    fitter.Minimize(fitSettings);
-//    EFT_PROF_INFO("[ComputeNpRanking] after -1 variation of {}", res.np_name);
-//    EFT_PROF_INFO("result: poi: {} = {} +- {}", res.poi_name,
-//                  ws()->GetParVal(res.poi_name),
-//                  ws()->GetParErr(res.poi_name)
-//    );
-//
-//    res.poi_minus_one_variation_val = ws()->GetParVal(res.poi_name);
-//    res.poi_minus_one_variation_err = ws()->GetParErr(res.poi_name);
-}
+
+    EFT_PROF_DEBUG("Nps:");
+    for (const auto np : *nps) {
+        auto np_var = dynamic_cast<RooRealVar*>(np);
+        EFT_PROF_TRACE("{:40}, {} +- {}, const => {}",
+                       np_var->GetName(),
+                       np_var->getVal(),
+                       np_var->getError(),
+                       np_var->isConstant());
+    }
 
     RooAbsData& data = GetData(settings.prePostFit);
     auto pdf = GetPdf("pdf_total");
@@ -299,24 +179,29 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
             .UsingNPs(nps)
             .ForNP(res.np_name)
             .UsingErrors(settings.errors)
-            .UsingWS(ws_.get())
+            .UsingWS(ws_)
             .UsingSnapshotWithInitVals("tmp_nps")
             .ForPOI(res.poi_name)
-            .UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
+            .UsingPOIs(const_cast<RooArgSet*>(ws_->GetPOIs()))
+            //.UsingPOIs(new RooArgSet(*ws()->GetVar(res.poi_name)))
             .UsingFitSettings(settings);
+
+    npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
+
+    npManager.RunFreeFit();
 
     const auto np_val_free = ws()->GetParVal(res.np_name);
     const auto np_err_free = ws()->GetParErr(res.np_name);
-    res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
-    res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
+    //res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
+    //res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
 
     res.np_val = np_val_free;
     res.np_err = np_err_free;
 
     npManager.SetNpPreferredValue(np_val_free, np_err_free);
-    npManager.SetPoiPreferredValue(settings.poi_init_val, 0.);
 
     npManager.RunFitFixingNpAtCentralValue();
+
     EFT_PROF_INFO("Now we're only interested in central values of the POI => set error type to default");
     npManager.SetErrors(fit::Errors::DEFAULT);
     npManager.RunPreFit('+');
@@ -325,6 +210,9 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
     npManager.RunPostFit('-');
 
     // TODO: get NpRankingStudyRes directly from the NpManager
+    res.poi_free_fit_val = npManager.GetResult("free_fit").poi_val;
+    res.poi_free_fit_err = npManager.GetResult("free_fit").poi_err;
+
     res.poi_fixed_np_val = npManager.GetResult("fixed_np_fit").poi_val;
     res.poi_fixed_np_err = npManager.GetResult("fixed_np_fit").poi_err;
 
@@ -390,6 +278,7 @@ void FitManager::ComputeNpRankingOneWorker(const NpRankingStudySettings& setting
 
 void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("[DoFitAllNpFloat]");
     SetUpGlobObs(settings.prePostFit);
     //SetAllGlobObsTo(0, 0); // to find values for np preferred by data
@@ -450,16 +339,16 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
     EFT_PROF_INFO("[DoFitAllNpFloat] create Nll for free fit");
     fitter.Fit(fitSettings);
     EFT_PROF_WARN("[DoFitAllNpFloat] after fit");
-    //auto fitRes = fitter.Fit(fitSettings);
-    //auto nll = fitter.CreatNll(fitSettings);
-    //auto fitRes = fitter.Minimize(fitSettings);
+    //auto fitRes = fitter.Fit(fitSettings_);
+    //auto nll = fitter.CreatNll(fitSettings_);
+    //auto fitRes = fitter.Minimize(fitSettings_);
     //EFT_PROF_INFO("[DoFitAllNpFloat] print nps after free fit:");
     //args_["np"]->Print("v");
 
     res.poi_free_fit_val = ws()->GetParVal(res.poi_name);
     res.poi_free_fit_err = ws()->GetParErr(res.poi_name);
     //res.ExtractPoiValErr(ws_, res.poi_name);
-    //res.nll = fitSettings.nll->getVal();
+    //res.nll = fitSettings_.nll->getVal();
 
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, poi: {} +- {}", res.poi_free_fit_val, res.poi_free_fit_err);
     EFT_PROF_INFO("[DoFitAllNpFloat] after free fit, nll: {}", res.nll);
@@ -501,10 +390,194 @@ void FitManager::DoFitAllNpFloat(const NpRankingStudySettings& settings)
     }
 }
 
+//HesseStudyResult FitManager::ComputeHesseNps(const NpRankingStudySettings& settings) {
+//    EFT_PROFILE_FN();
+//    EFT_PROF_INFO("Compute Hesse forNPS");
+//    auto& data = GetData(settings.prePostFit);
+//    auto* pdf  = GetPdf("pdf_total");
+//    auto* globObs = GetListAsArgSet("paired_globs");
+//    auto* nps = GetListAsArgSet("paired_nps");
+//
+//
+//    EFT_PROF_INFO("set all POIs const");
+//    SetAllPOIsConst();
+//
+//    EFT_PROF_INFO("Float required poi: {}", settings.poi);
+//    ws_->FloatVal(settings.poi);
+//
+//    // TODO: float all pois, if needed by a flag!!!!
+//
+//    fit::Fitter fitter;
+//    fitter.SetNps(nps);
+//    fitter.SetGlobs(globObs);
+//
+//    fit::FitSettings fitSettings_;
+//    fitSettings_.pdf = const_cast<RooAbsPdf*>(pdf);
+//    fitSettings_.data = &data;
+//    fitSettings_.pois = args_["pois"]; // TODO: wrap around by a function
+//    fitSettings_.errors = settings.errors;
+//    fitSettings_.retry = settings.retry;
+//    fitSettings_.strategy = settings.strategy;
+//    fitSettings_.eps = settings.eps;
+//    fitSettings_.save_res = true;
+//    // TODO: use one set of settings...
+//
+//
+//    EFT_PROF_INFO("[ComputeHesseNps] perform fit saving results");
+//    auto fitRes = fitter.Fit(fitSettings_);
+//    EFT_PROF_DEBUG("[ComputeHesseNps] create list of nps");
+//    RooArgList list_nps(*nps);
+//    list_nps.add(*ws_->GetVar(settings.poi));
+//    EFT_PROF_DEBUG("[ComputeHesseNps] created list of nps (and POI) with {} entries:", list_nps.size());
+//    for (const auto np : list_nps) {
+//        cout << np->GetName() << endl;
+//    }
+//    EFT_PROF_DEBUG("[ComputeHesseNps] extract results from RooFitResult");
+//    auto res = HesseStudyResult::ExtractFromRooFitResult(*fitRes, list_nps);
+//    return res;
+//}
+//
+//void FitManager::PlotCovariances(const HesseStudyResult& res) const
+//{
+//    EFT_PROFILE_FN();
+//    using eft::utils::draw::Scene;
+//
+//    shared_ptr<TH2D> cov = make_shared<TH2D>(res.reducedCovMatrix);
+//    EFT_PROF_INFO("Created cov matrix with size: [{}][{}]", res.reducedCovMatrix.GetNcols(), res.reducedCovMatrix.GetNrows());
+//    auto canvas = make_shared<TCanvas>("c", "c", 4000, 4000);
+//    //auto canvas = Scene::Create(4000, 4000);
+//    //Scene::Register(cov.get());
+//    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+//        EFT_PROF_DEBUG("set label of bin: {:4} to {}", idx_np, res.params.at(idx_np)->GetName());
+//        cov->GetXaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
+//        cov->GetYaxis()->SetBinLabel(idx_np + 1, res.params.at(idx_np)->GetName());
+//    }
+//    cov->SetLabelSize(0.005);
+//    cov->GetXaxis()->SetLabelSize(0.005);
+//    cov->GetYaxis()->SetLabelSize(0.005);
+//    EFT_PROF_INFO("All names are set, draw");
+//    cov->Draw("colz");
+//    EFT_PROF_INFO("drawn, save");
+//    string name_covs = fmt::format("covariances_with_{}_float.pdf", res.poi);
+//    canvas->SaveAs(name_covs.c_str());
+//    EFT_PROF_INFO("clear");
+//    canvas->Clear();
+//    //Scene::SaveAs("covariances.pdf");
+//
+////    map<string, double> corr_per_np;
+////    // get correlations between POI and other things
+////    EFT_PROF_INFO("Extract correlations: poi <-> nps");
+////    auto poi_var = ws_->GetVar(res.poi);
+////    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
+////    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+////        auto par = res.params.at(idx_np);
+////        auto corr = res.fitResult->correlation(*poi_var, *par);
+////        corr_with_poi->SetBinContent(idx_np + 1, corr);
+////        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, par->GetName());
+////        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+////        corr_per_np[par->GetName()] = corr;
+////    }
+//
+//    shared_ptr<TH1D> corr_with_poi = make_shared<TH1D>("h", "h", res.covariances.size(), 0, res.covariances.size());
+//    //for (const auto& [np, corr] : res.correlations_per_nb_np) {
+//    for (size_t idx_np {0}; idx_np < res.correlations_per_nb_np.size(); ++idx_np) {
+//        corr_with_poi->SetBinContent(idx_np + 1, res.correlations_per_nb_np.at(idx_np).second);
+//        corr_with_poi->GetXaxis()->SetBinLabel(idx_np + 1, res.correlations_per_nb_np.at(idx_np).first.c_str());
+//    }
+//
+//    corr_with_poi->SetLabelSize(0.005);
+//    corr_with_poi->Draw("H");
+//    string name_to_save = fmt::format("correlations_with_{}.pdf", res.poi);
+//    canvas->SaveAs(name_to_save.c_str());
+//    canvas->Clear();
+//
+//    //vector<pair<string, double>> sorted_corrs {corr_per_np.begin(), corr_per_np.end()};
+//    vector<pair<string, double>> sorted_corrs {res.corr_per_np.begin(), res.corr_per_np.end()};
+//    std::sort(sorted_corrs.begin(),
+//              sorted_corrs.end(),
+//              [](const auto& l, const auto& r) -> bool
+//    {
+//        return abs(l.second) > abs(r.second);
+//    });
+//
+//    EFT_PROF_INFO("Sorted corrs with poi:");
+//    for (const auto& [name, cor] : sorted_corrs) {
+//        cout << fmt::format("{:60} => {}", name, cor) << endl;
+//    }
+//
+//    EFT_PROF_INFO("Fill corr with poi sorted");
+//    const string h_name = fmt::format("Correlations of NPs with {}", res.poi);
+//    shared_ptr<TH1D> corr_with_poi_sorted = make_shared<TH1D>(h_name.c_str(),
+//                                                              h_name.c_str(),
+//                                                              res.covariances.size(),
+//                                                              0,
+//                                                              res.covariances.size());
+//    EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", "idx", "name", "corr wit mu");
+//    for (size_t idx {1}; idx < sorted_corrs.size(); ++idx) {
+//    //for (const auto& [name, cor] : sorted_corrs) {
+//        auto& name = sorted_corrs.at(idx).first;
+//        auto& corr = sorted_corrs.at(idx).second;
+//        EFT_PROF_DEBUG("{:3} ==> {:50} ==> {:10}", idx, name, corr);
+//        corr_with_poi_sorted->SetBinContent(idx, corr);
+//        corr_with_poi_sorted->GetXaxis()->SetBinLabel(idx, name.c_str());
+//    }
+//    corr_with_poi_sorted->SetLabelSize(0.005);
+//    corr_with_poi_sorted->Draw("H");
+//    string name_to_save_sorted = fmt::format("correlations_with_{}_sorted.pdf", res.poi);
+//    canvas->SaveAs(name_to_save_sorted.c_str());
+//    //canvas->SaveAs("correlations_with_poi_sorted.pdf");
+//    canvas->Clear();
+//
+//    //Scene::SaveAs()
+//}
+//
+//void FitManager::ExtractCorrelations(HesseStudyResult& res) const
+//{
+//    EFT_PROFILE_FN();
+//    map<string, double> corr_per_np;
+//    std::vector<std::pair<std::string, double>> correlations_per_nb_np;
+//    // get correlations between POI and other things
+//    EFT_PROF_INFO("Extract correlations: poi <-> nps");
+//    auto poi_var = ws_->GetVar(res.poi);
+//    for (size_t idx_np {0}; idx_np < res.reducedCovMatrix.GetNcols(); ++idx_np) {
+//        auto par = res.params.at(idx_np);
+//        auto corr = res.fitResult->correlation(*poi_var, *par);
+//        EFT_PROF_DEBUG("correlations [poi] <-> {:40} ==> {}", par->GetName(), corr);
+//        corr_per_np[par->GetName()] = corr;
+//        correlations_per_nb_np.emplace_back(par->GetName(), corr);
+//    }
+//    res.corr_per_np = std::move(corr_per_np);
+//    res.correlations_per_nb_np = std::move(correlations_per_nb_np);
+//}
+//
+//void FitManager::PrintSuggestedNpsRanking(std::string path, const HesseStudyResult& res) const
+//{
+//    EFT_PROFILE_FN();
+//    EFT_PROF_INFO("Print suggested nps ranking to: [{}]", path);
+//    ofstream fs(path);
+//    if ( ! fs.is_open() ) {
+//        EFT_PROF_CRITICAL("Cannot open file: [{}] for writing. Print only to stdout", path);
+//        PrintSuggestedNpsRankingStream(cout, res);
+//    }
+//    else {
+//        PrintSuggestedNpsRankingStream(fs, res);
+//        PrintSuggestedNpsRankingStream(cout, res);
+//    }
+//}
+//
+//void FitManager::PrintSuggestedNpsRankingStream(std::ostream& os, const HesseStudyResult& res) const
+//{
+//    //TODO: change by a json encoding
+//    os << "results of ranking for " << res.poi << " with " << res.corr_per_np.size() << " nps" << endl;
+//    for (const auto& [np, corr] : res.sorted_correlations) {
+//        os << fmt::format("{:50} {}", np, corr) << endl;
+//    }
+//}
+
 void FitManager::SetAllNuisanceParamsConst() noexcept
 {
-
-    if (args_["np"]->empty())
+    EFT_PROFILE_FN();
+    if (args_["np_all"]->empty())
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissConst]");
@@ -524,7 +597,7 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
 //    }
 
     //args_["np"]->Print("v");
-    for (const auto& np : *args_["np"]) {
+    for (const auto& np : *args_["np_all"]) {
         const string name = {np->GetTitle()};
         EFT_PROF_DEBUG("Set {} to const", name);
         dynamic_cast<RooRealVar *>(np)->setConstant(true);
@@ -535,12 +608,12 @@ void FitManager::SetAllNuisanceParamsConst() noexcept
 }
 
 void FitManager::SetAllNuisanceParamsFloat() noexcept {
-
-    if (args_["np"]->empty())
+    EFT_PROFILE_FN();
+    if (args_["np_all"]->empty())
         ExtractNP();
 
     EFT_PROF_TRACE("[SetAllNuissFloat]");
-    for (const auto& np : *args_["np"]) {
+    for (const auto& np : *args_["np_all"]) {
         const string name = {np->GetTitle()};
         EFT_PROF_DEBUG("Set {} to float ==> {}", name, *dynamic_cast<RooRealVar *>(np));
         dynamic_cast<RooRealVar *>(np)->setConstant(false);
@@ -549,6 +622,7 @@ void FitManager::SetAllNuisanceParamsFloat() noexcept {
 
 void FitManager::ExtractPOIs() noexcept
 {
+    EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["pois"] = (RooArgSet *) ws_->GetPOIs();
     // create list of pois in string format
@@ -563,9 +637,10 @@ void FitManager::ExtractPOIs() noexcept
     for (const auto& poi : pois_) { EFT_PROF_DEBUG("[{}]", poi); }
 }
 
-void FitManager::Init(FitManagerConfig&& config)
+void FitManager::Init(FitManagerConfig config)
 {
-
+    EFT_PROFILE_FN();
+    //eft::stats::Logger::SetFullPrinting();
     if (config.ws_name.empty()) {
         EFT_PROF_CRITICAL("ws_name is empty");
         throw std::logic_error("no ws_name set");
@@ -619,11 +694,12 @@ void FitManager::Init(FitManagerConfig&& config)
         return;
     }
 
-    EFT_PROF_INFO("[FitManager] INIT DONE");
+    EFT_PROF_TRACE("[FitManager] INIT DONE");
 }
 
 void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept
 {
+    EFT_PROFILE_FN();
     EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
 
     // Use macros of a few kinds:
@@ -640,6 +716,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 #endif
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, res_path);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, worker_id);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_name);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ws_path);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, ws_name);
@@ -658,7 +735,6 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmul);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, rmuh);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, np_scale);
-    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, save_prelim);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, out_dir);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, output);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, input);
@@ -681,6 +757,11 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_size);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, text_font);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dy);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, empty_bins);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dx_legend);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, dy_legend);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, max_digits);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, suggestions);
 #undef EFT_SET_VAL_IF_EXISTS
 
 // Parse bool options
@@ -700,6 +781,9 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, reuse_nll);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, silent);
     EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, release);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, save_prelim);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, draw_impact);
+    EFT_ADD_BOOL_OPTIONS(commandLineArgs, config, weighted);
 #undef EFT_ADD_BOOL_OPTIONS
 
     // vectors
@@ -722,15 +806,20 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_ADD_VEC_OPTION(commandLineArgs, config, add_text_ndc);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, get);
     EFT_ADD_VEC_OPTION(commandLineArgs, config, h_draw_options);
+    EFT_ADD_VEC_OPTION(commandLineArgs, config, plt_size);
 #undef EFT_ADD_VEC_OPTION
 
 
 
-    if (config.fit_all_pois && config.fit_single_poi) {
-        EFT_PROF_CRITICAL("CommandLineArgs impossible to use \"fit_all_pois\" and \"fit_single_poi\" simultaneously");
-        return;
-        //hrow std::runtime_error("ERROR ^------- see the message above");
+    if (config.fit_all_pois) {
+        EFT_PROF_WARN("Set [fit_all_pois mode]: all available pois are to be fit");
+        config.fit_single_poi = false;
     }
+
+    if (config.res_path.empty())
+        EFT_PROF_WARN("save res to default (in the root folder)");
+    else
+        EFT_PROF_INFO("save res to: {}", config.res_path);
 
     if (config.release)
         eft::stats::Logger::SetRelease();
@@ -856,7 +945,7 @@ void FitManager::SetGlobalObservablesToValueFoundInFit() noexcept
 }
 
 void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
-    EFT_PROF_DEBUG("Process get command: {}", config.get);
+    //EFT_PROF_DEBUG("Process get command: {}", config.get);
     ASSERT_NOT(config.get.empty());
     string get_demand = config.get[0];
     bool get_count = false;

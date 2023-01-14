@@ -53,6 +53,11 @@ struct RankingPlotterSettings {
     std::vector<std::string>    add_text;
     std::vector<std::string>    add_text_ndc;
     std::vector<std::string>    h_draw_options;
+    size_t                      empty_bins;
+    float                       dx_legend;
+    float                       dy_legend;
+    size_t                      max_digits;
+    bool                        draw_impact;
 };
 
 } // plot

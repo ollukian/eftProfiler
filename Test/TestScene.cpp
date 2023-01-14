@@ -9,6 +9,8 @@
 
 #include "TBox.h"
 #include "TObject.h"
+#include "TH2D.h"
+#include "TH1D.h"
 
 using namespace std;
 using namespace eft::utils::draw;
@@ -108,6 +110,44 @@ void TestDrawableCtor() {
         ASSERT_NOT_EQUAL(box_1->As<TBox>()->GetY2(), box_2->As<TBox>()->GetY2());
 
     }
+    {
+        auto box = std::make_shared<TBox>(1, 3, 2, 4);
+        auto drawable = Drawable(box.get());
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX1(), 1);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX2(), 2);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY1(), 3);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY2(), 4);
+
+        box->SetX1(10);
+        box->SetX2(20);
+        box->SetY1(30);
+        box->SetY2(40);
+
+        ASSERT_EQUAL(box->GetX1(), 10);
+        ASSERT_EQUAL(box->GetX2(), 20);
+        ASSERT_EQUAL(box->GetY1(), 30);
+        ASSERT_EQUAL(box->GetY2(), 40);
+
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX1(), 10);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX2(), 20);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY1(), 30);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY2(), 40);
+
+        drawable.As<TBox>()->SetX1(100);
+        drawable.As<TBox>()->SetX2(200);
+        drawable.As<TBox>()->SetY1(300);
+        drawable.As<TBox>()->SetY2(400);
+
+        ASSERT_EQUAL(box->GetX1(), 100);
+        ASSERT_EQUAL(box->GetX2(), 200);
+        ASSERT_EQUAL(box->GetY1(), 300);
+        ASSERT_EQUAL(box->GetY2(), 400);
+
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX1(), 100);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetX2(), 200);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY1(), 300);
+        ASSERT_EQUAL(drawable.As<TBox>()->GetY2(), 400);
+    }
 }
 
 //void TestDrawableTemplateCreation() {
@@ -123,13 +163,10 @@ void TestDrawableCtor() {
 
 void TestSceneBasicDrawableRegistering() {
     {
-        EFT_PROF_CRITICAL("test #1");
-        eft::stats::Logger::SetFullPrinting();
-        EFT_PROF_INFO("TestSceneBasicDrawableRegistering");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box1 = Drawable::Create(new TBox(1, 2, 3, 4), "opt", "box1");
-        Scene::Register(box1);
+        Scene::Register(box1.get());
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 1u);
         ASSERT_EQUAL(reg[0]->name, "box1");
@@ -138,7 +175,6 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #2");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         EFT_PROF_CRITICAL("test #3  create box #1");
@@ -146,9 +182,9 @@ void TestSceneBasicDrawableRegistering() {
         EFT_PROF_CRITICAL("test #3  create box #2");
         auto box2 = Drawable::Create(new TBox(1, 1, 1, 1), "", "box2");
         EFT_PROF_CRITICAL("test #3  register box #1");
-        Scene::Register(box1);
+        Scene::Register(box1.get());
         EFT_PROF_CRITICAL("test #3  register box #2");
-        Scene::Register(box2);
+        Scene::Register(box2.get());
         EFT_PROF_CRITICAL("test #3  get reg");
         const auto& reg = Scene::GetRegistry();
         ASSERT_EQUAL(reg.size(), 2u);
@@ -161,7 +197,6 @@ void TestSceneBasicDrawableRegistering() {
         Scene::Clear();
     }
     {
-        EFT_PROF_CRITICAL("test #3");
         auto canvas = Scene::Create(1200, 800);
         ASSERT(canvas);
         auto box_raw1 = Scene::AddBox(1, 2, 3, 4)->As<TBox>();
@@ -182,6 +217,35 @@ void TestSceneBasicDrawableRegistering() {
         ASSERT_EQUAL(box_raw2->GetY1(), 6);
         ASSERT_EQUAL(box_raw2->GetX2(), 7);
         ASSERT_EQUAL(box_raw2->GetY2(), 8);
+        Scene::Clear();
+    }
+    {
+        auto canvas = Scene::Create(1200, 800);
+        ASSERT(canvas);
+
+        shared_ptr<TH2D> cov = make_shared<TH2D>("test", "tsts", 10, 0, 10, 10, 0, 10);
+
+        std::random_device rd;
+        std::mt19937 rng(rd());
+        std::uniform_int_distribution<std::mt19937::result_type> dist256(0, 255);
+        for (size_t idx_x {0}; idx_x < 50; ++idx_x) {
+            for (size_t idx_y {0}; idx_y < 50; ++idx_y) {
+                cov->SetBinContent(idx_x + 1, idx_y + 1, dist256(rng));
+            }
+        }
+
+        auto hist_drawable_handle = Scene::Register(cov);
+        ASSERT(hist_drawable_handle);
+        auto hist_drawable_handle_as_th2d = hist_drawable_handle->As<TH2D>();
+        ASSERT_EQUAL(hist_drawable_handle_as_th2d->GetName(), cov->GetName());
+        for (size_t idx_x {1}; idx_x <= 50; ++idx_x) {
+            for (size_t idx_y {1}; idx_y <= 50; ++idx_y) {
+                ASSERT_EQUAL(cov->GetBinContent(idx_x, idx_y),
+                             hist_drawable_handle_as_th2d->GetBinContent(idx_x, idx_y)
+                             );
+            }
+        }
+
         Scene::Clear();
     }
 }

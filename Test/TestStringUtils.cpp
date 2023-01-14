@@ -34,7 +34,24 @@ void TestJoin()
         const Sentence expected{"one"};
         ASSERT_EQUAL(expected, obtained);
     }
-
+    {
+        Words words {};
+        const auto obtained = SU::Join(' ', words);
+        const Sentence expected {};
+        ASSERT(obtained.empty());
+    }
+    {
+        Words words {"one"};
+        const auto obtained = SU::Join("__", words);
+        const Sentence expected{"one"};
+        ASSERT_EQUAL(expected, obtained);
+    }
+    {
+        Words words {"one", "two"};
+        const auto obtained = SU::Join("__", words);
+        const Sentence expected{"one__two"};
+        ASSERT_EQUAL(expected, obtained);
+    }
 }
 void TestStrip()
 {
@@ -134,6 +151,13 @@ void TestRemovePrefix()
         SU::RemovePrefix(s, prefix);
         ASSERT_EQUAL(s, s_res);
     }
+    {
+        string s {"[text"};
+        const string prefix {"["};
+        const string s_res{"text"};
+        SU::RemovePrefix(s, prefix);
+        ASSERT_EQUAL(s, s_res);
+    }
 }
 void TestRemoveSuffix()
 {
@@ -177,6 +201,13 @@ void TestRemoveSuffix()
         string s {"abcd"};
         const string suffix {"a"};
         const string s_res{"abcd"};
+        SU::RemoveSuffix(s, suffix);
+        ASSERT_EQUAL(s, s_res);
+    }
+    {
+        string s {"text]"};
+        const string suffix {"]"};
+        const string s_res{"text"};
         SU::RemoveSuffix(s, suffix);
         ASSERT_EQUAL(s, s_res);
     }

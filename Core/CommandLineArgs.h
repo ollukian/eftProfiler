@@ -45,7 +45,7 @@ public:
     inline bool HasKey(const Key& key) const noexcept;
 
     template<typename T>
-    bool SetValIfArgExists(const std::string& key, T& val);
+    bool SetValIfArgExists(const std::string& key, T& val) const;
 
     [[nodiscard]]
     const auto& GetOps() const noexcept { return ops; }
@@ -53,16 +53,17 @@ public:
     const auto& GetKeys() const noexcept { return keys;}
 
     void ReportStatus() const noexcept;
+    void RegisterKey(const Key& key) const noexcept;
 private:
     std::map<Key, Vals> ops;
     mutable std::set<Key> _requested_keys; // to track down that all keys have been asked for
     mutable std::set<Key> _parsed_keys;   // to track down that all keys have been asked for
     Keys keys;
 private:
+    void AddKey(Key key);
     bool ParseInput(int argc, char* argv[]);
     [[nodiscard]]
     static inline Key TrimKey(const Key& key) noexcept;
-    void AddKey(Key key);
     //static std::pair<Key, Vals> ExtractVals(std::string_view raw) noexcept;
 };
 
@@ -108,7 +109,7 @@ struct is_smart_pointer<T, typename std::enable_if<std::is_same<typename std::re
 //inline constexpr bool is_smart_pointer_v<is_smart_pointer<T>::value> = true;
 
 template<typename T>
-bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
+bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val) const
 {
     EFT_PROFILE_FN();
     //EFT_PROF_DEBUG("[CommandLineArgs] try to get value for key: {}", key);
@@ -161,6 +162,7 @@ bool CommandLineArgs::SetValIfArgExists(const std::string& key, T& val)
         else if constexpr(std::is_same_v<std::vector<std::string>, std::remove_cv_t<T>>) {
             EFT_PROF_DEBUG("[CommandLineArgs] Set value for key: {:10} ==> {:10} as vector<string>", key, val_opt.value());
             val = GetVals(key).value();
+            //val = val_opt.value();
             return true;
             // TODO: to do the same with arrays and other containers. decay_type ?
             // TODO: add unfolding of a vector by looping over it and extracting components

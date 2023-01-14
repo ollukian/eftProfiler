@@ -21,6 +21,27 @@ namespace eft::stats::fit {
 RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
     EFT_PROF_TRACE("[CreateNll]");
     TStopwatch timer;
+
+    if (globs_ == nullptr && settings.globalObs != nullptr) {
+        globs_ = settings.globalObs;
+    }
+    if (nps_ == nullptr && settings.nps != nullptr) {
+        nps_ = settings.nps;
+    }
+
+    if (nps_ == nullptr) {
+        EFT_PROF_CRITICAL("nps are nullptr!");
+    }
+    if (globs_ == nullptr) {
+        EFT_PROF_CRITICAL("globs are nullptr!");
+    }
+    if (settings.pdf == nullptr) {
+        EFT_PROF_CRITICAL("pdf is nullptr!");
+    }
+    if ( !settings.data->valid() ) {
+        EFT_PROF_CRITICAL("data is not valid");
+    }
+
     RooAbsReal* nll = settings.pdf->createNLL(*settings.data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
@@ -45,26 +66,34 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
         throw std::runtime_error("no nll is set for minimisation");
     }
 
-    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
+    static bool isPrinted {false};
+    if ( ! isPrinted ) {
+        EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
+        EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
+        EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
+        EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
+        EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001 = {}", settings.eps, settings.eps / 0.001);
+        EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
+        EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
+        EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
+        isPrinted = true;
+    }
+    //EFT_PROF_INFO("[Minimizer] max function calls: {}", max_function_calls);
     //RooMinimizerWrapper minim(*settings.nll);
     RooMinimizerWrapper minim(*nll);
-    EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
     minim.setStrategy( settings.strategy );
-    EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
     minim.setPrintLevel( 1 );
-    EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
-    RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
+    //RooFit::MsgLevel::
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::PROGRESS);
     minim.setProfile(); /* print out time */
-    EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001", settings.eps);
     minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
-    EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
-    EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
     minim.optimizeConst( 2 );
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
     size_t max_function_calls = 5000 * settings.pdf->getVariables()->getSize();
     minim.setMaxFunctionCalls(max_function_calls);
-    EFT_PROF_INFO("[Minimizer] max function calls: {}", max_function_calls);
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
@@ -72,7 +101,6 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
       _status += minim.simplex();
       }*/
 
-    EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
     minim.setMinimizerType( "Minuit2" );
 
     // retry taken from:
@@ -83,7 +111,6 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 
     size_t retry = settings.retry;
     size_t strategy = settings.strategy;
-
     while (_status != 0 && _status != 1 && strategy < 2 && retry > 0)
     {
         EFT_PROF_INFO("Fit failed with status: {} using strategy {}, try again with strategy: {}",
@@ -258,13 +285,12 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 #endif
 
     EFT_PROF_INFO("[Minimizer] fit is finished");
+    if (settings.save_res) {
+        EFT_PROF_INFO("[Minimizer] required to save results as: {}", "fit_res");
+        return make_unique<RooFitResult>(*minim.save("fit_res", "fit_res"));
+    }
+    //EFT_PROF_DEBUG("[Minimizer] not required to save results, leave function");
     return {};
-    //auto result = make_unique<RooFitResult>(
-    //        *minim.save("fitResult","Fit Results")
-    //        );
-
-    //EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
-    //return result;
 }
 
 IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
@@ -283,8 +309,7 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     std::unique_ptr<RooAbsReal> nll;
     nll.reset(CreatNll(settings));
     //settings.nll = nll;
-    Minimize(settings, nll.get());
-    return {};
+    return Minimize(settings, nll.get());;
     //auto res = Minimize(settings, nll.get());
     //return res;
     //FitResPtr to_return;

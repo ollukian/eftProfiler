@@ -6,6 +6,8 @@
 #include "spdlog/fmt/bundled/color.h"
 #include "spdlog/fmt/bundled/ostream.h"
 
+#include "StringUtils.h"
+
 using namespace std;
 using eft::stats::Logger;
 
@@ -84,4 +86,5 @@ void Tester::InitSetTests() {
     EFT_RUN_TESTFILE(CommandLineArguments); // problems with vec<string> ==> argv convertion
     EFT_RUN_TESTFILE(WorkSpaceWrapper);
     EFT_RUN_TESTFILE(Scene);
+    EFT_RUN_TESTFILE(FitManager);
 }

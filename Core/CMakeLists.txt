@@ -1,7 +1,10 @@
 set(core_source_files
-        IWorkspaceWrapper.h
-        WorkspaceWrapper.cpp WorkspaceWrapper.h
-        CommandLineArgs.cpp CommandLineArgs.h Logger.h Logger.cpp Profiler.cpp Profiler.h)
+        WorkspaceWrapper.cpp
+        CommandLineArgs.cpp
+        Logger.cpp
+        Profiler.cpp
+        EfPreCompHeaders.cpp
+        Core.cpp)
 
 add_library(core ${core_source_files})
 #target_link_libraries(core modules)

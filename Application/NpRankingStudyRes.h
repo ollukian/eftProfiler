@@ -14,10 +14,12 @@ class IWorkspaceWrapper;
 
 namespace eft::stats {
 
+
 enum class StudyType  : uint8_t;
 enum class StatType   : uint8_t;
 enum class PrePostFit : uint8_t;
 
+class FitManagerConfig; // fwd declaration
 struct NpRankingStudyRes;  // result of running fit
 struct NpRankingStudySettings; // settings for plotting
 struct NpInfoForPlot;
@@ -98,16 +100,22 @@ struct NpRankingStudyRes {
 struct NpRankingStudySettings
 {
     std::string poi;
+    std::string np_name;
     std::string path_to_save_res {"/pbs/home/o/ollukian/public/EFT/git/eftProfiler/"};
     StatType  statType  {StatType::NP_RANKING};
     StudyType studyType {StudyType::NOTDEF};
     PrePostFit prePostFit {PrePostFit::OBSERVED};
     fit::Errors errors {fit::Errors::DEFAULT};
-    bool no_gamma {false};
+    bool no_gamma;
     double poi_init_val;
     double eps;
+    bool reuse_nll;
+    bool  fit_all_pois;
+    bool  fit_single_poi;
     size_t retry;
     size_t strategy;
+
+    void GetFromConfig(FitManagerConfig* config);
 };
 
 // Only information relevant for plotting

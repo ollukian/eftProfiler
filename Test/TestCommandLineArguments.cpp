@@ -31,15 +31,6 @@ vector<vector<char>> ConvertToArgcAgv(istringstream& s)
         vstrings.emplace_back(components[idx].begin(), components[idx].end());
         vstrings.back().push_back('\0');
     }
-    EFT_PROF_INFO("argv:");
-    for (size_t idx {0}; idx != nb_components; ++idx) {
-        size_t nb_chars_line {vstrings[idx].size()};
-        //fmt::print(fmt::fg(fmt::color::aqua), "Arg#{} ==> [", idx);
-        for (size_t idx_char {0}; idx_char < nb_chars_line; ++idx_char) {
-            //fmt::print(fmt::fg(fmt::color::aqua), "{}", vstrings[idx][idx_char]);
-        }
-        //fmt::print(fmt::fg(fmt::color::aqua), "]\n");
-    }
     return vstrings;
 }
 

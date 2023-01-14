@@ -61,9 +61,9 @@ void CreateWS(const string& filename)
     using RooStats::ModelConfig;
     using WS = RooWorkspace;
 
-    auto ws = new RooWorkspace("ws_test");
+    //auto ws = new RooWorkspace("ws_test");
     //auto ws = new RooWorkspace();
-    //auto ws = make_shared<RooWorkspace>("ws_test");
+    auto ws = make_shared<RooWorkspace>("ws_test");
     //RooRealVar myy("myy", "myy", 125.f, 105.f, 160.f);
     //RooRealVar mH("mH", "mH", 125.09);
     //RooRealVar width("width", "width", 2);
@@ -88,7 +88,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create lumi block..");
     ws->factory( "lumi_nom[5000.0, 4000.0, 6000.0]" );
     ws->factory( "lumi_kappa[1.045]" );
-    ws->factory( "cexpr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
+    ws->factory( "expr::alpha_lumi('pow(lumi_kappa,beta_lumi)',lumi_kappa,beta_lumi[0,-5,5])" );
     ws->factory( "prod::lumi(lumi_nom,alpha_lumi)" );
     ws->factory( "Gaussian::constr_lumi(beta_lumi,glob_lumi[0,-5,5],1)" );
     //EFT_PROF_INFO("Create lumi block DONE");
@@ -97,7 +97,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create efficiency block..");
     ws->factory( "efficiency_nom[0.1, 0.05, 0.15]" );
     ws->factory( "efficiency_kappa[1.10]" );
-    ws->factory( "cexpr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
+    ws->factory( "expr::alpha_efficiency('pow(efficiency_kappa,beta_efficiency)',efficiency_kappa,beta_efficiency[0,-5,5])" );
     ws->factory( "prod::efficiency(efficiency_nom,alpha_efficiency)" );
     ws->factory( "Gaussian::constr_efficiency(beta_efficiency,glob_efficiency[0,-5,5],1)" );
     //EFT_PROF_INFO("Create efficiency block DONE");
@@ -107,7 +107,7 @@ void CreateWS(const string& filename)
     //EFT_PROF_INFO("Create background block..");
     ws->factory( "nbkg_nom[10.0, 5.0, 15.0]" );
     ws->factory( "nbkg_kappa[1.10]" );
-    ws->factory( "cexpr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
+    ws->factory( "expr::alpha_nbkg('pow(nbkg_kappa,beta_nbkg)',nbkg_kappa,beta_nbkg[0,-5,5])" );
     ws->factory( "prod::nbkg(nbkg_nom,alpha_lumi,alpha_nbkg)" );
     ws->factory( "Gaussian::constr_nbkg(beta_nbkg,glob_nbkg[0,-5,5],1)" );
 
@@ -496,6 +496,7 @@ void CreateWS(const string& filename)
 [[nodiscard]]
 //std::shared_ptr<WorkspaceWrapper> LoadWS() {
 WorkspaceWrapper* LoadWS() {
+    auto level = RooMsgService::instance().globalKillBelow();
     RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
     static const string path {"__temp_ws_for_eftTests.root"};
     static const string ws_name {"ws_test"};
@@ -503,6 +504,7 @@ WorkspaceWrapper* LoadWS() {
     //auto ws_ = std::make_shared<WorkspaceWrapper>();
     ws_->SetWS(path, ws_name);
     ws_->SetModelConfig("ModelConfig");
+    RooMsgService::instance().setGlobalKillBelow(level);
     return ws_;
 }
 
@@ -520,6 +522,9 @@ void Finalise() {
 }
 
 void TestWSreading() {
+    auto level = RooMsgService::instance().globalKillBelow();
+    RooMsgService::instance().setGlobalKillBelow(RooFit::WARNING);
+    //eft::stats::Logger::SetFullPrinting();
     const string path {"__temp_ws_for_eftTests.root"};
     const string ws_name {"ws_test"};
     auto ws_ = new WorkspaceWrapper();
@@ -528,11 +533,16 @@ void TestWSreading() {
     ASSERT(std::filesystem::exists(path));
 
     bool is_set = false;
+    EFT_PROF_INFO("set ws");
     ASSERT_NO_THROW(is_set = ws_->SetWS(path, ws_name));
+    EFT_PROF_INFO("set ws DONE");
     ASSERT(is_set);
+    EFT_PROF_INFO("try extract variable n");
     ASSERT_EQUAL(ws_->raw()->var("n")->getVal(), 11);
+    EFT_PROF_INFO("set model config");
     ASSERT_NO_THROW(ws_->SetModelConfig("ModelConfig"));
 
+    EFT_PROF_INFO("get pois");
     const RooArgSet* pois  = ws_->GetPOIs();
     const RooArgSet* nps   = ws_->GetNp();
     const RooArgSet* globs = ws_->GetGlobObs();
@@ -551,9 +561,12 @@ void TestWSreading() {
     ASSERT_EQUAL(nps->getSize(),    3);
     ASSERT_EQUAL(globs->getSize(),  3);
     ASSERT_EQUAL(obs->getSize(),    1);
+    RooMsgService::instance().setGlobalKillBelow(level);
+    EFT_PROF_INFO("function is over, time to delete the ws");
 }
 
 void TestLoading() {
+    EFT_PROF_INFO("Try loading");
     ASSERT_NO_THROW(std::ignore = LoadWS()); // std::ignore to prevent warnings about [[nodiscard]]
     ASSERT(LoadWS()->raw());
 }
@@ -561,6 +574,9 @@ void TestLoading() {
 void TestWSGetters() {
     using namespace eft::utils::internal;
     auto ws = LoadWS();
+    //auto ws = std::make_shared<WorkspaceWrapper>(*LoadWS());
+    //auto ws = std::make_shared<WorkspaceWrapper>();
+    //ws.reset(LoadWS());
 
     for (const string& glob_name : _test_globs_names_) {
         ASSERT(ws->GetVar(glob_name)->isConstant());
@@ -592,6 +608,8 @@ void TestWSGetters() {
 
 void TestWSSetters() {
     using namespace eft::utils::internal;
+    //auto ws = std::make_shared<WorkspaceWrapper>();
+    //ws.reset(LoadWS());
     auto ws = LoadWS();
 
     const string poi_name = *_test_poi_names_.begin();
@@ -631,9 +649,11 @@ void Initiate() {
 //                  "Running tests of the Workspace wrapper. First stage may take some non-negligible time",
 //                  "due to creation of a toy RooWorkspace, requiring compiling of functions for a few test",
 //                  "systematics: luminosity and efficiency");
+    auto level = RooMsgService::instance().globalKillBelow();
     RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::FATAL);
     const string filename = fmt::format("__temp_ws_for_eftTests.root");
     CreateWS(filename);
+    RooMsgService::instance().setGlobalKillBelow(level);
 }
 
 EFT_IMPLEMENT_TESTFILE(WorkSpaceWrapper) {

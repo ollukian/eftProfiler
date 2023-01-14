@@ -21,6 +21,7 @@ struct FitManagerConfig {
     std::string                 comb_data           {"combData"};
     std::string                 res_path;
     std::string                 poi                 {"cHG"};
+    std::string                 np_name             ;
     std::vector<std::string>    errors;
     size_t                      worker_id           {0};
     double                      eps                 {1E-3}; // to be divided on 1000 later on
@@ -32,13 +33,14 @@ struct FitManagerConfig {
     bool                        no_gamma            {false};
     bool                        fit_all_pois        {false};
     bool                        fit_single_poi      {true};
-    bool                        reuse_nll           {true};      // <== to add
+    bool                        reuse_nll           {true};
     bool                        save_prelim         {false};
     bool                        silent              {false};
     bool                        release             {false};
     std::vector<std::string>    get                 ;
     // PLOTTING
-    bool                        vertical            {false};     // <== to add
+    bool                        vertical            {false};
+    bool                        weighted            {false}; // for comparison
     std::string                 color_prefit_plus   {"kBlue"};
     std::string                 color_prefit_minus  {"kGreen"};
     std::string                 color_postfit_plus  {"kBlue"};
@@ -50,8 +52,8 @@ struct FitManagerConfig {
     float                       tmargin             {0.03};
     float                       bmargin             {0.40};
     std::vector<size_t>         plt_size            {1200, 800};
-    float                       rmul                {-0.002};
-    float                       rmuh                {0.002};
+    float                       rmul                {0.};
+    float                       rmuh                {0.};
     float                       np_scale            {1E-9};
     float                       label_size          {0.02};
     std::vector<std::string>    fileformat          {"pdf"};
@@ -61,6 +63,7 @@ struct FitManagerConfig {
     std::string                 out_dir             {"figures"};
     std::string                 output              {};
     std::string                 input               {};
+    std::string                 suggestions         {}; // for suggestions
     std::vector<std::string>    remove_prefix       {};
     std::vector<std::string>    remove_suffix       {};
     std::vector<std::string>    replace             {};
@@ -79,6 +82,11 @@ struct FitManagerConfig {
     std::vector<std::string>    add_text            {};
     std::vector<std::string>    add_text_ndc        {};
     std::vector<std::string>    h_draw_options      {};
+    size_t                      empty_bins          {3};
+    float                       dx_legend           {0.15};
+    float                       dy_legend           {0.00};
+    size_t                      max_digits          {3};
+    bool                        draw_impact         {false};
 };
 
 template<typename OStream>

@@ -1,0 +1,16 @@
+//
+// Created by Aleksei Lukianchuk on 20-Dec-22.
+//
+
+#ifndef EFTPROFILER_EFTROOFITPRECOMPHEADERS_H
+#define EFTPROFILER_EFTROOFITPRECOMPHEADERS_H
+
+#include "RooArgSet.h"
+#include "RooArgList.h"
+#include "RooFitResult.h"
+#include "RooRealVar.h"
+#include "RooNLLVar.h"
+#include "RooAbsPdf.h"
+#include "RooAbsData.h"
+
+#endif //EFTPROFILER_EFTROOFITPRECOMPHEADERS_H

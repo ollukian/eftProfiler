@@ -17,7 +17,8 @@
 namespace eft::utils::draw {
 
 struct Drawable {
-    std::unique_ptr<TObject> obj {};
+    TObject* obj;
+    //std::weak_ptr<TObject> obj {};
     std::string draw_options;
     std::string name;
     bool should_be_drawn {true};
@@ -35,7 +36,7 @@ struct Drawable {
 
     template<typename T>
     T* As() {
-       return dynamic_cast<T*>(obj.get());
+       return dynamic_cast<T*>(obj);
     }
 
 //    explicit Drawable(TObject* ptr) noexcept : obj(ptr) {};
@@ -45,12 +46,17 @@ struct Drawable {
 //        , name(std::move(name_ext))
 //        {};
     explicit Drawable(std::unique_ptr<TObject> ptr, std::string opt = "", std::string name_ext = "") noexcept
-            : obj(std::move(ptr))
+            : obj(ptr.get())
             , draw_options(std::move(opt))
             , name(std::move(name_ext))
     {};
     explicit Drawable(TObject* ptr, std::string opt = "", std::string name_ext = "") noexcept
             : obj(ptr)
+            , draw_options(std::move(opt))
+            , name(std::move(name_ext))
+    {};
+    explicit Drawable(std::shared_ptr<TObject>& ptr, std::string opt = "", std::string name_ext = "") noexcept
+            : obj(ptr.get())
             , draw_options(std::move(opt))
             , name(std::move(name_ext))
     {};

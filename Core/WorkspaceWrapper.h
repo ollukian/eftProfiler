@@ -13,6 +13,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <stdexcept>
 
 #include <spdlog/fmt/fmt.h>
 #include "spdlog/fmt/ostr.h"
@@ -47,6 +48,9 @@ public:
 
     inline void FixValConst(const std::string& poi) override;
     inline void FixValConst(const std::vector<std::string>& pois) override;
+    inline void FixValConst(RooArgSet* vals) override;
+
+
     //inline void FixValConst(std::initializer_list<std::vector<std::string>> pois) override;
 
     //inline void FixAllPois()   noexcept override;
@@ -54,6 +58,7 @@ public:
 
     inline void FloatVal(const std::string& poi) override;
     inline void FloatVals(const std::vector<std::string>& pois) override;
+    inline void FloatVals(RooArgSet* vals) override;
     //inline void FloatVals(std::initializer_list<std::vector<std::string>> pois) override;
 
     inline void SetVarVal(const std::string& name, double val) override;
@@ -117,9 +122,10 @@ public:
     bool LoadSnapshot(std::string name)  override;
 #endif // if 0 to screen
 private:
-    std::unique_ptr<RooWorkspace>           ws_             {};
-    std::unique_ptr<RooStats::ModelConfig>  modelConfig_    {};
+    std::shared_ptr<RooWorkspace>           ws_             {};
+    std::shared_ptr<RooStats::ModelConfig>  modelConfig_    {};
     std::unique_ptr<RooCategory>            channelList_    {};
+    std::shared_ptr<TFile>                  file_with_ws_   {};
     mutable Categories                      categories_     {};
 
 
@@ -144,21 +150,29 @@ inline RooRealVar* WorkspaceWrapper::GetVar(const std::string& name)
 inline bool WorkspaceWrapper::SetWS(std::string path, std::string name)
 {
     EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("Set ws, check path: {}", path);
     if (! std::filesystem::exists(path) ) {
         EFT_PROF_CRITICAL("Ws under [{}] doesn't exist", path);
+        throw std::runtime_error("Impossible to extract ws");
         return false;
     }
 
     //std::unique_ptr<TFile> f_ {TFile::Open(path.c_str())};
-    TFile* f_ = TFile::Open(std::move(path).c_str());
-    if (f_) {
-        ws_ = std::make_unique<RooWorkspace>(
-                *dynamic_cast<RooWorkspace*>( f_->Get( std::move(name).c_str() ) )
-                );
-        //f_->Close();
-        return true;
+    //TFile* f_ = TFile::Open(std::move(path).c_str());
+    EFT_PROF_DEBUG("Set ws, reset ptr");
+    file_with_ws_.reset(TFile::Open(path.c_str()));
+    //file_with_ws_ = std::make_shared<TFile>( *TFile::Open(path.c_str()) );
+    EFT_PROF_DEBUG("extract from the file");
+    EFT_PROF_DEBUG("check that ws exists under this name");
+    auto ptr = file_with_ws_->Get( name.c_str() );
+    if (! ptr) {
+        EFT_PROF_CRITICAL("In the file: [{}] there is no ws with name: [{}]",
+                          path, name);
+        throw std::runtime_error("Impossible to extract ws");
     }
-    return false;
+
+    ws_.reset(dynamic_cast<RooWorkspace*>( ptr ));
+    return true;
 }
 
 inline void WorkspaceWrapper::FixValConst(const std::string& poi)
@@ -167,6 +181,7 @@ inline void WorkspaceWrapper::FixValConst(const std::string& poi)
     EFT_PROF_DEBUG("Set {:30} const", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FixValConst variable {} is not present in the WS", poi);
+        throw std::runtime_error("");
         return;
     }
     ws_->var( poi.c_str() )->setConstant(true);
@@ -180,13 +195,38 @@ inline void WorkspaceWrapper::FixValConst(const std::vector<std::string>& pois)
     }
 }
 
+inline void WorkspaceWrapper::FixValConst(RooArgSet* vals)  {
+    EFT_PROFILE_FN();
+    if (vals == nullptr) {
+        EFT_PROF_CRITICAL("FixValConst nullpts provided");
+        throw std::runtime_error("");
+    }
+    for (auto val : * vals) {
+        dynamic_cast<RooRealVar*>(val)->setConstant(true);
+        EFT_PROF_DEBUG("Set {:30} const", val->GetName());
+    }
+}
+
+inline void WorkspaceWrapper::FloatVals(RooArgSet* vals)  {
+    EFT_PROFILE_FN();
+    if (vals == nullptr) {
+        EFT_PROF_CRITICAL("FloatVals nullpts provided");
+        throw std::runtime_error("");
+    }
+    for (auto val : * vals) {
+        dynamic_cast<RooRealVar*>(val)->setConstant(false);
+        EFT_PROF_DEBUG("Set {:30} float", val->GetName());
+    }
+}
+
 inline void WorkspaceWrapper::FloatVal(const std::string& poi)
 {
     EFT_PROFILE_FN();
     EFT_PROF_DEBUG("Set {:30} float", poi);
     if (ws_->var(poi.c_str()) == nullptr) {
         EFT_PROF_CRITICAL("WorkspaceWrapper::FloatVal variable {} is not present in the WS", poi);
-        return;
+        throw std::logic_error("");
+        //return;
     }
     ws_->var( poi.c_str() )->setConstant(false);
 }
@@ -203,11 +243,19 @@ inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
 {
     EFT_PROFILE_FN();
     EFT_PROF_TRACE("[WorkspaceWrapper] Set value of {:30} to {}", name, val);
+    if (GetVar(name) == nullptr) {
+        EFT_PROF_CRITICAL("SetVarVal[{}] this var is not present", name);
+        throw std::logic_error("");
+    }
     ws_->var( name.c_str() )->setVal(val);
 }
 inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 {
     EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:30} to {}", name, err);
+    if (GetVar(name) == nullptr) {
+        EFT_PROF_CRITICAL("SetVarErr[{}] this var is not present", name);
+        throw std::logic_error("");
+    }
     ws_->var( name.c_str() )->setError(err);
 }
 
@@ -236,6 +284,7 @@ inline RooAbsPdf* WorkspaceWrapper::GetPdfSigGivenCategory(const std::string& ca
 inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
 {
     EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("try to set model config with name: {}", name);
     auto _mc = ws_->obj( name.c_str() );
     if (! _mc) {
         EFT_PROF_CRITICAL("Model Config with name {} is not present in the WS", name);
@@ -245,6 +294,7 @@ inline RooStats::ModelConfig* WorkspaceWrapper::SetModelConfig(std::string name)
              _mc
             ))
             ;
+    EFT_PROF_DEBUG("Model config is set, leave setmodelconfig");
     return modelConfig_.get();
 }
 
@@ -317,7 +367,7 @@ inline void WorkspaceWrapper::VaryParNbSigmas(const std::string& par, float nb_s
 }
 
 template<typename OStream>
-OStream& operator<<(OStream& os, const RooRealVar& var) {
+OStream& operator<<(OStream& os, RooRealVar& var) {
     std::string constness = "const";
     if (! var.isConstant() )
         constness = "float";

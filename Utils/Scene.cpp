@@ -5,15 +5,17 @@
 #include "Scene.h"
 #include "Drawing/Latex.h"
 
-#include "TLatex.h"
-#include "TH1D.h"
-#include "TBox.h"
-#include "TMarker.h"
-#include "TLegend.h"
-#include "TLine.h"
-#include "TGraphErrors.h"
-#include "TGraph.h"
-#include "TGaxis.h"
+#include "../Core/EftRootDrawingPreCompHeaders.h"
+
+//#include "TLatex.h"
+//#include "TH1D.h"
+//#include "TBox.h"
+//#include "TMarker.h"
+//#include "TLegend.h"
+//#include "TLine.h"
+//#include "TGraphErrors.h"
+//#include "TGraph.h"
+//#include "TGaxis.h"
 
 #include "Logger.h"
 #include "Profiler.h"
@@ -40,10 +42,13 @@ TCanvas* Scene::Create(size_t width, size_t height) {
 Drawable* Scene::AddBox(float xl, float yl, float xh, float yh) {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Create box with coord: [{}], [{}], [{}], [{}]", xl, yl, xh, yh);
-    std::unique_ptr<TObject> box = make_unique<TBox>(xl, yl, xh, yh);
-    auto box_drawable = make_unique<Drawable>(std::move(box));
+    //std::unique_ptr<TObject> box = make_unique<TBox>(xl, yl, xh, yh);
+    std::shared_ptr<TObject> box = std::make_shared<TBox>(xl, yl, xh, yh);
+    //owned_.insert(box);
+    //auto box_drawable =
+    //auto box_drawable = make_unique<Drawable>(std::move(box));
     //Register(box_drawable);
-    return Register(box_drawable);
+    return Register(box);
     //return dynamic_cast<TBox *>(Register(box_drawable));
 }
 

@@ -127,24 +127,29 @@ optional<CommandLineArgs::Vals> CommandLineArgs::GetVals(const Key& option) cons
     //if (find( keys.begin(), keys.end(), option ) != keys.end()) {
         return nullopt;
     }
+    EFT_PROF_TRACE("found: {} elems for key {}:", ops.at(option).size(), option);
     return ops.at(option);
 }
 
 optional<CommandLineArgs::Val> CommandLineArgs::GetVal(const CommandLineArgs::Key& option) const
 {
     EFT_PROFILE_FN();
-    EFT_PROF_DEBUG("get vals for {}", option);
+    //EFT_PROF_DEBUG("get vals for {}", option);
     //cout << fmt::format("[CmdLine] GetVals for {} key", option);
     _requested_keys.insert(option);
     if (keys.find(option) == keys.end()) {
-        EFT_PROF_DEBUG("n such key found");
+        EFT_PROF_DEBUG("no value for the key: {:30} found", option);
         return nullopt;
     }
-    EFT_PROF_DEBUG("found: {} elems for key {}:", ops.at(option).size(), option);
+    EFT_PROF_TRACE("found: {} elems for key {}:", ops.at(option).size(), option);
 
     if ( ! ops.at(option).empty() )
         return ops.at(option)[0];
     return "";
+}
+
+void CommandLineArgs::RegisterKey(const Key& key) const noexcept {
+    _requested_keys.insert(key);
 }
 
 void CommandLineArgs::ReportStatus() const noexcept

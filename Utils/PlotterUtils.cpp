@@ -7,12 +7,16 @@
 
 #include "TH1D.h"
 
+#include "Profiler.h"
+#include "Logger.h"
+
 using namespace std;
 
 namespace eft::utils {
 
 
 string PlotterUtils::FormName(const PlotterUtils::PlotSettings& settings) noexcept {
+    EFT_PROFILE_FN();
     string ignore_part;
     string select_part;
 
@@ -47,6 +51,7 @@ string PlotterUtils::FormName(const PlotterUtils::PlotSettings& settings) noexce
 }
 
 shared_ptr<TH1D> PlotterUtils::MakeHisto1D(const string& name, size_t nb_bins) noexcept {
+    EFT_PROFILE_FN();
     return std::make_shared<TH1D>(name.c_str(), name.c_str(),
                                   nb_bins,
                                   0,
@@ -58,6 +63,7 @@ string PlotterUtils::GetLabel(const PlotterUtils::PlotSettings& settings,
                                    size_t idx,
                                    const string& nominal_name) noexcept
 {
+    EFT_PROFILE_FN();
     string bin_label;
     if (settings->np_names.empty()) {
         bin_label = nominal_name;
@@ -77,6 +83,7 @@ string PlotterUtils::GetLabel(const PlotterUtils::PlotSettings& settings,
 std::vector<PlotterUtils::Replacement>
 PlotterUtils::ParseReplacements(const std::vector<std::string>& replacements)
 {
+    EFT_PROFILE_FN();
     // convert vector of "key:val" to vector of pairs: <key, val>
     EFT_PROF_TRACE("ParseReplacements for {} objects", replacements.size());
     vector<Replacement> res;
@@ -106,6 +113,7 @@ PlotterUtils::ParseReplacements(const std::vector<std::string>& replacements)
 
 void PlotterUtils::ReplaceStrings(std::string& s, const std::vector<Replacement>& replacements)
 {
+    EFT_PROFILE_FN();
     for (const auto& replacement : replacements) {
         EFT_PROF_DEBUG("Replace {} using {:10} -> {:10} replacement", s, replacement.first, replacement.second);
         StringUtils::Replace(s, replacement.first, replacement.second);
@@ -114,6 +122,7 @@ void PlotterUtils::ReplaceStrings(std::string& s, const std::vector<Replacement>
 
 void PlotterUtils::RemovePrefix(string& s, const vector<string>& prefixes)
 {
+    EFT_PROFILE_FN();
     for (const auto& prefix : prefixes) {
         EFT_PROF_DEBUG("Remove prefix: {:10} from {:10}", prefix, s);
         StringUtils::RemovePrefix(s, prefix);
@@ -121,6 +130,7 @@ void PlotterUtils::RemovePrefix(string& s, const vector<string>& prefixes)
 }
 void PlotterUtils::RemoveSuffix(string& s, const vector<string>& suffixes)
 {
+    EFT_PROFILE_FN();
     for (const auto& suffix : suffixes) {
         EFT_PROF_DEBUG("Remove suffix: {:10} from {:10}", suffix, s);
         StringUtils::RemoveSuffix(s, suffix);
