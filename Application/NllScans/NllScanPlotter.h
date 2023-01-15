@@ -35,6 +35,7 @@ public:
 
     void RegisterRes1D(NllScanResult nllScanRes);
     static NllScanResult ReadValuesOneFile(const std::filesystem::path& path);
+    static inline NllScanResult ReadValuesOneFile(const std::string& path);
     //static PoiConfig ReadValuesOneFile(const std::filesystem::path& path);
 private:
     Nll1Dresults results1D_;
@@ -43,6 +44,11 @@ private:
     //std::unordered_map<std::string, PoiConfigs> configs_per_poi_;
     //std::unordered_map<>;
 };
+
+NllScanResult NllScanPlotter::ReadValuesOneFile(const std::string& path) {
+    std::filesystem::path path1 {path};
+    return ReadValuesOneFile(path1);
+}
 
 
 } // eft::stats::scans
