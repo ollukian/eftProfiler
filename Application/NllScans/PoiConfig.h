@@ -39,11 +39,11 @@ public:
     inline PoiConfig& WithCentralErr(float err_ = 0.) noexcept { central_err = err_; return *this; }
     inline PoiConfig& WithVersionOfConfig(std::string ver = "v1") noexcept { version = std::move(ver); return *this; }
     inline PoiConfig& WithGridSize(size_t sz) noexcept { grid_size = sz; return *this; }
-    inline PoiConfig& WithRangeLow(float r) noexcept { range_scan_low = r;  is_range_in_sigmas = true; return *this; }
-    inline PoiConfig& WithRangeHigh(float r) noexcept { range_scan_high = r; is_range_in_sigmas = true; return *this; }
+    inline PoiConfig& WithRangeLow(float r) noexcept { range_scan_low = r;   return *this; }
+    inline PoiConfig& WithRangeHigh(float r) noexcept { range_scan_high = r;  return *this; }
     inline PoiConfig& WithRangeSigmas(float nb_sigma) noexcept;
-    inline PoiConfig& WithRangeSigmasLow(float nb_sigma) noexcept { range_scan_sigmas_low = nb_sigma; return *this; }
-    inline PoiConfig& WithRangeSigmasHigh(float nb_sigma) noexcept { range_scan_sigmas_high = nb_sigma; return *this; }
+    inline PoiConfig& WithRangeSigmasLow(float nb_sigma) noexcept { range_scan_sigmas_low = nb_sigma; is_range_in_sigmas = true; return *this; }
+    inline PoiConfig& WithRangeSigmasHigh(float nb_sigma) noexcept { range_scan_sigmas_high = nb_sigma; is_range_in_sigmas = true; return *this; }
 
 
     [[nodiscard]] const std::string& Name()                 const noexcept { return name; }
