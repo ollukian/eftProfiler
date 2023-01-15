@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iostream>
 
+
+
 using namespace std;
 namespace fs =  std::filesystem;
 
@@ -83,18 +85,23 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
     const auto min_poi = *std::min_element(mu_vals.begin(), mu_vals.end());
     const auto max_poi = *std::max_element(mu_vals.begin(), mu_vals.end());
 
-    EFT_PROF_DEBUG("{:3} | {:5} | {:10}", "idx", "mu", "2dnll");
-    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
-        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
-    }
+    EFT_PROF_INFO("min_nll: {}", min_nll);
+    EFT_PROF_INFO("min_poi: {}", min_poi);
+    EFT_PROF_INFO("max_poi: {}", max_poi);
+
     std::for_each(nll_vals.begin(), nll_vals.end(), [&min_nll](double& val) -> void
         {
+            auto val_copy = val;
             val -= min_nll;
             val *= 2;
+            EFT_PROF_DEBUG("transform: {} into {}", val_copy, val);
         }
     );
 
-
+    EFT_PROF_DEBUG("{:3} | {:.4} | {:.6}", "idx", "mu", "2dnll");
+    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
+        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
+    }
 }
 
 NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& path)
