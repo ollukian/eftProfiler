@@ -167,23 +167,30 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
             if (vals.size() == 2) {
                 string r1 = vals[0];
                 string r2 = vals[1];
+                EFT_PROF_DEBUG("range with 2 elements: {} and {}", r1, r2);
                 if (r1.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r1, "s");
+                    EFT_PROF_DEBUG("r1 starts with s, after cutting: [{}]", r1, r1);
                     auto val1 = stod(r1);
+                    EFT_PROF_DEBUG("value of r1 in units of sigma: {}", val1);
                     res.WithRangeSigmasLow(val1);
                 }
                 else {
                     auto val1 = stod(r1);
+                    EFT_PROF_DEBUG("r1 is in the real units => set range low to: {}", val1);
                     res.WithRangeLow(val1);
                 }
 
                 if (r2.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r2, "s");
+                    EFT_PROF_DEBUG("r2 starts with s, after cutting: [{}]", r1);
                     auto val2 = stod(r2);
+                    EFT_PROF_DEBUG("value of r2 in units of sigma: {}", val2);
                     res.WithRangeSigmasHigh(val2);
                 }
                 else {
                     auto val2 = stod(r2);
+                    EFT_PROF_DEBUG("r2 is in the real units => set range high to: {}", val2);
                     res.WithRangeHigh(val2);
                 }
             }
