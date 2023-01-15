@@ -10,6 +10,7 @@
 //#include "nlohmann/json.hpp"
 #include "nlohmann/json_fwd.hpp"
 #include "Grid.h"
+#include "Profiler.h"
 
 namespace eft::stats::scans {
 
