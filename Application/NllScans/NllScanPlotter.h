@@ -34,6 +34,7 @@ public:
     void RegisterRes(NllScanResult nllScanRes);
 
     void RegisterRes1D(NllScanResult nllScanRes);
+    static NllScanResult ReadValuesOneFile(const std::filesystem::path& path);
     //static PoiConfig ReadValuesOneFile(const std::filesystem::path& path);
 private:
     Nll1Dresults results1D_;

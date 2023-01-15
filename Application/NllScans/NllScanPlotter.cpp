@@ -30,7 +30,7 @@ void NllScanPlotter::ReadFiles(std::filesystem::path& path) {
         if(entry.is_directory()) {
             EFT_PROF_INFO("{} is a directory, skip it", filenameStr);
         } else if(entry.is_regular_file()) {
-            RegisterRes(PoiConfig::readFromJSON(entry));
+            RegisterRes(ReadValuesOneFile(entry));
         }
     }
 }
@@ -97,36 +97,36 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
 
 }
 
-//PoiConfig NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& path)
-//{
-//    EFT_PROFILE_FN();
-//    const string filename = path.string();
-//    const string extension = path.extension().string();
-//    if (extension != ".json") {
-//        EFT_PROF_WARN("{} NOT [.json]", path.string());
-//        return {};
-//    }
-//
-//    ifstream ifs(filename);
-//    if ( ! ifs.is_open() ) {
-//        throw std::runtime_error("error opening: " + filename);
-//    }
-//
-//    nlohmann::json j;
-//    ifs >> j;
-//
-//    PoiConfig res;
-//
-//    try {
-//        EFT_LOG_DURATION("Reading result from JSON");
-//        res = j.get<PoiConfig>();
-//    }
-//    catch (nlohmann::json::type_error& e) {
-//        EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}.", path.string(), e.what()
-//        );
-//    }
-//
-//    return res;
-//}
+NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& path)
+{
+    EFT_PROFILE_FN();
+    const string filename = path.string();
+    const string extension = path.extension().string();
+    if (extension != ".json") {
+        EFT_PROF_WARN("{} NOT [.json]", path.string());
+        return {};
+    }
+
+    ifstream ifs(filename);
+    if ( ! ifs.is_open() ) {
+        throw std::runtime_error("error opening: " + filename);
+    }
+
+    nlohmann::json j;
+    ifs >> j;
+
+    NllScanResult res;
+
+    try {
+        EFT_LOG_DURATION("Reading result from JSON");
+        res = j.get<NllScanResult>();
+    }
+    catch (nlohmann::json::type_error& e) {
+        EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}.", path.string(), e.what()
+        );
+    }
+
+    return res;
+}
 
 } // eft::stats::scans
