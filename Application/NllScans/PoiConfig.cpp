@@ -184,6 +184,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                 if (r2.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r2, ")");
                 }
+                EFT_PROF_DEBUG("r2: [{}]", r2);
 
                 if (r2.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r2, "s");
@@ -194,7 +195,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                 }
                 else {
                     auto val2 = stod(r2);
-                    EFT_PROF_DEBUG("r2 is in the real units => set range high to: {}", val2);
+                    EFT_PROF_DEBUG("r2: [{}] is in the real units => set range high to: {}", r2, val2);
                     res.WithRangeHigh(val2);
                 }
             }
@@ -204,6 +205,11 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
             res.ToTestAt(val);
         }
 
+    }
+
+    if (res.range_scan_sigmas_low != 0) {
+        EFT_PROF_INFO("range for scan low is defined in units of sigma: compute real range");
+        res.ComputeRangeFromSigmasIfNeeded();
     }
 
     return res;

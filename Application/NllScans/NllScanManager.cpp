@@ -90,7 +90,7 @@ double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t
     EFT_PROFILE_FN();
     const double length = high - low;
     const double step   = length / (size_grid - 1);
-    double res = low + (nb_point - 1) * step;
+    double res = low + (nb_point) * step;
 
     EFT_PROF_DEBUG("low: {}, high: {}, np pts: {}, number to get: {}",
                     low, high, size_grid, nb_point);
