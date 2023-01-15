@@ -182,6 +182,10 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                 }
 
                 if (r2.back() == 's') {
+                    eft::StringUtils::RemoveSuffix(r2, ")");
+                }
+
+                if (r2.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r2, "s");
                     EFT_PROF_DEBUG("r2 starts with s, after cutting: [{}]", r1);
                     auto val2 = stod(r2);

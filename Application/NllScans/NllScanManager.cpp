@@ -39,17 +39,22 @@ double NllScanManager::GetPointAtGrid(PoiConfig& config) const {
 
 void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
     EFT_PROFILE_FN();
+    EFT_PROF_INFO("NllScanManager::IdentifyScanPointCoordinateAllPois for {} pois", pois_.size());
     for (auto& poi : pois_) {
-        EFT_PROF_INFO("Dealing with: {}", poi.Name());
+        EFT_PROF_INFO("Dealing with: {}...", poi.Name());
         if (gridType_ != GridType::USER_DEFINED) {
             poi.ToTestAt(GetPointAtGrid(poi));
         }
+        EFT_PROF_INFO("Poi: {} is to be tested at: {}", poi.Name(), poi.Value());
     }
 }
 
 void NllScanManager::SetPOIsToTheRequiredGridPosition() {
     EFT_PROFILE_FN();
-    for (const auto& poi : pois_) {
+    for (auto& poi : pois_) {
+        if (not poi.IsGridPointKnown()) {
+            EFT_PROF_WARN("NllScanManager::SetPOIsToTheRequiredGridPosition grid point of {} is not known", poi.Name());
+        }
         ws_->SetVarVal(poi.Name(), poi.Value());
     }
 }
@@ -105,6 +110,9 @@ void NllScanManager::RunScan() {
 
     EFT_PROF_INFO("Float required POIs (which are allowed to by a research)");
     ws_->FloatVals(pois_to_float);
+
+    EFT_PROF_INFO("Identify grid points to put the pois to");
+    IdentifyScanPointCoordinateAllPois();
 
     EFT_PROF_INFO("Set up the grid by forcing all POIs to bet at the required values");
     SetPOIsToTheRequiredGridPosition();
