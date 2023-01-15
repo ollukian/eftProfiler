@@ -65,13 +65,21 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Plot Nll 1D results for {} entries", configs.size());
 
+    EFT_PROF_INFO("Scan entries by poi vals");
+
+    vector<NllScanResult> configs_sorted {configs.begin(), configs.end()};
+
+    std::sort(configs_sorted.begin(), configs_sorted.end(), [](NllScanResult& l, NllScanResult& r) -> bool{
+        return l.poi_configs[0].Value() < r.poi_configs[0].Value();
+    });
+
     vector<double> nll_vals;
-    nll_vals.reserve(configs.size());
+    nll_vals.reserve(configs_sorted.size());
 
     vector<double> mu_vals;
-    mu_vals.reserve(configs.size());
+    mu_vals.reserve(configs_sorted.size());
 
-    for (const auto& config : configs) {
+    for (const auto& config : configs_sorted) {
         nll_vals.emplace_back(config.nll_val);
         mu_vals. emplace_back(config.poi_configs.at(0).Value());
     }
