@@ -34,7 +34,15 @@ double NllScanManager::GetPointAtGrid(PoiConfig& config) const {
     double high = config.ScanRangeHigh();
     EFT_PROF_DEBUG("compute from range. low = {}, high = {}", low, high);
 
-    return GetPointAtGridHermite(low, high, config.GridSize(), worker_id);
+    switch (gridType_) {
+        case GridType::EQUIDISTANT:
+            return GetPointAtGridEquidistant(low, high, config.GridSize(), worker_id);;
+        case GridType::HERMITE:
+            return GetPointAtGridHermite(low, high, config.GridSize(), worker_id);;
+        case GridType::USER_DEFINED: // never used
+            return 0;
+    }
+
 }
 
 void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
