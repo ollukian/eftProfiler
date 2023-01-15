@@ -30,6 +30,7 @@ public:
     const Nll1Dresults& GetResults1DPoi(const std::string& poi) const { return results1D_per_poi_.at(poi); }
 
     void ReadFiles(std::filesystem::path& path);
+    void inline ReadFiles(const std::string& path_str);
     void PlotNll1D(const Nll1Dresults& configs);
     void RegisterRes(NllScanResult nllScanRes);
 
@@ -48,6 +49,11 @@ private:
 NllScanResult NllScanPlotter::ReadValuesOneFile(const std::string& path) {
     std::filesystem::path path1 {path};
     return ReadValuesOneFile(path1);
+}
+
+void inline NllScanPlotter::ReadFiles(const std::string& path_str) {
+    std::filesystem::path path {path_str};
+    ReadFiles(path);
 }
 
 
