@@ -34,6 +34,7 @@ inline bool operator == (const NllScanResult& l, const NllScanResult& r) noexcep
         return false;
     if (l.nll_val != r.nll_val)
         return false;
+    return true;
 }
 inline bool operator != (const NllScanResult& l, const NllScanResult& r) noexcept {
     return ! (l == r);

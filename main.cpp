@@ -319,7 +319,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->SetValIfArgExists("poi", poi);
 
         string path_res;
-        commandLineArgs->SetValIfArgExists("path_res", path_res);
+        commandLineArgs->SetValIfArgExists("input", path_res);
 
 
         NllScanPlotter plotter;
