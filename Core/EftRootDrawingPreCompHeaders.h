@@ -18,6 +18,7 @@
 
 #include "TGraphErrors.h"
 #include "TGraph.h"
+#include "TMultiGraph.h"
 #include "TGaxis.h"
 
 #endif //EFTPROFILER_EFTROOTDRAWINGPRECOMPHEADERS_H
