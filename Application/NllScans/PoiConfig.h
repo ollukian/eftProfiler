@@ -22,9 +22,13 @@ class PoiConfig {
     friend class PoiConfigBuilder;
     friend std::ostream& operator << (std::ostream& os, const PoiConfig& config);
 public:
+    bool operator == (const PoiConfig& other) const noexcept { return name == this->name && val == this->val; }
+    bool operator != (const PoiConfig& other) const noexcept { return ! (other == *this); }
+
     explicit PoiConfig(std::string name_) noexcept : name(std::move(name_)) {}
     PoiConfig() = default;
     static PoiConfig readFromString(const std::string& s);
+    static PoiConfig readFromJSON(const std::filesystem::path& path);
 
     //static void PrintHelp(std::ostream& os);
     inline PoiConfig& ToTestAt(float val_ = 0.) noexcept { val = val_; is_defined = true; return *this; }
@@ -102,5 +106,19 @@ inline PoiConfig& PoiConfig::WithRangeSigmas(float nb_sigma) noexcept {
 
 
 } // eft::stats::scans
+
+
+namespace std {
+    template<>
+    struct hash<eft::stats::scans::PoiConfig> {
+        std::size_t operator()(const eft::stats::scans::PoiConfig& poi) const {
+            using std::hash;
+            using std::string;
+            auto h1 = hash<string>()(poi.Name());
+            auto h2 = hash<float>()(poi.Value()) << 1;
+            return h1 ^ h2;
+        }
+    };
+}
 
 #endif //EFTPROFILER_POICONFIG_H

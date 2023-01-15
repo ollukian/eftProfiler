@@ -67,7 +67,7 @@ namespace eft::plot {
         const string filename = path.string();
         const string extension = path.extension().string();
         if (extension != ".json") {
-            cout << fmt::format(" NOT [.json]") << endl;
+            EFT_PROF_WARN("{} NOT [.json]", path.string());
             return {};
         }
 

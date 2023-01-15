@@ -12,6 +12,9 @@
 
 #include "nlohmann/json.hpp"
 
+#include <filesystem>
+#include <fstream>
+
 namespace eft::stats::scans {
 
 using namespace std;
@@ -216,6 +219,37 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
     //          range [1s 2s]       => low = 1 * sigma, high = 2 * sigma
     //      at [value]              ## to probe at a given value instead of computing the grid position ##
     //          value               => exact position at which to probe this POI, without using the grid
+}
+
+PoiConfig readFromJSON(const std::filesystem::path& path) {
+    EFT_PROFILE_FN();
+    const string filename = path.string();
+    const string extension = path.extension().string();
+    if (extension != ".json") {
+        EFT_PROF_WARN("{} NOT [.json]", path.string());
+        return {};
+    }
+
+    ifstream ifs(filename);
+    if ( ! ifs.is_open() ) {
+        throw std::runtime_error("error opening: " + filename);
+    }
+
+    nlohmann::json j;
+    ifs >> j;
+
+    PoiConfig res;
+
+    try {
+        EFT_LOG_DURATION("Reading result from JSON");
+        res = j.get<PoiConfig>();
+    }
+    catch (nlohmann::json::type_error& e) {
+        EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}.", path.string(), e.what()
+        );
+    }
+
+    return res;
 }
 
 std::ostream& operator << (std::ostream& os, const PoiConfig& config) {

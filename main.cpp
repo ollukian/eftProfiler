@@ -14,6 +14,7 @@
 #include "Application/Ranking/CorrelationStudyProcessor.h"
 
 #include "Application/NllScans/NllScanManager.h"
+#include "Application/NllScans/NllScanPlotter.h"
 
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
@@ -304,8 +305,26 @@ int main(int argc, char* argv[]) {
             scanManager.AddPoi(poi1);
         }
         EFT_PROF_CRITICAL("before run scan");
+        size_t worker_id;
+        commandLineArgs->SetValIfArgExists("worker_id", worker_id);
+        scanManager.SetWorkerId(worker_id);
         scanManager.RunScan();
         scanManager.SaveRes();
+
+    }
+    else if (task == "plot_scan" ) {
+        using namespace eft::stats::scans;
+
+        string poi;
+        commandLineArgs->SetValIfArgExists("poi", poi);
+
+        string path_res;
+        commandLineArgs->SetValIfArgExists("path_res", path_res);
+
+
+        NllScanPlotter plotter;
+        plotter.ReadFiles(path_res);
+        plotter.PlotNll1D(plotter.GetResults1DPoi(poi));
 
     }
     else {
