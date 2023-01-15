@@ -181,7 +181,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     res.WithRangeLow(val1);
                 }
 
-                if (r2.back() == 's') {
+                if (r2.back() == ')') {
                     eft::StringUtils::RemoveSuffix(r2, ")");
                 }
                 EFT_PROF_DEBUG("r2: [{}]", r2);
