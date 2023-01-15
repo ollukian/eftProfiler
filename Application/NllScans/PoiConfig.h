@@ -6,6 +6,7 @@
 #define EFTPROFILER_POICONFIG_H
 
 #include <string>
+#include <filesystem>
 //#include "nlohmann/json.hpp"
 #include "nlohmann/json_fwd.hpp"
 #include "Grid.h"
