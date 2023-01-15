@@ -78,10 +78,16 @@ private:
 inline void PoiConfig::ComputeRangeFromSigmasIfNeeded() const noexcept {
     EFT_PROFILE_FN();
     if (not is_range_in_sigmas) {
+        EFT_PROF_DEBUG("The range is not in sigmas...");
         return;
     }
+    EFT_PROF_INFO("central value: {} +- {}", central_val, central_err);
+    EFT_PROF_INFO("sigma_l: {}", range_scan_sigmas_low);
+    EFT_PROF_INFO("sigma_h: {}", range_scan_sigmas_high);
     range_scan_low  = central_val - range_scan_sigmas_low  * central_err;
     range_scan_high = central_val + range_scan_sigmas_high * central_err;
+    EFT_PROF_INFO("Set range_scan_low to: {}", range_scan_low);
+    EFT_PROF_INFO("Set range_scan_high to: {}", range_scan_high);
     is_range_computed_already = true;
 }
 

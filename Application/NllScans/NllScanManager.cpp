@@ -42,7 +42,7 @@ double NllScanManager::GetPointAtGrid(PoiConfig& config) const {
         case GridType::USER_DEFINED: // never used
             return 0;
     }
-
+    return 0; // never reached
 }
 
 void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
