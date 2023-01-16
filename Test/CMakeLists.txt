@@ -10,6 +10,8 @@ set(tester_source_files
         TestFitManager.cpp
         TestPoiConfig.cpp)
 
+include_directories(../../Vendors)
+
 add_library(tester ${tester_source_files})
 #target_link_libraries(core modules)
 target_link_libraries( tester PUBLIC ${ROOT_LIBRARIES} )

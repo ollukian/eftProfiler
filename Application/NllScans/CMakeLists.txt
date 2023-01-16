@@ -9,7 +9,6 @@ set(nll_source_files
 
 include_directories(../../Vendors)
 include_directories(../../Core)
-include_directories(../../Vendors/nlohmann_json)
 
 add_library(nllscans ${nll_source_files})
 
