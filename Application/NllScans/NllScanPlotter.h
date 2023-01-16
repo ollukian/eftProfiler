@@ -1,6 +1,8 @@
 //
 // Created by Aleksei Lukianchuk on 15-Jan-23.
 //
+// @ lukianchuk.aleksei@gmail.com
+
 
 #ifndef EFTPROFILER_NLLSCANPLOTTER_H
 #define EFTPROFILER_NLLSCANPLOTTER_H

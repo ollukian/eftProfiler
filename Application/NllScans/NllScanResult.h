@@ -1,6 +1,7 @@
 //
 // Created by Aleksei Lukianchuk on 12-Jan-23.
 //
+// @ lukianchuk.aleksei@gmail.com
 
 #ifndef EFTPROFILER_NLLSCANRESULT_H
 #define EFTPROFILER_NLLSCANRESULT_H
@@ -10,10 +11,17 @@
 #include "nlohmann/json_fwd.hpp"
 
 #include "PoiConfig.h"
+#include "../NpRankingStudyRes.h"
+#include "NllScanResult_detail.h"
+
 
 namespace eft::stats::scans {
 
-struct NllScanResult;
+using detail::NllScanResult;
+
+//namespace detail {
+//    struct NllScanResult;
+//}
 inline bool operator == (const NllScanResult& l, const NllScanResult& r) noexcept;
 inline bool operator != (const NllScanResult& l, const NllScanResult& r) noexcept;
 void to_json(nlohmann::json& j, const NllScanResult& res);
@@ -22,13 +30,15 @@ void from_json(const nlohmann::json& j, NllScanResult& res);
 void to_json_v1(nlohmann::json& j, const NllScanResult& res);
 void from_json_v1(const nlohmann::json& j, NllScanResult& res);
 
+void to_json_v2(nlohmann::json& j, const NllScanResult& res);
+void from_json_v2(const nlohmann::json& j, NllScanResult& res);
 
-struct NllScanResult {
-    std::string             version         {"v1"};
-    std::vector<PoiConfig>  poi_configs;
-    double                  nll_val         {0.};
-    int                     fit_status      {0};
-};
+
+
+//namespace detail = detail_v2;
+//using detail::NllScanResult;
+
+
 
 inline bool operator == (const NllScanResult& l, const NllScanResult& r) noexcept {
     if (l.poi_configs.size() != r.poi_configs.size())
