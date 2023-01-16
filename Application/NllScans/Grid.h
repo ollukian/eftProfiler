@@ -7,7 +7,8 @@
 #ifndef EFTPROFILER_GRID_H
 #define EFTPROFILER_GRID_H
 
-#include "nlohmann/json_fwd.hpp"
+//#include "nlohmann/json_fwd.hpp"
+#include "../../Vendors/nlohmann_json/include/nlohmann/json_fwd.hpp"
 
 namespace eft::stats::scans {
 
