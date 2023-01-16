@@ -74,6 +74,8 @@ public:
             throw std::out_of_range("");
     }
 
+    //explicit Colour(std::string_view s) { *this = CreateFromString(s); }
+
     Colour() = default;
     Colour(const Colour&) = default;
     Colour(Colour&&) = default;

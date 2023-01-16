@@ -120,6 +120,8 @@ inline void StringUtils::RemoveSuffix(std::string& s, const std::string& suffix)
     // might be simple done just with inverse() and ::RemovePrefix,
     // but I wouldn't like to inverse it to prevent memory allocation
     EFT_PROFILE_FN();
+    if (s.empty())
+        return;
     auto pos_suffix = s.rfind(suffix);
     if (pos_suffix != s.size() - suffix.length())
         return;
@@ -138,6 +140,8 @@ inline std::string StringUtils::ReplaceCopy(std::string s, const std::string& wh
 // trim from start (in place)
 inline void StringUtils::Ltrim(std::string &s) {
         EFT_PROFILE_FN();
+        if (s.empty())
+            return;
     s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](unsigned char ch) {
         return !std::isspace(ch);
     }));
@@ -146,6 +150,8 @@ inline void StringUtils::Ltrim(std::string &s) {
 // trim from end (in place)
 inline void StringUtils::Rtrim(std::string &s) {
         EFT_PROFILE_FN();
+        if (s.empty())
+            return;
     s.erase(std::find_if(s.rbegin(), s.rend(), [](unsigned char ch) {
         return !std::isspace(ch);
     }).base(), s.end());
@@ -182,6 +188,8 @@ inline void StringUtils::Rtrim(std::string &s) {
 template <typename Container>
 std::string StringUtils::Join(char c, const Container& cont) {
     EFT_PROFILE_FN();
+    if (cont.empty())
+        return {};
     std::ostringstream os;
     for (const auto& item : Head(cont, cont.size() - 1)) {
         os << item << c;
@@ -193,6 +201,8 @@ std::string StringUtils::Join(char c, const Container& cont) {
 template <typename Container>
 std::string StringUtils::Join(std::string line, const Container& cont) {
     EFT_PROFILE_FN();
+    if (cont.empty())
+        return {};
     std::ostringstream os;
     for (const auto& item : Head(cont, cont.size() - 1)) {
         os << item << line;
@@ -205,6 +215,8 @@ std::string StringUtils::Join(std::string line, const Container& cont) {
 
 std::string StringUtils::Strip(const std::string& s) {
     EFT_PROFILE_FN();
+    if (s.empty())
+        return {};
     size_t idx_first_not_space = 0;
     size_t idx_last_not_space  = s.size() - 1;
     size_t idx_max = s.length() - 1;
@@ -222,6 +234,8 @@ std::string StringUtils::Strip(const std::string& s) {
 
 std::string_view StringUtils::StripCopy(std::string_view s) {
     EFT_PROFILE_FN();
+    if (s.empty())
+        return {};
     Strip(s);
     return s;
 }
@@ -236,6 +250,8 @@ void StringUtils::Strip(std::string_view& s) {
 }
 
 std::vector<std::string_view> StringUtils::SplitBy(std::string_view s, char sep) {
+    if (s.empty())
+        return {};
     EFT_PROFILE_FN();
     std::vector<std::string_view> result;
     while (!s.empty()) {
@@ -251,6 +267,8 @@ std::vector<std::string_view> StringUtils::SplitBy(std::string_view s, char sep)
 
 std::vector<std::string> StringUtils::Split(const std::string& s, char sep) {
     EFT_PROFILE_FN();
+    if (s.empty())
+        return {};
     std::vector<std::string> result;
     std::string string_copy = s;
     while (!string_copy.empty()) {
