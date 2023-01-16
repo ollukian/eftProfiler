@@ -125,7 +125,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
         //std::copy_if()
         std::copy_if(vals_all.begin(),
                      vals_all.end(),
-                     vals.begin(),
+                     back_inserter(vals),
                      [](auto& val_) -> bool
                     {
                          return val_ != " ";
