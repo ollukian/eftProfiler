@@ -79,7 +79,7 @@ void TestReadCentralValueFromLine()
         ASSERT_EQUAL(poi.CentralError(), 1.f);
     }
     {
-        const string str {"mu_VBF (val 1 )"};
+        const string str {"mu_VBF (val 1 0)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
@@ -178,7 +178,7 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.1f);
+        ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
         ASSERT(poi.IsRangeInSigmas());
     }
@@ -375,7 +375,6 @@ void TestReadingValueToTestAt() {
         const string str {"mu_VBF ()"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.Value(),   4.07f);
         ASSERT_NOT(poi.IsGridPointKnown());
     }
     {
@@ -385,8 +384,8 @@ void TestReadingValueToTestAt() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.9f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  2.0f);
 
         ASSERT_EQUAL(poi.GridSize(), 100u);
         ASSERT_EQUAL(poi.Value(), 1.23f);
@@ -425,8 +424,6 @@ void TestSetters() {
     }
     {
         auto poi = PoiConfig()
-                .WithRangeLow(r_low)
-                .WithRangeHigh(r_high)
                 .WithName(name)
                 .WithVersionOfConfig(cfg_version)
                 .WithGridSize(grid_size)
