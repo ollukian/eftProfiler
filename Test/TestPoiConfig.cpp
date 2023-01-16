@@ -178,7 +178,7 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
         ASSERT(poi.IsRangeInSigmas());
     }
