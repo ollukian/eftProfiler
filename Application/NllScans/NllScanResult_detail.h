@@ -20,19 +20,19 @@
 
 namespace eft::stats::scans {
 
-    namespace detail_v1 {
+    //namespace detail_v1 {
         // v1
-        struct NllScanResult {
+        struct NllScanResult_v1 {
             std::string             version         {"v1"};
             std::vector<PoiConfig>  poi_configs;
             double                  nll_val         {0.};
             int                     fit_status      {0};
         };
-    }
+    //}
 
-    namespace detail_v2 {
+    //namespace detail_v2 {
         // v2
-        struct NllScanResult {
+        struct NllScanResult_v2 {
             std::string             version     {"v2"};
             std::vector<PoiConfig>  poi_configs;
             double                  nll_val     {0.};
@@ -41,9 +41,9 @@ namespace eft::stats::scans {
             PrePostFit              prePostFit  {PrePostFit::OBSERVED};
             StudyType               studyType   {StudyType::OBSERVED};
         };
-    }
-
-    namespace detail = detail_v2;
+    //}
+    using NllScanResult = NllScanResult_v2;
+    //namespace detail = detail_v2;
 
 
 }

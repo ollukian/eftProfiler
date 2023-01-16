@@ -17,7 +17,7 @@
 
 namespace eft::stats::scans {
 
-using detail::NllScanResult;
+//using NllScanResult = detail::NllScanResult;
 
 //namespace detail {
 //    struct NllScanResult;
@@ -26,6 +26,7 @@ inline bool operator == (const NllScanResult& l, const NllScanResult& r) noexcep
 inline bool operator != (const NllScanResult& l, const NllScanResult& r) noexcept;
 void to_json(nlohmann::json& j, const NllScanResult& res);
 void from_json(const nlohmann::json& j, NllScanResult& res);
+
 
 void to_json_v1(nlohmann::json& j, const NllScanResult& res);
 void from_json_v1(const nlohmann::json& j, NllScanResult& res);

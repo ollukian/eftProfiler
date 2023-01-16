@@ -13,6 +13,7 @@ namespace eft::stats::scans {
 
 using namespace std;
 
+
 void to_json(nlohmann::json& j, const NllScanResult& res) {
     EFT_PROFILE_FN();
     if        (res.version == "v1") {
