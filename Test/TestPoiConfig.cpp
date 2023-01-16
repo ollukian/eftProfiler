@@ -178,8 +178,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
+        ASSERT_EQUAL(poi.ScanRangeLow(),  1.1f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -189,8 +189,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -200,8 +200,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.0f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -211,8 +211,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.5f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  1.5f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -222,8 +222,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.5f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  1.5f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -233,8 +233,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.5f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  1.5f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -244,8 +244,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.5f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  1.5f);
         ASSERT(poi.IsRangeInSigmas());
     }
     {
@@ -255,8 +255,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), -5.f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), -5.f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),   5.f);
         ASSERT_NOT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
     }
@@ -267,8 +267,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), -1.f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), -1.f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),   5.f);
         ASSERT_NOT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
     }
@@ -279,8 +279,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.9f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  1.2f);
         ASSERT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
     }
@@ -291,8 +291,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), -1.f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),   1.2f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), -1.f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),   1.2f);
         ASSERT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
     }
@@ -303,8 +303,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.9f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  2.0f);
         ASSERT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
     }
@@ -315,8 +315,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.8f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
+        ASSERT_EQUAL(poi.ScanRangeLow(),  0.8f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 1.2f);
 
         ASSERT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
@@ -328,8 +328,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
+        ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 2.0f);
         ASSERT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
     }
@@ -340,8 +340,8 @@ void TestReadRangeFromLine() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), 0.8f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
+        ASSERT_EQUAL(poi.ScanRangeLow(), 0.8f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(),  1.2f);
 
         ASSERT(poi.IsRangeInSigmas());
         ASSERT_NOT(poi.IsGridPointKnown());
@@ -357,8 +357,8 @@ void TestReadingValueToTestAt() {
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
         ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
-        ASSERT_EQUAL(poi.ScanRangeHigh(), -5.f);
-        ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
+        ASSERT_EQUAL(poi.ScanRangeLow(),  -5.f);
+        ASSERT_EQUAL(poi.ScanRangeHigh(), 5.f);
 
         ASSERT_EQUAL(poi.Value(),   4.07f);
         ASSERT(poi.IsGridPointKnown());
