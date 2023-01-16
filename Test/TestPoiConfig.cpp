@@ -7,6 +7,7 @@
 #include "test_runner.h"
 #include "Tester.h"
 #include "EftTests.h"
+#include "Logger.h"
 
 using namespace eft::stats::scans;
 using namespace std;
@@ -14,6 +15,7 @@ using namespace std;
 void TestReadCentralValueFromLine()
 {
     {
+        eft::stats::Logger::SetFullPrinting();
         const string str {"mu_VBF(val 1)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
