@@ -126,14 +126,17 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
         std::copy_if(vals_all.begin(),
                      vals_all.end(),
                      back_inserter(vals),
-                     [](auto& val_) -> bool
+                     [](string& val_) -> bool
                     {
-                         return val_ != " ";
+                        if (val_.empty())
+                            return false;
+                        return val_ != " ";
                     }
         );
         EFT_PROF_DEBUG("Found: {} vals: {}", vals.size(), eft::StringUtils::Join('|', vals));
 
         if (token_name == "val") {
+            EFT_PROF_DEBUG("* parse val...");
             if (vals.size() == 2) {
                 double val;
                 double err;
@@ -146,7 +149,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_CRITICAL("Error in parsing: {} as two floats", token_vals);
                     throw std::runtime_error("");
                 }
-
+                EFT_PROF_DEBUG("    values set to: {} +- {}", val, err);
                 res.WithCentralVal(val).WithCentralErr(err);
             }
             else if (vals.size() == 1) {
@@ -155,6 +158,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
             }
         }
         else if (token_name == "grid") {
+            EFT_PROF_DEBUG("* parse grid...");
             if (vals.size() == 2) {
                 int nb_points_grid;
                 string grid_type;
@@ -166,6 +170,9 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_CRITICAL("Error in parsing: {} as an int and string", token_vals);
                     throw std::runtime_error("");
                 }
+                EFT_PROF_CRITICAL("parsing grid type is not available yet");
+                throw std::logic_error("see message above");
+                EFT_PROF_DEBUG("    grid set to: {}", nb_points_grid);
                 res.WithGridSize(nb_points_grid);
             }
             else if (vals.size() == 1) {
@@ -177,24 +184,28 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_CRITICAL("Error in parsing: {} as an int", token_vals);
                     throw std::runtime_error("");
                 }
+                EFT_PROF_DEBUG("    grid set to: {} +- {}", nb_points_grid);
                 res.WithGridSize(nb_points_grid);
             }
         }
         else if (token_name == "range") {
+            EFT_PROF_DEBUG("* parse range...");
             if (vals.size() == 2) {
                 string r1 = vals[0];
                 string r2 = vals[1];
-                EFT_PROF_DEBUG("range with 2 elements: {} and {}", r1, r2);
+                EFT_PROF_DEBUG("    range with 2 elements: {} and {}", r1, r2);
                 if (r1.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r1, "s");
-                    EFT_PROF_DEBUG("r1 starts with s, after cutting: [{}]", r1, r1);
+                    EFT_PROF_DEBUG("    r1 starts with s, after cutting: [{}]", r1, r1);
                     auto val1 = stod(r1);
-                    EFT_PROF_DEBUG("value of r1 in units of sigma: {}", val1);
+                    EFT_PROF_DEBUG("    value of r1 in units of sigma: {}", val1);
+                    EFT_PROF_DEBUG("    range LOW to: {} sigmas", val1);
                     res.WithRangeSigmasLow(val1);
                 }
                 else {
                     auto val1 = stod(r1);
                     EFT_PROF_DEBUG("r1 is in the real units => set range low to: {}", val1);
+                    EFT_PROF_DEBUG("    range LOW to: {}", val1);
                     res.WithRangeLow(val1);
                 }
 
@@ -208,23 +219,27 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_DEBUG("r2 starts with s, after cutting: [{}]", r1);
                     auto val2 = stod(r2);
                     EFT_PROF_DEBUG("value of r2 in units of sigma: {}", val2);
+                    EFT_PROF_DEBUG("    range HIGH to: {} sigmas", val2);
                     res.WithRangeSigmasHigh(val2);
                 }
                 else {
                     auto val2 = stod(r2);
                     EFT_PROF_DEBUG("r2: [{}] is in the real units => set range high to: {}", r2, val2);
+                    EFT_PROF_DEBUG("    range HIGH to: {}", val2);
                     res.WithRangeHigh(val2);
                 }
             }
         }
         else if (token_name == "at") {
+            EFT_PROF_DEBUG("* parse at...");
             float val = stod(token_vals);
             res.ToTestAt(val);
+            EFT_PROF_DEBUG("    at to: {}", val);
         }
 
     }
 
-    if (res.range_scan_sigmas_low != 0) {
+    if (res.is_range_in_sigmas) {
         EFT_PROF_INFO("range for scan low is defined in units of sigma: compute real range");
         res.ComputeRangeFromSigmasIfNeeded();
     }
