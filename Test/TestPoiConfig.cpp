@@ -15,7 +15,6 @@ using namespace std;
 void TestReadCentralValueFromLine()
 {
     {
-        eft::stats::Logger::SetFullPrinting();
         const string str {"mu_VBF(val 1)"};
         ASSERT_THROW(PoiConfig::readFromString(str), std::logic_error);
     }
@@ -103,7 +102,6 @@ void TestReadCentralValueFromLine()
 
 void TestReadGridFromLine() {
     {
-        eft::stats::Logger::SetFullPrinting();
         const string str {"mu_VBF (val 1 0.1 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
@@ -138,7 +136,6 @@ void TestReadGridFromLine() {
 }
 
 void TestReadRangeFromLine() {
-    eft::stats::Logger::SetFullPrinting();
     {
         const string str {"mu_VBF (val 1 0.1 : grid 100 : range -1 1 )"};
         auto poi = PoiConfig::readFromString(str);
@@ -350,7 +347,6 @@ void TestReadRangeFromLine() {
 
 void TestReadingValueToTestAt() {
     {
-        eft::stats::Logger::SetFullPrinting();
         const string str {"mu_VBF (val 1 0.1 : range -5 5  : at 4.07)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
