@@ -120,7 +120,17 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
             EFT_PROF_DEBUG("need to remove [] symbols from the token vals... => {}", token_vals);
         }
 
-        auto vals = eft::StringUtils::Split(token_vals);
+        auto vals_all = eft::StringUtils::Split(token_vals);
+        vector<string> vals;
+        //std::copy_if()
+        std::copy_if(vals_all.begin(),
+                     vals_all.end(),
+                     vals.begin(),
+                     [](auto& val_) -> bool
+                    {
+                         return val_ != " ";
+                    }
+        );
         EFT_PROF_DEBUG("Found: {} vals: {}", vals.size(), eft::StringUtils::Join('|', vals));
 
         if (token_name == "val") {
