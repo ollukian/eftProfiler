@@ -82,7 +82,8 @@ void from_json(const nlohmann::json& j, PoiConfig& config) {
 
 PoiConfig PoiConfig::readFromString(const std::string& s) {
     EFT_PROFILE_FN();
-
+    // todo:
+    //  - to add parsing errors in a case of weird things, like to many arguments number
     set<string> keys = {
         "val",
         "grid",

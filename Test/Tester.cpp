@@ -87,4 +87,5 @@ void Tester::InitSetTests() {
     EFT_RUN_TESTFILE(WorkSpaceWrapper);
     EFT_RUN_TESTFILE(Scene);
     EFT_RUN_TESTFILE(FitManager);
+    EFT_RUN_TESTFILE(PoiConfig);
 }

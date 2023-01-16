@@ -34,6 +34,7 @@ public:
     static PoiConfig readFromString(const std::string& s);
     static PoiConfig readFromJSON(const std::filesystem::path& path);
 
+    // todo: move build things to a builder class?
     //static void PrintHelp(std::ostream& os);
     inline PoiConfig& ToTestAt(float val_ = 0.) noexcept { val = val_; is_defined = true; return *this; }
     inline PoiConfig& WithName(std::string name_) noexcept { name = std::move(name_); return *this; }
@@ -44,8 +45,8 @@ public:
     inline PoiConfig& WithRangeLow(float r) noexcept { range_scan_low = r;   return *this; }
     inline PoiConfig& WithRangeHigh(float r) noexcept { range_scan_high = r;  return *this; }
     inline PoiConfig& WithRangeSigmas(float nb_sigma) noexcept;
-    inline PoiConfig& WithRangeSigmasLow(float nb_sigma) noexcept { range_scan_sigmas_low = nb_sigma; is_range_in_sigmas = true; return *this; }
-    inline PoiConfig& WithRangeSigmasHigh(float nb_sigma) noexcept { range_scan_sigmas_high = nb_sigma; is_range_in_sigmas = true; return *this; }
+    inline PoiConfig& WithRangeSigmasLow(float nb_sigma) noexcept { range_scan_sigmas_low = abs(nb_sigma); is_range_in_sigmas = true; return *this; }
+    inline PoiConfig& WithRangeSigmasHigh(float nb_sigma) noexcept { range_scan_sigmas_high = abs(nb_sigma); is_range_in_sigmas = true; return *this; }
 
 
     [[nodiscard]] const std::string& Name()                 const noexcept { return name; }
@@ -53,13 +54,16 @@ public:
     [[nodiscard]] float              Value()                const noexcept { return val; }
     [[nodiscard]] size_t             GridSize()             const noexcept { return grid_size; }
     [[nodiscard]] bool               IsGridPointKnown()     const noexcept { return is_defined; }
+    [[nodiscard]] bool               IsRangeInSigmas()      const noexcept { return is_range_in_sigmas; }
     [[nodiscard]] inline float       ScanRangeLow()         const noexcept;
     [[nodiscard]] inline float       ScanRangeHigh()        const noexcept;
+    [[nodiscard]] inline float       CentralValue()         const noexcept { return central_val; };
+    [[nodiscard]] inline float       CentralError()         const noexcept { return central_err; };
 private:
     inline void ComputeRangeFromSigmasIfNeeded() const noexcept;
 private:
     std::string name;
-    float val {0.};
+    float val {0.}; // value to test at
 
     float central_val {0.};
     float central_err {0.};
