@@ -234,7 +234,9 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                 string& range = vals[0];
                 StringUtils::Trim(range);
                 EFT_PROF_DEBUG("    range with 1 element: {}", range);
-
+                if (range.back() == ')') {
+                    eft::StringUtils::RemoveSuffix(range, ")");
+                }
                 if (range.back() == 's') {
                     eft::StringUtils::RemoveSuffix(range, "s");
                     auto val1 = stod(range);
