@@ -131,7 +131,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     {
                         if (val_.empty())
                             return false;
-                        return val_ != " ";
+                        return val_ != " " && val_ != ")";
                     }
         );
         EFT_PROF_DEBUG("Found: {} vals: {}", vals.size(), eft::StringUtils::Join('|', vals));

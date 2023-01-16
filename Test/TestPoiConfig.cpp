@@ -107,32 +107,32 @@ void TestReadGridFromLine() {
         const string str {"mu_VBF (val 1 0.1 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
         ASSERT_EQUAL(poi.GridSize(), 1u);
     }
     {
         const string str {"mu_VBF (val 1 0.1 : grid 100)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
         ASSERT_EQUAL(poi.GridSize(), 100u);
     }
     {
         const string str {"mu_VBF (val 1 0.1 : grid 100 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
         ASSERT_EQUAL(poi.GridSize(), 100u);
     }
     {
         const string str {"mu_VBF (val 1 0.1 : grid 100 : )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
         ASSERT_EQUAL(poi.GridSize(), 100u);
     }
 }
