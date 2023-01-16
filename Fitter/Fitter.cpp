@@ -83,7 +83,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     RooMinimizerWrapper minim(*nll);
     minim.setStrategy( settings.strategy );
     minim.setPrintLevel( 1 );
-    //RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
+    RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     //RooFit::MsgLevel::
     //RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
     //RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::PROGRESS);
