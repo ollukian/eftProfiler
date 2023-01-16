@@ -307,6 +307,8 @@ int main(int argc, char* argv[]) {
         EFT_PROF_CRITICAL("before run scan");
         size_t worker_id;
         commandLineArgs->SetValIfArgExists("worker_id", worker_id);
+
+
         scanManager.SetWorkerId(worker_id);
         scanManager.RunScan();
         scanManager.SaveRes();

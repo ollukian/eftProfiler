@@ -150,6 +150,7 @@ void NllScanManager::RunScan() {
     res_ = NllScanResult{};
     res_.nll_val = found_nll;
     res_.poi_configs = pois_;
+    res_.fit_status = fitter.GetLastFitStatus();
 
     //if ()
 }

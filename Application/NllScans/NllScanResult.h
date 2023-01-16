@@ -19,12 +19,15 @@ inline bool operator != (const NllScanResult& l, const NllScanResult& r) noexcep
 void to_json(nlohmann::json& j, const NllScanResult& res);
 void from_json(const nlohmann::json& j, NllScanResult& res);
 
+void to_json_v1(nlohmann::json& j, const NllScanResult& res);
+void from_json_v1(const nlohmann::json& j, NllScanResult& res);
+
 
 struct NllScanResult {
     std::string             version         {"v1"};
     std::vector<PoiConfig>  poi_configs;
     double                  nll_val         {0.};
-    size_t                  fit_status      {0};
+    int                     fit_status      {0};
 };
 
 inline bool operator == (const NllScanResult& l, const NllScanResult& r) noexcept {
