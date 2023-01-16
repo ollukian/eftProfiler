@@ -138,6 +138,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
             }
             else if (vals.size() == 1) {
                 EFT_PROF_CRITICAL("Error: for val 2 values must be given: value and error");
+                throw std::logic_error("For the POI both value and error must be provided");
             }
         }
         else if (token_name == "grid") {
