@@ -176,7 +176,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
@@ -187,7 +187,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
@@ -198,7 +198,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.0f);
@@ -209,7 +209,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -220,7 +220,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -231,7 +231,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -242,7 +242,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -253,7 +253,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -5.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
@@ -265,7 +265,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
@@ -277,7 +277,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
@@ -289,7 +289,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   1.2f);
@@ -301,7 +301,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
@@ -313,7 +313,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.8f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
@@ -326,7 +326,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
@@ -338,7 +338,7 @@ void TestReadRangeFromLine() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.8f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
@@ -355,7 +355,7 @@ void TestReadingValueToTestAt() {
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1.f);
-        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -5.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
