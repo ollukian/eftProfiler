@@ -48,42 +48,42 @@ void TestReadCentralValueFromLine()
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 1);
+        ASSERT_EQUAL(poi.CentralError(), 2);
     }
     {
         const string str {"mu_VBF (val 1 0.1)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
     }
     {
         const string str {"mu_VBF (val 1 0.1 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
     }
     {
         const string str {"    mu_VBF     (    val 1         0.1)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
     }
     {
         const string str {"mu_VBF (val 1 1 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 1.f);
     }
     {
         const string str {"mu_VBF (val 1 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.f);
     }
     {
         const string str {"mu_VBF (val 1 :)"};
@@ -143,8 +143,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : grid 100 : range -1 1 )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
         ASSERT_EQUAL(poi.GridSize(), 100u);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
@@ -154,8 +154,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : grid 100 : range -1 1)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
         ASSERT_EQUAL(poi.GridSize(), 100u);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
@@ -165,8 +165,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -1 1)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(), -1.f);
@@ -175,8 +175,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range 1s 1)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
@@ -186,8 +186,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range 1s 1s)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  0.9f);
@@ -197,8 +197,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range 1 1s)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 1.1f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.0f);
@@ -208,8 +208,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range 5s 5s)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -219,8 +219,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range 5s 5s  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -230,8 +230,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -5s 5s  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -241,8 +241,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -5s -5s  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.5f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.5f);
@@ -252,8 +252,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -5 5  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -5.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
@@ -264,8 +264,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -1 5  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
@@ -276,8 +276,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -1s 2s  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
@@ -288,8 +288,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -1 2s  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -1.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   1.2f);
@@ -300,8 +300,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range -1s 2  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
@@ -312,8 +312,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1 : range 2s  )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.8f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
@@ -325,8 +325,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1:range -1s 2)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
@@ -337,8 +337,8 @@ void TestReadRangeFromLine() {
         const string str {"mu_VBF (val 1 0.1:range 2s)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.8f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  1.2f);
@@ -354,8 +354,8 @@ void TestReadingValueToTestAt() {
         const string str {"mu_VBF (val 1 0.1 : range -5 5  : at 4.07)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1.f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), -5.f);
         ASSERT_EQUAL(poi.ScanRangeLow(),   5.f);
@@ -382,8 +382,8 @@ void TestReadingValueToTestAt() {
         const string str {"mu_VBF(val 1 0.1 : range -1s 2 : grid 100 : at 1.23)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
-        ASSERT_EQUAL(poi.CentralValue(), 1);
-        ASSERT_EQUAL(poi.CentralError(), 0.1);
+        ASSERT_EQUAL(poi.CentralValue(), 1.f);
+        ASSERT_EQUAL(poi.CentralError(), 0.1f);
 
         ASSERT_EQUAL(poi.ScanRangeHigh(), 0.9f);
         ASSERT_EQUAL(poi.ScanRangeLow(),  2.0f);
