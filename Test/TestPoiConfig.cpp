@@ -86,14 +86,14 @@ void TestReadCentralValueFromLine()
         ASSERT_EQUAL(poi.CentralError(), 0.f);
     }
     {
-        const string str {"mu_VBF (val 1 :)"};
+        const string str {"mu_VBF (val 1 0:)"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1);
         ASSERT_EQUAL(poi.CentralError(), 0);
     }
     {
-        const string str {"mu_VBF (val 1 : )"};
+        const string str {"mu_VBF (val 1 0: )"};
         auto poi = PoiConfig::readFromString(str);
         ASSERT_EQUAL(poi.Name(), "mu_VBF");
         ASSERT_EQUAL(poi.CentralValue(), 1);

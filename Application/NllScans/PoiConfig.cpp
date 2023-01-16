@@ -192,8 +192,8 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
         else if (token_name == "range") {
             EFT_PROF_DEBUG("* parse range...");
             if (vals.size() == 2) {
-                string r1 = vals[0];
-                string r2 = vals[1];
+                string& r1 = vals[0];
+                string& r2 = vals[1];
                 EFT_PROF_DEBUG("    range with 2 elements: {} and {}", r1, r2);
                 if (r1.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r1, "s");
@@ -229,6 +229,25 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_DEBUG("    range HIGH to: {}", val2);
                     res.WithRangeHigh(val2);
                 }
+            }
+            else {
+                string& range = vals[0];
+                StringUtils::Trim(range);
+                EFT_PROF_DEBUG("    range with 1 element: {}", range);
+
+                if (range.back() == 's') {
+                    eft::StringUtils::RemoveSuffix(range, "s");
+                    auto val1 = stod(range);
+                    EFT_PROF_DEBUG("    value of the range in units of sigma: {}", val1);
+                    EFT_PROF_DEBUG("    range  to: {} sigmas", val1);
+                    res.WithRangeSigmas(val1);
+                } // if the range is in sigmas
+                else {
+                    auto val1 = stod(range);
+                    EFT_PROF_DEBUG("    range  to: {} ", val1);
+                    res.WithRangeHigh(val1);
+                    res.WithRangeLow(val1);
+                } // range not in sigmas
             }
         }
         else if (token_name == "at") {
