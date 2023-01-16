@@ -7,7 +7,7 @@ set(nll_source_files
         NllScanPlotter.cpp
         NllScanPlotterSettings.cpp)
 
-include_directories(../../Vendors)
+include_directories(../../Vendors/nlohmann_json/include/)
 include_directories(../../Core)
 
 add_library(nllscans ${nll_source_files})
