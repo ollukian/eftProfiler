@@ -30,9 +30,11 @@ public:
      //FitResPtr   Fit(std::string&& data, std::string&& pdf)      override{return {};}
      void SetGlobs(RooArgSet* globs) noexcept override { globs_ = globs; };
      void SetNps(RooArgSet* nps) noexcept override { nps_ = nps; }
+     int  GetLastFitStatus() noexcept override { return last_fit_status_; }
 private:
     RooArgSet* nps_   = nullptr;
     RooArgSet* globs_ = nullptr;
+    int        last_fit_status_ {-999};
 };
 
 class RooMinimizerWrapper : public RooMinimizer {
