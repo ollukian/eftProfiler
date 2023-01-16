@@ -7,7 +7,8 @@ set(tester_source_files
         TestStringUtils.cpp
         TestWorkspaceWrapper.cpp
         TestScene.cpp
-        TestFitManager.cpp)
+        TestFitManager.cpp
+        TestPoiConfig.cpp)
 
 add_library(tester ${tester_source_files})
 #target_link_libraries(core modules)
