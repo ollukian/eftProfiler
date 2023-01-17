@@ -421,7 +421,7 @@ void NllScanManager::SaveRes() const {
 
     string stat_type ;
     if (res_.statType == StatType::STAT) {
-        expected_type = "stat_only";
+        stat_type = "stat_only";
     }
 
     const string name = fmt::format("{}/res__{}D__{}__{}__worker_{}__{}_at_{}.json",
