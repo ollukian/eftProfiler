@@ -174,6 +174,8 @@ void NllScanManager::RunScan() {
         EFT_PROF_CRITICAL("pdf are nullptr before create nll");
     }
 
+    std::filesystem::create_directories("figures/plots");
+
     // plot real data
     for (auto obs : *ws_->GetModelConfig().GetObservables()) {
         auto obs_var = dynamic_cast<RooRealVar*>(obs);
