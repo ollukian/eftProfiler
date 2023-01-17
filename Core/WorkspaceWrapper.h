@@ -270,7 +270,7 @@ inline void WorkspaceWrapper::SetVarVal(RooArgSet* vars, double val) {
     EFT_PROF_INFO("Set {} vars values to {}", vars->size(), val);
     for (auto value : * vars) {
         auto val_as_roorealvar = dynamic_cast<RooRealVar*>(value);
-        val_as_roorealvar->setConstant(false);
+        val_as_roorealvar->setVal(val);
         EFT_PROF_DEBUG("Set {:30} value to {}", val_as_roorealvar->GetName(), val);
     }
 }
@@ -291,7 +291,7 @@ inline void WorkspaceWrapper::SetVarErr(RooArgSet* vars, double err) {
     EFT_PROF_INFO("Set {} vars errors to {}", vars->size(), err);
     for (auto value : * vars) {
         auto val_as_roorealvar = dynamic_cast<RooRealVar*>(value);
-        val_as_roorealvar->setConstant(false);
+        val_as_roorealvar->setError(err);
         EFT_PROF_DEBUG("Set {:30} error to {}", val_as_roorealvar->GetName(), err);
     }
 }
