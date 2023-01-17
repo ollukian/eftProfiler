@@ -18,7 +18,7 @@ struct NllCurveSettings;
 struct NllScanPlotterSettings;
 
 struct NllCurveSettings {
-    utils::Colour   colour      {utils::Colour::CreateFromString("kBlue")};
+    size_t          colour      {utils::ColourUtils::GetColourFromString("kBlue")};
     size_t          thickness   {2u};
     bool            to_draw     {true};
     std::string     title       ;
