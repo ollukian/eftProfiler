@@ -237,14 +237,16 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     StudyType   studyType   {StudyType::OBSERVED}; // expected
     StatType    statType    {StatType::FULL}; // stat
 
-    cmdLineArgs->SetValIfArgExists("study_type", study_type_str);
-    StringUtils::ToLowCase(study_type_str);
+    //cmdLineArgs->SetValIfArgExists("study_type", study_type_str);
+    //StringUtils::ToLowCase(study_type_str);
 
-    if (study_type_str == "prefit" || study_type_str == "pre") {
+    if (cmdLineArgs->HasKey("prefit")) {
+    //if (study_type_str == "prefit" || study_type_str == "pre") {
         studyType   = StudyType::EXPECTED;
         prePostFit  = PrePostFit::PREFIT;
     }
-    else if (study_type_str == "postfit" || study_type_str == "post") {
+    //else if (study_type_str == "postfit" || study_type_str == "post") {
+    else if (cmdLineArgs->HasKey("postfit")) {
         studyType   = StudyType::EXPECTED;
         prePostFit  = PrePostFit::POSTFIT;
     }
