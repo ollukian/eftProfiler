@@ -240,14 +240,14 @@ void NllScanManager::RunScan() {
     fitSettings_.data = data;
     EFT_PROF_INFO("Set Global observables to values found in data if needed and fix nps if needed...");
     EFT_PROF_DEBUG(" *** Globs before....");
-    fitSettings_.globalObs->Print("");
+    fitSettings_.globalObs->Print("v");
     EFT_PROF_DEBUG(" *** NPS before....");
-    fitSettings_.nps->Print("");
+    fitSettings_.nps->Print("v");
     SetGlobsToNpsIfNeeded();
     EFT_PROF_DEBUG("Globs after ....");
-    fitSettings_.globalObs->Print("");
+    fitSettings_.globalObs->Print("v");
     EFT_PROF_DEBUG(" *** NPS after....");
-    fitSettings_.nps->Print("");
+    fitSettings_.nps->Print("v");
 
     auto nll = fitter.CreatNll(fitSettings_);
 
