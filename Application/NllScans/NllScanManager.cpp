@@ -17,6 +17,10 @@
 
 #include "StringUtils.h"
 
+#include "RooStats/AsymptoticCalculator.h"
+
+#include "TCanvas.h"
+
 
 namespace eft::stats::scans {
 
@@ -76,6 +80,32 @@ void NllScanManager::FixGridPOIs() {
     for (const auto& poi : pois_) {
         ws_->FixValConst(poi.Name());
     }
+}
+
+RooAbsData* NllScanManager::GetData(PrePostFit prePostFit) {
+    EFT_PROFILE_FN();
+    if (prePostFit == PrePostFit::OBSERVED) {
+        EFT_PROF_INFO("NllScanManager::GetData[OBSERVED] => return real data");
+        return fitSettings_.data;
+    }
+    if (prePostFit == PrePostFit::PREFIT) {
+        EFT_PROF_INFO("NllScanManager::GetData[{}] => create asimov data", "PREFIT");
+    }
+    else if (prePostFit == PrePostFit::POSTFIT) {
+        EFT_PROF_INFO("NllScanManager::GetData[{}] => create asimov data", "POSTFIT");
+    }
+
+
+
+    auto ds = (RooDataSet*) RooStats::AsymptoticCalculator::MakeAsimovData(*fitSettings_.data,
+                                                                      ws_->GetModelConfig(),
+                                                                      *pois_to_float,
+                                                                      *fitSettings_.globalObs
+    );
+
+    ws_->raw()->saveSnapshot("condGlobObs", *fitSettings_.globalObs, kTRUE);
+    ws_->raw()->loadSnapshot("condGlobObs");
+    return ds;
 }
 
 double NllScanManager::GetPointAtGrid(double low, double  high, size_t size_grid, size_t nb_point, GridType gridType) {
@@ -143,6 +173,27 @@ void NllScanManager::RunScan() {
     if (fitSettings_.pdf == nullptr) {
         EFT_PROF_CRITICAL("pdf are nullptr before create nll");
     }
+
+    // plot real data
+    for (auto obs : *ws_->GetModelConfig().GetObservables()) {
+        auto obs_var = dynamic_cast<RooRealVar*>(obs);
+        TCanvas c("c", "c");
+        fitSettings_.data->plotOn(obs_var->frame());
+        c.SaveAs(fmt::format("figures/plots/read_sdata_{}.png", obs_var->GetName()).c_str());
+    }
+
+    auto data = GetData(prePostFit_);
+    // plot asimov
+    {
+        for (auto obs : *ws_->GetModelConfig().GetObservables()) {
+            auto obs_var = dynamic_cast<RooRealVar*>(obs);
+            TCanvas c("c", "c");
+            data->plotOn(obs_var->frame());
+            c.SaveAs(fmt::format("figures/plots/asimov_{}.png", obs_var->GetName()).c_str());
+        }
+    }
+    fitSettings_.data = data;
+
     auto nll = fitter.CreatNll(fitSettings_);
 
     EFT_PROF_INFO("Minimise Nll");
@@ -206,7 +257,8 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     auto globObs = (RooArgSet*) manager->GetListAsArgSet("paired_globs")->clone("globs");
     auto nps = (RooArgSet*) manager->GetListAsArgSet("paired_nps")->clone("nps"); // TODO: refactor to get nps
     auto pdf = (RooAbsPdf*) manager->GetPdf("pdf_total")->clone("pdf");
-    //auto data = manager->GetData()
+    //RooAbsData* data = ws_-
+    //auto data* =  manager->GetData(prePostFit);
 
     if (nps == nullptr) {
         EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine nps are nullptr");
@@ -243,7 +295,10 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetNPs(nps_to_use)
             .SetData(&manager->GetData(PrePostFit::OBSERVED))
             .SetPDF(pdf_to_use)
-            .SetGridType(GridType::EQUIDISTANT);
+            .SetGridType(GridType::EQUIDISTANT)
+            .SetPrePostFit(prePostFit)
+            .SetStudyType(studyType)
+            .SetStatType(statType);
 
     EFT_PROF_CRITICAL("before leaving init function");
 

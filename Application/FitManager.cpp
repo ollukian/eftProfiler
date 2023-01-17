@@ -842,6 +842,7 @@ void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
     //SetUpGlobObs(studyType);
     SetAllGlobObsTo(0., 0.);
     NpRankingStudySettings settings;
+    settings.errors = fit::Errors::DEFAULT;
     //settings.poi
     DoFitAllNpFloat(std::move(settings));
     SetGlobalObservablesToValueFoundInFit();
@@ -862,6 +863,8 @@ void FitManager::CreateAsimovData(PrePostFit studyType) noexcept
                                                            *args_["pois"],
                                                            *args_["globObs"]
     );
+    ws_->raw()->saveSnapshot("condGlobObs", *args_["globObs"], kTRUE);
+    ws_->raw()->loadSnapshot("condGlobObs");
 };
 
 RooArgSet* FitManager::GetListAsArgSet(const std::string& name) const
