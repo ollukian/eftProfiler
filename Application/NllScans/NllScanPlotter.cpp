@@ -161,8 +161,13 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
     mg->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
     mg->GetYaxis()->SetRangeUser(0.f,          max_nll);
 
+    if (settings_.range_2dnll_h != 0) {
+        mg->GetYaxis()->SetRangeUser(0.f,          settings_.range_2dnll_h);
+    }
+
     gr->SetTitle("");
     gr->Draw("A P C");
+
     //grStat->Draw("A P C same");
     //grFull->Draw("A L P");
 

@@ -15,6 +15,7 @@
 
 #include "Application/NllScans/NllScanManager.h"
 #include "Application/NllScans/NllScanPlotter.h"
+#include "Application/NllScans/NllScanPlotterSettings.h"
 
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
@@ -317,6 +318,9 @@ int main(int argc, char* argv[]) {
     else if (task == "plot_scan" ) {
         using namespace eft::stats::scans;
 
+        commandLineArgs->RegisterKey("yl");
+        commandLineArgs->RegisterKey("yh");
+
         string poi;
         commandLineArgs->SetValIfArgExists("poi", poi);
 
@@ -325,6 +329,10 @@ int main(int argc, char* argv[]) {
 
 
         NllScanPlotter plotter;
+        NllScanPlotterSettings plotSettings;
+        plotSettings.ReadSettingsFromCommandLine(commandLineArgs);
+        plotter.UseSettings(std::move(plotSettings));
+
         plotter.ReadFiles(path_res);
         plotter.PlotNll1D(plotter.GetResults1DPoi(poi));
 

@@ -11,6 +11,7 @@
 
 #include "PoiConfig.h"
 #include "NllScanResult.h"
+#include "NllScanPlotterSettings.h"
 
 #include <unordered_map>
 #include <unordered_set>
@@ -31,6 +32,7 @@ public:
     [[nodiscard]]
     const Nll1Dresults& GetResults1DPoi(const std::string& poi) const { return results1D_per_poi_.at(poi); }
 
+    void inline UseSettings(NllScanPlotterSettings settings) noexcept { settings_ = std::move(settings); }
     void ReadFiles(std::filesystem::path& path);
     void inline ReadFiles(const std::string& path_str);
     void PlotNll1D(const Nll1Dresults& configs);
@@ -43,6 +45,8 @@ public:
 private:
     Nll1Dresults results1D_;
     Nll1DresultsPerPOI results1D_per_poi_;
+
+    NllScanPlotterSettings settings_;
     //PoiConfigs configs_;
     //std::unordered_map<std::string, PoiConfigs> configs_per_poi_;
     //std::unordered_map<>;

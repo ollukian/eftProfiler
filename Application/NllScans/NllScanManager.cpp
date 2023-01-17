@@ -15,6 +15,8 @@
 #include "FitManager.h"
 #include "FitManagerConfig.h"
 
+#include "StringUtils.h"
+
 
 namespace eft::stats::scans {
 
@@ -179,11 +181,32 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     eft::stats::FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
     manager->Init(std::move(config));
 
+    string study_type_str;
+    PrePostFit  prePostFit  {PrePostFit::OBSERVED}; // pre- post-fit
+    StudyType   studyType   {StudyType::OBSERVED}; // expected
+    StatType    statType    {StatType::FULL}; // stat
+
+    cmdLineArgs->SetValIfArgExists("study_type", study_type_str);
+    StringUtils::ToLowCase(study_type_str);
+
+    if (study_type_str == "prefit" || study_type_str == "pre") {
+        studyType   = StudyType::EXPECTED;
+        prePostFit  = PrePostFit::PREFIT;
+    }
+    else if (study_type_str == "postfit" || study_type_str == "post") {
+        studyType   = StudyType::EXPECTED;
+        prePostFit  = PrePostFit::POSTFIT;
+    }
+    if (cmdLineArgs->HasKey("stat_only")) {
+        statType = StatType::STAT;
+    }
+
     NllScanManager scanManager;
 
     auto globObs = (RooArgSet*) manager->GetListAsArgSet("paired_globs")->clone("globs");
     auto nps = (RooArgSet*) manager->GetListAsArgSet("paired_nps")->clone("nps"); // TODO: refactor to get nps
     auto pdf = (RooAbsPdf*) manager->GetPdf("pdf_total")->clone("pdf");
+    //auto data = manager->GetData()
 
     if (nps == nullptr) {
         EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine nps are nullptr");
