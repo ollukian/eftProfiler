@@ -67,6 +67,8 @@ public:
 private:
     void IdentifyScanPointCoordinateAllPois()  noexcept;
 
+    void SetGlobsToNpsIfNeeded();
+
     double GetPointAtGrid(PoiConfig& config) const;
     static double GetPointAtGrid(double low, double  high, size_t size_grid, size_t nb_point, GridType gridType);
 

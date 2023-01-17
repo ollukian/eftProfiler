@@ -65,6 +65,43 @@ void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
     }
 }
 
+/// If STAT_ONLY, then Global Observables need to be put to the value found in data
+/// And NPs should be fixed const at the same position
+void NllScanManager::SetGlobsToNpsIfNeeded() {
+    EFT_PROFILE_FN();
+    if (statType_ == StatType::FULL) {
+        EFT_PROF_INFO("NllScanManager::SetGlobsToNpsIfNeeded ==> FULL study,  need to fit nps");
+        return;
+    }
+    EFT_PROF_INFO("NllScanManager::SetGlobsToNpsIfNeeded ==> STAT ONLY study, no need to fit nps");
+
+    auto nps = fitSettings_.nps;
+    auto globs = fitSettings_.globalObs;
+
+    const size_t nb_nps = nps->size();
+    for (size_t idx_np {0}; idx_np < nb_nps; ++idx_np)
+    {
+        auto np = dynamic_cast<RooRealVar*>(nps->operator[](idx_np));
+        for (size_t idx_glob {0}; idx_glob < nb_nps; ++idx_glob)
+        {
+            auto glob = dynamic_cast<RooRealVar*>( globs->operator[](idx_glob) );
+            if (glob->dependsOn(*np))
+            {
+                std::string np_name   = np->GetName();
+                std::string glob_name = glob->GetName();
+                EFT_PROF_DEBUG("Set glob: {:60} to the value of \n\t np: {:60} => {:10}",
+                               std::move(glob_name),
+                               std::move(np_name),
+                               np->getVal()
+                );
+                glob->setVal(np->getVal());
+                np->setConstant(true);
+            }
+        }
+    }
+
+}
+
 void NllScanManager::SetPOIsToTheRequiredGridPosition() {
     EFT_PROFILE_FN();
     for (auto& poi : pois_) {
@@ -201,6 +238,16 @@ void NllScanManager::RunScan() {
 //        }
 //    }
     fitSettings_.data = data;
+    EFT_PROF_INFO("Set Global observables to values found in data if needed and fix nps if needed...");
+    EFT_PROF_DEBUG(" *** Globs before....");
+    fitSettings_.globalObs->Print("");
+    EFT_PROF_DEBUG(" *** NPS before....");
+    fitSettings_.nps->Print("");
+    SetGlobsToNpsIfNeeded();
+    EFT_PROF_DEBUG("Globs after ....");
+    fitSettings_.globalObs->Print("");
+    EFT_PROF_DEBUG(" *** NPS after....");
+    fitSettings_.npss->Print("");
 
     auto nll = fitter.CreatNll(fitSettings_);
 
@@ -214,7 +261,9 @@ void NllScanManager::RunScan() {
     res_.nll_val = found_nll;
     res_.poi_configs = pois_;
     res_.fit_status = fitter.GetLastFitStatus();
-
+    res_.statType   = statType_;
+    res_.prePostFit = prePostFit_;
+    res_.studyType  = studyType_;
     //if ()
 }
 
@@ -361,9 +410,25 @@ void NllScanManager::SaveRes() const {
         std::filesystem::create_directories(path_res);
     }
 
-    const string name = fmt::format("{}/res__{}D__worker_{}__{}_at_{}.json",
+    // TODO: refactor to "string FormName()"
+    string expected_type {"observed"};
+    if (res_.prePostFit == PrePostFit::PREFIT) {
+        expected_type = "prefit";
+    }
+    else if (res_.prePostFit == PrePostFit::POSTFIT) {
+        expected_type = "postfit";
+    }
+
+    string stat_type ;
+    if (res_.statType == StatType::STAT) {
+        expected_type = "stat_only";
+    }
+
+    const string name = fmt::format("{}/res__{}D__{}__{}__worker_{}__{}_at_{}.json",
                                     path_res.string(),
                                     scan_dimension,
+                                    std::move(expected_type),
+                                    std::move(expected_type),
                                     worker_id,
                                     pois_[0].Name(),
                                     pois_[0].Value()
