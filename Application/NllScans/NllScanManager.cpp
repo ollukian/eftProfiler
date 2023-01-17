@@ -175,23 +175,27 @@ void NllScanManager::RunScan() {
     }
 
     std::filesystem::create_directories("figures/plots");
-
+    EFT_PROF_INFO("Plot real data...");
     // plot real data
     for (auto obs : *ws_->GetModelConfig().GetObservables()) {
         auto obs_var = dynamic_cast<RooRealVar*>(obs);
         TCanvas c("c", "c");
-        fitSettings_.data->plotOn(obs_var->frame());
-        c.SaveAs(fmt::format("figures/plots/read_sdata_{}.png", obs_var->GetName()).c_str());
+        auto frame = obs_var->frame();
+        fitSettings_.data->plotOn(frame);
+        c.SaveAs(fmt::format("figures/plots/real_data_{}.png", obs_var->GetName()).c_str());
     }
 
     auto data = GetData(prePostFit_);
-    // plot asimov
-    {
-        for (auto obs : *ws_->GetModelConfig().GetObservables()) {
-            auto obs_var = dynamic_cast<RooRealVar*>(obs);
-            TCanvas c("c", "c");
-            data->plotOn(obs_var->frame());
-            c.SaveAs(fmt::format("figures/plots/asimov_{}.png", obs_var->GetName()).c_str());
+    if (prePostFit_ != PrePostFit::OBSERVED) {
+        EFT_PROF_INFO("Plot generated asimov");
+        // plot asimov
+        {
+            for (auto obs: *ws_->GetModelConfig().GetObservables()) {
+                auto obs_var = dynamic_cast<RooRealVar *>(obs);
+                TCanvas c("c", "c");
+                data->plotOn(obs_var->frame());
+                c.SaveAs(fmt::format("figures/plots/asimov_{}.png", obs_var->GetName()).c_str());
+            }
         }
     }
     fitSettings_.data = data;
