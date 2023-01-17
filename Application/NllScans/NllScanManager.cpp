@@ -199,6 +199,9 @@ void NllScanManager::RunScan() {
     EFT_PROF_INFO("Fix GRID POIs to be const");
     FixGridPOIs();
 
+    EFT_PROF_INFO("Set globs to zero...");
+    ws_->SetVarVal(fitSettings_.globalObs, 0.);
+
     EFT_PROF_INFO("Create Nll");
     fit::Fitter fitter;
     if (fitSettings_.nps == nullptr) {

@@ -62,7 +62,12 @@ public:
     //inline void FloatVals(std::initializer_list<std::vector<std::string>> pois) override;
 
     inline void SetVarVal(const std::string& name, double val) override;
+    inline void SetVarVal(const std::vector<std::string>& names, double val) override;
+    inline void SetVarVal(RooArgSet* vars, double val) override;
+
     inline void SetVarErr(const std::string& name, double err) override;
+    inline void SetVarErr(const std::vector<std::string>& names, double err) override;
+    inline void SetVarErr(RooArgSet* vars, double err) override;
 
     inline void VaryParNbSigmas(const std::string& par, float nb_sigma) noexcept override;
 
@@ -249,6 +254,48 @@ inline void WorkspaceWrapper::SetVarVal(const std::string& name, double val)
     }
     ws_->var( name.c_str() )->setVal(val);
 }
+inline void WorkspaceWrapper::SetVarVal(const std::vector<std::string>& names, double val) {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Set {} vars values to {}", names.size(), val);
+    for (const auto& name : names) {
+        SetVarVal(name, val);
+    }
+}
+inline void WorkspaceWrapper::SetVarVal(RooArgSet* vars, double val) {
+    EFT_PROFILE_FN();
+    if (vars == nullptr) {
+        EFT_PROF_CRITICAL("SetVarVal nullpts provided");
+        throw std::runtime_error("");
+    }
+    EFT_PROF_INFO("Set {} vars values to {}", vars->size(), val);
+    for (auto value : * vars) {
+        auto val_as_roorealvar = dynamic_cast<RooRealVar*>(value);
+        val_as_roorealvar->setConstant(false);
+        EFT_PROF_DEBUG("Set {:30} value to {}", val_as_roorealvar->GetName(), val);
+    }
+}
+
+inline void WorkspaceWrapper::SetVarErr(const std::vector<std::string>& names, double err) {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Set {} vars errors to {}", names.size(), err);
+    for (const auto& name : names) {
+        SetVarErr(name, err);
+    }
+}
+inline void WorkspaceWrapper::SetVarErr(RooArgSet* vars, double err) {
+    EFT_PROFILE_FN();
+    if (vars == nullptr) {
+        EFT_PROF_CRITICAL("SetVarErr nullpts provided");
+        throw std::runtime_error("");
+    }
+    EFT_PROF_INFO("Set {} vars errors to {}", vars->size(), err);
+    for (auto value : * vars) {
+        auto val_as_roorealvar = dynamic_cast<RooRealVar*>(value);
+        val_as_roorealvar->setConstant(false);
+        EFT_PROF_DEBUG("Set {:30} error to {}", val_as_roorealvar->GetName(), err);
+    }
+}
+
 inline void WorkspaceWrapper::SetVarErr(const std::string& name, double err)
 {
     EFT_PROF_TRACE("[WorkspaceWrapper] Set error of {:30} to {}", name, err);
