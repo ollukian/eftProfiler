@@ -133,6 +133,15 @@ RooAbsData* NllScanManager::GetData(PrePostFit prePostFit) {
     }
 
 
+    EFT_PROF_DEBUG("* use {} pois to asimov data:", pois_to_float->size());
+    for (auto poi : *pois_to_float) {
+        EFT_PROF_DEBUG("\t |{}|", poi->GetName());
+    }
+
+    EFT_PROF_DEBUG(" * use {} globs to asimov data:", fitSettings_.globalObs->size());
+    for (auto globs : *fitSettings_.globalObs) {
+        EFT_PROF_DEBUG("\t |{}|", globs->GetName());
+    }
 
     auto ds = (RooDataSet*) RooStats::AsymptoticCalculator::MakeAsimovData(*fitSettings_.data,
                                                                       ws_->GetModelConfig(),
@@ -241,15 +250,25 @@ void NllScanManager::RunScan() {
 //        }
 //    }
     fitSettings_.data = data;
-    EFT_PROF_INFO("Set Global observables to values found in data if needed and fix nps if needed...");
-    EFT_PROF_DEBUG(" *** Globs before....");
+    //if (pre)
+//    EFT_PROF_INFO("Set Global observables to values found in data if needed and fix nps if needed...");
+//    EFT_PROF_DEBUG(" *** Globs before....");
+//    fitSettings_.globalObs->Print("v");
+//    EFT_PROF_DEBUG(" *** NPS before....");
+//    fitSettings_.nps->Print("v");
+//    SetGlobsToNpsIfNeeded();
+
+    if (statType_ == StatType::STAT) {
+        EFT_PROF_INFO("Study type: Stan only ==> need to fix all nps to const");
+        ws_->FixValConst(fitSettings_.nps);
+    }
+    else {
+        EFT_PROF_INFO("Study type: Full ==> no need to fix nps");
+    }
+
+    EFT_PROF_DEBUG("Globs before nll creation ....");
     fitSettings_.globalObs->Print("v");
-    EFT_PROF_DEBUG(" *** NPS before....");
-    fitSettings_.nps->Print("v");
-    SetGlobsToNpsIfNeeded();
-    EFT_PROF_DEBUG("Globs after ....");
-    fitSettings_.globalObs->Print("v");
-    EFT_PROF_DEBUG(" *** NPS after....");
+    EFT_PROF_DEBUG("NPS before nll creation....");
     fitSettings_.nps->Print("v");
 
     auto nll = fitter.CreatNll(fitSettings_);
@@ -267,7 +286,6 @@ void NllScanManager::RunScan() {
     res_.statType   = statType_;
     res_.prePostFit = prePostFit_;
     res_.studyType  = studyType_;
-    //if ()
 }
 
 bool NllScanManager::ParseConfig(std::string path, std::string format) {
