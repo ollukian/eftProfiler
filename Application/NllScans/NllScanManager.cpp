@@ -174,30 +174,32 @@ void NllScanManager::RunScan() {
         EFT_PROF_CRITICAL("pdf are nullptr before create nll");
     }
 
-    std::filesystem::create_directories("figures/plots");
-    EFT_PROF_INFO("Plot real data...");
-    // plot real data
-    for (auto obs : *ws_->GetModelConfig().GetObservables()) {
-        auto obs_var = dynamic_cast<RooRealVar*>(obs);
-        TCanvas c("c", "c");
-        auto frame = obs_var->frame();
-        fitSettings_.data->plotOn(frame);
-        c.SaveAs(fmt::format("figures/plots/real_data_{}.png", obs_var->GetName()).c_str());
-    }
+//    std::filesystem::create_directories("figures/plots");
+//    EFT_PROF_INFO("Plot real data...");
+//    // plot real data
+//    for (auto obs : *ws_->GetModelConfig().GetObservables()) {
+//        auto obs_var = dynamic_cast<RooRealVar*>(obs);
+//        EFT_PROF_DEBUG("deal with category: {}", obs_var->GetName());
+//        TCanvas c("c", "c");
+//        auto frame = obs_var->frame();
+//        ws_->GetModelConfig().Get
+//        fitSettings_.data->plotOn(frame, RooFit::ProjWData());
+//        c.SaveAs(fmt::format("figures/plots/real_data_{}.png", obs_var->GetName()).c_str());
+//    }
 
     auto data = GetData(prePostFit_);
-    if (prePostFit_ != PrePostFit::OBSERVED) {
-        EFT_PROF_INFO("Plot generated asimov");
-        // plot asimov
-        {
-            for (auto obs: *ws_->GetModelConfig().GetObservables()) {
-                auto obs_var = dynamic_cast<RooRealVar *>(obs);
-                TCanvas c("c", "c");
-                data->plotOn(obs_var->frame());
-                c.SaveAs(fmt::format("figures/plots/asimov_{}.png", obs_var->GetName()).c_str());
-            }
-        }
-    }
+//    if (prePostFit_ != PrePostFit::OBSERVED) {
+//        EFT_PROF_INFO("Plot generated asimov");
+//        // plot asimov
+//        {
+//            for (auto obs: *ws_->GetModelConfig().GetObservables()) {
+//                auto obs_var = dynamic_cast<RooRealVar *>(obs);
+//                TCanvas c("c", "c");
+//                data->plotOn(obs_var->frame());
+//                c.SaveAs(fmt::format("figures/plots/asimov_{}.png", obs_var->GetName()).c_str());
+//            }
+//        }
+//    }
     fitSettings_.data = data;
 
     auto nll = fitter.CreatNll(fitSettings_);
