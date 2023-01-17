@@ -449,7 +449,7 @@ void NllScanManager::SaveRes() const {
                                     path_res.string(),
                                     scan_dimension,
                                     std::move(expected_type),
-                                    std::move(expected_type),
+                                    std::move(stat_type),
                                     worker_id,
                                     pois_[0].Name(),
                                     pois_[0].Value()
