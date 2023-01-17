@@ -247,7 +247,7 @@ void NllScanManager::RunScan() {
     EFT_PROF_DEBUG("Globs after ....");
     fitSettings_.globalObs->Print("");
     EFT_PROF_DEBUG(" *** NPS after....");
-    fitSettings_.npss->Print("");
+    fitSettings_.nps->Print("");
 
     auto nll = fitter.CreatNll(fitSettings_);
 
