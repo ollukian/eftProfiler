@@ -61,6 +61,9 @@ std::string NllScanResult::PrintAsString() const noexcept {
         const auto& name = config.Name();
         const auto& value = config.Value();
 
+        EFT_PROF_DEBUG("name: {}", name);
+        EFT_PROF_DEBUG("value: {}", value);
+
         std::string stat_type_str {"full"};
         if (statType == StatType::STAT)
             stat_type_str = "stat_only";
@@ -70,6 +73,11 @@ std::string NllScanResult::PrintAsString() const noexcept {
             prefit_str = "prefit";
         else if (prePostFit == PrePostFit::POSTFIT)
             prefit_str = "postfit";
+
+        EFT_PROF_DEBUG("stat_type_str: {}", stat_type_str);
+        EFT_PROF_DEBUG("prefit_str: {}", prefit_str);
+        EFT_PROF_DEBUG("fit_status: {}", fit_status);
+        EFT_PROF_DEBUG("version: {}", version);
 
         //                    name    val             nll stat/full obs/exp
         res = fmt::format("1D {} at {:.4} with nll: {:.2} | {:10} {:10} | fit status: {} | version: {}",
