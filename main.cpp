@@ -288,6 +288,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("prefit");
         commandLineArgs->RegisterKey("postfit");
         commandLineArgs->RegisterKey("stat_only");
+        commandLineArgs->RegisterKey("out");
         vector<string> pois_float;
         vector<string> pois;
 
