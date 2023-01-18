@@ -364,17 +364,17 @@ std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcep
 }
 
 size_t ColourUtils::GetColourFromString(std::string_view s) noexcept {
-    EFT_PROF_TRACE("Get colour from [{}]", s);
+    //EFT_PROF_TRACE("Get colour from [{}]", s);
 
     if (auto res = CheckIfROOTcolour(s); res.has_value()) {
-        EFT_PROF_DEBUG("[{}] is a ROOT colour: [{}]", s, res.value());
+        //EFT_PROF_DEBUG("[{}] is a ROOT colour: [{}]", s, res.value());
         return res.value();
     }
 
     auto colour = Colour::CreateFromString(s);
     if (idx_of_colour_.find(colour) != idx_of_colour_.end()) {
         auto idx = idx_of_colour_.at(colour);
-        EFT_PROF_TRACE("Colour {} is already present, return its idx: {}", colour, idx);
+        //EFT_PROF_TRACE("Colour {} is already present, return its idx: {}", colour, idx);
         return idx;
     }
     return RegisterColour(colour);
