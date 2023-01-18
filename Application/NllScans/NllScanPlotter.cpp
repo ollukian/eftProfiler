@@ -123,12 +123,18 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
             curve_stat_postfit.AddPoint(mu_val, nll_val);
         }
     }
-
+    EFT_PROF_INFO("All {} entries have been sorted:");
+    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "stat", "observed",   curve_stat_observed.NbPoints());
+    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "full", "observed",   curve_full_observed.NbPoints());
+    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "stat", "prefit",     curve_stat_prefit.  NbPoints());
+    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "full", "prefit",     curve_full_prefit.  NbPoints());
+    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "stat", "postfit",    curve_stat_postfit. NbPoints());
+    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "full", "postfit",    curve_full_postfit. NbPoints());
     curve_stat_postfit. colour = kRed;
     curve_stat_prefit.  colour = kRed;
     curve_stat_observed.colour = kRed;
 
-#define EFT_MOVE_TO_MAP(name) curves_[#name] = std::move(curve_##name);
+#define EFT_MOVE_TO_MAP(name) curves_[#name] = std::move(curve_##name); EFT_PROF_DEBUG(string("move map ") + #name);
     EFT_MOVE_TO_MAP(full_observed);
     EFT_MOVE_TO_MAP(full_prefit);
     EFT_MOVE_TO_MAP(full_postfit);
@@ -136,6 +142,7 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
     EFT_MOVE_TO_MAP(stat_prefit);
     EFT_MOVE_TO_MAP(stat_postfit);
 #undef EFT_MOVE_TO_MAP
+    EFT_PROF_DEBUG("leave SplitEntriesObservedExpectedPrefit");
 }
 
 NllScanPlotter::NllScanPlotter() {
@@ -150,9 +157,11 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("Plot Nll 1D results for {} entries", results1D_.size());
 
+    EFT_PROF_INFO("Get selected entries by poi...");
     auto selected = GetSelectedEntries(poi_name);
+    EFT_PROF_INFO("available {} selected entries", selected.size());
     SplitEntriesObservedExpectedPrefit(selected);
-
+    EFT_PROF_INFO("split entries is done");
     //EFT_PROF_INFO("Scan entries by poi vals");
     EFT_PROF_INFO("Prepare mu-nll pairs");
     for (const string& key : {"full_observed",

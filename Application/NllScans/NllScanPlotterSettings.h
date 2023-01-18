@@ -34,6 +34,8 @@ struct NllCurveSettings {
 
     std::shared_ptr<TGraph> graph;
 
+
+    [[nodiscard]] size_t NbPoints() const noexcept { return mu_nll_values.size(); }
     void AddPoint(float mu, float nll) {mu_nll_values.emplace_back(mu, nll);}
     void PrepareMuNllValues();
     std::shared_ptr<TGraph> GetGraph();
