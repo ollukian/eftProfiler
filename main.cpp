@@ -337,7 +337,8 @@ int main(int argc, char* argv[]) {
         plotter.UseSettings(std::move(plotSettings));
 
         plotter.ReadFiles(path_res);
-        plotter.PlotNll1D(plotter.GetResults1DPoi(poi));
+        //plotter.GetResults1DPoi(poi);
+        plotter.PlotNll1D(poi);
 
     }
     else {
