@@ -89,15 +89,33 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
     string curve_type_key;
     // TODO: to really think how to make it better....
 
+    EFT_PROF_DEBUG("construct 1");
     NllCurveSettings curve_full_observed ;
+    EFT_PROF_DEBUG("construct 2");
     NllCurveSettings curve_full_prefit   ;
+    EFT_PROF_DEBUG("construct 3");
     NllCurveSettings curve_full_postfit  ;
+    EFT_PROF_DEBUG("construct 4");
     NllCurveSettings curve_stat_observed ;
+    EFT_PROF_DEBUG("construct 5");
     NllCurveSettings curve_stat_prefit   ;
+    EFT_PROF_DEBUG("construct 6");
     NllCurveSettings curve_stat_postfit  ;
+    EFT_PROF_DEBUG("construct last - done");
     for (auto& entry : results) {
+        EFT_PROF_DEBUG("try to get mu_val...");
         auto mu_val = entry.poi_configs[ 0 ].Value();
+        EFT_PROF_DEBUG(" ==> {}", mu_val);
+        EFT_PROF_DEBUG("try to get nll_val...");
         auto nll_val = entry.nll_val;
+        EFT_PROF_DEBUG(" ==> {}", nll_val);
+
+        EFT_PROF_DEBUG("dispatch: {}", entry);
+        EFT_PROF_DEBUG("version: {}", entry.version);
+        if (entry.version != "v2") {
+            continue;
+        }
+
         if      (entry.prePostFit == PrePostFit::OBSERVED   && entry.statType == StatType::FULL) {
             EFT_PROF_DEBUG("entry: {} goes to OBSERVED FULL", entry);
             curve_full_observed.AddPoint(mu_val, nll_val);
