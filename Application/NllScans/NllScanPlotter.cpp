@@ -89,19 +89,12 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
     string curve_type_key;
     // TODO: to really think how to make it better....
 
-    EFT_PROF_DEBUG("construct 1");
     NllCurveSettings curve_full_observed ;
-    EFT_PROF_DEBUG("construct 2");
     NllCurveSettings curve_full_prefit   ;
-    EFT_PROF_DEBUG("construct 3");
     NllCurveSettings curve_full_postfit  ;
-    EFT_PROF_DEBUG("construct 4");
     NllCurveSettings curve_stat_observed ;
-    EFT_PROF_DEBUG("construct 5");
     NllCurveSettings curve_stat_prefit   ;
-    EFT_PROF_DEBUG("construct 6");
     NllCurveSettings curve_stat_postfit  ;
-    EFT_PROF_DEBUG("construct last - done");
     for (auto& entry : results) {
         EFT_PROF_DEBUG("try to get mu_val...");
         auto mu_val = entry.poi_configs[ 0 ].Value();
@@ -110,34 +103,34 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
         auto nll_val = entry.nll_val;
         EFT_PROF_DEBUG(" ==> {}", nll_val);
 
-        EFT_PROF_DEBUG("dispatch: {}", entry);
+        EFT_PROF_DEBUG("dispatch: {}", entry.PrintAsString());
         EFT_PROF_DEBUG("version: {}", entry.version);
         if (entry.version != "v2") {
             continue;
         }
 
         if      (entry.prePostFit == PrePostFit::OBSERVED   && entry.statType == StatType::FULL) {
-            EFT_PROF_DEBUG("entry: {} goes to OBSERVED FULL", entry);
+            EFT_PROF_DEBUG("entry: {} goes to OBSERVED FULL", entry.PrintAsString());
             curve_full_observed.AddPoint(mu_val, nll_val);
         }
         else if (entry.prePostFit == PrePostFit::OBSERVED   && entry.statType == StatType::STAT) {
-            EFT_PROF_DEBUG("entry: {} goes to OBSERVED STAT", entry);
+            EFT_PROF_DEBUG("entry: {} goes to OBSERVED STAT", entry.PrintAsString());
             curve_stat_observed.AddPoint(mu_val, nll_val);
         }
         else if (entry.prePostFit == PrePostFit::PREFIT     && entry.statType == StatType::FULL) {
-            EFT_PROF_DEBUG("entry: {} goes to PREFIT FULL", entry);
+            EFT_PROF_DEBUG("entry: {} goes to PREFIT FULL", entry.PrintAsString());
             curve_full_prefit.AddPoint(mu_val, nll_val);
         }
         else if (entry.prePostFit == PrePostFit::PREFIT     && entry.statType == StatType::STAT) {
-            EFT_PROF_DEBUG("entry: {} goes to PREFIT STAT", entry);
+            EFT_PROF_DEBUG("entry: {} goes to PREFIT STAT", entry.PrintAsString());
             curve_stat_prefit.AddPoint(mu_val, nll_val);
         }
         else if (entry.prePostFit == PrePostFit::POSTFIT    && entry.statType == StatType::FULL) {
-            EFT_PROF_DEBUG("entry: {} goes to POSTFIT FULL", entry);
+            EFT_PROF_DEBUG("entry: {} goes to POSTFIT FULL", entry.PrintAsString());
             curve_full_postfit.AddPoint(mu_val, nll_val);
         }
         else if (entry.prePostFit == PrePostFit::POSTFIT    && entry.statType == StatType::STAT) {
-            EFT_PROF_DEBUG("entry: {} goes to POSTFIT STAT", entry);
+            EFT_PROF_DEBUG("entry: {} goes to POSTFIT STAT", entry.PrintAsString());
             curve_stat_postfit.AddPoint(mu_val, nll_val);
         }
     }

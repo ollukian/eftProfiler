@@ -86,15 +86,15 @@ std::string NllScanResult::PrintAsString() const noexcept {
     return res;
 }
 
-
-} // namespace eft::stats::scans
-
 template<typename OStream>
-OStream& operator << (OStream& os, const eft::stats::scans::NllScanResult& res) {
+OStream& operator << (OStream& os, const NllScanResult& res) {
     EFT_PROFILE_FN();
     if (res.version != "v2")
         return os << fmt::format("print for res version {} is not supported", res.version);
     return os << res.PrintAsString();
 }
+
+
+} // namespace eft::stats::scans
 
 #endif //EFTPROFILER_NLLSCANRESULT_DETAIL_H
