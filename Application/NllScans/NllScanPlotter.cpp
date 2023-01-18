@@ -96,15 +96,9 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
     NllCurveSettings curve_stat_prefit   ;
     NllCurveSettings curve_stat_postfit  ;
     for (auto& entry : results) {
-        EFT_PROF_DEBUG("try to get mu_val...");
         auto mu_val = entry.poi_configs[ 0 ].Value();
-        EFT_PROF_DEBUG("\t ==> {}", mu_val);
-        EFT_PROF_DEBUG("try to get nll_val...");
         auto nll_val = entry.nll_val;
-        EFT_PROF_DEBUG("\t ==> {}", nll_val);
 
-        EFT_PROF_DEBUG("dispatch: {}", entry.PrintAsString());
-        EFT_PROF_DEBUG("version: {}", entry.version);
         if (entry.version != "v2") {
             continue;
         }
@@ -135,17 +129,19 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
         }
     }
     EFT_PROF_INFO("All {} entries have been sorted:");
-    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "stat", "observed",   curve_stat_observed.NbPoints());
-    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "full", "observed",   curve_full_observed.NbPoints());
-    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "stat", "prefit",     curve_stat_prefit.  NbPoints());
-    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "full", "prefit",     curve_full_prefit.  NbPoints());
-    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "stat", "postfit",    curve_stat_postfit. NbPoints());
-    EFT_PROF_INFO("{:10} {:10} ==> {:4} entries", "full", "postfit",    curve_full_postfit. NbPoints());
+    EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "stat", "observed",   curve_stat_observed.NbPoints());
+    EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "full", "observed",   curve_full_observed.NbPoints());
+    EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "stat", "prefit",     curve_stat_prefit.  NbPoints());
+    EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "full", "prefit",     curve_full_prefit.  NbPoints());
+    EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "stat", "postfit",    curve_stat_postfit. NbPoints());
+    EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "full", "postfit",    curve_full_postfit. NbPoints());
     curve_stat_postfit. colour = kRed;
     curve_stat_prefit.  colour = kRed;
     curve_stat_observed.colour = kRed;
 
-#define EFT_MOVE_TO_MAP(name) curves_[#name] = std::move(curve_##name); EFT_PROF_DEBUG(string("move map ") + #name);
+#define EFT_MOVE_TO_MAP(name) curve_##name.title = #name; \
+    curves_[#name] = std::move(curve_##name);
+
     EFT_MOVE_TO_MAP(full_observed);
     EFT_MOVE_TO_MAP(full_prefit);
     EFT_MOVE_TO_MAP(full_postfit);

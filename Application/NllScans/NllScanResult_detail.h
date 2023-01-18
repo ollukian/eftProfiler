@@ -55,33 +55,22 @@ namespace eft::stats::scans {
 std::string NllScanResult::PrintAsString() const noexcept {
     EFT_PROFILE_FN();
     std::string res;
-    EFT_PROF_DEBUG("print as string a value with dimension: {}", poi_configs.size());
     if (poi_configs.size() == 1) {
         const auto& config = poi_configs[0];
         const auto& name = config.Name();
         const auto& value = config.Value();
 
-        EFT_PROF_DEBUG("name: {}", name);
-        EFT_PROF_DEBUG("value: {}", value);
-
         std::string stat_type_str {"full"};
         if (statType == StatType::STAT)
-            stat_type_str = "stat_only";
+            stat_type_str = "stat";
 
         std::string prefit_str {"observed"};
         if (prePostFit == PrePostFit::PREFIT)
             prefit_str = "prefit";
         else if (prePostFit == PrePostFit::POSTFIT)
             prefit_str = "postfit";
-
-        EFT_PROF_DEBUG("stat_type_str: {}", stat_type_str);
-        EFT_PROF_DEBUG("prefit_str: {}", prefit_str);
-        EFT_PROF_DEBUG("fit_status: {}", fit_status);
-        EFT_PROF_DEBUG("version: {}", version);
-        EFT_PROF_DEBUG("nll: {}", nll_val);
-
-        //                    name    val             nll stat/full obs/exp
-        res = fmt::format("1D {} at {:.4} with nll: {:.2} | {:10} {:10} | fit status: {} | version: {}",
+        //                         name  val             nll      stat/full obs/exp
+        res = fmt::format("1D {} at {:.4} with nll: {:.2} | {:4} {:8} | fit status: {} | version: {}",
                                name,
                                value,
                                nll_val,

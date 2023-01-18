@@ -29,7 +29,11 @@ void NllScanPlotterSettings::ReadSettingsFromCommandLine(shared_ptr<CommandLineA
 
 void NllCurveSettings::PrepareMuNllValues() {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("Prepare MuNllValues by sorting them for {}", title);
+    if (NbPoints() == 0) {
+        EFT_PROF_INFO("No entries for: {}", title);
+        return;
+    }
+    EFT_PROF_INFO("Prepare MuNllValues by sorting them for |{}|", title);
     EFT_PROF_INFO("Available {} entries", mu_nll_values.size());
 
     std::sort(mu_nll_values.begin(), mu_nll_values.end(), [](auto& l, auto& r) -> bool{
