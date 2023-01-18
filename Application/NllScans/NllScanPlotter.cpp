@@ -184,12 +184,17 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
                               "full_posfit",
                               "stat_observed",
                               "stat_prefit",
-                              "stat_posfit"})
+                              "stat_postfit"})
     {
-        EFT_PROF_INFO("deal with {:15} type", key);
-        curves_[key].PrepareMuNllValues();
-        curves_[key].title = key + "_" + poi_name;
-        curves_[key].GetGraph();
+        if (curves_.find(key) == curves_.end()) {
+            EFT_PROF_CRITICAL("NllScanPlotter:: no key: {} in curves_ found at line: {}", key, __LINE__);
+        }
+        else {
+            EFT_PROF_INFO("deal with {:15} type", key);
+            curves_[ key ].PrepareMuNllValues();
+            curves_[ key ].title = key + "_" + poi_name;
+            curves_[ key ].GetGraph();
+        }
     }
 
     //const string& poi_name = configs.begin()->poi_configs.at(0).Name();
@@ -273,7 +278,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 
     for (auto& [name, curve] : curves_) {
         if (curve.NbPoints() != 0) {
-            EFT_PROF_INFO("Add curve: {:15} to the scene", name);
+            EFT_PROF_INFO("Add curve: {:15} with {} points to the scene", name, curve.NbPoints());
             EFT_PROF_INFO("points:");
             EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
