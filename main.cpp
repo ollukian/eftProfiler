@@ -315,7 +315,11 @@ int main(int argc, char* argv[]) {
 
         scanManager.SetWorkerId(worker_id);
         scanManager.RunScan();
-        scanManager.SaveRes();
+        string path_res = "../results/NllScans/1D";
+        if (commandLineArgs->HasKey("out")) {
+            commandLineArgs->SetValIfArgExists("out", path_res);
+        }
+        scanManager.SaveRes(path_res);
 
     }
     else if (task == "plot_scan" ) {

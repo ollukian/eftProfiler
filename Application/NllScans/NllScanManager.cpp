@@ -418,17 +418,17 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     return *this;
 }
 
-void NllScanManager::SaveRes() const {
+void NllScanManager::SaveRes(const std::string& path) const {
     EFT_PROFILE_FN();
 
-
+    EFT_PROF_INFO("NllScanManager save results to: {}", path);
     //std::filesystem::path path_res = settings.path_to_save_res;
-    std::filesystem::path path_res = "NllScans";
+    //std::filesystem::path path_res = "NllScans";
     size_t scan_dimension = pois_.size();
 
-    if ( !std::filesystem::exists(path_res) ) {
-        EFT_PROF_INFO("Required path directory {} needs to be created", path_res);
-        std::filesystem::create_directories(path_res);
+    if ( !std::filesystem::exists(path) ) {
+        EFT_PROF_INFO("Required path directory {} needs to be created", path);
+        std::filesystem::create_directories(path);
     }
 
     // TODO: refactor to "string FormName()"
@@ -446,7 +446,7 @@ void NllScanManager::SaveRes() const {
     }
 
     const string name = fmt::format("{}/res__{}D__{}__{}__worker_{}__{}_at_{}.json",
-                                    path_res.string(),
+                                    path,
                                     scan_dimension,
                                     std::move(expected_type),
                                     std::move(stat_type),

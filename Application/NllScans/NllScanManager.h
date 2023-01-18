@@ -57,7 +57,7 @@ public:
 
     void SaveRes(const std::string& path) const;
     void SaveRes(std::ostream& os) const;
-    void SaveRes() const;
+    void SaveRes(const std::string& path) const;
 
     //void inline SetGridSize1D(size_t sz) noexcept { size_grid_1d = sz; }
 
