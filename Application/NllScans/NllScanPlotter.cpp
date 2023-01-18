@@ -181,7 +181,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     EFT_PROF_INFO("Prepare mu-nll pairs");
     for (const string& key : {"full_observed",
                               "full_prefit",
-                              "full_posfit",
+                              "full_postfit",
                               "stat_observed",
                               "stat_prefit",
                               "stat_postfit"})
