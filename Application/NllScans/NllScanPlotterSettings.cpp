@@ -66,7 +66,7 @@ void NllCurveSettings::PrepareMuNllValues() {
 }
 
 shared_ptr<TGraph> NllCurveSettings::GetGraph() {
-    EFT_PROF_WARN("GetGraph. Is ready? ==> {} | nll_values.size() = {}", is_graph_ready, nll_values.size());
+    //EFT_PROF_WARN("GetGraph. Is ready? ==> {} | nll_values.size() = {}", is_graph_ready, nll_values.size());
     if (! is_graph_ready ) {
         graph = make_shared<TGraph>(nll_values.size(),
                                     mu_values.data(),
