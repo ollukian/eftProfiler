@@ -78,11 +78,13 @@ std::string NllScanResult::PrintAsString() const noexcept {
         EFT_PROF_DEBUG("prefit_str: {}", prefit_str);
         EFT_PROF_DEBUG("fit_status: {}", fit_status);
         EFT_PROF_DEBUG("version: {}", version);
+        EFT_PROF_DEBUG("nll: {}", nll_val);
 
         //                    name    val             nll stat/full obs/exp
         res = fmt::format("1D {} at {:.4} with nll: {:.2} | {:10} {:10} | fit status: {} | version: {}",
                                name,
                                value,
+                               nll_val,
                                stat_type_str,
                                prefit_str,
                                fit_status,
