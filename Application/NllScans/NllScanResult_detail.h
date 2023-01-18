@@ -52,14 +52,6 @@ namespace eft::stats::scans {
     //namespace detail = detail_v2;
 
 
-template<typename OStream>
-OStream& operator << (OStream& os, const NllScanResult& res) {
-    EFT_PROFILE_FN();
-    if (res.version != "v2")
-        return os << fmt::format("print for res version {} is not supported", res.version);
-    return os << res.PrintAsString();
-}
-
 std::string NllScanResult::PrintAsString() const noexcept {
     EFT_PROFILE_FN();
     std::string res;
@@ -95,6 +87,14 @@ std::string NllScanResult::PrintAsString() const noexcept {
 }
 
 
+} // namespace eft::stats::scans
+
+template<typename OStream>
+OStream& operator << (OStream& os, const eft::stats::scans::NllScanResult& res) {
+    EFT_PROFILE_FN();
+    if (res.version != "v2")
+        return os << fmt::format("print for res version {} is not supported", res.version);
+    return os << res.PrintAsString();
 }
 
 #endif //EFTPROFILER_NLLSCANRESULT_DETAIL_H
