@@ -199,6 +199,10 @@ void NllScanManager::RunScan() {
     EFT_PROF_INFO("Float required POIs (which are allowed to by a research)");
     ws_->FloatVals(pois_to_float);
 
+    auto data = GetData(prePostFit_);
+    fitSettings_.data = data;
+
+
     EFT_PROF_INFO("Identify grid points to put the pois to");
     IdentifyScanPointCoordinateAllPois();
 
@@ -236,7 +240,6 @@ void NllScanManager::RunScan() {
 //        c.SaveAs(fmt::format("figures/plots/real_data_{}.png", obs_var->GetName()).c_str());
 //    }
 
-    auto data = GetData(prePostFit_);
 //    if (prePostFit_ != PrePostFit::OBSERVED) {
 //        EFT_PROF_INFO("Plot generated asimov");
 //        // plot asimov
@@ -249,7 +252,6 @@ void NllScanManager::RunScan() {
 //            }
 //        }
 //    }
-    fitSettings_.data = data;
     //if (pre)
 //    EFT_PROF_INFO("Set Global observables to values found in data if needed and fix nps if needed...");
 //    EFT_PROF_DEBUG(" *** Globs before....");
