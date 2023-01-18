@@ -153,7 +153,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     SplitEntriesObservedExpectedPrefit(selected);
 
     //EFT_PROF_INFO("Scan entries by poi vals");
-
+    EFT_PROF_INFO("Prepare mu-nll pairs");
     for (const string& key : {"full_observed",
                               "full_prefit",
                               "full_posfit",
@@ -161,6 +161,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
                               "stat_prefit",
                               "stat_posfit"})
     {
+        EFT_PROF_INFO("deal with {} type", key);
         curves_[key].PrepareMuNllValues();
         curves_[key].title = key + "_" + poi_name;
         curves_[key].GetGraph();
