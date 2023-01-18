@@ -29,26 +29,26 @@ struct NllCurveSettings {
     float min_poi   {0.f};
     float max_poi   {0.f};
 
-    std::vector<std::pair<float, float>> mu_nll_values;
-    std::vector<float>  mu_values;
-    std::vector<float>  nll_values;
+    std::vector<std::pair<double, double>> mu_nll_values;
+    std::vector<double>  mu_values;
+    std::vector<double>  nll_values;
 
     std::shared_ptr<TGraph> graph {std::make_shared<TGraph>()};
     bool is_graph_ready {false};
 
 
     [[nodiscard]] size_t NbPoints() const noexcept { return mu_nll_values.size(); }
-    void AddPoint(float mu, float nll) {mu_nll_values.emplace_back(mu, nll);}
+    void AddPoint(double mu, double nll) {mu_nll_values.emplace_back(mu, nll);}
     void PrepareMuNllValues();
     std::shared_ptr<TGraph> GetGraph();
 };
 
 struct NllScanPlotterSettings {
     //NllCurveSettings()
-    float range_mu_l    {0.f};
-    float range_mu_h    {0.f};
-    float range_2dnll_l {0.f};
-    float range_2dnll_h {0.f};
+    double range_mu_l    {0.f};
+    double range_mu_h    {0.f};
+    double range_2dnll_l {0.f};
+    double range_2dnll_h {0.f};
     //NllCurveSettings    full;
     //NllCurveSettings    stat;
     std::map<std::string, NllCurveSettings> curves;
