@@ -61,67 +61,161 @@ void NllScanPlotter::RegisterRes1D(NllScanResult nllScanRes) {
                    poi,
                    nllScanRes.poi_configs[0].Value(),
                    nllScanRes.nll_val);
-
+    // not sure these guys are needed....
     results1D_per_poi_[poi].insert(nllScanRes);
     results1D_.insert(std::move(nllScanRes));
+    //results1D_per_poi_[poi].insert(nllScanRes);
+    //results1D_.insert(std::move(nllScanRes));
 }
 
-void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
+NllScanPlotter::Nll1Dresults NllScanPlotter::GetSelectedEntries(const string& mu) {
     EFT_PROFILE_FN();
-    EFT_PROF_INFO("Plot Nll 1D results for {} entries", configs.size());
-
-    EFT_PROF_INFO("Scan entries by poi vals");
-
-    const string& poi_name = configs.begin()->poi_configs.at(0).Name();
-
-    vector<NllScanResult> configs_sorted {configs.begin(), configs.end()};
-
-    std::sort(configs_sorted.begin(), configs_sorted.end(), [](NllScanResult& l, NllScanResult& r) -> bool{
-        return l.poi_configs[0].Value() < r.poi_configs[0].Value();
-    });
-
-    vector<double> nll_vals;
-    nll_vals.reserve(configs_sorted.size());
-
-    vector<double> mu_vals;
-    mu_vals.reserve(configs_sorted.size());
-
-    for (const auto& config : configs_sorted) {
-        nll_vals.emplace_back(config.nll_val);
-        mu_vals. emplace_back(config.poi_configs.at(0).Value());
-    }
-
-    EFT_PROF_DEBUG("{:3} | {:5} | {:10}", "idx", "mu", "nll");
-    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
-        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
-    }
-
-    const auto min_nll = *std::min_element(nll_vals.begin(), nll_vals.end());
-    const auto max_nll = *std::max_element(nll_vals.begin(), nll_vals.end());
-    const auto min_poi = *std::min_element(mu_vals.begin(), mu_vals.end());
-    const auto max_poi = *std::max_element(mu_vals.begin(), mu_vals.end());
-
-    EFT_PROF_INFO("min_nll: {}", min_nll);
-    EFT_PROF_INFO("max_nll: {}", max_nll);
-    EFT_PROF_INFO("min_poi: {}", min_poi);
-    EFT_PROF_INFO("max_poi: {}", max_poi);
-
-    std::for_each(nll_vals.begin(), nll_vals.end(), [&min_nll](double& val) -> void
-        {
-            auto val_copy = val;
-            val -= min_nll;
-            val *= 2;
-            EFT_PROF_DEBUG("transform: {} into {}", val_copy, val);
+    EFT_PROF_INFO("NllScanPlotter::GetSelectedEntries based only on POI name: {}", mu);
+    NllScanPlotter::Nll1Dresults selected;
+    for (const auto& entry : results1D_) {
+        if (entry.poi_configs[0].Name() != mu) {
+            EFT_PROF_DEBUG("entry doesn't pass name selection");
+            continue;
         }
-    );
-
-    EFT_PROF_DEBUG("{:3} | {:.4} | {:.6}", "idx", "mu", "2dnll");
-    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
-        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
+        selected.insert(entry);
     }
+    EFT_PROF_INFO("NllScanPlotter::GetSelectedEntries selected {} out of {}", selected.size(), results1D_.size());
+}
+
+void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nll1Dresults& results) {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("NllScanPlotter split all entries on full/stat + observed/prefit/postfit");
+    string curve_type_key;
+    // TODO: to really think how to make it better....
+
+    NllCurveSettings curve_full_observed ;
+    NllCurveSettings curve_full_prefit   ;
+    NllCurveSettings curve_full_postfit  ;
+    NllCurveSettings curve_stat_observed ;
+    NllCurveSettings curve_stat_prefit   ;
+    NllCurveSettings curve_stat_postfit  ;
+    for (auto& entry : results) {
+        auto mu_val = entry.poi_configs[ 0 ].Value();
+        auto nll_val = entry.nll_val;
+        if      (entry.prePostFit == PrePostFit::OBSERVED   && entry.statType == StatType::FULL) {
+            EFT_PROF_DEBUG("entry: {} goes to OBSERVED FULL", entry);
+            curve_full_observed.AddPoint(mu_val, nll_val);
+        }
+        else if (entry.prePostFit == PrePostFit::OBSERVED   && entry.statType == StatType::STAT) {
+            EFT_PROF_DEBUG("entry: {} goes to OBSERVED STAT", entry);
+            curve_stat_observed.AddPoint(mu_val, nll_val);
+        }
+        else if (entry.prePostFit == PrePostFit::PREFIT     && entry.statType == StatType::FULL) {
+            EFT_PROF_DEBUG("entry: {} goes to PREFIT FULL", entry);
+            curve_full_prefit.AddPoint(mu_val, nll_val);
+        }
+        else if (entry.prePostFit == PrePostFit::PREFIT     && entry.statType == StatType::STAT) {
+            EFT_PROF_DEBUG("entry: {} goes to PREFIT STAT", entry);
+            curve_stat_prefit.AddPoint(mu_val, nll_val);
+        }
+        else if (entry.prePostFit == PrePostFit::POSTFIT    && entry.statType == StatType::FULL) {
+            EFT_PROF_DEBUG("entry: {} goes to POSTFIT FULL", entry);
+            curve_full_postfit.AddPoint(mu_val, nll_val);
+        }
+        else if (entry.prePostFit == PrePostFit::POSTFIT    && entry.statType == StatType::STAT) {
+            EFT_PROF_DEBUG("entry: {} goes to POSTFIT STAT", entry);
+            curve_stat_postfit.AddPoint(mu_val, nll_val);
+        }
+    }
+
+    curve_stat_postfit. colour = kRed;
+    curve_stat_prefit.  colour = kRed;
+    curve_stat_observed.colour = kRed;
+
+#define EFT_MOVE_TO_MAP(name) curves_[#name] = std::move(curve_##name);
+    EFT_MOVE_TO_MAP(full_observed);
+    EFT_MOVE_TO_MAP(full_prefit);
+    EFT_MOVE_TO_MAP(full_postfit);
+    EFT_MOVE_TO_MAP(stat_observed);
+    EFT_MOVE_TO_MAP(stat_prefit);
+    EFT_MOVE_TO_MAP(stat_postfit);
+#undef EFT_MOVE_TO_MAP
+}
+
+NllScanPlotter::NllScanPlotter() {
+//    for (const string& stat_type : {"full", "stat"}) {
+//        for (const string& prefit_type : {"prefit", "postfit", "observed"}) {
+//            curves_[stat_type + "_" + prefit_type] = {};
+//        }
+//    }
+}
+
+void NllScanPlotter::PlotNll1D(const string& poi_name) {
+    EFT_PROFILE_FN();
+    EFT_PROF_INFO("Plot Nll 1D results for {} entries", results1D_.size());
+
+    auto selected = GetSelectedEntries(poi_name);
+    SplitEntriesObservedExpectedPrefit(selected);
+
+    //EFT_PROF_INFO("Scan entries by poi vals");
+
+    for (const string& key : {"full_observed",
+                              "full_prefit",
+                              "full_posfit",
+                              "stat_observed",
+                              "stat_prefit",
+                              "stat_posfit"})
+    {
+        curves_[key].PrepareMuNllValues();
+        curves_[key].title = key + "_" + poi_name;
+        curves_[key].GetGraph();
+    }
+
+    //const string& poi_name = configs.begin()->poi_configs.at(0).Name();
+
+//    vector<NllScanResult> configs_sorted {configs.begin(), configs.end()};
+//
+//    std::sort(configs_sorted.begin(), configs_sorted.end(), [](NllScanResult& l, NllScanResult& r) -> bool{
+//        return l.poi_configs[0].Value() < r.poi_configs[0].Value();
+//    });
+//
+//    vector<double> nll_vals;
+//    nll_vals.reserve(configs_sorted.size());
+//
+//    vector<double> mu_vals;
+//    mu_vals.reserve(configs_sorted.size());
+//
+//    for (const auto& config : configs_sorted) {
+//        nll_vals.emplace_back(config.nll_val);
+//        mu_vals. emplace_back(config.poi_configs.at(0).Value());
+//    }
+//
+//    EFT_PROF_DEBUG("{:3} | {:5} | {:10}", "idx", "mu", "nll");
+//    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
+//        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
+//    }
+//
+//    const auto min_nll = *std::min_element(nll_vals.begin(), nll_vals.end());
+//    const auto max_nll = *std::max_element(nll_vals.begin(), nll_vals.end());
+//    const auto min_poi = *std::min_element(mu_vals.begin(), mu_vals.end());
+//    const auto max_poi = *std::max_element(mu_vals.begin(), mu_vals.end());
+//
+//    EFT_PROF_INFO("min_nll: {}", min_nll);
+//    EFT_PROF_INFO("max_nll: {}", max_nll);
+//    EFT_PROF_INFO("min_poi: {}", min_poi);
+//    EFT_PROF_INFO("max_poi: {}", max_poi);
+//
+//    std::for_each(nll_vals.begin(), nll_vals.end(), [&min_nll](double& val) -> void
+//        {
+//            auto val_copy = val;
+//            val -= min_nll;
+//            val *= 2;
+//            EFT_PROF_DEBUG("transform: {} into {}", val_copy, val);
+//        }
+//    );
+//
+//    EFT_PROF_DEBUG("{:3} | {:.4} | {:.6}", "idx", "mu", "2dnll");
+//    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
+//        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
+//    }
 
     auto mg = make_shared<TMultiGraph>("mg", "mg");
-    auto gr = make_shared<TGraph>(nll_vals.size(), mu_vals.data(), nll_vals.data());
+    //auto gr = make_shared<TGraph>(nll_vals.size(), mu_vals.data(), nll_vals.data());
 
     TCanvas c("c", "c", 1800, 1200);
     c.SetRightMargin(0.03);
@@ -129,13 +223,13 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
     c.SetTopMargin(0.02);
     c.SetBottomMargin(0.10);
 
-    gr->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
+    //gr->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
     //grFull->GetYaxis()->SetRangeUser(-1, 15);
 
-    gr->GetXaxis()->SetTitle(("#mu_{" + poi_name.substr(3, poi_name.length()) + "}").c_str());
-    gr->GetYaxis()->SetTitle("2 #Delta ln L");
+    //gr->GetXaxis()->SetTitle(("#mu_{" + poi_name.substr(3, poi_name.length()) + "}").c_str());
+    //gr->GetYaxis()->SetTitle("2 #Delta ln L");
 
-    gr->SetMarkerColor(kBlue);
+    //gr->SetMarkerColor(kBlue);
 
 //    if (grStat) {
 //        grStat->SetMarkerColor(kRed);
@@ -146,27 +240,30 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
 //        mg->Add(grStat);
 //    }
 
-    gr->SetLineWidth(6);
-    gr->SetLineColor(kBlue);
-    gr->SetMarkerSize(2);
-    gr->SetMarkerStyle(24);
+//    gr->SetLineWidth(6);
+//    gr->SetLineColor(kBlue);
+//    gr->SetMarkerSize(2);
+//    gr->SetMarkerStyle(24);
 
-    mg->Add(gr.get());
+    for (auto& [name, curve] : curves_) {
+        mg->Add(curve.GetGraph().get());
+        curve.GetGraph()->Draw("A P C");
+    }
 
 
     mg->SetTitle("");
-    mg->GetXaxis()->SetTitle(("#mu_{" + poi_name.substr(3, poi_name.length()) + "}").c_str());
+    mg->GetXaxis()->SetTitle(poi_name.c_str());
     mg->GetYaxis()->SetTitle("2 #Delta ln L");
 
-    mg->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
-    mg->GetYaxis()->SetRangeUser(0.f,          max_nll);
+    //mg->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
+    //mg->GetYaxis()->SetRangeUser(0.f,          max_nll);
 
     if (settings_.range_2dnll_h != 0) {
         mg->GetYaxis()->SetRangeUser(0.f,          settings_.range_2dnll_h);
     }
 
-    gr->SetTitle("");
-    gr->Draw("A P C");
+    //gr->SetTitle("");
+    //gr->Draw("A P C");
 
     //grStat->Draw("A P C same");
     //grFull->Draw("A L P");
@@ -178,12 +275,12 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
     l1.SetLineWidth(4);
     l1.SetLineColor(kBlack);
     l1.SetLineStyle(kDashed);
-    l1.DrawLine(0.85 * min_poi, 1, 1.05 * max_poi, 1);
+    l1.DrawLine(mg->GetXaxis()->GetXmin(), 1,  mg->GetXaxis()->GetXmax(), 1);
 
     TLine l2;
     l2.SetLineWidth(4);
     l2.SetLineColor(kGray);
-    l1.DrawLine(0.85 * min_poi, 3.84, 1.05 * max_poi, 3.84);
+    l2.DrawLine(mg->GetXaxis()->GetXmin(), 3.84,  mg->GetXaxis()->GetXmax(), 3.84);
 
     TLatex tex;
     tex.SetNDC();
@@ -246,8 +343,8 @@ void NllScanPlotter::PlotNll1D(const NllScanPlotter::Nll1Dresults& configs) {
 
     tex.SetNDC(false);
 
-    tex.DrawLatex(0.87 * min_poi, 1.05, "1#sigma");
-    tex.DrawLatex(0.87 * max_poi, 3.94, "2#sigma");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() + 0.05, 1.05f, "1#sigma");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "2#sigma");
 
     c.SaveAs(("LikelihoodScan1D_" + poi_name + ".png").c_str());
 }

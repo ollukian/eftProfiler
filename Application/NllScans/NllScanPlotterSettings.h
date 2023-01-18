@@ -8,9 +8,11 @@
 
 #include "../NpRankingStudyRes.h"
 #include "../../Utils/ColourUtils.h"
+#include <map>
 
 #include <memory>
 class CommandLineArgs;
+class TGraph;
 
 namespace eft::stats::scans {
 
@@ -23,18 +25,29 @@ struct NllCurveSettings {
     bool            to_draw     {true};
     std::string     title       ;
     std::string     poi_name    {"mu"};
+    float min_poi   {0.f};
+    float max_poi   {0.f};
 
+    std::vector<std::pair<float, float>> mu_nll_values;
     std::vector<float>  mu_values;
-    std::vector<float>  dnll_values;
+    std::vector<float>  nll_values;
+
+    std::shared_ptr<TGraph> graph;
+
+    void AddPoint(float mu, float nll) {mu_nll_values.emplace_back(mu, nll);}
+    void PrepareMuNllValues();
+    std::shared_ptr<TGraph> GetGraph();
 };
 
 struct NllScanPlotterSettings {
+    //NllCurveSettings()
     float range_mu_l    {0.f};
     float range_mu_h    {0.f};
     float range_2dnll_l {0.f};
     float range_2dnll_h {0.f};
-    NllCurveSettings    full;
-    NllCurveSettings    stat;
+    //NllCurveSettings    full;
+    //NllCurveSettings    stat;
+    std::map<std::string, NllCurveSettings> curves;
 
     float                       rmargin             {0.05};
     float                       lmargin             {0.10};

@@ -26,6 +26,7 @@ class NllScanPlotter {
     using Nll1Dresults = std::unordered_set<NllScanResult>;
     using Nll1DresultsPerPOI = std::unordered_map<std::string, Nll1Dresults>;
 public:
+    NllScanPlotter();
 
     [[nodiscard]]
     const Nll1Dresults& GetResults1D() const noexcept { return results1D_; }
@@ -35,18 +36,23 @@ public:
     void inline UseSettings(NllScanPlotterSettings settings) noexcept { settings_ = std::move(settings); }
     void ReadFiles(std::filesystem::path& path);
     void inline ReadFiles(const std::string& path_str);
-    void PlotNll1D(const Nll1Dresults& configs);
+    void PlotNll1D(const std::string& configs);
     void RegisterRes(NllScanResult nllScanRes);
 
     void RegisterRes1D(NllScanResult nllScanRes);
     static NllScanResult ReadValuesOneFile(const std::filesystem::path& path);
     static inline NllScanResult ReadValuesOneFile(const std::string& path);
+
+    Nll1Dresults GetSelectedEntries(const std::string& mu);
+    void SplitEntriesObservedExpectedPrefit(const Nll1Dresults& results);
+
     //static PoiConfig ReadValuesOneFile(const std::filesystem::path& path);
 private:
     Nll1Dresults results1D_;
     Nll1DresultsPerPOI results1D_per_poi_;
 
     NllScanPlotterSettings settings_;
+    std::map<std::string, NllCurveSettings> curves_;
     //PoiConfigs configs_;
     //std::unordered_map<std::string, PoiConfigs> configs_per_poi_;
     //std::unordered_map<>;

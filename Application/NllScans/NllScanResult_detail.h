@@ -17,6 +17,10 @@
 #include "PoiConfig.h"
 #include "../NpRankingStudyRes.h"
 
+// for printing of NllScanResults in logger
+#include <spdlog/spdlog.h>
+#include <spdlog/fmt/ostr.h>
+
 
 namespace eft::stats::scans {
 
@@ -40,10 +44,55 @@ namespace eft::stats::scans {
             StatType                statType    {StatType::FULL};
             PrePostFit              prePostFit  {PrePostFit::OBSERVED};
             StudyType               studyType   {StudyType::OBSERVED};
+
+            [[nodiscard]] inline std::string PrintAsString() const noexcept;
         };
     //}
     using NllScanResult = NllScanResult_v2;
     //namespace detail = detail_v2;
+
+
+template<typename OStream>
+OStream& operator << (OStream& os, const NllScanResult& res) {
+    EFT_PROFILE_FN();
+    if (res.version != "v2")
+        return os << fmt::format("print for res version {} is not supported", res.version);
+    return os << res.PrintAsString();
+}
+
+std::string NllScanResult::PrintAsString() const noexcept {
+    EFT_PROFILE_FN();
+    std::string res;
+    if (poi_configs.size() == 1) {
+        const auto& config = poi_configs[0];
+        const auto& name = config.Name();
+        const auto& value = config.Value();
+
+        std::string stat_type_str {"full"};
+        if (statType == StatType::STAT)
+            stat_type_str = "stat_only";
+
+        std::string prefit_str {"observed"};
+        if (prePostFit == PrePostFit::PREFIT)
+            prefit_str = "prefit";
+        else if (prePostFit == PrePostFit::POSTFIT)
+            prefit_str = "postfit";
+
+        //                    name    val             nll stat/full obs/exp
+        res = fmt::format("1D {} at {:.4} with nll: {:.2} | {:10} {:10} | fit status: {} | version: {}",
+                               name,
+                               value,
+                               stat_type_str,
+                               prefit_str,
+                               fit_status,
+                               version);
+    }
+    else {
+        EFT_PROF_CRITICAL("llScanResult::PrintAsString() only for 1D is supported");
+        return fmt::format("{}D results are not supported", poi_configs.size());
+    }
+    return res;
+}
 
 
 }
