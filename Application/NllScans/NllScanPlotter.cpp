@@ -100,8 +100,14 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
         auto mu_val = entry.poi_configs[ 0 ].Value();
         auto nll_val = entry.nll_val;
 
-        if (entry.version != "v2") {
-            EFT_PROF_DEBUG("entry: {} is of version: {} ==> not v2", entry.PrintAsString(), entry.version);
+        if (entry.version != "v2" || entry.version != "v1") {
+            EFT_PROF_DEBUG("entry: {} is of version: {} ==> not v1 or v2", entry.PrintAsString(), entry.version);
+            continue;
+        }
+            //EFT_PROF_DEBUG("entry: {} is of version: {} ==> not v2", entry.PrintAsString(), entry.version);
+        if (entry.version == "v1") {
+            EFT_PROF_DEBUG("entry: {} goes to OBSERVED FULL [v1]", entry.PrintAsString());
+            curve_full_observed.AddPoint(mu_val, nll_val);
             continue;
         }
 
