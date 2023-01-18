@@ -269,7 +269,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             EFT_PROF_INFO("points:");
             EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
-                EFT_PROF_DEBUG("{:5} ==> {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx));
+                EFT_PROF_DEBUG("{.3} ==> {.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
             }
             mg->Add(curve.GetGraph().get());
             curve.GetGraph()->Draw("A P C");
