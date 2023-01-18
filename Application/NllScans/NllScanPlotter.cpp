@@ -130,7 +130,7 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
             curve_stat_postfit.AddPoint(mu_val, nll_val);
         }
     }
-    EFT_PROF_INFO("All {} entries have been sorted:");
+    EFT_PROF_INFO("All {} entries have been sorted:", results.size());
     EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "stat", "observed",   curve_stat_observed.NbPoints());
     EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "full", "observed",   curve_full_observed.NbPoints());
     EFT_PROF_INFO("{:4} {:8} ==> {:4} entries", "stat", "prefit",     curve_stat_prefit.  NbPoints());
