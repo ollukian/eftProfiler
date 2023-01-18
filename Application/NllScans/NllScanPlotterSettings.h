@@ -34,6 +34,7 @@ struct NllCurveSettings {
     std::vector<float>  nll_values;
 
     std::shared_ptr<TGraph> graph {std::make_shared<TGraph>()};
+    bool is_graph_ready {false};
 
 
     [[nodiscard]] size_t NbPoints() const noexcept { return mu_nll_values.size(); }

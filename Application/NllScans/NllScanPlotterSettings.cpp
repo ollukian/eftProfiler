@@ -66,7 +66,8 @@ void NllCurveSettings::PrepareMuNllValues() {
 }
 
 shared_ptr<TGraph> NllCurveSettings::GetGraph() {
-    if (! graph ) {
+    EFT_PROF_WARN("GetGraph. Is ready? ==> {} | nll_values.size() = {}", is_graph_ready, nll_values.size());
+    if (! is_graph_ready ) {
         graph = make_shared<TGraph>(nll_values.size(),
                                     mu_values.data(),
                                     nll_values.data()
@@ -78,6 +79,7 @@ shared_ptr<TGraph> NllCurveSettings::GetGraph() {
         graph->SetMarkerStyle(24);
 
         graph->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
+        is_graph_ready = true;
     }
     return graph;
 }
