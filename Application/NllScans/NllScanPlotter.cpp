@@ -98,10 +98,10 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
     for (auto& entry : results) {
         EFT_PROF_DEBUG("try to get mu_val...");
         auto mu_val = entry.poi_configs[ 0 ].Value();
-        EFT_PROF_DEBUG(" ==> {}", mu_val);
+        EFT_PROF_DEBUG("\t ==> {}", mu_val);
         EFT_PROF_DEBUG("try to get nll_val...");
         auto nll_val = entry.nll_val;
-        EFT_PROF_DEBUG(" ==> {}", nll_val);
+        EFT_PROF_DEBUG("\t ==> {}", nll_val);
 
         EFT_PROF_DEBUG("dispatch: {}", entry.PrintAsString());
         EFT_PROF_DEBUG("version: {}", entry.version);

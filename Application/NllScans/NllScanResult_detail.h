@@ -55,6 +55,7 @@ namespace eft::stats::scans {
 std::string NllScanResult::PrintAsString() const noexcept {
     EFT_PROFILE_FN();
     std::string res;
+    EFT_PROF_DEBUG("print as string a value with dimension: {}", poi_configs.size());
     if (poi_configs.size() == 1) {
         const auto& config = poi_configs[0];
         const auto& name = config.Name();
