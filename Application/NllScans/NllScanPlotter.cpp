@@ -101,6 +101,7 @@ void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nl
         auto nll_val = entry.nll_val;
 
         if (entry.version != "v2") {
+            EFT_PROF_DEBUG("entry: {} is of version: {} ==> not v2", entry.PrintAsString(), entry.version);
             continue;
         }
 
