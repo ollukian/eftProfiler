@@ -80,6 +80,7 @@ NllScanPlotter::Nll1Dresults NllScanPlotter::GetSelectedEntries(const string& mu
         selected.insert(entry);
     }
     EFT_PROF_INFO("NllScanPlotter::GetSelectedEntries selected {} out of {}", selected.size(), results1D_.size());
+    return selected;
 }
 
 void NllScanPlotter::SplitEntriesObservedExpectedPrefit(const NllScanPlotter::Nll1Dresults& results) {
