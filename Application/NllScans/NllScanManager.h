@@ -55,7 +55,7 @@ public:
 
     [[nodiscard]] const inline NllScanResult& GetRes() const noexcept { return res_; }
 
-    void SaveRes(const std::string& path) const;
+    //void SaveRes(const std::string& path) const;
     void SaveRes(std::ostream& os) const;
     void SaveRes(const std::string& path) const;
 
