@@ -178,7 +178,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
                               "stat_prefit",
                               "stat_posfit"})
     {
-        EFT_PROF_INFO("deal with {} type", key);
+        EFT_PROF_INFO("deal with {:15} type", key);
         curves_[key].PrepareMuNllValues();
         curves_[key].title = key + "_" + poi_name;
         curves_[key].GetGraph();
@@ -264,8 +264,11 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 //    gr->SetMarkerStyle(24);
 
     for (auto& [name, curve] : curves_) {
-        mg->Add(curve.GetGraph().get());
-        curve.GetGraph()->Draw("A P C");
+        if (curve.NbPoints() != 0) {
+            EFT_PROF_INFO("Add curve: {:15} to the scene", name);
+            mg->Add(curve.GetGraph().get());
+            curve.GetGraph()->Draw("A P C");
+        }
     }
 
 
