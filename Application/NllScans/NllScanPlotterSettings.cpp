@@ -56,10 +56,22 @@ void NllCurveSettings::PrepareMuNllValues() {
     EFT_PROF_DEBUG("for: {}", title);
     EFT_PROF_DEBUG("mu  range: {:.4f} {:.4f}", min_poi, max_poi);
     EFT_PROF_DEBUG("nll range: {:.4f} {:.4f} <= nll", min_nll, max_nll);
+    EFT_PROF_DEBUG("elements before substracting");
+    EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "nll");
+    for (size_t idx {0}; idx < NbPoints(); ++idx) {
+        EFT_PROF_DEBUG("{:10} ==> {:.10}", mu_values.at(idx), nll_values.at(idx));
+    }
 
     for (auto& nll : nll_values) {
         nll = 2 * (nll - min_nll);
     }
+
+    EFT_PROF_DEBUG("elements before substracting");
+    EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
+    for (size_t idx {0}; idx < NbPoints(); ++idx) {
+        EFT_PROF_DEBUG("{:10} ==> {:.10}", mu_values.at(idx), nll_values.at(idx));
+    }
+
     min_nll = *std::min_element(nll_values.begin(), nll_values.end());
     max_nll = *std::max_element(nll_values.begin(), nll_values.end());
     EFT_PROF_DEBUG("nll range: {:.4f} {:.4f} <= 2dnll", min_nll, max_nll);
