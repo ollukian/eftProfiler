@@ -74,9 +74,10 @@ NllScanPlotter::Nll1Dresults NllScanPlotter::GetSelectedEntries(const string& mu
     NllScanPlotter::Nll1Dresults selected;
     for (const auto& entry : results1D_) {
         if (entry.poi_configs[0].Name() != mu) {
-            EFT_PROF_DEBUG("entry doesn't pass name selection");
+            EFT_PROF_DEBUG("entry {} DOESN'T PASS name selection for {}", entry.PrintAsString(), mu);
             continue;
         }
+        EFT_PROF_DEBUG("entry {} PASSES        name selection for {}", entry.PrintAsString(), mu);
         selected.insert(entry);
     }
     EFT_PROF_INFO("NllScanPlotter::GetSelectedEntries selected {} out of {}", selected.size(), results1D_.size());
