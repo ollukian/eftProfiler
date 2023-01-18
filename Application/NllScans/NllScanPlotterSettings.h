@@ -9,10 +9,11 @@
 #include "../NpRankingStudyRes.h"
 #include "../../Utils/ColourUtils.h"
 #include <map>
+#include "TGraph.h"
 
 #include <memory>
 class CommandLineArgs;
-class TGraph;
+
 
 namespace eft::stats::scans {
 
