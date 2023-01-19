@@ -23,7 +23,7 @@ struct NllScanPlotterSettings;
 struct NllCurveSettings {
     size_t          colour      {utils::ColourUtils::GetColourFromString("kBlue")};
     size_t          thickness   {2u};
-    bool            to_draw     {true};
+    bool            to_draw     {false};
     std::string     title       ;
     std::string     poi_name    {"mu"};
     double          min_poi   {0.f};

@@ -198,15 +198,29 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
         }
     }
 
-    if (settings_.draw_stat && settings_.draw_obs)
-        curves_["stat_observed"]. to_draw = true;
+    EFT_PROF_INFO("Setting: stat=> {} obs {}", settings_.draw_stat, settings_.draw_obs);
+    EFT_PROF_INFO("Setting: full=> {} exp {}", settings_.draw_full, settings_.draw_exp);
+    EFT_PROF_INFO("Setting: stat=> {} obs {}", settings_.draw_stat, settings_.draw_obs);
+    EFT_PROF_INFO("Setting: full=> {} exp {}", settings_.draw_full, settings_.draw_exp);
+
+    if (settings_.draw_stat && settings_.draw_obs) {
+        EFT_PROF_INFO("to draw: {}", "stat_observed");
+        curves_[ "stat_observed" ].to_draw = true;
+    }
     if (settings_.draw_stat && settings_.draw_exp) {
+        EFT_PROF_INFO("to draw: {}", "stat_expected");
+        EFT_PROF_INFO("Setting: stat=> {} obs {}");
         curves_[ "stat_postfit" ].to_draw = true;
         curves_[ "stat_prefit" ]. to_draw = true;
     }
-    if (settings_.draw_full && settings_.draw_obs)
-        curves_[ "full_observed"].to_draw = true;
+    if (settings_.draw_full && settings_.draw_obs) {
+        EFT_PROF_INFO("to draw: {}", "full_observed");
+        EFT_PROF_INFO("Setting: stat=> {} obs {}");
+        curves_[ "full_observed" ].to_draw = true;
+    }
     if (settings_.draw_full && settings_.draw_exp) {
+         EFT_PROF_INFO("to draw: {}", "full_expected");
+        EFT_PROF_INFO("Setting: stat=> {} obs {}");
         curves_[ "full_postfit" ].to_draw = true;
         curves_[ "full_prefit" ]. to_draw = true;
     }
