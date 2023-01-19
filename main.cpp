@@ -328,6 +328,10 @@ int main(int argc, char* argv[]) {
 
         commandLineArgs->RegisterKey("yl");
         commandLineArgs->RegisterKey("yh");
+        commandLineArgs->RegisterKey("out");
+        commandLineArgs->RegisterKey("stat");
+        commandLineArgs->RegisterKey("obs");
+        commandLineArgs->RegisterKey("exp");
 
         string poi;
         commandLineArgs->SetValIfArgExists("poi", poi);
@@ -335,10 +339,20 @@ int main(int argc, char* argv[]) {
         string path_res;
         commandLineArgs->SetValIfArgExists("input", path_res);
 
-
         NllScanPlotter plotter;
         NllScanPlotterSettings plotSettings;
         plotSettings.ReadSettingsFromCommandLine(commandLineArgs);
+
+        if (commandLineArgs->HasKey("full"))
+            plotSettings.draw_full = true;
+        if (commandLineArgs->HasKey("stat"))
+            plotSettings.draw_stat = true;
+        if (commandLineArgs->HasKey("exp"))
+            plotSettings.draw_exp = true;
+        if (commandLineArgs->HasKey("obs"))
+            plotSettings.draw_obs = true;
+
+
         plotter.UseSettings(std::move(plotSettings));
 
         plotter.ReadFiles(path_res);

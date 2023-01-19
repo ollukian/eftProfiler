@@ -195,6 +195,45 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             curves_[ key ].PrepareMuNllValues();
             curves_[ key ].title = key + "_" + poi_name;
             curves_[ key ].GetGraph();
+
+            // if draw observed / observed
+            if (key.find("observed") != string::npos) {
+                if (settings_.draw_obs) {
+                    curves_[ key ].to_draw = true;
+                }
+                else {
+                    curves_[ key ].to_draw = false;
+                }
+            }
+            else { // if draw expected
+                if (settings_.draw_exp) {
+                    curves_[ key ].to_draw = true;
+                }
+                else {
+                    curves_[ key ].to_draw = false;
+                }
+            }
+
+
+            // if draw stat / full
+            if (key.find("stat") != string::npos) {
+                if (settings_.draw_stat) {
+                    curves_[ key ].to_draw = true;
+                }
+                else {
+                    curves_[ key ].to_draw = false;
+                }
+            }
+            else { // full
+                if (settings_.draw_full) {
+                    curves_[ key ].to_draw = true;
+                }
+                else {
+                    curves_[ key ].to_draw = false;
+                }
+            }
+
+            EFT_PROF_DEBUG("To draw curve with key: {:10} ==> {}", curves_[key].to_draw);
         }
     }
 
@@ -286,9 +325,15 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
                 EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
             }
-            mg->Add(curve.GetGraph().get());
-            curve.GetGraph()->Draw("A P C");
-            legend->AddEntry(curve.GetGraph().get(), curve.title.c_str());
+            if (curve.to_draw) {
+                EFT_PROF_INFO("To     draw curve: {} due to the settings", curve.title);
+                mg->Add(curve.GetGraph().get());
+                curve.GetGraph()->Draw("A P C");
+                legend->AddEntry(curve.GetGraph().get(), curve.title.c_str());
+            }
+            else {
+                EFT_PROF_INFO("To NOT draw curve: {}  due to the settings", curve.title);
+            }
         }
     }
 

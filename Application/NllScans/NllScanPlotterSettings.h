@@ -26,8 +26,8 @@ struct NllCurveSettings {
     bool            to_draw     {true};
     std::string     title       ;
     std::string     poi_name    {"mu"};
-    double min_poi   {0.f};
-    double max_poi   {0.f};
+    double          min_poi   {0.f};
+    double          max_poi   {0.f};
 
     std::vector<std::pair<double, double>> mu_nll_values;
     std::vector<double>  mu_values;
@@ -45,12 +45,14 @@ struct NllCurveSettings {
 
 struct NllScanPlotterSettings {
     //NllCurveSettings()
-    double range_mu_l    {0.f};
-    double range_mu_h    {0.f};
-    double range_2dnll_l {0.f};
-    double range_2dnll_h {0.f};
-    //NllCurveSettings    full;
-    //NllCurveSettings    stat;
+    double range_mu_l       {0.f};
+    double range_mu_h       {0.f};
+    double range_2dnll_l    {0.f};
+    double range_2dnll_h    {0.f};
+    bool draw_obs           {false};
+    bool draw_exp           {false};
+    bool draw_stat          {false};
+    bool draw_full          {false};
     std::map<std::string, NllCurveSettings> curves;
 
     float                       rmargin             {0.05};
