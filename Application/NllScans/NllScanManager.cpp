@@ -292,10 +292,10 @@ void NllScanManager::RunScan() {
             auto nll_free_fit = fitter.CreatNll(fitSettings_);
             EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is created");
             EFT_PROF_INFO("pois before free fit:");
-            fitSettings_.pois->Print("v");
+            all_pois->Print("v");
             fitter.Minimize(fitSettings_, nll_free_fit);
             EFT_PROF_INFO("pois before free fit:");
-            fitSettings_.pois->Print("v");
+            all_pois->Print("v");
             EFT_PROF_DEBUG("NPS after nll creation for free fit");
             fitSettings_.nps->Print("v");
             EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is minimised");
@@ -303,7 +303,7 @@ void NllScanManager::RunScan() {
             fitSettings_.globalObs->Print("v");
             SetPOIsToTheRequiredGridPosition();
             EFT_PROF_INFO("pois after setting the grid back after free fit:");
-            fitSettings_.pois->Print("v");
+            all_pois->Print("v");
             EFT_PROF_INFO("Run free fit to get required values of nps ==> return back POIs");
         }
         ws_->FixValConst(fitSettings_.nps);
