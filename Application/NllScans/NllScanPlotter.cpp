@@ -434,7 +434,29 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     tex.DrawLatex(mg->GetXaxis()->GetXmin() + 0.05, 1.05f, "1#sigma");
     tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "2#sigma");
 
-    c.SaveAs(("LikelihoodScan1D_" + poi_name + ".png").c_str());
+    string stat_regime_str;
+    if (settings_.draw_stat) {
+        stat_regime_str += "stat_";
+    }
+    if (settings_.draw_full) {
+        stat_regime_str += "full_";
+    }
+
+    string expected_regime_str;
+    if (settings_.draw_exp) {
+        expected_regime_str += "exp_";
+    }
+    if (settings_.draw_obs) {
+        expected_regime_str += "obs_";
+    }
+
+    string save_name = fmt::format("{}_LikelihoodScan1D_{}_{}_{}.png",
+                                   settings_.output,
+                                   stat_regime_str,
+                                   expected_regime_str,
+                                   poi_name);
+
+    c.SaveAs(save_name.c_str());
 }
 
 NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& path)

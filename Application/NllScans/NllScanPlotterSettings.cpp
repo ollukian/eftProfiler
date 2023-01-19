@@ -25,6 +25,8 @@ void NllScanPlotterSettings::ReadSettingsFromCommandLine(shared_ptr<CommandLineA
         cmdLine->SetValIfArgExists("yl",range_2dnll_l);
     if (cmdLine->HasKey("yh"))
         cmdLine->SetValIfArgExists("yh",range_2dnll_h);
+    if (cmdLine->HasKey("out"))
+        cmdLine->SetValIfArgExists("out", output);
 }
 
 void NllCurveSettings::PrepareMuNllValues() {
