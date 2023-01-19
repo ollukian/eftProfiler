@@ -26,8 +26,8 @@ struct NllCurveSettings {
     bool            to_draw     {true};
     std::string     title       ;
     std::string     poi_name    {"mu"};
-    float min_poi   {0.f};
-    float max_poi   {0.f};
+    double min_poi   {0.f};
+    double max_poi   {0.f};
 
     std::vector<std::pair<double, double>> mu_nll_values;
     std::vector<double>  mu_values;

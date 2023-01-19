@@ -48,8 +48,8 @@ void NllCurveSettings::PrepareMuNllValues() {
         nll_values.emplace_back(nll);
     }
 
-    float min_nll = *std::min_element(nll_values.begin(), nll_values.end());
-    float max_nll = *std::max_element(nll_values.begin(), nll_values.end());
+    double min_nll = *std::min_element(nll_values.begin(), nll_values.end());
+    double max_nll = *std::max_element(nll_values.begin(), nll_values.end());
     min_poi = *std::min_element(mu_values.begin(), mu_values.end());
     max_poi = *std::max_element(mu_values.begin(), mu_values.end());
 
@@ -66,7 +66,7 @@ void NllCurveSettings::PrepareMuNllValues() {
         nll = 2 * (nll - min_nll);
     }
 
-    EFT_PROF_DEBUG("elements before substracting");
+    EFT_PROF_DEBUG("elements after substracting");
     EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
     for (size_t idx {0}; idx < NbPoints(); ++idx) {
         EFT_PROF_DEBUG("{:10} ==> {:.10}", mu_values.at(idx), nll_values.at(idx));
@@ -89,6 +89,10 @@ shared_ptr<TGraph> NllCurveSettings::GetGraph() {
         graph->SetLineWidth(6);
         graph->SetMarkerSize(2);
         graph->SetMarkerStyle(24);
+
+        if (title.find("observed") == string::npos) {
+            graph->SetLineStyle(kDashed);
+        }
 
         graph->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
         is_graph_ready = true;

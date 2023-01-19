@@ -13,6 +13,7 @@
 #include "TGraph.h"
 #include "TCanvas.h"
 #include "TLatex.h"
+#include "TLegend.h"
 #include "TLine.h"
 #include "TAxis.h"
 
@@ -246,6 +247,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 //    }
 
     auto mg = make_shared<TMultiGraph>("mg", "mg");
+    auto legend = make_shared<TLegend>(0.7, 0.7, 0.9, 0.9);
     //auto gr = make_shared<TGraph>(nll_vals.size(), mu_vals.data(), nll_vals.data());
 
     TCanvas c("c", "c", 1800, 1200);
@@ -286,6 +288,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             }
             mg->Add(curve.GetGraph().get());
             curve.GetGraph()->Draw("A P C");
+            legend->AddEntry(curve.GetGraph().get(), curve.title.c_str());
         }
     }
 
@@ -308,6 +311,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     //grFull->Draw("A L P");
 
     mg->Draw("APC");
+    legend->Draw("same");
     //mg->Draw("L P C");
 
     TLine l1;
