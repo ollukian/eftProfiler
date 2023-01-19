@@ -188,6 +188,28 @@ double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t
     return res;
 }
 
+void NllScanManager::RunFreeFit() {
+//    EFT_PROFILE_FN();
+//
+//    if (all_pois != nullptr) {
+//        EFT_PROF_INFO("FixNllScanManager::RunFreeFit:: all POIs (later on, needed ones will be float)");
+//        ws_->FixValConst(all_pois);
+//    }
+//
+//    EFT_PROF_INFO("FixNllScanManager::RunFreeFit:: Float required POIs (which are allowed to by a research)");
+//    ws_->FloatVals(pois_to_float);
+//    auto data = GetData(prePostFit_);
+//    fitSettings_.data = data;
+//    EFT_PROF_INFO("FixNllScanManager::RunFreeFit:: Set globs to zero...");
+//    ws_->SetVarVal(fitSettings_.globalObs, 0.);
+//
+//    fit::Fitter fitter;
+//    auto nll = fitter.CreatNll(fitSettings_);
+//
+//    EFT_PROF_INFO("Minimise Nll");
+//    fitter.Minimize(fitSettings_, nll);
+}
+
 void NllScanManager::RunScan() {
     EFT_PROFILE_FN();
 
@@ -261,7 +283,29 @@ void NllScanManager::RunScan() {
 //    SetGlobsToNpsIfNeeded();
 
     if (statType_ == StatType::STAT) {
-        EFT_PROF_INFO("Study type: Stan only ==> need to fix all nps to const");
+        EFT_PROF_INFO("Study type: Stan only ==> need to fix all nps to const after a free fit");
+        //RunFreeFit();
+        {
+            EFT_PROF_INFO("Run free fit to get required values of nps");
+            EFT_PROF_DEBUG("NPS before nll creation for free fit");
+            fitSettings_.nps->Print("v");
+            auto nll_free_fit = fitter.CreatNll(fitSettings_);
+            EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is created");
+            EFT_PROF_INFO("pois before free fit:");
+            fitSettings_.pois->Print("v");
+            fitter.Minimize(fitSettings_, nll_free_fit);
+            EFT_PROF_INFO("pois before free fit:");
+            fitSettings_.pois->Print("v");
+            EFT_PROF_DEBUG("NPS after nll creation for free fit");
+            fitSettings_.nps->Print("v");
+            EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is minimised");
+            EFT_PROF_DEBUG("Globs");
+            fitSettings_.globalObs->Print("v");
+            SetPOIsToTheRequiredGridPosition();
+            EFT_PROF_INFO("pois after setting the grid back after free fit:");
+            fitSettings_.pois->Print("v");
+            EFT_PROF_INFO("Run free fit to get required values of nps ==> return back POIs");
+        }
         ws_->FixValConst(fitSettings_.nps);
     }
     else {

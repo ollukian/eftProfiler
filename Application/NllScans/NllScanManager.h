@@ -31,6 +31,7 @@ namespace eft::stats::scans {
 class NllScanManager {
 public:
     void RunScan();
+    void RunFreeFit();
     static NllScanManager InitFromCommandLine(const std::shared_ptr<CommandLineArgs>& cmdLineArgs);
 
     bool ParseConfig(std::string path, std::string format);
