@@ -58,8 +58,13 @@ void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
     EFT_PROF_INFO("NllScanManager::IdentifyScanPointCoordinateAllPois for {} pois", pois_.size());
     for (auto& poi : pois_) {
         EFT_PROF_INFO("Dealing with: {}...", poi.Name());
-        if (gridType_ != GridType::USER_DEFINED) {
-            poi.ToTestAt(GetPointAtGrid(poi));
+        if (poi.IsGridPointKnown()) {
+            EFT_PROF_INFO("Poi: {} value is already set: {}", poi.Name(), poi.Value());
+        }
+        else {
+            if(gridType_ != GridType::USER_DEFINED) {
+                poi.ToTestAt(GetPointAtGrid(poi));
+            }
         }
         EFT_PROF_INFO("Poi: {} is to be tested at: {}", poi.Name(), poi.Value());
     }
