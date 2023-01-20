@@ -230,19 +230,7 @@ void NllScanManager::RunScan() {
     fitSettings_.data = data;
 
 
-    EFT_PROF_INFO("Identify grid points to put the pois to");
-    IdentifyScanPointCoordinateAllPois();
-
-    EFT_PROF_INFO("Set up the grid by forcing all POIs to bet at the required values");
-    SetPOIsToTheRequiredGridPosition();
-
-    EFT_PROF_INFO("Fix GRID POIs to be const");
-    FixGridPOIs();
-
-    EFT_PROF_INFO("Set globs to zero...");
-    ws_->SetVarVal(fitSettings_.globalObs, 0.);
-
-    EFT_PROF_INFO("Create Nll");
+    //EFT_PROF_INFO("Create Nll");
     fit::Fitter fitter;
     if (fitSettings_.nps == nullptr) {
         EFT_PROF_CRITICAL("nps are nullptr before create nll");
@@ -340,6 +328,18 @@ void NllScanManager::RunScan() {
     else {
         EFT_PROF_INFO("Study type: Full ==> no need to fix nps");
     }
+
+    EFT_PROF_INFO("Identify grid points to put the pois to");
+    IdentifyScanPointCoordinateAllPois();
+
+    EFT_PROF_INFO("Set up the grid by forcing all POIs to bet at the required values");
+    SetPOIsToTheRequiredGridPosition();
+
+    EFT_PROF_INFO("Fix GRID POIs to be const");
+    FixGridPOIs();
+
+    EFT_PROF_INFO("Set globs to zero...");
+    ws_->SetVarVal(fitSettings_.globalObs, 0.);
 
     EFT_PROF_DEBUG("Globs before nll creation ....");
     fitSettings_.globalObs->Print("v");
