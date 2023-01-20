@@ -289,11 +289,35 @@ void NllScanManager::RunScan() {
             EFT_PROF_INFO("Run free fit to get required values of nps");
             EFT_PROF_DEBUG("NPS before nll creation for free fit");
             fitSettings_.nps->Print("v");
+            EFT_PROF_INFO("pois before free fit:");
+            for (const auto& poi : pois_) {
+                auto ptr = ws_->GetVar(poi.Name());
+                string is_const_str = "F";
+                if (ptr->isConstant())
+                    is_const_str = "C";
+                EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                               ptr->GetName(),
+                               ptr->getVal(),
+                               ptr->getError(),
+                               is_const_str);
+            }
             auto nll_free_fit = fitter.CreatNll(fitSettings_);
             EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is created");
-//            EFT_PROF_INFO("pois before free fit:");
+ //           pois_->Print("v");
 //            all_pois->Print("v");
             fitter.Minimize(fitSettings_, nll_free_fit);
+            EFT_PROF_INFO("pois after free fit:");
+            for (const auto& poi : pois_) {
+                auto ptr = ws_->GetVar(poi.Name());
+                string is_const_str = "F";
+                if (ptr->isConstant())
+                    is_const_str = "C";
+                EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                               ptr->GetName(),
+                               ptr->getVal(),
+                               ptr->getError(),
+                               is_const_str);
+            }
 //            EFT_PROF_INFO("pois before free fit:");
 //            all_pois->Print("v");
             EFT_PROF_DEBUG("NPS after nll creation for free fit");
@@ -317,10 +341,41 @@ void NllScanManager::RunScan() {
     EFT_PROF_DEBUG("NPS before nll creation....");
     fitSettings_.nps->Print("v");
 
+    EFT_PROF_INFO("pois before final fit:");
+    for (const auto& poi : pois_) {
+        auto ptr = ws_->GetVar(poi.Name());
+        string is_const_str = "F";
+        if (ptr->isConstant())
+            is_const_str = "C";
+        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                       ptr->GetName(),
+                       ptr->getVal(),
+                       ptr->getError(),
+                       is_const_str);
+    }
+
     auto nll = fitter.CreatNll(fitSettings_);
 
     EFT_PROF_INFO("Minimise Nll");
     fitter.Minimize(fitSettings_, nll);
+
+    EFT_PROF_INFO("pois after final fit:");
+    for (const auto& poi : pois_) {
+        auto ptr = ws_->GetVar(poi.Name());
+        string is_const_str = "F";
+        if (ptr->isConstant())
+            is_const_str = "C";
+        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                       ptr->GetName(),
+                       ptr->getVal(),
+                       ptr->getError(),
+                       is_const_str);
+    }
+
+    EFT_PROF_DEBUG("Globs after final fit creation ....");
+    fitSettings_.globalObs->Print("v");
+    EFT_PROF_DEBUG("NPS after final fit creation....");
+    fitSettings_.nps->Print("v");
 
     auto found_nll = nll->getVal();
     EFT_PROF_INFO("nll value: {}", found_nll);
