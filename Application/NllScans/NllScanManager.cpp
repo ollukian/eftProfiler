@@ -342,8 +342,10 @@ void NllScanManager::RunScan() {
     fitSettings_.nps->Print("v");
 
     EFT_PROF_INFO("pois before final fit:");
-    for (const auto& poi : pois_) {
-        auto ptr = ws_->GetVar(poi.Name());
+    for (auto poi : *all_pois) {
+        auto ptr = dynamic_cast<RooRealVar*>(poi);
+//    for (const auto& poi : pois_) {
+//        auto ptr = ws_->GetVar(poi.Name());
         string is_const_str = "F";
         if (ptr->isConstant())
             is_const_str = "C";
@@ -360,8 +362,10 @@ void NllScanManager::RunScan() {
     fitter.Minimize(fitSettings_, nll);
 
     EFT_PROF_INFO("pois after final fit:");
-    for (const auto& poi : pois_) {
-        auto ptr = ws_->GetVar(poi.Name());
+    for (auto poi : *all_pois) {
+        auto ptr = dynamic_cast<RooRealVar*>(poi);
+//    for (const auto& poi : pois_) {
+//        auto ptr = ws_->GetVar(poi.Name());
         string is_const_str = "F";
         if (ptr->isConstant())
             is_const_str = "C";
