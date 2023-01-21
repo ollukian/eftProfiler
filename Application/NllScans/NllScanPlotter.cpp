@@ -336,14 +336,18 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     if (settings_.range_2dnll_h != 0) {
         mg->GetYaxis()->SetRangeUser(0.f, settings_.range_2dnll_h);
     }
-    if (settings_.range_mu_l != 0) {
+    if (settings_.range_mu_l != 0.f) {
+        EFT_PROF_INFO("Change POI low bound to: {}", settings_.range_mu_l);
         auto current_range_h = mg->GetXaxis()->GetXmax();
         mg->GetXaxis()->SetRangeUser(settings_.range_mu_l, current_range_h);
     }
-    if (settings_.range_mu_h != 0) {
+    if (settings_.range_mu_h != 0.f) {
+        EFT_PROF_INFO("Change POI high bound to: {}", settings_.range_mu_h);
         auto current_range_l = mg->GetXaxis()->GetXmin();
         mg->GetXaxis()->SetRangeUser(current_range_l, settings_.range_mu_h);
     }
+
+    EFT_PROF_DEBUG("Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
 
     //gr->SetTitle("");
     //gr->Draw("A P C");
@@ -401,29 +405,6 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     lFull.SetLineStyle(kDashed);
     lFull.SetLineWidth(3);
     lFull.Draw();
-
-
-//    static const map<string, double> muErrors = {
-//            {"mu_ggF", 0.128564},
-//            {"mu_VBF", 0.278759},
-//            {"mu_WH",  0.529406},
-//            {"mu_ZH",  0.515287},
-//            {"mu_ttH", 0.305285},
-//            {"mu_tH",  3.30348}
-//    };
-//
-//    tex.SetTextSize(0.045);
-//    const string muStr = "#mu_{" + mu.substr(3, mu.length()) + "}";
-//    tex.DrawLatex(0.50, 0.8, (muStr + " = " + to_string(sens.full.muHat).substr(0, 5)
-//                              + " #pm " + to_string(muErrors.at(mu)).substr(0, 5)
-//                  ).c_str()
-//    );
-
-    /*tex.DrawLatex(0.50, 0.75, (muStr + " = " + to_string(sens.full.muHat).substr(0, 5)
-                  + " #pm " + to_string(muErrors.at(mu)).substr(0, 5)
-                  ).c_str()
-                  );*/
-
 
     tex.SetNDC(false);
 
