@@ -332,6 +332,8 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("stat");
         commandLineArgs->RegisterKey("obs");
         commandLineArgs->RegisterKey("exp");
+        commandLineArgs->RegisterKey("force_data");
+        commandLineArgs->RegisterKey("snapshot");
 
         string poi;
         commandLineArgs->SetValIfArgExists("poi", poi);

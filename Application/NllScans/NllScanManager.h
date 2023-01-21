@@ -91,6 +91,10 @@ private:
     IWorkspaceWrapper* ws_  {nullptr};
     RooArgSet*              pois_to_float {nullptr};
     RooArgSet*              all_pois {nullptr};
+    std::string             snapshot_;
+    std::string             data_name;
+    bool                    force_data {false};
+
 };
 
 

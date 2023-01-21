@@ -194,6 +194,50 @@ double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t
 }
 
 void NllScanManager::RunFreeFit() {
+    EFT_PROF_INFO("Run free fit to get required values of nps");
+    EFT_PROF_DEBUG("NPS before nll creation for free fit");
+    fitSettings_.nps->Print("v");
+    EFT_PROF_INFO("pois before free fit:");
+    for (const auto& poi : pois_) {
+        auto ptr = ws_->GetVar(poi.Name());
+        string is_const_str = "F";
+        if (ptr->isConstant())
+            is_const_str = "C";
+        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                       ptr->GetName(),
+                       ptr->getVal(),
+                       ptr->getError(),
+                       is_const_str);
+    }
+    fit::Fitter fitter;
+    auto nll_free_fit = fitter.CreatNll(fitSettings_);
+    EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is created");
+    //           pois_->Print("v");
+//            all_pois->Print("v");
+    fitter.Minimize(fitSettings_, nll_free_fit);
+    EFT_PROF_INFO("pois after free fit:");
+    for (const auto& poi : pois_) {
+        auto ptr = ws_->GetVar(poi.Name());
+        string is_const_str = "F";
+        if (ptr->isConstant())
+            is_const_str = "C";
+        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                       ptr->GetName(),
+                       ptr->getVal(),
+                       ptr->getError(),
+                       is_const_str);
+    }
+//            EFT_PROF_INFO("pois before free fit:");
+//            all_pois->Print("v");
+    EFT_PROF_DEBUG("NPS after nll creation for free fit");
+    fitSettings_.nps->Print("v");
+    EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is minimised");
+    EFT_PROF_DEBUG("Globs");
+    fitSettings_.globalObs->Print("v");
+    SetPOIsToTheRequiredGridPosition();
+//            EFT_PROF_INFO("pois after setting the grid back after free fit:");
+//            all_pois->Print("v");
+    EFT_PROF_INFO("Run free fit to get required values of nps ==> return back POIs");
 //    EFT_PROFILE_FN();
 //
 //    if (all_pois != nullptr) {
@@ -226,7 +270,24 @@ void NllScanManager::RunScan() {
     EFT_PROF_INFO("Float required POIs (which are allowed to by a research)");
     ws_->FloatVals(pois_to_float);
 
-    auto data = GetData(prePostFit_);
+    if ( ! snapshot_.empty() ) {
+        ws_->raw()->loadSnapshot(snapshot_.c_str());
+    }
+
+    RooAbsData* data;
+
+    if (force_data) {
+        EFT_PROF_INFO("Force loading dataset: {}", data_name);
+        data = ws_->raw()->data(data_name.c_str());
+        if (!data) {
+            EFT_PROF_CRITICAL("Data: {} is not present in the ws", data_name);
+            throw std::runtime_error("Data name is not correct (not present in the WS)");
+        }
+    }
+    else {
+        EFT_PROF_CRITICAL("Get dataset from the manager");
+        data = GetData(prePostFit_);
+    }
     fitSettings_.data = data;
 
 
@@ -242,87 +303,9 @@ void NllScanManager::RunScan() {
         EFT_PROF_CRITICAL("pdf are nullptr before create nll");
     }
 
-//    std::filesystem::create_directories("figures/plots");
-//    EFT_PROF_INFO("Plot real data...");
-//    // plot real data
-//    for (auto obs : *ws_->GetModelConfig().GetObservables()) {
-//        auto obs_var = dynamic_cast<RooRealVar*>(obs);
-//        EFT_PROF_DEBUG("deal with category: {}", obs_var->GetName());
-//        TCanvas c("c", "c");
-//        auto frame = obs_var->frame();
-//        ws_->GetModelConfig().Get
-//        fitSettings_.data->plotOn(frame, RooFit::ProjWData());
-//        c.SaveAs(fmt::format("figures/plots/real_data_{}.png", obs_var->GetName()).c_str());
-//    }
-
-//    if (prePostFit_ != PrePostFit::OBSERVED) {
-//        EFT_PROF_INFO("Plot generated asimov");
-//        // plot asimov
-//        {
-//            for (auto obs: *ws_->GetModelConfig().GetObservables()) {
-//                auto obs_var = dynamic_cast<RooRealVar *>(obs);
-//                TCanvas c("c", "c");
-//                data->plotOn(obs_var->frame());
-//                c.SaveAs(fmt::format("figures/plots/asimov_{}.png", obs_var->GetName()).c_str());
-//            }
-//        }
-//    }
-    //if (pre)
-//    EFT_PROF_INFO("Set Global observables to values found in data if needed and fix nps if needed...");
-//    EFT_PROF_DEBUG(" *** Globs before....");
-//    fitSettings_.globalObs->Print("v");
-//    EFT_PROF_DEBUG(" *** NPS before....");
-//    fitSettings_.nps->Print("v");
-//    SetGlobsToNpsIfNeeded();
-
     if (statType_ == StatType::STAT) {
         EFT_PROF_INFO("Study type: Stan only ==> need to fix all nps to const after a free fit");
-        //RunFreeFit();
-        {
-            EFT_PROF_INFO("Run free fit to get required values of nps");
-            EFT_PROF_DEBUG("NPS before nll creation for free fit");
-            fitSettings_.nps->Print("v");
-            EFT_PROF_INFO("pois before free fit:");
-            for (const auto& poi : pois_) {
-                auto ptr = ws_->GetVar(poi.Name());
-                string is_const_str = "F";
-                if (ptr->isConstant())
-                    is_const_str = "C";
-                EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                               ptr->GetName(),
-                               ptr->getVal(),
-                               ptr->getError(),
-                               is_const_str);
-            }
-            auto nll_free_fit = fitter.CreatNll(fitSettings_);
-            EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is created");
- //           pois_->Print("v");
-//            all_pois->Print("v");
-            fitter.Minimize(fitSettings_, nll_free_fit);
-            EFT_PROF_INFO("pois after free fit:");
-            for (const auto& poi : pois_) {
-                auto ptr = ws_->GetVar(poi.Name());
-                string is_const_str = "F";
-                if (ptr->isConstant())
-                    is_const_str = "C";
-                EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                               ptr->GetName(),
-                               ptr->getVal(),
-                               ptr->getError(),
-                               is_const_str);
-            }
-//            EFT_PROF_INFO("pois before free fit:");
-//            all_pois->Print("v");
-            EFT_PROF_DEBUG("NPS after nll creation for free fit");
-            fitSettings_.nps->Print("v");
-            EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is minimised");
-            EFT_PROF_DEBUG("Globs");
-            fitSettings_.globalObs->Print("v");
-            SetPOIsToTheRequiredGridPosition();
-//            EFT_PROF_INFO("pois after setting the grid back after free fit:");
-//            all_pois->Print("v");
-            EFT_PROF_INFO("Run free fit to get required values of nps ==> return back POIs");
-        }
+        RunFreeFit();
         ws_->FixValConst(fitSettings_.nps);
     }
     else {
@@ -338,8 +321,11 @@ void NllScanManager::RunScan() {
     EFT_PROF_INFO("Fix GRID POIs to be const");
     FixGridPOIs();
 
-    EFT_PROF_INFO("Set globs to zero...");
-    ws_->SetVarVal(fitSettings_.globalObs, 0.);
+    // TODO: to handle post-fit things
+    if (snapshot_.empty()) {
+        EFT_PROF_INFO("Set globs to zero...");
+        ws_->SetVarVal(fitSettings_.globalObs, 0.);
+    }
 
     EFT_PROF_DEBUG("Globs before nll creation ....");
     fitSettings_.globalObs->Print("v");
@@ -461,6 +447,12 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
     EFT_PROF_CRITICAL("pois_to_float are set");
 
+    bool  force_data {false};
+    string snapshot_name;
+
+    cmdLineArgs->SetValIfArgExists("snapshot", snapshot_name);
+    if (cmdLineArgs->HasKey("force_data"))
+        force_data = true;
 
 
     auto pdf_to_use = dynamic_cast<RooAbsPdf*>(pdf->clone());
@@ -485,6 +477,18 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetPrePostFit(prePostFit)
             .SetStudyType(studyType)
             .SetStatType(statType);
+
+    EFT_PROF_INFO("Create a list of all pois to keep them const");
+    auto pois = new RooArgSet{};
+
+    for (const auto& poi : manager->GetListPOIs()) {
+        EFT_PROF_INFO("\t add: {}", poi);
+        pois->add(*manager->ws()->GetVar(poi));
+    }
+
+    scanManager.force_data = force_data;
+    scanManager.snapshot_  = std::move(snapshot_name);
+    scanManager.all_pois = pois;
 
     EFT_PROF_CRITICAL("before leaving init function");
 
