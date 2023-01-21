@@ -486,9 +486,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     }
 
     vector<string> pois_to_float;
-    EFT_PROF_CRITICAL("try to set up pois_to_float");
     cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
-    EFT_PROF_CRITICAL("pois_to_float are set");
 
     bool  force_data {false};
     string snapshot_name;
@@ -541,8 +539,6 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     scanManager.force_data = force_data;
     scanManager.snapshot_  = std::move(snapshot_name);
     scanManager.all_pois = pois;
-
-    EFT_PROF_CRITICAL("before leaving init function");
 
     if ( scanManager.fitSettings_.nps == nullptr) {
         EFT_PROF_CRITICAL("fitsettiings.nps == nullptr in the init");
