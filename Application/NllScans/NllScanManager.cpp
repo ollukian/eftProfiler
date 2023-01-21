@@ -194,7 +194,12 @@ double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t
 }
 
 void NllScanManager::RunFreeFit() {
-    EFT_PROF_INFO("Run free fit to get required values of nps");
+    EFT_PROF_INFO("RunFreeFit: Run free fit to get required values of nps");
+    EFT_PROF_INFO("RunFreeFit: Make all pois const and then float allowed ones..");
+    ws_->FixValConst(all_pois);
+    EFT_PROF_INFO("RunFreeFit: float allowed POIs..");
+    ws_->FloatVals(pois_to_float);
+
     //EFT_PROF_INFO("Float all pois");
     // TODO: proper deal with pois to float / to fix
     //ws_->FloatVals(all_pois);
