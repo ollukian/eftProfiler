@@ -289,6 +289,8 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("postfit");
         commandLineArgs->RegisterKey("stat_only");
         commandLineArgs->RegisterKey("out");
+        commandLineArgs->RegisterKey("one_at_time");
+        commandLineArgs->RegisterKey("fit_all_pois");
         vector<string> pois_float;
         vector<string> pois;
 
