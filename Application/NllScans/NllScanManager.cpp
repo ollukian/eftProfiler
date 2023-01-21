@@ -195,11 +195,17 @@ double NllScanManager::GetPointAtGridEquidistant(double low, double high, size_t
 
 void NllScanManager::RunFreeFit() {
     EFT_PROF_INFO("Run free fit to get required values of nps");
+    //EFT_PROF_INFO("Float all pois");
+    // TODO: proper deal with pois to float / to fix
+    //ws_->FloatVals(all_pois);
     EFT_PROF_DEBUG("NPS before nll creation for free fit");
     fitSettings_.nps->Print("v");
+    ws_->FloatVals(all_pois);
     EFT_PROF_INFO("pois before free fit:");
-    for (const auto& poi : pois_) {
-        auto ptr = ws_->GetVar(poi.Name());
+    for (auto poi : *all_pois) {
+        auto ptr = dynamic_cast<RooRealVar*>(poi);
+//    for (const auto& poi : pois_) {
+//        auto ptr = ws_->GetVar(poi.Name());
         string is_const_str = "F";
         if (ptr->isConstant())
             is_const_str = "C";
@@ -216,8 +222,10 @@ void NllScanManager::RunFreeFit() {
 //            all_pois->Print("v");
     fitter.Minimize(fitSettings_, nll_free_fit);
     EFT_PROF_INFO("pois after free fit:");
-    for (const auto& poi : pois_) {
-        auto ptr = ws_->GetVar(poi.Name());
+    for (auto poi : *all_pois) {
+        auto ptr = dynamic_cast<RooRealVar*>(poi);
+//    for (const auto& poi : pois_) {
+//        auto ptr = ws_->GetVar(poi.Name());
         string is_const_str = "F";
         if (ptr->isConstant())
             is_const_str = "C";
@@ -266,6 +274,7 @@ void NllScanManager::RunScan() {
         EFT_PROF_INFO("Fix all POIs (later on, needed ones will be float)");
         ws_->FixValConst(all_pois);
     }
+    // TODO: a flag to float all pois
 
     EFT_PROF_INFO("Float required POIs (which are allowed to by a research)");
     ws_->FloatVals(pois_to_float);
