@@ -334,7 +334,15 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     //mg->GetYaxis()->SetRangeUser(0.f,          max_nll);
 
     if (settings_.range_2dnll_h != 0) {
-        mg->GetYaxis()->SetRangeUser(0.f,          settings_.range_2dnll_h);
+        mg->GetYaxis()->SetRangeUser(0.f, settings_.range_2dnll_h);
+    }
+    if (settings_.range_mu_l != 0) {
+        auto current_range_h = mg->GetXaxis()->GetXmax();
+        mg->GetXaxis()->SetRangeUser(settings_.range_mu_l, current_range_h);
+    }
+    if (settings_.range_mu_h != 0) {
+        auto current_range_l = mg->GetXaxis()->GetXmin();
+        mg->GetXaxis()->SetRangeUser(current_range_l, settings_.range_mu_h);
     }
 
     //gr->SetTitle("");

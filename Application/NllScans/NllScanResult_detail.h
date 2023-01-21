@@ -51,6 +51,8 @@ namespace eft::stats::scans {
     using NllScanResult = NllScanResult_v2;
     //namespace detail = detail_v2;
 
+    // TODO: v3 => fit type (one-at-time / all float / user defined)
+
 
 std::string NllScanResult::PrintAsString() const noexcept {
     EFT_PROFILE_FN();
