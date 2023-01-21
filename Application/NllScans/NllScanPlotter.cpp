@@ -340,11 +340,13 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
         EFT_PROF_INFO("Change POI low bound to: {}", settings_.range_mu_l);
         auto current_range_h = mg->GetXaxis()->GetXmax();
         mg->GetXaxis()->SetRangeUser(settings_.range_mu_l, current_range_h);
+        EFT_PROF_DEBUG("==>Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
     }
     if (settings_.range_mu_h != 0.f) {
         EFT_PROF_INFO("Change POI high bound to: {}", settings_.range_mu_h);
         auto current_range_l = mg->GetXaxis()->GetXmin();
         mg->GetXaxis()->SetRangeUser(current_range_l, settings_.range_mu_h);
+        EFT_PROF_DEBUG("==>Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
     }
 
     EFT_PROF_DEBUG("Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
