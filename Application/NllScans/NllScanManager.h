@@ -94,6 +94,12 @@ private:
     std::string             snapshot_;
     std::string             data_name;
     bool                    force_data {false};
+    // TODO: change to enum about the way to float POIS:
+    //  - one-at-a-time
+    //  - all-float
+    //  - user-defined
+    bool                    one_at_time  {true};
+    bool                    fit_all_pois {false};
 
 };
 
