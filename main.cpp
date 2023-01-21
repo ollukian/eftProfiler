@@ -291,6 +291,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("out");
         commandLineArgs->RegisterKey("one_at_time");
         commandLineArgs->RegisterKey("fit_all_pois");
+        commandLineArgs->RegisterKey("force_data");
         vector<string> pois_float;
         vector<string> pois;
 
