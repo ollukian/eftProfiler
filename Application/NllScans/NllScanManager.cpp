@@ -208,6 +208,18 @@ void NllScanManager::RunFreeFit() {
         ws_->FloatVals(all_pois);
     }
 
+    if (prePostFit_ == PrePostFit::POSTFIT) {
+        EFT_PROF_INFO("RunFreeFit: option POSTFIT ==> allow globs to be not at zero");
+    }
+    else if (prePostFit_ == PrePostFit::PREFIT) {
+        EFT_PROF_INFO("RunFreeFit: option PREFIT ==> force globs to zero");
+        ws_->SetVarVal(fitSettings_.globalObs, 0.);
+    }
+    else if (prePostFit_ == PrePostFit::OBSERVED) {
+        EFT_PROF_INFO("RunFreeFit: option OBSERVED ==> force globs to zero");
+        ws_->SetVarVal(fitSettings_.globalObs, 0.);
+    }
+
     EFT_PROF_DEBUG("RunFreeFit: pois before free fit:");
     for (auto poi : *all_pois) {
         auto ptr = dynamic_cast<RooRealVar*>(poi);
@@ -224,11 +236,11 @@ void NllScanManager::RunFreeFit() {
     }
 
 
-    //EFT_PROF_INFO("Float all pois");
-    // TODO: proper deal with pois to float / to fix
-    //ws_->FloatVals(all_pois);
     EFT_PROF_DEBUG("NPS before nll creation for free fit");
     fitSettings_.nps->Print("v");
+
+    EFT_PROF_DEBUG("Globs before nll creation for free fit");
+    fitSettings_.globalObs->Print("v");
     //ws_->FloatVals(all_pois);
 
     fit::Fitter fitter;
@@ -248,10 +260,9 @@ void NllScanManager::RunFreeFit() {
                        ptr->getError(),
                        is_const_str);
     }
-    EFT_PROF_DEBUG("NPS after nll creation for free fit");
+    EFT_PROF_DEBUG("RunFreeFit: NPS after free fit");
     fitSettings_.nps->Print("v");
-    EFT_PROF_INFO("Run free fit to get required values of nps ==> nll is minimised");
-    EFT_PROF_DEBUG("Globs");
+    EFT_PROF_DEBUG("RunFreeFit: globs after free fit");
     fitSettings_.globalObs->Print("v");
     //SetPOIsToTheRequiredGridPosition();
 //            EFT_PROF_INFO("pois after setting the grid back after free fit:");
@@ -282,6 +293,7 @@ void NllScanManager::RunScan() {
     EFT_PROFILE_FN();
 
     if ( ! snapshot_.empty() ) {
+        EFT_PROF_INFO("Load snapshot: {}", snapshot_);
         ws_->raw()->loadSnapshot(snapshot_.c_str());
     }
 
@@ -353,8 +365,8 @@ void NllScanManager::RunScan() {
     FixGridPOIs();
 
     // TODO: to handle post-fit things
-    if (snapshot_.empty()) {
-        EFT_PROF_INFO("Set globs to zero...");
+    if (prePostFit_ != PrePostFit::POSTFIT) {
+        EFT_PROF_INFO("Not postfit => set globs to zero");
         ws_->SetVarVal(fitSettings_.globalObs, 0.);
     }
 
