@@ -17,6 +17,8 @@
 #include "Application/NllScans/NllScanPlotter.h"
 #include "Application/NllScans/NllScanPlotterSettings.h"
 
+#include "Application/FreeFit/FreeFitManager.h"
+
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
 #include "spdlog/fmt/bundled/color.h"
@@ -361,6 +363,10 @@ int main(int argc, char* argv[]) {
         //plotter.GetResults1DPoi(poi);
         plotter.PlotNll1D(poi);
 
+    }
+    else if (task == "free_fit") {
+        auto fitManager = eft::stats::freefit::FreeFitManager::InitFromCommandLine(commandLineArgs);
+        fitManager.RunFit();
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);
