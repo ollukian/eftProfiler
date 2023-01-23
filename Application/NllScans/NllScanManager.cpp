@@ -349,6 +349,7 @@ void NllScanManager::RunScan() {
     }
     else if (user_defined) {
         EFT_PROF_INFO("RunScan: option user_defined ==> allow to float all {} mentioned POIs", pois_to_float->size());
+        ws_->FixValConst(all_pois);
         ws_->FloatVals(pois_to_float);
     }
 
