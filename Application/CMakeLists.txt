@@ -13,7 +13,7 @@ include_directories(../Vendors)
 include_directories(../Core)
 
 add_subdirectory(NllScans)
-add_subdirectory(freefit)
+add_subdirectory(FreeFit)
 
 add_library(app ${app_source_files})
 
