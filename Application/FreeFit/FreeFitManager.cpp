@@ -127,6 +127,7 @@ void FreeFitManager::RunFit() {
     fitSettings_.nps->Print("v");
     EFT_PROF_DEBUG("RunFreeFit: globs before free fit");
     fitSettings_.globalObs->Print("v");
+    fitSettings_.errors = errors_type;
 
     fitSettings_.save_res = true;
     RooArgList list_pois(*pois_to_float);
