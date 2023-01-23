@@ -12,5 +12,13 @@
 #include "RooNLLVar.h"
 #include "RooAbsPdf.h"
 #include "RooAbsData.h"
+#include "RooFitResult.h"
+#include "RooSimultaneous.h"
+#include "RooAddPdf.h"
+#include "RooAddModel.h"
+#include "RooWorkspace.h"
+#include "RooGaussian.h"
+#include "TMinuit.h"
+#include "RooMinimizer.h"
 
 #endif //EFTPROFILER_EFTROOFITPRECOMPHEADERS_H

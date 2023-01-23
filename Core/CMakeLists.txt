@@ -1,9 +1,9 @@
 set(core_source_files
+        EfPreCompHeaders.cpp
         WorkspaceWrapper.cpp
         CommandLineArgs.cpp
         Logger.cpp
         Profiler.cpp
-        EfPreCompHeaders.cpp
         Core.cpp)
 
 add_library(core ${core_source_files})

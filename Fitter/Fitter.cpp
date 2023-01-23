@@ -83,7 +83,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
     RooMinimizerWrapper minim(*nll);
     minim.setStrategy( settings.strategy );
     minim.setPrintLevel( 1 );
-    //RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
+    RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
     //RooFit::MsgLevel::
     //RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
     //RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::PROGRESS);
@@ -111,7 +111,12 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
 
     size_t retry = settings.retry;
     size_t strategy = settings.strategy;
-    while (_status != 0 && _status != 1 && strategy < 2 && retry > 0)
+
+    EFT_PROF_INFO("retry:    {}", retry);
+    EFT_PROF_INFO("strategy: {}", strategy);
+
+    while (_status != 0 && _status != 1 && retry > 0)
+    //while (_status != 0 && _status != 1 && strategy < 2 && retry > 0)
     {
         EFT_PROF_INFO("Fit failed with status: {} using strategy {}, try again with strategy: {}",
                       _status,
@@ -120,7 +125,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
         --retry;
         ++strategy;
         minim.setStrategy(strategy);
-        EFT_PROF_INFO("Change strategy to {}", strategy);
+        EFT_PROF_INFO("Change strategy to {} and launch new minimisation...", strategy);
         _status = minim.minimize("Minuit2", "Migrag");
         EFT_PROF_INFO("After retrying, fit status: {}", _status);
     }
@@ -134,6 +139,8 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
         EFT_PROF_INFO("Successfull minimization! Return back fit strategy");
         minim.setStrategy(settings.strategy);
     }
+
+    last_fit_status_ = _status;
 
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;

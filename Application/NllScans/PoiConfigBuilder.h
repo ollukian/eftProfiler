@@ -1,6 +1,8 @@
 //
 // Created by Aleksei Lukianchuk on 13-Jan-23.
 //
+// @ lukianchuk.aleksei@gmail.com
+
 
 #ifndef EFTPROFILER_POICONFIGBUILDER_H
 #define EFTPROFILER_POICONFIGBUILDER_H

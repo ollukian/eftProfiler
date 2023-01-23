@@ -64,6 +64,7 @@ public:
     virtual void ExtractPdfTotal(std::string name)  = 0;
 
     virtual RooAbsData& GetData(PrePostFit studyType) = 0;
+    //virtual RooAbsData* GetDataPtr(PrePostFit studyType) = 0;
     virtual void        SetUpGlobObs(PrePostFit studyType) = 0;
 
     virtual void CreateAsimovData(PrePostFit studyType) noexcept = 0;

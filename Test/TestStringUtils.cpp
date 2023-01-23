@@ -356,8 +356,6 @@ void TestToUpperCase() {
     }
 }
 
-// TODO: test tolowcase and touppercse
-
 EFT_IMPLEMENT_TESTFILE(StringUtils) {
     EFT_ADD_TEST(TestJoin,          "StringUtils");
     EFT_ADD_TEST(TestStrip,         "StringUtils");

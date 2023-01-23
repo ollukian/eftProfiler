@@ -1,6 +1,8 @@
 //
 // Created by Aleksei Lukianchuk on 12-Jan-23.
 //
+// @ lukianchuk.aleksei@gmail.com
+
 
 #include "Grid.h"
 #include "Core.h"

@@ -259,13 +259,12 @@ ostream& operator << (ostream& os, const Colour& c) noexcept {
 
 std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcept {
 
-    EFT_PROF_TRACE("Check if [{}] is a ROOT colour", s);
-
+    //EFT_PROF_TRACE("Check if [{}] is a ROOT colour", s);
     StringUtils::Strip(s);
     if (s.empty())
         return {};
     if (s[0] != 'k') {
-        EFT_PROF_TRACE("[{}] doesn't start with {}, but with: {}", s, "k", s[0]);
+        //EFT_PROF_TRACE("[{}] doesn't start with {}, but with: {}", s, "k", s[0]);
         return {};
     }
 
@@ -355,7 +354,7 @@ std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcep
 
     if (eft_ROOT_ColourNames.find(s) != eft_ROOT_ColourNames.end()) {
         size_t res = eft_ROOT_ColourNames.at(s);
-        EFT_PROF_TRACE("{} is present in the ROOT pallette with idx: {}", s, res);
+        //EFT_PROF_TRACE("{} is present in the ROOT pallette with idx: {}", s, res);
         return res;
     }
     EFT_PROF_CRITICAL("{} starts with [k] but is not present in the palette");
@@ -364,17 +363,17 @@ std::optional<size_t> ColourUtils::CheckIfROOTcolour(std::string_view s) noexcep
 }
 
 size_t ColourUtils::GetColourFromString(std::string_view s) noexcept {
-    EFT_PROF_TRACE("Get colour from [{}]", s);
+    //EFT_PROF_TRACE("Get colour from [{}]", s);
 
     if (auto res = CheckIfROOTcolour(s); res.has_value()) {
-        EFT_PROF_DEBUG("[{}] is a ROOT colour: [{}]", s, res.value());
+        //EFT_PROF_DEBUG("[{}] is a ROOT colour: [{}]", s, res.value());
         return res.value();
     }
 
     auto colour = Colour::CreateFromString(s);
     if (idx_of_colour_.find(colour) != idx_of_colour_.end()) {
         auto idx = idx_of_colour_.at(colour);
-        EFT_PROF_TRACE("Colour {} is already present, return its idx: {}", colour, idx);
+        //EFT_PROF_TRACE("Colour {} is already present, return its idx: {}", colour, idx);
         return idx;
     }
     return RegisterColour(colour);

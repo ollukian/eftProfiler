@@ -1,6 +1,8 @@
 //
 // Created by Aleksei Lukianchuk on 12-Jan-23.
 //
+// @ lukianchuk.aleksei@gmail.com
+
 
 #include "PoiConfig.h"
 #include "Core.h"
@@ -11,6 +13,9 @@
 #include <string>
 
 #include "nlohmann/json.hpp"
+
+#include <filesystem>
+#include <fstream>
 
 namespace eft::stats::scans {
 
@@ -77,7 +82,8 @@ void from_json(const nlohmann::json& j, PoiConfig& config) {
 
 PoiConfig PoiConfig::readFromString(const std::string& s) {
     EFT_PROFILE_FN();
-
+    // todo:
+    //  - to add parsing errors in a case of weird things, like to many arguments number
     set<string> keys = {
         "val",
         "grid",
@@ -86,8 +92,12 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
     };
 
     auto name_params = eft::StringUtils::Split(s, '(');
-    const auto& name = name_params[0];
-    auto params = name_params[1];
+    auto& name = name_params[0];
+    auto& params = name_params[1];
+
+    eft::StringUtils::Trim(name);
+    EFT_PROF_INFO("Read POI from string: {}", s);
+    EFT_PROF_DEBUG("parsed name: [{}]", name);
 
     auto tokens = eft::StringUtils::Split(params, ':');
     EFT_PROF_DEBUG("obtained {} tokens from: [{}]", tokens.size(), s);
@@ -111,10 +121,23 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
             EFT_PROF_DEBUG("need to remove [] symbols from the token vals... => {}", token_vals);
         }
 
-        auto vals = eft::StringUtils::Split(token_vals);
+        auto vals_all = eft::StringUtils::Split(token_vals);
+        vector<string> vals;
+        //std::copy_if()
+        std::copy_if(vals_all.begin(),
+                     vals_all.end(),
+                     back_inserter(vals),
+                     [](string& val_) -> bool
+                    {
+                        if (val_.empty())
+                            return false;
+                        return val_ != " " && val_ != ")";
+                    }
+        );
         EFT_PROF_DEBUG("Found: {} vals: {}", vals.size(), eft::StringUtils::Join('|', vals));
 
         if (token_name == "val") {
+            EFT_PROF_DEBUG("* parse val...");
             if (vals.size() == 2) {
                 double val;
                 double err;
@@ -127,14 +150,16 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_CRITICAL("Error in parsing: {} as two floats", token_vals);
                     throw std::runtime_error("");
                 }
-
+                EFT_PROF_DEBUG("    values set to: {} +- {}", val, err);
                 res.WithCentralVal(val).WithCentralErr(err);
             }
             else if (vals.size() == 1) {
                 EFT_PROF_CRITICAL("Error: for val 2 values must be given: value and error");
+                throw std::logic_error("For the POI both value and error must be provided");
             }
         }
         else if (token_name == "grid") {
+            EFT_PROF_DEBUG("* parse grid...");
             if (vals.size() == 2) {
                 int nb_points_grid;
                 string grid_type;
@@ -146,6 +171,9 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_CRITICAL("Error in parsing: {} as an int and string", token_vals);
                     throw std::runtime_error("");
                 }
+                EFT_PROF_CRITICAL("parsing grid type is not available yet");
+                throw std::logic_error("see message above");
+                EFT_PROF_DEBUG("    grid set to: {}", nb_points_grid);
                 res.WithGridSize(nb_points_grid);
             }
             else if (vals.size() == 1) {
@@ -157,39 +185,85 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
                     EFT_PROF_CRITICAL("Error in parsing: {} as an int", token_vals);
                     throw std::runtime_error("");
                 }
+                EFT_PROF_DEBUG("    grid set to: {} +- {}", nb_points_grid);
                 res.WithGridSize(nb_points_grid);
             }
         }
         else if (token_name == "range") {
+            EFT_PROF_DEBUG("* parse range...");
             if (vals.size() == 2) {
-                string r1 = vals[0];
-                string r2 = vals[1];
+                string& r1 = vals[0];
+                string& r2 = vals[1];
+                EFT_PROF_DEBUG("    range with 2 elements: {} and {}", r1, r2);
                 if (r1.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r1, "s");
+                    EFT_PROF_DEBUG("    r1 starts with s, after cutting: [{}]", r1, r1);
                     auto val1 = stod(r1);
+                    EFT_PROF_DEBUG("    value of r1 in units of sigma: {}", val1);
+                    EFT_PROF_DEBUG("    range LOW to: {} sigmas", val1);
                     res.WithRangeSigmasLow(val1);
                 }
                 else {
                     auto val1 = stod(r1);
+                    EFT_PROF_DEBUG("r1 is in the real units => set range low to: {}", val1);
+                    EFT_PROF_DEBUG("    range LOW to: {}", val1);
                     res.WithRangeLow(val1);
                 }
 
+                if (r2.back() == ')') {
+                    eft::StringUtils::RemoveSuffix(r2, ")");
+                }
+                EFT_PROF_DEBUG("r2: [{}]", r2);
+
                 if (r2.back() == 's') {
                     eft::StringUtils::RemoveSuffix(r2, "s");
+                    EFT_PROF_DEBUG("r2 starts with s, after cutting: [{}]", r1);
                     auto val2 = stod(r2);
+                    EFT_PROF_DEBUG("value of r2 in units of sigma: {}", val2);
+                    EFT_PROF_DEBUG("    range HIGH to: {} sigmas", val2);
                     res.WithRangeSigmasHigh(val2);
                 }
                 else {
                     auto val2 = stod(r2);
+                    EFT_PROF_DEBUG("r2: [{}] is in the real units => set range high to: {}", r2, val2);
+                    EFT_PROF_DEBUG("    range HIGH to: {}", val2);
                     res.WithRangeHigh(val2);
                 }
             }
+            else {
+                string& range = vals[0];
+                StringUtils::Trim(range);
+                EFT_PROF_DEBUG("    range with 1 element: {}", range);
+                if (range.back() == ')') {
+                    eft::StringUtils::RemoveSuffix(range, ")");
+                }
+                if (range.back() == 's') {
+                    eft::StringUtils::RemoveSuffix(range, "s");
+                    auto val1 = stod(range);
+                    EFT_PROF_DEBUG("    value of the range in units of sigma: {}", val1);
+                    EFT_PROF_DEBUG("    range  to: {} sigmas", val1);
+                    res.WithRangeSigmas(val1);
+                } // if the range is in sigmas
+                else {
+                    auto val1 = stod(range);
+                    EFT_PROF_DEBUG("    range  to: {} ", val1);
+                    res.WithRangeHigh(val1);
+                    res.WithRangeLow(val1);
+                } // range not in sigmas
+            }
         }
         else if (token_name == "at") {
+            EFT_PROF_DEBUG("* parse at...");
             float val = stod(token_vals);
             res.ToTestAt(val);
+            EFT_PROF_DEBUG("    at to: {}", val);
         }
 
+    }
+
+    if (res.is_range_in_sigmas) {
+        EFT_PROF_INFO("range for scan low is defined in units of sigma: compute real range");
+        res.ComputeRangeFromSigmasIfNeeded();
     }
 
     return res;
@@ -216,6 +290,37 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
     //          range [1s 2s]       => low = 1 * sigma, high = 2 * sigma
     //      at [value]              ## to probe at a given value instead of computing the grid position ##
     //          value               => exact position at which to probe this POI, without using the grid
+}
+
+PoiConfig readFromJSON(const std::filesystem::path& path) {
+    EFT_PROFILE_FN();
+    const string filename = path.string();
+    const string extension = path.extension().string();
+    if (extension != ".json") {
+        EFT_PROF_WARN("{} NOT [.json]", path.string());
+        return {};
+    }
+
+    ifstream ifs(filename);
+    if ( ! ifs.is_open() ) {
+        throw std::runtime_error("error opening: " + filename);
+    }
+
+    nlohmann::json j;
+    ifs >> j;
+
+    PoiConfig res;
+
+    try {
+        EFT_LOG_DURATION("Reading result from JSON");
+        res = j.get<PoiConfig>();
+    }
+    catch (nlohmann::json::type_error& e) {
+        EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}.", path.string(), e.what()
+        );
+    }
+
+    return res;
 }
 
 std::ostream& operator << (std::ostream& os, const PoiConfig& config) {

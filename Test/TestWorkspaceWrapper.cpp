@@ -639,11 +639,11 @@ void TestWSSetters() {
 void Initiate() {
     Logger::SetLevel(spdlog::level::level_enum::info);
 
-    fmt::print(fmt::fg(fmt::color::yellow),
-               " {} {}",
-               "Running tests of the Workspace wrapper may may take some non-negligible time ~20-30 seconds\n",
-               "It happens due to creating a toy RooWorkspace, requiring compiling of systematics functions\n"
-               );
+//    fmt::print(fmt::fg(fmt::color::yellow),
+//               " {} {}",
+//               "Running tests of the Workspace wrapper may may take some non-negligible time ~20-30 seconds\n",
+//               "It happens due to creating a toy RooWorkspace, requiring compiling of systematics functions\n"
+//               );
 
 //    EFT_PROF_WARN("{} {} {}",
 //                  "Running tests of the Workspace wrapper. First stage may take some non-negligible time",

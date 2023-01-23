@@ -46,7 +46,12 @@ public:
     virtual void FloatVals(RooArgSet* vals)  = 0;
 
     virtual void SetVarVal(const std::string& name, double val) = 0;
+    virtual void SetVarVal(const std::vector<std::string>& names, double val) = 0;
+    virtual void SetVarVal(RooArgSet* vars, double val) = 0;
+
     virtual void SetVarErr(const std::string& name, double err) = 0;
+    virtual void SetVarErr(const std::vector<std::string>& names, double err) = 0;
+    virtual void SetVarErr(RooArgSet* vars, double err) = 0;
 
     virtual double GetParVal(const std::string& par)   const = 0;
     virtual double GetParErr(const std::string& par)   const = 0;

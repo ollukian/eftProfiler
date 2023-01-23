@@ -3396,6 +3396,7 @@ namespace stats {
         cout << "[ComputeExpectedNll] nll is created" << endl;
         cout << "[ComputeExpectedNll] Minimize..." << endl;
         auto res = Minimize(*nll);
+        auto res = Minimize(*nll);
         cout << "[ComputeExpectedNll] Minimizing DONE" << endl;
         //cout << "[ComputeExpectedNll] status after:" << endl;
         //PrintInnerParams();

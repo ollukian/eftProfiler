@@ -67,7 +67,7 @@ namespace eft::plot {
         const string filename = path.string();
         const string extension = path.extension().string();
         if (extension != ".json") {
-            cout << fmt::format(" NOT [.json]") << endl;
+            EFT_PROF_WARN("{} NOT [.json]", path.string());
             return {};
         }
 
@@ -632,13 +632,14 @@ namespace eft::plot {
             latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
         }
 
+
         EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", x_selection_info, y_selection_info);
+
 
         if (settings->mu_latex.empty())
             latex.DrawLatex(x -= dx, y -= dy, settings->poi.c_str());
         else
             latex.DrawLatex(x -= dx, y -= dy, settings->mu_latex.c_str());
-
 
         const string stem_name = eft::utils::PlotterUtils::FormName(settings);
         for (const std::string& fileformat : settings->fileformat) {

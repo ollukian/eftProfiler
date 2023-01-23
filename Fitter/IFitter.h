@@ -28,6 +28,7 @@ public:
     virtual FitResPtr   Fit(FitSettings& settings) = 0;
     virtual void SetGlobs(RooArgSet* globs) noexcept = 0;
     virtual void SetNps(RooArgSet* nps) noexcept = 0;
+    virtual int  GetLastFitStatus() noexcept = 0;
     //virtual FitResPtr   Fit(std::string&& data, std::string&& pdf)      = 0;
 };
 

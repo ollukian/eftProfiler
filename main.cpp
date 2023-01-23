@@ -14,6 +14,8 @@
 #include "Application/Ranking/CorrelationStudyProcessor.h"
 
 #include "Application/NllScans/NllScanManager.h"
+#include "Application/NllScans/NllScanPlotter.h"
+#include "Application/NllScans/NllScanPlotterSettings.h"
 
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
@@ -283,12 +285,18 @@ int main(int argc, char* argv[]) {
 
         commandLineArgs->RegisterKey("pois");
         commandLineArgs->RegisterKey("pois_float");
+        commandLineArgs->RegisterKey("prefit");
+        commandLineArgs->RegisterKey("postfit");
+        commandLineArgs->RegisterKey("stat_only");
+        commandLineArgs->RegisterKey("out");
+        commandLineArgs->RegisterKey("one_at_time");
+        commandLineArgs->RegisterKey("fit_all_pois");
+        commandLineArgs->RegisterKey("force_data");
         vector<string> pois_float;
         vector<string> pois;
 
         NllScanManager scanManager = NllScanManager::InitFromCommandLine(commandLineArgs);
-        EFT_PROF_CRITICAL("after init from cmdline");
-        PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
+        //PoiConfig poi1 = PoiConfig::readFromString("ceHRe33(val [0.01 0.0004]: grid [10 equidistant] : range [2 3] : at 15)");
         //cout << "poi1: " << poi1 << endl;
 
 
@@ -299,13 +307,59 @@ int main(int argc, char* argv[]) {
             cout << "poi2 (from the command line): " << endl << poi2 << endl;
             scanManager.AddPoi(poi2);
         }
-        else {
-            EFT_PROF_CRITICAL("read POIs from default expression");
-            scanManager.AddPoi(poi1);
-        }
-        EFT_PROF_CRITICAL("before run scan");
+        //else {
+            //EFT_PROF_CRITICAL("read POIs from default expression");
+            //scanManager.AddPoi(poi1);
+        //}
+        size_t worker_id;
+        commandLineArgs->SetValIfArgExists("worker_id", worker_id);
+
+        scanManager.SetWorkerId(worker_id);
         scanManager.RunScan();
-        scanManager.SaveRes();
+        string path_res = "../results/NllScans/1D";
+        if (commandLineArgs->HasKey("out")) {
+            commandLineArgs->SetValIfArgExists("out", path_res);
+        }
+        scanManager.SaveRes(path_res);
+
+    }
+    else if (task == "plot_scan" ) {
+        using namespace eft::stats::scans;
+
+        commandLineArgs->RegisterKey("yl");
+        commandLineArgs->RegisterKey("yh");
+        commandLineArgs->RegisterKey("out");
+        commandLineArgs->RegisterKey("stat");
+        commandLineArgs->RegisterKey("obs");
+        commandLineArgs->RegisterKey("exp");
+        commandLineArgs->RegisterKey("force_data");
+        commandLineArgs->RegisterKey("snapshot");
+
+        string poi;
+        commandLineArgs->SetValIfArgExists("poi", poi);
+
+        string path_res;
+        commandLineArgs->SetValIfArgExists("input", path_res);
+
+        NllScanPlotter plotter;
+        NllScanPlotterSettings plotSettings;
+        plotSettings.ReadSettingsFromCommandLine(commandLineArgs);
+
+        if (commandLineArgs->HasKey("full"))
+            plotSettings.draw_full = true;
+        if (commandLineArgs->HasKey("stat"))
+            plotSettings.draw_stat = true;
+        if (commandLineArgs->HasKey("exp"))
+            plotSettings.draw_exp = true;
+        if (commandLineArgs->HasKey("obs"))
+            plotSettings.draw_obs = true;
+
+
+        plotter.UseSettings(std::move(plotSettings));
+
+        plotter.ReadFiles(path_res);
+        //plotter.GetResults1DPoi(poi);
+        plotter.PlotNll1D(poi);
 
     }
     else {
