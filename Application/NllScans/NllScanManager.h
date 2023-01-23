@@ -100,6 +100,7 @@ private:
     //  - user-defined
     bool                    one_at_time  {true};
     bool                    fit_all_pois {false};
+    bool                    user_defined {false};
 
 };
 

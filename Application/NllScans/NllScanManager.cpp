@@ -57,16 +57,16 @@ void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("NllScanManager::IdentifyScanPointCoordinateAllPois for {} pois", pois_.size());
     for (auto& poi : pois_) {
-        EFT_PROF_INFO("Dealing with: {}...", poi.Name());
+        EFT_PROF_DEBUG("\tDealing with: {}...", poi.Name());
         if (poi.IsGridPointKnown()) {
-            EFT_PROF_INFO("Poi: {} value is already set: {}", poi.Name(), poi.Value());
+            EFT_PROF_INFO("IdentifyScanPointCoordinateAllPois:: Poi: {} value is already set: {}", poi.Name(), poi.Value());
         }
         else {
             if(gridType_ != GridType::USER_DEFINED) {
                 poi.ToTestAt(GetPointAtGrid(poi));
             }
         }
-        EFT_PROF_INFO("Poi: {} is to be tested at: {}", poi.Name(), poi.Value());
+        EFT_PROF_INFO("IdentifyScanPointCoordinateAllPois:: Poi: {} is to be tested at: {}", poi.Name(), poi.Value());
     }
 }
 
@@ -344,8 +344,12 @@ void NllScanManager::RunScan() {
         ws_->FloatVal(pois_[0].Name());
     }
     else if (fit_all_pois) {
-        EFT_PROF_INFO("RunScan: option fit_all_pois ==> allow to float all POIs: {}");
+        EFT_PROF_INFO("RunScan: option fit_all_pois ==> allow to float all {} POIs", all_pois->size());
         ws_->FloatVals(all_pois);
+    }
+    else if (user_defined) {
+        EFT_PROF_INFO("RunScan: option user_defined ==> allow to float all {} mentioned POIs", pois_to_float->size());
+        ws_->FloatVals(pois_to_float);
     }
 
 //    if (all_pois != nullptr) {
@@ -555,11 +559,12 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
 
  NllScanManager& NllScanManager::SetPOIsToFloat(const std::vector<std::string>& list) {
     if (ws_ == nullptr) {
-        EFT_PROF_CRITICAL("Seet WS before calling to SetPOIsToFloat[strings]");
+        EFT_PROF_CRITICAL("Set WS before calling to SetPOIsToFloat[strings]");
         throw std::runtime_error("");
     }
     pois_to_float = new RooArgSet();
     for (const auto& poi : list) {
+        EFT_PROF_DEBUG("Add {:10} to the list of the POIs to float", poi);
         pois_to_float->add(*ws_->GetVar(poi));
     }
     return *this;
