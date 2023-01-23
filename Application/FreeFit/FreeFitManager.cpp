@@ -127,9 +127,14 @@ void FreeFitManager::RunFit() {
     EFT_PROF_DEBUG("RunFreeFit: globs before free fit");
     fitSettings_.globalObs->Print("v");
 
+    fitSettings_.save_res = true;
+    RooArgList list_pois(*pois_to_float);
+    list_pois.add(*pois_to_float);
+
     fit::Fitter fitter;
     auto nll_free_fit = fitter.CreatNll(fitSettings_);
-    fitter.Minimize(fitSettings_, nll_free_fit);
+    auto res = fitter.Minimize(fitSettings_, nll_free_fit);
+    auto cov = res->reducedCovarianceMatrix(list_pois);
     EFT_PROF_INFO("RunFreeFit: pois after free fit:");
     for (auto poi : *all_pois) {
         auto ptr = dynamic_cast<RooRealVar*>(poi);
@@ -147,6 +152,18 @@ void FreeFitManager::RunFit() {
     fitSettings_.nps->Print("v");
     EFT_PROF_DEBUG("RunFreeFit: globs after free fit");
     fitSettings_.globalObs->Print("v");
+
+    for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
+        for (size_t idx_poi_2{0}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
+            auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
+            auto poi_2 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_2));
+            //auto corr = cov.operator()(idx_poi_1, idx_poi_2);
+            string poi_name_1 = poi_1->GetName();
+            string poi_name_2 = poi_2->GetName();
+            auto corr = res->correlation(poi_name_1.c_str(), poi_name_2.c_str());
+            EFT_PROF_INFO("Correlation: [{:6}][{:6}] = {}", poi_name_1, poi_name_2, corr);
+        }
+    }
 }
 
 } //  eft::stats::freefit
