@@ -205,6 +205,7 @@ void NllScanManager::RunFreeFit() {
     }
     else if (fit_all_pois) {
         EFT_PROF_INFO("RunFreeFit: option fit_all_pois ==> allow to float all POIs: {}");
+        EFT_PROF_INFO("RunFreeFit: option fit_all_pois ==> allow to float all POIs: {}");
         ws_->FloatVals(all_pois);
     }
 
