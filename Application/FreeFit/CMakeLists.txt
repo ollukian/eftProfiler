@@ -4,7 +4,7 @@ set(freefit_source_files
 include_directories(../../Vendors/nlohmann_json/include/)
 include_directories(../../Core)
 
-add_library(freefit ${nll_source_files})
+add_library(freefit ${freefit_source_files})
 
 #target_link_libraries(app PUBLIC core)
 target_link_libraries(freefit PUBLIC ${ROOT_LIBRARIES} )
