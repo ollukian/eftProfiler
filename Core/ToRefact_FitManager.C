@@ -89,6 +89,7 @@ namespace stats {
     //**************************************************************************************************
     inline void FitManager::AddModelConfig(const string& name) {
         modelConfig_ = dynamic_cast<RooStats::ModelConfig*>( ws_->obj(name.c_str() ) );
+        modelConfig_->
     }
     //**************************************************************************************************
     inline void FitManager::PlotDSandPdfGivenCats(const std::vector<std::string>& cats) {
@@ -3394,6 +3395,7 @@ namespace stats {
 
         cout << "[ComputeExpectedNll] nll is created" << endl;
         cout << "[ComputeExpectedNll] Minimize..." << endl;
+        auto res = Minimize(*nll);
         auto res = Minimize(*nll);
         cout << "[ComputeExpectedNll] Minimizing DONE" << endl;
         //cout << "[ComputeExpectedNll] status after:" << endl;

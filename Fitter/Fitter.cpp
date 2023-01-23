@@ -21,6 +21,27 @@ namespace eft::stats::fit {
 RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
     EFT_PROF_TRACE("[CreateNll]");
     TStopwatch timer;
+
+    if (globs_ == nullptr && settings.globalObs != nullptr) {
+        globs_ = settings.globalObs;
+    }
+    if (nps_ == nullptr && settings.nps != nullptr) {
+        nps_ = settings.nps;
+    }
+
+    if (nps_ == nullptr) {
+        EFT_PROF_CRITICAL("nps are nullptr!");
+    }
+    if (globs_ == nullptr) {
+        EFT_PROF_CRITICAL("globs are nullptr!");
+    }
+    if (settings.pdf == nullptr) {
+        EFT_PROF_CRITICAL("pdf is nullptr!");
+    }
+    if ( !settings.data->valid() ) {
+        EFT_PROF_CRITICAL("data is not valid");
+    }
+
     RooAbsReal* nll = settings.pdf->createNLL(*settings.data,
                                     RooFit::BatchMode(true),
                                     RooFit::CloneData(false),
@@ -37,30 +58,42 @@ RooAbsReal* Fitter::CreatNll(const FitSettings& settings) {
 return nll;
 }
 
-IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
+IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll) {
     EFT_PROF_TRACE("[Minimize]");
 
-    if (settings.nll == nullptr) {
+    if (nll == nullptr) {
         EFT_PROF_CRITICAL("minimize, no nll is set");
         throw std::runtime_error("no nll is set for minimisation");
     }
 
-    EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
-    RooMinimizerWrapper minim(*settings.nll);
-    EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
-    minim.setStrategy( 1 );
-    EFT_PROF_INFO("[Minimizer] set strategy to 1");
+    static bool isPrinted {false};
+    if ( ! isPrinted ) {
+        EFT_PROF_INFO("[Minimizer] create a RooMinimizerWrapper. Error handling: {}", settings.errors);
+        EFT_PROF_TRACE("[Minimizer] a RooMinimizerWrapper is created");
+        EFT_PROF_INFO("[Minimizer] set strategy to {}", settings.strategy);
+        EFT_PROF_INFO("[Minimizer] set print level to {}", 1);
+        EFT_PROF_INFO("[Minimizer] set eps to {} / 0.001 = {}", settings.eps, settings.eps / 0.001);
+        EFT_PROF_INFO("[Minimizer] allow offsetting: {}", true);
+        EFT_PROF_INFO("[Minimizer] optimise const: {}", 2);
+        EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
+        isPrinted = true;
+    }
+    //EFT_PROF_INFO("[Minimizer] max function calls: {}", max_function_calls);
+    //RooMinimizerWrapper minim(*settings.nll);
+    RooMinimizerWrapper minim(*nll);
+    minim.setStrategy( settings.strategy );
     minim.setPrintLevel( 1 );
     RooMsgService::instance().setGlobalKillBelow(RooFit::FATAL);
+    //RooFit::MsgLevel::
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::INFO);
+    //RooMsgService::instance().setGlobalKillBelow(RooFit::MsgLevel::PROGRESS);
     minim.setProfile(); /* print out time */
-    minim.setEps(1E-03 / 0.001); // used to be 1E-3 ==> minimise until 1E-6
+    minim.setEps(settings.eps / 0.001); // used to be 1E-3 ==> minimise until 1E-6
     minim.setOffsetting( true );
-    EFT_PROF_INFO("[Minimizer] allow offseting");
     minim.optimizeConst( 2 );
-    EFT_PROF_INFO("[Minimizer] set optimize constant 2");
     // Line suggested by Stefan, to avoid running out function calls when there are many parameters
-    minim.setMaxFunctionCalls(5000 * settings.pdf->getVariables()->getSize());
-
+    size_t max_function_calls = 5000 * settings.pdf->getVariables()->getSize();
+    minim.setMaxFunctionCalls(max_function_calls);
     int _status = 0;
 
     /*if ( _useSIMPLEX ) {
@@ -68,17 +101,87 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
       _status += minim.simplex();
       }*/
 
-    EFT_PROF_INFO("[Minimizer] minimizerType = Minuit2, alg: Migrag");
     minim.setMinimizerType( "Minuit2" );
-    // Perform fit with MIGRAD
+
+    // retry taken from:
+    // https://gitlab.cern.ch/atlas-physics/stat/tools/StatisticsTools/-/blob/master/src/ExtendedMinimizer.cxx#L228
+    EFT_PROF_INFO("Try to minimize nll..");
     _status += minim.minimize( "Minuit2", "Migrad" );
-    //_status += minim.minimize( "Minuit2");
     EFT_PROF_INFO("[Minimizer] fit status: {}", _status);
+
+    size_t retry = settings.retry;
+    size_t strategy = settings.strategy;
+
+    EFT_PROF_INFO("retry:    {}", retry);
+    EFT_PROF_INFO("strategy: {}", strategy);
+
+    while (_status != 0 && _status != 1 && retry > 0)
+    //while (_status != 0 && _status != 1 && strategy < 2 && retry > 0)
+    {
+        EFT_PROF_INFO("Fit failed with status: {} using strategy {}, try again with strategy: {}",
+                      _status,
+                      strategy,
+                      strategy + 1);
+        --retry;
+        ++strategy;
+        minim.setStrategy(strategy);
+        EFT_PROF_INFO("Change strategy to {} and launch new minimisation...", strategy);
+        _status = minim.minimize("Minuit2", "Migrag");
+        EFT_PROF_INFO("After retrying, fit status: {}", _status);
+    }
+
+    if (_status != 0 && _status != 1) {
+        EFT_PROF_CRITICAL("After all attempts, fit failed with status: {}", _status);
+        EFT_PROF_CRITICAL("Return back fit strategy to {}", settings.strategy);
+        minim.setStrategy(settings.strategy);
+    }
+    else {
+        EFT_PROF_INFO("Successfull minimization! Return back fit strategy");
+        minim.setStrategy(settings.strategy);
+    }
+
+    last_fit_status_ = _status;
+
     /*if ( _useHESSE ) {
       cout << endl << "Starting fit with HESSE..." << endl;
       _status += minim.hesse();
       minim.save("hesse","")->Print();
       }*/
+
+    switch (settings.errors) {
+        case Errors::HESSE:
+            EFT_PROF_INFO("[Minimizer] start HESSE...");
+            minim.hesse();
+            EFT_PROF_INFO("[Minimizer] HESSE is done");
+            //minim.save("hesse", "")->Print();
+            break; // nothing
+        case Errors::MINOS_NPS:
+            assert(settings.nps);
+            EFT_PROF_INFO("[Minimizer] re-estimate errors for NPS");
+            minim.minos(*settings.nps);
+            break;
+        case Errors::MINOS_POIS:
+            EFT_PROF_INFO("[Minimizer] re-estimate errors for POIS");
+            assert(settings.pois);
+            minim.minos(*settings.pois);
+            break;
+        case Errors::MINOS_ALL:
+            EFT_PROF_INFO("[Minimizer] re-estimate errors for NPS & POIS");
+            assert(settings.nps);
+            assert(settings.pois);
+            minim.minos(RooArgSet{*settings.pois, *settings.nps});
+            break;
+        case Errors::DEFAULT:
+            EFT_PROF_INFO("[Minimizer] no need to re-estimate errors, default strategy is set");
+            break;
+    }
+
+//    if (settings.errors == Errors::HESSE) {
+//        EFT_PROF_INFO("[Minimizer] start HESSE...");
+//        minim.hesse();
+//        EFT_PROF_INFO("[Minimizer] HESSE is done");
+//        //minim.save("hesse", "")->Print();
+//    }
 
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     /// COPIED from QuickFit:                                                                                        //
@@ -86,6 +189,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Copied from RooAbsPdf::fitTo()
     //if (_doSumW2==1 && minim.getNPar()>0) {
+#if 0
     if (settings.errors != Errors::DEFAULT) {
     //if (false) {
 
@@ -93,8 +197,10 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
             EFT_PROF_INFO("[Minimizer] start HESSE...");
             minim.hesse();
             EFT_PROF_INFO("[Minimizer] HESSE is done");
-            minim.save("hesse", "")->Print();
+            //minim.save("hesse", "")->Print();
         }
+
+
 
         EFT_PROF_INFO("[Minimizer] Evaluating SumW2 error...");
         // Make list of RooNLLVar components of FCN
@@ -158,7 +264,7 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
 
         switch (settings.errors) {
             case Errors::HESSE:
-                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors");
+                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors with MINOS: already done Hesse");
                 break; // nothing
             case Errors::MINOS_NPS:
                 assert(settings.nps);
@@ -177,19 +283,21 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings) {
                 minim.minos(RooArgSet{*settings.pois, *settings.nps});
                 break;
             case Errors::DEFAULT:
-                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors");
+                EFT_PROF_INFO("[Minimizer] no need to re-estimate errors, default strategy is set");
                 break;
         }
 
 
     }
+#endif
 
-    auto result = make_unique<RooFitResult>(
-            *minim.save("fitResult","Fit Results")
-            );
-
-    EFT_PROF_INFO("[Minimizer] fit is finished. Min nll: {}", result->minNll());
-    return result;
+    EFT_PROF_INFO("[Minimizer] fit is finished");
+    if (settings.save_res) {
+        EFT_PROF_INFO("[Minimizer] required to save results as: {}", "fit_res");
+        return make_unique<RooFitResult>(*minim.save("fit_res", "fit_res"));
+    }
+    //EFT_PROF_DEBUG("[Minimizer] not required to save results, leave function");
+    return {};
 }
 
 IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
@@ -205,10 +313,12 @@ IFitter::FitResPtr Fitter::Fit(FitSettings& settings) {
     settings.globalObs = globs_;
     settings.nps = nps_;
 
-    auto nll = CreatNll(settings);
-    settings.nll = nll;
-    auto res = Minimize(settings);
-    return res;
+    std::unique_ptr<RooAbsReal> nll;
+    nll.reset(CreatNll(settings));
+    //settings.nll = nll;
+    return Minimize(settings, nll.get());;
+    //auto res = Minimize(settings, nll.get());
+    //return res;
     //FitResPtr to_return;
     //to_return.rooFitResult = res.rooFitResult;
     //to_return.nll = nll;

@@ -23,6 +23,7 @@
 namespace eft::stats {
 
 struct NpRankingStudySettings;
+struct HesseStudyResult;
 
 
 // Interface to the fit engine
@@ -36,8 +37,9 @@ public:
 
     // global tasks
     virtual void DoGlobalFit() = 0;
-    virtual void ComputeNpRankingOneWorker(NpRankingStudySettings settings, size_t workerId) = 0;
-    virtual void DoFitAllNpFloat(NpRankingStudySettings settings) = 0;
+    virtual void ComputeNpRankingOneWorker(const NpRankingStudySettings& settings, size_t workerId) = 0;
+    virtual void DoFitAllNpFloat(const NpRankingStudySettings& settings) = 0;
+    //virtual HesseStudyResult ComputeHesseNps(const NpRankingStudySettings& settings) = 0;
 
     //IFitManager() = default;
     virtual ~IFitManager() noexcept = default;
@@ -62,6 +64,7 @@ public:
     virtual void ExtractPdfTotal(std::string name)  = 0;
 
     virtual RooAbsData& GetData(PrePostFit studyType) = 0;
+    //virtual RooAbsData* GetDataPtr(PrePostFit studyType) = 0;
     virtual void        SetUpGlobObs(PrePostFit studyType) = 0;
 
     virtual void CreateAsimovData(PrePostFit studyType) noexcept = 0;
@@ -70,8 +73,8 @@ public:
     virtual const ArgsClosure& GetArgsClosure() const noexcept = 0;
     virtual const FuncClosure& GetFuncClosure() const noexcept = 0;
 
-    virtual const RooAbsData* GetData(std::string&& name) const = 0;
-    virtual const RooAbsPdf*  GetPdf (std::string&& name) const = 0;
+    virtual const RooAbsData* GetData(std::string name) const = 0;
+    virtual RooAbsPdf * GetPdf (std::string name) const = 0;
 
     virtual const std::vector<std::string>& GetListPOIs() const noexcept= 0;
 
