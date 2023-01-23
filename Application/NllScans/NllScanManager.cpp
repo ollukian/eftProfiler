@@ -528,6 +528,8 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetStudyType(studyType)
             .SetStatType(statType);
 
+    scanManager.user_defined = user_defined_pois_to_float;
+
     if (cmdLineArgs->HasKey("one_at_time"))
         scanManager.one_at_time = true;
     if (cmdLineArgs->HasKey("fit_all_pois"))
@@ -556,7 +558,6 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     scanManager.force_data = force_data;
     scanManager.snapshot_  = std::move(snapshot_name);
     scanManager.all_pois   = pois;
-    scanManager.user_defined = user_defined_pois_to_float;
 
     if ( scanManager.fitSettings_.nps == nullptr) {
         EFT_PROF_CRITICAL("fitsettiings.nps == nullptr in the init");
