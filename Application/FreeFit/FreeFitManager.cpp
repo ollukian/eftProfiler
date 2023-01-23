@@ -75,6 +75,7 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
         cmdLineArgs->SetValIfArgExists("errors", error_str);
         eft::StringUtils::ToLowCase(error_str);
         if (error_str == "hesse") {
+            EFT_PROF_INFO("Errors estimation method: Hesse");
             fitManager.SetErorsEvaluation(fit::Errors::HESSE);
         }
         else {
@@ -154,7 +155,7 @@ void FreeFitManager::RunFit() {
     fitSettings_.globalObs->Print("v");
 
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
-        for (size_t idx_poi_2{0}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
+        for (size_t idx_poi_2 {idx_poi_1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
             auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
             auto poi_2 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_2));
             //auto corr = cov.operator()(idx_poi_1, idx_poi_2);
