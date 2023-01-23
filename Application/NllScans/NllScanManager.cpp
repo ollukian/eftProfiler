@@ -489,8 +489,13 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
         EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine pdf is nullptr");
     }
 
+    bool user_defined_pois_to_float {false};
+
     vector<string> pois_to_float;
-    cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
+    if (cmdLineArgs->HasKey("pois_float")) {
+        cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
+        user_defined_pois_to_float = true;
+    }
 
     bool  force_data {false};
     string snapshot_name;
@@ -531,6 +536,14 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
         EFT_PROF_CRITICAL("Cannot use one_at_time and fit_all_pois at the same time. Choose one");
         throw std::logic_error("inconsistent options: one_at_time and fit_all_pois");
     }
+    if (scanManager.one_at_time && scanManager.user_defined) {
+        EFT_PROF_CRITICAL("Cannot use one_at_time and user_defined at the same time. Choose one");
+        throw std::logic_error("inconsistent options: one_at_time and user_defined");
+    }
+    if (scanManager.fit_all_pois && scanManager.user_defined) {
+        EFT_PROF_CRITICAL("Cannot use fit_all_pois and user_defined at the same time. Choose one");
+        throw std::logic_error("inconsistent options: fit_all_pois and user_defined");
+    }
 
     EFT_PROF_INFO("Create a list of all pois to keep them const");
     auto pois = new RooArgSet{};
@@ -542,7 +555,8 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
 
     scanManager.force_data = force_data;
     scanManager.snapshot_  = std::move(snapshot_name);
-    scanManager.all_pois = pois;
+    scanManager.all_pois   = pois;
+    scanManager.user_defined = user_defined_pois_to_float;
 
     if ( scanManager.fitSettings_.nps == nullptr) {
         EFT_PROF_CRITICAL("fitsettiings.nps == nullptr in the init");
