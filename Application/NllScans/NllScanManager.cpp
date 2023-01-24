@@ -571,6 +571,16 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
         EFT_PROF_CRITICAL("fitsettiings.pdf == nullptr in the init");
     }
 
+    if (cmdLineArgs->HasKey("retry")) {
+        cmdLineArgs->SetValIfArgExists("retry", scanManager.fitSettings_.retry);
+    }
+    if (cmdLineArgs->HasKey("eps")) {
+        cmdLineArgs->SetValIfArgExists("eps", scanManager.fitSettings_.eps);
+    }
+    if (cmdLineArgs->HasKey("strategy")) {
+        cmdLineArgs->SetValIfArgExists("strategy", scanManager.fitSettings_.strategy);
+    }
+
     return scanManager;
 }
 
