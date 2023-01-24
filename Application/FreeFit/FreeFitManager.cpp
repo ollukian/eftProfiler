@@ -131,7 +131,7 @@ void FreeFitManager::RunFit() {
 
     fitSettings_.save_res = true;
     RooArgList list_pois(*pois_to_float);
-    list_pois.add(*pois_to_float);
+    //list_pois.add(*pois_to_float);
 
     fit::Fitter fitter;
     auto nll_free_fit = fitter.CreatNll(fitSettings_);
@@ -166,6 +166,7 @@ void FreeFitManager::RunFit() {
             EFT_PROF_INFO("Correlation: [{:6}][{:6}] = {}", poi_name_1, poi_name_2, corr);
         }
     }
+    // TODO: to save result to a file... via SaveRes()
 }
 
 } //  eft::stats::freefit
