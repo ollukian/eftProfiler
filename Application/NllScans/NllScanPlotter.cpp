@@ -306,15 +306,18 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 //    gr->SetMarkerStyle(24);
 
     for (auto& [name, curve] : curves_) {
+        ofstream res(name);
         if (curve.NbPoints() != 0) {
             EFT_PROF_INFO("Add curve: {:15} with {} points to the scene", name, curve.NbPoints());
             EFT_PROF_INFO("points:");
             EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
-            cout << fmt::format("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status") << endl;
+            res  << fmt::format("{:5} {:10} {:5}", curve.poi_name, "dnll", "fit_status") << endl;
+            cout << fmt::format("{:5} {:10} {:5}", curve.poi_name, "dnll", "fit_status") << endl;
             //EFT_PROF_DEBUG("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
                 //EFT_PROFILE_FN()
-                cout << fmt::format("{:5} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx), 0)  << endl;
+                res  << fmt::format("{:5} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx) / 2., 0) << endl;
+                cout << fmt::format("{:5} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx) / 2., 0)  << endl;
                 //EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
             }
             if (curve.to_draw) {
