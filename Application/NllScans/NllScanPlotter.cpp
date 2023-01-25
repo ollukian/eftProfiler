@@ -310,8 +310,12 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             EFT_PROF_INFO("Add curve: {:15} with {} points to the scene", name, curve.NbPoints());
             EFT_PROF_INFO("points:");
             EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
+            cout << fmt::format("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status") << endl;
+            //EFT_PROF_DEBUG("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
-                EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
+                //EFT_PROFILE_FN()
+                cout << fmt::format("{:5} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx), 0)  << endl;
+                //EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
             }
             if (curve.to_draw) {
                 EFT_PROF_INFO("To     draw curve: {} due to the settings", curve.title);
