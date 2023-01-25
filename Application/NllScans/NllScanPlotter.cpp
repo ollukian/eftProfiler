@@ -436,13 +436,16 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
         expected_regime_str += "obs_";
     }
 
-    string save_name = fmt::format("{}_LikelihoodScan1D_{}_{}_{}.png",
-                                   settings_.output,
-                                   stat_regime_str,
-                                   expected_regime_str,
-                                   poi_name);
+    for (string format : {"png", "pdf"}) {
+        string save_name = fmt::format("{}_LikelihoodScan1D_{}_{}_{}.{}",
+                                       settings_.output,
+                                       stat_regime_str,
+                                       expected_regime_str,
+                                       poi_name,
+                                       format);
 
-    c.SaveAs(save_name.c_str());
+        c.SaveAs(save_name.c_str());
+    }
 }
 
 NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& path)
