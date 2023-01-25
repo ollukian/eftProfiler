@@ -306,13 +306,13 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 //    gr->SetMarkerStyle(24);
 
     for (auto& [name, curve] : curves_) {
-        ofstream res(name);
+        ofstream res(name + "_" + poi_name + ".txt");
         if (curve.NbPoints() != 0) {
             EFT_PROF_INFO("Add curve: {:15} with {} points to the scene", name, curve.NbPoints());
             EFT_PROF_INFO("points:");
             EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
-            res  << fmt::format("{:5} {:10} {:5}", curve.poi_name, "dnll", "fit_status") << endl;
-            cout << fmt::format("{:5} {:10} {:5}", curve.poi_name, "dnll", "fit_status") << endl;
+            res  << fmt::format("{:5} {:10} {:5}", poi_name, "dnll", "fit_status") << endl;
+            cout << fmt::format("{:5} {:10} {:5}", poi_name, "dnll", "fit_status") << endl;
             //EFT_PROF_DEBUG("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
                 //EFT_PROFILE_FN()
