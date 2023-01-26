@@ -277,7 +277,7 @@ namespace eft::plot {
         histo_minus_sigma_var->SetLineWidth(1);
 
 
-        std::filesystem::create_directory(settings->out_dir); // figures -> by default
+        std::filesystem::create_directories(settings->out_dir); // figures -> by default
 
 
         auto canvas = eft::utils::draw::Scene::Create(
