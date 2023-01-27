@@ -45,6 +45,10 @@ void NllScanPlotter::ReadFiles(std::filesystem::path& path) {
 
 void NllScanPlotter::RegisterRes(NllScanResult nllScanRes) {
     EFT_PROFILE_FN();
+    if (nllScanRes.nll_val == 0) {
+        EFT_PROF_WARN("Skip failed result");
+        return;
+    }
     if (nllScanRes.poi_configs.size() == 1) {
         RegisterRes1D(std::move(nllScanRes));
     }
@@ -482,6 +486,7 @@ NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& pat
     catch (nlohmann::json::type_error& e) {
         EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}.", path.string(), e.what()
         );
+        return {};
     }
 
     return res;
