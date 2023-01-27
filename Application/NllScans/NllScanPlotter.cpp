@@ -58,8 +58,8 @@ void NllScanPlotter::RegisterRes(NllScanResult nllScanRes) {
 void NllScanPlotter::RegisterRes1D(NllScanResult nllScanRes) {
     EFT_PROFILE_FN();
     const string& poi = nllScanRes.poi_configs[0].Name();
-    if (nllScanRes.fit_status == 1) {
-        EFT_PROF_WARN("NllScanPlotter: skip 1D - fit_status: {}. Poi: [{}] at [{:4}]",
+    if (nllScanRes.fit_status != 0) {
+        EFT_PROF_WARN("NllScanPlotter: skip 1D - fit_status: |{}|. Poi: [{}] at [{:4}]",
                       nllScanRes.fit_status,
                       poi,
                       nllScanRes.poi_configs[0].Value());
