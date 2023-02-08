@@ -1,5 +1,6 @@
 # eftProfiler
 Is a statistical framework used for Nuisance Parameters ranking and Nll (negative-log-likelihood) scans.
+[[_TOC_]]
 
 * Framework allows performing precise statistical analysis (based on the ROOT framework https://root.cern/).
 
