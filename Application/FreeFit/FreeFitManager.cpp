@@ -166,6 +166,12 @@ void FreeFitManager::RunFit() {
             EFT_PROF_INFO("Correlation: [{:6}][{:6}] = {}", poi_name_1, poi_name_2, corr);
         }
     }
+
+    EFT_PROF_INFO("Save free fit result to a file: {}", "free_fit_res.root");
+    TFile fres("free_fit_res.root", "RECREATE");
+    res->Write();
+    fres.Close();
+
     // TODO: to save result to a file... via SaveRes()
 }
 
