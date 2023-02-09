@@ -9,6 +9,8 @@
 
 #include "TGraph.h"
 #include "TAxis.h"
+#include "TF1.h"
+#include <memory>
 
 using namespace std;
 
@@ -102,4 +104,19 @@ shared_ptr<TGraph> NllCurveSettings::GetGraph() {
     return graph;
 }
 
+void NllCurveSettings::ComputeCentralValueAndError() {
+    EFT_PROFILE_FN();
+    auto fParab = std::make_shared<TF1>("parab", Parabola2, -100., 100., 2);
+    fParab->SetParNames("mean", "sigma");
+    auto graph_ = GetGraph();
+    auto res = graph_->Fit(fParab.get(), "S +");
+    central_value = fParab->GetParameter("mean");
+    central_error = fParab->GetParameter("sigma");
+    EFT_PROF_INFO("Compute central value and error for: {} => {} +- {}",
+                  title,
+                  central_value,
+                  central_error);
+}
+
 } // eft::stats::scan
+
