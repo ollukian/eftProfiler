@@ -366,6 +366,9 @@ int main(int argc, char* argv[]) {
     }
     else if (task == "free_fit") {
         commandLineArgs->RegisterKey("pois_float");
+        commandLineArgs->RegisterKey("postfit");
+        commandLineArgs->RegisterKey("prefit");
+        commandLineArgs->RegisterKey("pois_float");
         auto fitManager = eft::stats::freefit::FreeFitManager::InitFromCommandLine(commandLineArgs);
         fitManager.RunFit();
     }
