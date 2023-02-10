@@ -21,6 +21,7 @@ public:
 
     void ReadSettingsFromCommandLine(CommandLineArgs* cmdLineArgs);
     //void ReadNpFiles();
+    void PrintMissingNps(std::string& path, const std::string& separator = " \n");
     void PrintMissingNps(std::ostream& os, const std::string& separator = " \n");
     void ComputeMissingNPs() noexcept;
 private:
