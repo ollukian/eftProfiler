@@ -6,6 +6,7 @@
 #include "FitManager.h"
 #include "StringUtils.h"
 #include "Fitter.h"
+#include "RooStats/AsymptoticCalculator.h"
 
 using namespace std;
 
@@ -70,6 +71,16 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetData(&manager->GetData(PrePostFit::OBSERVED))
             .SetPDF(pdf_to_use);
 
+    if (cmdLineArgs->HasKey("prefit")) {
+        fitManager.prePostFit = PrePostFit::PREFIT;
+    }
+    else if (cmdLineArgs->HasKey("postfit")) {
+        fitManager.prePostFit = PrePostFit::POSTFIT;
+    }
+    else {
+        fitManager.prePostFit = PrePostFit::OBSERVED;
+    }
+
     string error_str;
     if (cmdLineArgs->HasKey("errors")) {
         cmdLineArgs->SetValIfArgExists("errors", error_str);
@@ -105,10 +116,35 @@ void FreeFitManager::RunFit() {
 
     // TODO: add asimov data
     auto data = fitSettings_.data;
+    if (prePostFit != PrePostFit::OBSERVED) {
+        if (prePostFit == PrePostFit::PREFIT) {
+            EFT_PROF_INFO("RunFreeFit: prefit => create asimov data and use it for free fit");
+            EFT_PROF_INFO("RunFreeFit: reset global observables to 0.");
+            ws_->SetVarVal(fitSettings_.globalObs, 0.);
+
+        } else {
+            EFT_PROF_INFO("RunFreeFit: postfit => create asimov data and use it for free fit");
+        }
+        EFT_PROF_INFO("RunFreeFit: create asimov data...");
+        data = (RooDataSet *) RooStats::AsymptoticCalculator::MakeAsimovData(*fitSettings_.data,
+                                                                             ws_->GetModelConfig(),
+                                                                             *pois_to_float,
+                                                                             *fitSettings_.globalObs
+        );
+        EFT_PROF_INFO("RunFreeFit: asimov data created, load it to the workspace...");
+        ws_->raw()->saveSnapshot("condGlobObs", *fitSettings_.globalObs, kTRUE);
+        ws_->raw()->loadSnapshot("condGlobObs");
+        EFT_PROF_INFO("RunFreeFit: asimov data is loaded it to the workspace");
+    } else {
+        EFT_PROF_INFO("RunFreeFit: observed data => use it for free fit");
+        ws_->SetVarVal(fitSettings_.globalObs, 0.);
+    }
+
+    fitSettings_.data = data;
 
     ws_->FixValConst(all_pois);
     ws_->FloatVals(pois_to_float);
-    ws_->SetVarVal(fitSettings_.globalObs, 0.);
+
 
     EFT_PROF_INFO("RunFreeFit: pois before free fit:");
     for (auto poi : *all_pois) {

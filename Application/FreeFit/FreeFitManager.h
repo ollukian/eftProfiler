@@ -15,6 +15,7 @@ class CommandLineArgs;
 #include "Core.h"
 #include "../Fitter/FitSettings.h"
 #include "../Fitter/ErrorsReEvaluation.h"
+#include "../Application/NpRankingStudyRes.h"
 
 #include <string>
 #include <memory>
@@ -45,6 +46,7 @@ private:
     std::string             snapshot_;
     std::string             data_name;
     bool                    force_data {false};
+    PrePostFit              prePostFit {PrePostFit::OBSERVED};
 
 
     Errors                  errors_type {Errors::DEFAULT};
