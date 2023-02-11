@@ -13,7 +13,15 @@
 
 #include <memory>
 class CommandLineArgs;
+// Old style to pass to ROOT...
+inline double Parabola2(double* xs, double* pars) {
+    double x = xs[0];
 
+    double mean  = pars[0];
+    double sigma = pars[1];
+
+    return ((x - mean) * (x - mean)) / (sigma * sigma);
+};
 
 namespace eft::stats::scans {
 
@@ -33,14 +41,21 @@ struct NllCurveSettings {
     std::vector<double>  mu_values;
     std::vector<double>  nll_values;
 
+    double central_value {0.f};
+    double central_error {0.f};
+
     std::shared_ptr<TGraph> graph {std::make_shared<TGraph>()};
     bool is_graph_ready {false};
+    bool is_central_value_computed {false};
 
 
     [[nodiscard]] size_t NbPoints() const noexcept { return mu_nll_values.size(); }
     void AddPoint(double mu, double nll) {mu_nll_values.emplace_back(mu, nll);}
     void PrepareMuNllValues();
     std::shared_ptr<TGraph> GetGraph();
+    double GetCentralValue() { if (!is_central_value_computed) ComputeCentralValueAndError(); return central_value;}
+    double GetCentralError() { if (!is_central_value_computed) ComputeCentralValueAndError(); return central_error;}
+    void ComputeCentralValueAndError();
 };
 
 struct NllScanPlotterSettings {

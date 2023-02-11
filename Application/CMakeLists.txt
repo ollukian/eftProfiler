@@ -7,12 +7,13 @@ set(app_source_files
         Ranking/MissingNpsProcessor.cpp
         HesseStudyResult.cpp
         Ranking/CorrelationStudyProcessor.cpp
-        Ranking/CorrelationStudyPlotSettings.cpp)
+        Ranking/CorrelationStudyPlotSettings.cpp FreeFit/FreeFitManager.cpp FreeFit/FreeFitManager.h)
 
 include_directories(../Vendors)
 include_directories(../Core)
 
 add_subdirectory(NllScans)
+add_subdirectory(FreeFit)
 
 add_library(app ${app_source_files})
 
@@ -23,3 +24,4 @@ target_link_libraries(app PUBLIC fitter)
 target_link_libraries(app PUBLIC core)
 target_link_libraries(app PUBLIC utils)
 target_link_libraries(app PUBLIC nllscans)
+target_link_libraries(app PUBLIC freefit)

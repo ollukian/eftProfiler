@@ -57,16 +57,16 @@ void NllScanManager::IdentifyScanPointCoordinateAllPois() noexcept {
     EFT_PROFILE_FN();
     EFT_PROF_INFO("NllScanManager::IdentifyScanPointCoordinateAllPois for {} pois", pois_.size());
     for (auto& poi : pois_) {
-        EFT_PROF_INFO("Dealing with: {}...", poi.Name());
+        EFT_PROF_DEBUG("\tDealing with: {}...", poi.Name());
         if (poi.IsGridPointKnown()) {
-            EFT_PROF_INFO("Poi: {} value is already set: {}", poi.Name(), poi.Value());
+            EFT_PROF_INFO("IdentifyScanPointCoordinateAllPois:: Poi: {} value is already set: {}", poi.Name(), poi.Value());
         }
         else {
             if(gridType_ != GridType::USER_DEFINED) {
                 poi.ToTestAt(GetPointAtGrid(poi));
             }
         }
-        EFT_PROF_INFO("Poi: {} is to be tested at: {}", poi.Name(), poi.Value());
+        EFT_PROF_INFO("IdentifyScanPointCoordinateAllPois:: Poi: {} is to be tested at: {}", poi.Name(), poi.Value());
     }
 }
 
@@ -204,6 +204,7 @@ void NllScanManager::RunFreeFit() {
         ws_->FloatVal(pois_[0].Name());
     }
     else if (fit_all_pois) {
+        EFT_PROF_INFO("RunFreeFit: option fit_all_pois ==> allow to float all POIs: {}");
         EFT_PROF_INFO("RunFreeFit: option fit_all_pois ==> allow to float all POIs: {}");
         ws_->FloatVals(all_pois);
     }
@@ -344,8 +345,13 @@ void NllScanManager::RunScan() {
         ws_->FloatVal(pois_[0].Name());
     }
     else if (fit_all_pois) {
-        EFT_PROF_INFO("RunScan: option fit_all_pois ==> allow to float all POIs: {}");
+        EFT_PROF_INFO("RunScan: option fit_all_pois ==> allow to float all {} POIs", all_pois->size());
         ws_->FloatVals(all_pois);
+    }
+    else if (user_defined) {
+        EFT_PROF_INFO("RunScan: option user_defined ==> allow to float all {} mentioned POIs", pois_to_float->size());
+        ws_->FixValConst(all_pois);
+        ws_->FloatVals(pois_to_float);
     }
 
 //    if (all_pois != nullptr) {
@@ -485,8 +491,13 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
         EFT_PROF_CRITICAL("NllScanManager::InitFromCommandLine pdf is nullptr");
     }
 
+    bool user_defined_pois_to_float {false};
+
     vector<string> pois_to_float;
-    cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
+    if (cmdLineArgs->HasKey("pois_float")) {
+        cmdLineArgs->SetValIfArgExists("pois_float", pois_to_float);
+        user_defined_pois_to_float = true;
+    }
 
     bool  force_data {false};
     string snapshot_name;
@@ -519,6 +530,8 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
             .SetStudyType(studyType)
             .SetStatType(statType);
 
+    scanManager.user_defined = user_defined_pois_to_float;
+
     if (cmdLineArgs->HasKey("one_at_time"))
         scanManager.one_at_time = true;
     if (cmdLineArgs->HasKey("fit_all_pois"))
@@ -526,6 +539,14 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     if (scanManager.one_at_time && scanManager.fit_all_pois) {
         EFT_PROF_CRITICAL("Cannot use one_at_time and fit_all_pois at the same time. Choose one");
         throw std::logic_error("inconsistent options: one_at_time and fit_all_pois");
+    }
+    if (scanManager.one_at_time && scanManager.user_defined) {
+        EFT_PROF_CRITICAL("Cannot use one_at_time and user_defined at the same time. Choose one");
+        throw std::logic_error("inconsistent options: one_at_time and user_defined");
+    }
+    if (scanManager.fit_all_pois && scanManager.user_defined) {
+        EFT_PROF_CRITICAL("Cannot use fit_all_pois and user_defined at the same time. Choose one");
+        throw std::logic_error("inconsistent options: fit_all_pois and user_defined");
     }
 
     EFT_PROF_INFO("Create a list of all pois to keep them const");
@@ -538,7 +559,7 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
 
     scanManager.force_data = force_data;
     scanManager.snapshot_  = std::move(snapshot_name);
-    scanManager.all_pois = pois;
+    scanManager.all_pois   = pois;
 
     if ( scanManager.fitSettings_.nps == nullptr) {
         EFT_PROF_CRITICAL("fitsettiings.nps == nullptr in the init");
@@ -550,16 +571,27 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
         EFT_PROF_CRITICAL("fitsettiings.pdf == nullptr in the init");
     }
 
+    if (cmdLineArgs->HasKey("retry")) {
+        cmdLineArgs->SetValIfArgExists("retry", scanManager.fitSettings_.retry);
+    }
+    if (cmdLineArgs->HasKey("eps")) {
+        cmdLineArgs->SetValIfArgExists("eps", scanManager.fitSettings_.eps);
+    }
+    if (cmdLineArgs->HasKey("strategy")) {
+        cmdLineArgs->SetValIfArgExists("strategy", scanManager.fitSettings_.strategy);
+    }
+
     return scanManager;
 }
 
  NllScanManager& NllScanManager::SetPOIsToFloat(const std::vector<std::string>& list) {
     if (ws_ == nullptr) {
-        EFT_PROF_CRITICAL("Seet WS before calling to SetPOIsToFloat[strings]");
+        EFT_PROF_CRITICAL("Set WS before calling to SetPOIsToFloat[strings]");
         throw std::runtime_error("");
     }
     pois_to_float = new RooArgSet();
     for (const auto& poi : list) {
+        EFT_PROF_DEBUG("Add {:10} to the list of the POIs to float", poi);
         pois_to_float->add(*ws_->GetVar(poi));
     }
     return *this;

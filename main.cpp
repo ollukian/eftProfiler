@@ -17,6 +17,8 @@
 #include "Application/NllScans/NllScanPlotter.h"
 #include "Application/NllScans/NllScanPlotterSettings.h"
 
+#include "Application/FreeFit/FreeFitManager.h"
+
 #include "spdlog/fmt/bundled/format.h"
 #include "spdlog/fmt/bundled/core.h"
 #include "spdlog/fmt/bundled/color.h"
@@ -37,7 +39,6 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::Init(commandLineArgs);
     //eft::stats::Logger::SetRelease();
     if (commandLineArgs->HasKey("test")) {
-    //if (argc >= 2 && string(argv[1]) == "--test") {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
         EFT_RUN_TESTS();
         return 0;
@@ -198,14 +199,29 @@ int main(int argc, char* argv[]) {
         correlationStudyProcessor.ExtractCorrelations(res);
         const auto sorted = res.GetSorted();
         correlationStudyProcessor.PlotCovariances(res);
-        string name_to_save = fmt::format("suggested_covariances_{}.txt", res.poi);
+        string name_to_save = fmt::format("compute_hesse_nps{}.txt", res.poi);
         correlationStudyProcessor.PrintSuggestedNpsRanking(std::move(name_to_save), res);
     }
     else if (task == "get_missing_nps") {
+        commandLineArgs->RegisterKey("out");
+        commandLineArgs->RegisterKey("sep");
         eft::stats::ranking::MissingNpsProcessor missingNpsProcessor;
         missingNpsProcessor.ReadSettingsFromCommandLine(commandLineArgs.get());
         missingNpsProcessor.ComputeMissingNPs();
-        missingNpsProcessor.PrintMissingNps(cout, " \\ \n");
+
+        string separator {" \\ \n"};
+        if (commandLineArgs->HasKey("sep")) {
+            commandLineArgs->SetValIfArgExists("sep", separator);
+        }
+
+        if (commandLineArgs->HasKey("out")) {
+            string out_file;
+            commandLineArgs->SetValIfArgExists("out", out_file);
+            missingNpsProcessor.PrintMissingNps(out_file, separator);
+        }
+        else {
+            missingNpsProcessor.PrintMissingNps(cout, separator);
+        }
     }
     else if (task == "compare_ratings") {
         using eft::stats::ranking::CorrelationStudyProcessor;
@@ -361,6 +377,14 @@ int main(int argc, char* argv[]) {
         //plotter.GetResults1DPoi(poi);
         plotter.PlotNll1D(poi);
 
+    }
+    else if (task == "free_fit") {
+        commandLineArgs->RegisterKey("pois_float");
+        commandLineArgs->RegisterKey("postfit");
+        commandLineArgs->RegisterKey("prefit");
+        commandLineArgs->RegisterKey("pois_float");
+        auto fitManager = eft::stats::freefit::FreeFitManager::InitFromCommandLine(commandLineArgs);
+        fitManager.RunFit();
     }
     else {
         EFT_PROF_CRITICAL("Task: [{}] is unknown, use: [plot_ranking], [compute_ranking], [compute_unconstrained], get_missing_nps", task);

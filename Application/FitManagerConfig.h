@@ -41,10 +41,10 @@ struct FitManagerConfig {
     // PLOTTING
     bool                        vertical            {false};
     bool                        weighted            {false}; // for comparison
-    std::string                 color_prefit_plus   {"kBlue"};
-    std::string                 color_prefit_minus  {"kGreen"};
-    std::string                 color_postfit_plus  {"kBlue"};
-    std::string                 color_postfit_minus {"kGreen"};
+    std::string                 color_prefit_plus   {"RGB(101,153,255)"};
+    std::string                 color_prefit_minus  {"RGB(1,255,255)"};
+    std::string                 color_postfit_plus  {"RGBA(101,153,255,160)"};
+    std::string                 color_postfit_minus {"RGBA(1,255,255,160)"};
 
     std::string                 color_np;  // <== to add
     float                       rmargin             {0.05};

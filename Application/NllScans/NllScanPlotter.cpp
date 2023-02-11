@@ -45,6 +45,10 @@ void NllScanPlotter::ReadFiles(std::filesystem::path& path) {
 
 void NllScanPlotter::RegisterRes(NllScanResult nllScanRes) {
     EFT_PROFILE_FN();
+    if (nllScanRes.nll_val == 0) {
+        EFT_PROF_WARN("Skip failed result");
+        return;
+    }
     if (nllScanRes.poi_configs.size() == 1) {
         RegisterRes1D(std::move(nllScanRes));
     }
@@ -58,7 +62,14 @@ void NllScanPlotter::RegisterRes(NllScanResult nllScanRes) {
 void NllScanPlotter::RegisterRes1D(NllScanResult nllScanRes) {
     EFT_PROFILE_FN();
     const string& poi = nllScanRes.poi_configs[0].Name();
-    EFT_PROF_DEBUG("NllScanPlotter register 1D. Poi: [{}] at [{:4}] with nll: {}",
+    if (nllScanRes.fit_status != 0) {
+        EFT_PROF_WARN("NllScanPlotter: skip 1D - fit_status: |{}|. Poi: [{}] at [{:4}]",
+                      nllScanRes.fit_status,
+                      poi,
+                      nllScanRes.poi_configs[0].Value());
+        return;
+    }
+    EFT_PROF_DEBUG("NllScanPlotter: register 1D. Poi: [{}] at [{:4}] with nll: {}",
                    poi,
                    nllScanRes.poi_configs[0].Value(),
                    nllScanRes.nll_val);
@@ -195,6 +206,13 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             curves_[ key ].PrepareMuNllValues();
             curves_[ key ].title = key + "_" + poi_name;
             curves_[ key ].GetGraph();
+            auto central_value = curves_[ key ].GetCentralValue();
+            auto central_error = curves_[ key ].GetCentralError();
+            EFT_PROF_INFO("{} => central value: {} +/- {}",
+                          key,
+                          central_value,
+                          central_error
+            );
         }
     }
 
@@ -306,12 +324,19 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 //    gr->SetMarkerStyle(24);
 
     for (auto& [name, curve] : curves_) {
+        ofstream res(name + "_" + poi_name + ".txt");
         if (curve.NbPoints() != 0) {
             EFT_PROF_INFO("Add curve: {:15} with {} points to the scene", name, curve.NbPoints());
             EFT_PROF_INFO("points:");
             EFT_PROF_DEBUG("{:5} ==> {:5}", "mu", "2dnll");
+            res  << fmt::format("{:5} {:10} {:5}", poi_name, "dnll", "fit_status") << endl;
+            cout << fmt::format("{:5} {:10} {:5}", poi_name, "dnll", "fit_status") << endl;
+            //EFT_PROF_DEBUG("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
-                EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
+                //EFT_PROFILE_FN()
+                res  << fmt::format("{} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx) / 2., 0) << endl;
+                cout << fmt::format("{} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx) / 2., 0)  << endl;
+                //EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));
             }
             if (curve.to_draw) {
                 EFT_PROF_INFO("To     draw curve: {} due to the settings", curve.title);
@@ -429,13 +454,16 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
         expected_regime_str += "obs_";
     }
 
-    string save_name = fmt::format("{}_LikelihoodScan1D_{}_{}_{}.png",
-                                   settings_.output,
-                                   stat_regime_str,
-                                   expected_regime_str,
-                                   poi_name);
+    for (string format : {"png", "pdf"}) {
+        string save_name = fmt::format("{}_LikelihoodScan1D_{}_{}_{}.{}",
+                                       settings_.output,
+                                       stat_regime_str,
+                                       expected_regime_str,
+                                       poi_name,
+                                       format);
 
-    c.SaveAs(save_name.c_str());
+        c.SaveAs(save_name.c_str());
+    }
 }
 
 NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& path)
@@ -465,6 +493,7 @@ NllScanResult NllScanPlotter::ReadValuesOneFile(const std::filesystem::path& pat
     catch (nlohmann::json::type_error& e) {
         EFT_PROF_WARN("NpRankingPlotter::ReadValuesOneFile{} error: {}.", path.string(), e.what()
         );
+        return {};
     }
 
     return res;

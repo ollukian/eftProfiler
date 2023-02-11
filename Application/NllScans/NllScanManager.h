@@ -98,8 +98,9 @@ private:
     //  - one-at-a-time
     //  - all-float
     //  - user-defined
-    bool                    one_at_time  {true};
+    bool                    one_at_time  {false};
     bool                    fit_all_pois {false};
+    bool                    user_defined {false};
 
 };
 

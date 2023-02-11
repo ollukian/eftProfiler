@@ -52,7 +52,7 @@ do
     do
 	for POI in "mu_ggF" "mu_VBF" "mu_ZH" "mu_ttH" "mu_tH" #cHG ctGRe ctHRe
 	do
-	    for worker_id in {0..10}
+	    for worker_id in $(seq 0 $EFT_GRID_SIZE)
 	    do
 		    submit_one_worker
 	    done

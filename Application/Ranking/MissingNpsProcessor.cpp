@@ -60,6 +60,7 @@ void MissingNpsProcessor::ReadSettingsFromCommandLine(CommandLineArgs *cmdLineAr
 
 void MissingNpsProcessor::PrintMissingNps(std::ostream& os, const std::string& separator)
 {
+    EFT_PROFILE_FN();
     EFT_PROF_TRACE("MissingNpsProcessor::PrintMissingNps");
     if (missing_nps_.empty()) {
         EFT_PROF_CRITICAL("No missing nps found");
@@ -69,6 +70,18 @@ void MissingNpsProcessor::PrintMissingNps(std::ostream& os, const std::string& s
     for (const auto& np : missing_nps_) {
         os << np << separator;
     }
+}
+
+void MissingNpsProcessor::PrintMissingNps(std::string& path, const std::string& separator) {
+    EFT_PROFILE_FN();
+    EFT_PROF_TRACE("MissingNpsProcessor::PrintMissingNps to a file: {} with a separator: {}", path, separator);
+
+    ofstream fs(path);
+    if ( ! fs.is_open() ) {
+        EFT_PROF_CRITICAL("Failed to open a file: {}", path);
+        return;
+    }
+    PrintMissingNps(fs, separator);
 }
 
 void MissingNpsProcessor::ComputeMissingNPs() noexcept {
