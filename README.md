@@ -15,6 +15,20 @@ Table of Contents
   * [Estimation of the most important nuisance parameters](#estimation-of-the-most-important-nuisance-parameters)
 
 
+# Installation & Requirements
+## Requirements:
+- RooFit && ROOT:
+* Either singularity (to run under /cvmfs/unpacked.cern.ch/gitlab-registry.cern.ch/ service)
+* Or RooFit (https://github.com/roofit-dev) with ROOT
+- CMake >= 3.13
+- c++ compiler supporting c++17 (tested with MSVC 2022 and gcc (Debian 10.2.1-6) 10.2.1 20210110)
+## Update
+To update the package, simply run:
+```
+sh update_from_singularity.sh
+```
+The code will  update itself if an update is required and will run a series of tests to check if everything is fine.
+
 ## Nll scans:
 ![alt text](https://github.com/ollukian/eftProfiler/blob/dev/photo_2023-01-23_11-00-10.jpg)
 Showing a result of a code for a POI Nll scan (expected post-fit).
