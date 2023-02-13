@@ -292,7 +292,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 //    }
 
     auto mg = make_shared<TMultiGraph>("mg", "mg");
-    auto legend = make_shared<TLegend>(0.7, 0.7, 0.9, 0.9);
+    auto legend = make_shared<TLegend>(0.8, 0.8, 0.97, 0.98);
     //auto gr = make_shared<TGraph>(nll_vals.size(), mu_vals.data(), nll_vals.data());
 
     TCanvas c("c", "c", 1800, 1200);
@@ -342,7 +342,16 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
                 EFT_PROF_INFO("To     draw curve: {} due to the settings", curve.title);
                 mg->Add(curve.GetGraph().get());
                 curve.GetGraph()->Draw("A P C");
-                legend->AddEntry(curve.GetGraph().get(), curve.title.c_str());
+                {
+                    string text_legend;
+                    if (curve.title.find("stat") != string::npos)
+                        text_legend = "Stat";
+                    else {
+                        text_legend = "Full";
+                    }
+                    legend->AddEntry(curve.GetGraph().get(), text_legend.c_str());
+                }
+
             }
             else {
                 EFT_PROF_INFO("To NOT draw curve: {}  due to the settings", curve.title);
@@ -418,8 +427,8 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     // tex.SetTextSize()
 
     tex.SetTextSize(0.025);
-    tex.DrawLatex(0.40, 0.8, "stat + syst");
-    tex.DrawLatex(0.40, 0.75, "stat");
+    //tex.DrawLatex(0.40, 0.8, "stat + syst");
+    //tex.DrawLatex(0.40, 0.75, "stat");
 
     TLine lStat(0.80, 0.81, 0.85, 0.81);
     lStat.SetNDC();
@@ -438,7 +447,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     tex.SetNDC(false);
 
     tex.DrawLatex(mg->GetXaxis()->GetXmin() + 0.05, 1.05f, "1#sigma");
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "95#% CL");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "95% CL");
 
     string stat_regime_str;
     if (settings_.draw_stat) {
