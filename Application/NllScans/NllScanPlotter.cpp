@@ -426,7 +426,8 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 
     tex.DrawLatex(x_text, y_text -= dy, "#sqrt{s} = 13 TeV, 31-139 fb^{-1}");
     tex.DrawLatex(x_text, y_text -= dy, "SMEFT, top symmetry");
-    tex.DrawLatex(x_text, y_text -= dy, "Higgs Combination");
+    //tex.DrawLatex(x_text, y_text -= dy, "Higgs Combination");
+    tex.DrawLatex(x_text, y_text -= dy, "H#rightarrow #gamma#gamma & H#rightarrow 4l STXS combination");
     tex.DrawLatex(x_text, y_text -= dy, "m_{H} = 125.09 GeV, |y_{H}| < 2.5");
 
     // tex.SetTextSize()
