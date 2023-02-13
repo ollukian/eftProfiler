@@ -39,12 +39,20 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
+    eft::stats::Logger::SetRelease();
+    if (commandLineArgs->HasKey("release")) {
+        eft::stats::Logger::SetRelease();
+    }
 
-    filesystem::current_path();
+    if (commandLineArgs->HasKey("debug")) {
+        eft::stats::Logger::SetFullPrinting();
+    }
 
-    EFT_PROF_INFO("Current directory: {}", filesystem::current_path().string());
+    if (commandLineArgs->HasKey("silent")) {
+        eft::stats::Logger::SetSilent();
+    }
     filesystem::current_path("../");
-    EFT_PROF_INFO("Current directory after change: {}", filesystem::current_path().string());
+
     //eft::stats::Logger::SetRelease();
     if (commandLineArgs->HasKey("test")) {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
