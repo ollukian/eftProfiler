@@ -1,4 +1,6 @@
 #include <iostream>
+#include <filesystem>
+
 #include <NpRankingStudyRes.h>
 #include <Ranking/CorrelationStudyPlotSettings.h>
 
@@ -37,6 +39,12 @@ int main(int argc, char* argv[]) {
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     auto commandLineArgs = std::make_shared<CommandLineArgs>(argc, argv);
     eft::stats::Logger::Init(commandLineArgs);
+
+    filesystem::current_path();
+
+    EFT_PROF_INFO("Current directory: {}", filesystem::current_path().string());
+    filesystem::current_path("../");
+    EFT_PROF_INFO("Current directory after change: {}", filesystem::current_path().string());
     //eft::stats::Logger::SetRelease();
     if (commandLineArgs->HasKey("test")) {
         eft::stats::Logger::SetLevel(spdlog::level::level_enum::info);
