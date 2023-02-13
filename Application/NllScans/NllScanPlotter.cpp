@@ -206,13 +206,13 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             curves_[ key ].PrepareMuNllValues();
             curves_[ key ].title = key + "_" + poi_name;
             curves_[ key ].GetGraph();
-            auto central_value = curves_[ key ].GetCentralValue();
-            auto central_error = curves_[ key ].GetCentralError();
-            EFT_PROF_INFO("{} => central value: {} +/- {}",
-                          key,
-                          central_value,
-                          central_error
-            );
+//            auto central_value = curves_[ key ].GetCentralValue();
+//            auto central_error = curves_[ key ].GetCentralError();
+//            EFT_PROF_INFO("{} => central value: {} +/- {}",
+//                          key,
+//                          central_value,
+//                          central_error
+//            );
         }
     }
 
@@ -430,24 +430,24 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     //tex.DrawLatex(0.40, 0.8, "stat + syst");
     //tex.DrawLatex(0.40, 0.75, "stat");
 
-    TLine lStat(0.80, 0.81, 0.85, 0.81);
-    lStat.SetNDC();
-    lStat.SetLineColor(kBlue);
-    lStat.SetLineStyle(kDashed);
-    lStat.SetLineWidth(3);
-    lStat.Draw();
-
-    TLine lFull(0.80, 0.76, 0.85, 0.76);
-    lFull.SetNDC();
-    lFull.SetLineColor(kRed);
-    lFull.SetLineStyle(kDashed);
-    lFull.SetLineWidth(3);
-    lFull.Draw();
+//    TLine lStat(0.80, 0.81, 0.85, 0.81);
+//    lStat.SetNDC();
+//    lStat.SetLineColor(kBlue);
+//    lStat.SetLineStyle(kDashed);
+//    lStat.SetLineWidth(3);
+//    lStat.Draw();
+//
+//    TLine lFull(0.80, 0.76, 0.85, 0.76);
+//    lFull.SetNDC();
+//    lFull.SetLineColor(kRed);
+//    lFull.SetLineStyle(kDashed);
+//    lFull.SetLineWidth(3);
+//    lFull.Draw();
 
     tex.SetNDC(false);
 
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() + 0.05, 1.05f, "1#sigma");
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "95% CL");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 1.05, 1.05f, "1#sigma");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.95, 3.90f, "95% CL");
 
     string stat_regime_str;
     if (settings_.draw_stat) {
