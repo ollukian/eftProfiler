@@ -410,7 +410,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 
     float y_text = 0.93f;
     float x_text = 0.13f;
-    float dy     = -0.05f;
+    float dy     = 0.05f;
 
     TLatex tex;
     tex.SetNDC();
