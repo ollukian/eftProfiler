@@ -365,12 +365,14 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
         EFT_PROF_INFO("Change POI low bound to: {}", settings_.range_mu_l);
         auto current_range_h = mg->GetXaxis()->GetXmax();
         mg->GetXaxis()->SetRangeUser(settings_.range_mu_l, current_range_h);
+        mg->GetXaxis()->SetLimits(settings_.range_mu_l, current_range_h);
         EFT_PROF_DEBUG("==>Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
     }
     if (settings_.range_mu_h != 0.f) {
         EFT_PROF_INFO("Change POI high bound to: {}", settings_.range_mu_h);
         auto current_range_l = mg->GetXaxis()->GetXmin();
         mg->GetXaxis()->SetRangeUser(current_range_l, settings_.range_mu_h);
+        mg->GetXaxis()->SetLimits(current_range_l, settings_.range_mu_h);
         EFT_PROF_DEBUG("==>Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
     }
 
@@ -382,7 +384,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     //grStat->Draw("A P C same");
     //grFull->Draw("A L P");
 
-    mg->Draw("APC");
+    mg->Draw("AC");
     legend->Draw("same");
     //mg->Draw("L P C");
 
@@ -436,7 +438,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     tex.SetNDC(false);
 
     tex.DrawLatex(mg->GetXaxis()->GetXmin() + 0.05, 1.05f, "1#sigma");
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "2#sigma");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() - 0.05, 3.90f, "95#% CL");
 
     string stat_regime_str;
     if (settings_.draw_stat) {
