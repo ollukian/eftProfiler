@@ -408,21 +408,26 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     l2.SetLineColor(kGray);
     l2.DrawLine(mg->GetXaxis()->GetXmin(), 3.84,  mg->GetXaxis()->GetXmax(), 3.84);
 
+    float y_text = 0.93f;
+    float x_text = 0.13f;
+    float dy     = -0.05f;
+
     TLatex tex;
     tex.SetNDC();
     //  tex.SetTextAlign(3);
     tex.SetTextFont(72);
     tex.SetTextSize(0.055); //0.045 is std
-    tex.DrawLatex(0.13, 0.9,"ATLAS");
+    tex.DrawLatex(x_text, y_text,"ATLAS"); // 0.13, 0.9
 
     tex.SetTextSize(0.045); //0.045 is std
     tex.SetTextFont(42);
-    tex.DrawLatex(0.28, 0.9, "Internal");
+    tex.DrawLatex(x_text + 0.15f, y_text, "Internal"); // 0.28, 0.9
 
 
-    tex.DrawLatex(0.13, 0.85, "#sqrt{s} = 13 TeV, 139 fb^{-1}");
-    tex.DrawLatex(0.13, 0.80, "m_{H} = 125.09 GeV");
-    tex.DrawLatex(0.13, 0.75, "|y_{H}| < 2.5");
+    tex.DrawLatex(x_text, y_text -= dy, "#sqrt{s} = 13 TeV, 31-139 fb^{-1}");
+    tex.DrawLatex(x_text, y_text -= dy, "SMEFT, top symmetry");
+    tex.DrawLatex(x_text, y_text -= dy, "Higgs Combination");
+    tex.DrawLatex(x_text, y_text -= dy, "m_{H} = 125.09 GeV, |y_{H}| < 2.5");
 
     // tex.SetTextSize()
 
@@ -446,8 +451,8 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 
     tex.SetNDC(false);
 
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 1.05, 1.05f, "1#sigma");
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.95, 3.90f, "95% CL");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 1.05f, "1#sigma");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 3.90f, "95% CL");
 
     string stat_regime_str;
     if (settings_.draw_stat) {
