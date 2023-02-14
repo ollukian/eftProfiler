@@ -426,7 +426,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     tex.DrawLatex(x_text + 0.5, y_text, settings_.obs_expected.c_str()); // Expected
 
 
-    tex.DrawLatex(x_text, y_text -= dy, fmt::format("#sqrt{s} = {} TeV, {} fb^{{-1}}",
+    tex.DrawLatex(x_text, y_text -= dy, fmt::format("#sqrt{{s}} = {} TeV, {} fb^{{-1}}",
                                                     settings_.energy,
                                                     settings_.lumi).c_str()
                                                     ); // 13 TeV, 139 fb^{-1}
