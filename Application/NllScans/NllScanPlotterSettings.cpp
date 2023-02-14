@@ -18,17 +18,55 @@ namespace eft::stats::scans {
 
 void NllScanPlotterSettings::ReadSettingsFromCommandLine(shared_ptr<CommandLineArgs>& cmdLine) {
     EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("ReadSettingsFromCommandLine");
 
-    if (cmdLine->HasKey("rmul"))
-        cmdLine->SetValIfArgExists("rmul",range_mu_l)   ;
-    if (cmdLine->HasKey("rmuh"))
-        cmdLine->SetValIfArgExists("rmuh",range_mu_h)   ;
-    if (cmdLine->HasKey("yl"))
-        cmdLine->SetValIfArgExists("yl",range_2dnll_l);
-    if (cmdLine->HasKey("yh"))
-        cmdLine->SetValIfArgExists("yh",range_2dnll_h);
-    if (cmdLine->HasKey("out"))
-        cmdLine->SetValIfArgExists("out", output);
+    cmdLine->RegisterKey("yl");
+    cmdLine->RegisterKey("yh");
+    cmdLine->RegisterKey("out");
+    cmdLine->RegisterKey("stat");
+    cmdLine->RegisterKey("obs");
+    cmdLine->RegisterKey("exp");
+    cmdLine->RegisterKey("force_data");
+    cmdLine->RegisterKey("snapshot");
+
+#ifndef EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE
+#define EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdline, key, val) \
+    if (cmdline->HasKey(key)) {                                    \
+        EFT_PROF_INFO("Set: {:15} to {}", #val, val);              \
+        cmdline->SetValIfArgExists(key, val); \
+    }
+
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "rmul", range_mu_l);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "rmuh", range_mu_h);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "yl", range_2dnll_l);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "yh", range_2dnll_h);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "out", output);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "ds", ds_title);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "energy", energy);
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "status", res_status); // Internal, ...
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "comment", obs_expected); // Observed, Expected, whatever
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "experiment", experiment); // ATLAS, CMS, ...
+    EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "lumi", lumi); // Intergated luminosity
+
+#undef EFT_SET_VAL_IF_ARG_EXISTS_FROM_CMD_LINE
+#endif
+
+#ifndef EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE
+#define EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE(cmdline, key, val) \
+    if (cmdline->HasKey(key)) {                                    \
+        EFT_PROF_INFO("Use flag: {:15}", #val, val);              \
+        val = true; \
+    }
+
+
+    EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "full", draw_full);
+    EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "stat", draw_stat);
+    EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "exp", draw_exp);
+    EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE(cmdLine, "obs", draw_obs);
+
+#undef EFT_SET_BOOL_FLAG_IF_ARG_EXISTS_FROM_CMD_LINE
+#endif
+
 }
 
 void NllCurveSettings::PrepareMuNllValues() {

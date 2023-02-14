@@ -417,19 +417,23 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     //  tex.SetTextAlign(3);
     tex.SetTextFont(72);
     tex.SetTextSize(0.055); //0.045 is std
-    tex.DrawLatex(x_text, y_text,"ATLAS"); // 0.13, 0.9
+    tex.DrawLatex(x_text, y_text,settings_.experiment.c_str()); // 0.13, 0.9 // ATLAS
 
     tex.SetTextSize(0.045); //0.045 is std
     tex.SetTextFont(42);
-    tex.DrawLatex(x_text + 0.15f, y_text, "Internal"); // 0.28, 0.9
+    tex.DrawLatex(x_text + 0.15f, y_text, settings_.res_status.c_str()); // 0.28, 0.9 // Internal
+
+    tex.DrawLatex(x_text + 0.5, y_text, settings_.obs_expected.c_str()); // Expected
 
 
-    tex.DrawLatex(x_text, y_text -= dy, "#sqrt{s} = 13 TeV, 31-139 fb^{-1}");
+    tex.DrawLatex(x_text, y_text -= dy, fmt::format("#sqrt{s} = {} TeV, {} fb^{{-1}}",
+                                                    settings_.energy,
+                                                    settings_.lumi).c_str()
+                                                    ); // 13 TeV, 139 fb^{-1}
     tex.DrawLatex(x_text, y_text -= dy, "SMEFT, top symmetry");
     //tex.DrawLatex(x_text, y_text -= dy, "Higgs Combination");
-    tex.DrawLatex(x_text, y_text -= dy, "H#rightarrow #gamma#gamma & H#rightarrow 4l STXS combination");
+    tex.DrawLatex(x_text, y_text -= dy, settings_.ds_title.c_str()); // DataSet title
     tex.DrawLatex(x_text, y_text -= dy, "m_{H} = 125.09 GeV, |y_{H}| < 2.5");
-
     // tex.SetTextSize()
 
     tex.SetTextSize(0.025);
