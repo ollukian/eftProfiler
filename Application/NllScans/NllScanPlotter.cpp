@@ -293,6 +293,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
 
     auto mg = make_shared<TMultiGraph>("mg", "mg");
     auto legend = make_shared<TLegend>(0.8, 0.8, 0.97, 0.98);
+    legend->SetBorderSize(0);
     //auto gr = make_shared<TGraph>(nll_vals.size(), mu_vals.data(), nll_vals.data());
 
     TCanvas c("c", "c", 1800, 1200);
@@ -386,17 +387,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     }
 
     EFT_PROF_DEBUG("Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
-
-    //gr->SetTitle("");
-    //gr->Draw("A P C");
-
-    //grStat->Draw("A P C same");
-    //grFull->Draw("A L P");
-
-    mg->Draw("AC");
-    legend->Draw("same");
-    //mg->Draw("L P C");
-
+    
     TLine l1;
     l1.SetLineWidth(4);
     l1.SetLineColor(kBlack);
@@ -436,28 +427,14 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     tex.DrawLatex(x_text, y_text -= dy, "m_{H} = 125.09 GeV, |y_{H}| < 2.5");
     // tex.SetTextSize()
 
-    tex.SetTextSize(0.025);
-    //tex.DrawLatex(0.40, 0.8, "stat + syst");
-    //tex.DrawLatex(0.40, 0.75, "stat");
-
-//    TLine lStat(0.80, 0.81, 0.85, 0.81);
-//    lStat.SetNDC();
-//    lStat.SetLineColor(kBlue);
-//    lStat.SetLineStyle(kDashed);
-//    lStat.SetLineWidth(3);
-//    lStat.Draw();
-//
-//    TLine lFull(0.80, 0.76, 0.85, 0.76);
-//    lFull.SetNDC();
-//    lFull.SetLineColor(kRed);
-//    lFull.SetLineStyle(kDashed);
-//    lFull.SetLineWidth(3);
-//    lFull.Draw();
-
+    tex.SetTextSize(0.030); // 0.025
     tex.SetNDC(false);
 
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 1.05f, "1#sigma");
-    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 3.90f, "95% CL");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 1.1f, "1#sigma");
+    tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 4.f, "95% CL");
+
+    mg->Draw("AC");
+    legend->Draw("same");
 
     string stat_regime_str;
     if (settings_.draw_stat) {

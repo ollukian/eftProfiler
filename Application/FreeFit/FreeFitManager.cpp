@@ -94,6 +94,15 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
             throw std::logic_error("inconsistent settings for errors");
         }
     }
+
+    if (cmdLineArgs->HasKey("eps"))
+        cmdLineArgs->SetValIfArgExists("eps", fitManager.fitSettings_.eps);
+    if (cmdLineArgs->HasKey("retry"))
+        cmdLineArgs->SetValIfArgExists("retry", fitManager.fitSettings_.retry);
+    if (cmdLineArgs->HasKey("strategy"))
+        cmdLineArgs->SetValIfArgExists("strategy", fitManager.fitSettings_.strategy);
+
+
     return fitManager;
 
 }
