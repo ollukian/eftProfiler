@@ -197,8 +197,14 @@ void FreeFitManager::RunFit() {
     auto nll_free_fit = fitter.CreatNll(fitSettings_);
     auto res = fitter.Minimize(fitSettings_, nll_free_fit);
     auto cov = res->reducedCovarianceMatrix(list_pois);
+
+    EFT_PROF_DEBUG("RunFreeFit: NPS after free fit");
+    fitSettings_.nps->Print("v");
+    EFT_PROF_DEBUG("RunFreeFit: globs after free fit");
+    fitSettings_.globalObs->Print("v");
+
     EFT_PROF_INFO("RunFreeFit: pois after free fit:");
-    for (auto poi : *all_pois) {
+    for (auto poi : *pois_to_float) {
         auto ptr = dynamic_cast<RooRealVar*>(poi);
 
         string is_const_str = "F";
@@ -220,10 +226,6 @@ void FreeFitManager::RunFit() {
                            is_const_str);
         }
     }
-    EFT_PROF_DEBUG("RunFreeFit: NPS after free fit");
-    fitSettings_.nps->Print("v");
-    EFT_PROF_DEBUG("RunFreeFit: globs after free fit");
-    fitSettings_.globalObs->Print("v");
 
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
         for (size_t idx_poi_2 {idx_poi_1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
