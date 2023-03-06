@@ -380,6 +380,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("postfit");
         commandLineArgs->RegisterKey("prefit");
         commandLineArgs->RegisterKey("pois_float");
+        commandLineArgs->RegisterKey("errors_for");
         auto fitManager = eft::stats::freefit::FreeFitManager::InitFromCommandLine(commandLineArgs);
         fitManager.RunFit();
     }

@@ -174,6 +174,14 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
         case Errors::DEFAULT:
             EFT_PROF_INFO("[Minimizer] no need to re-estimate errors, default strategy is set");
             break;
+        case Errors::USER_DEFINED:
+            EFT_PROF_INFO("[Minimizer] reestimate errors with Minos for a set of POIs");
+            if (settings.pois_to_estimate_errors == nullptr) {
+                EFT_PROF_CRITICAL("No POIs to estimate errors are provided! Use: --errors user --errors_for [POIs]");
+                throw std::runtime_error("No POIs to estimate errors are provided! Use: --errors user --errors_for [POIs]");
+            }
+            minim.minos(*settings.pois_to_estimate_errors);
+            break;
     }
 
 //    if (settings.errors == Errors::HESSE) {

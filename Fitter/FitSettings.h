@@ -25,6 +25,7 @@ struct  FitSettings {
     RooArgSet*  pois        {nullptr};//{new RooArgSet{}};//{nullptr};
     RooAbsReal* nll         {nullptr};
     Errors      errors      {Errors::DEFAULT};
+    RooArgSet*  pois_to_estimate_errors {nullptr};
     uint8_t     retry       {0};
     uint8_t     strategy    {1};
     double      eps         {1E-3};

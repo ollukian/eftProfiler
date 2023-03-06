@@ -89,6 +89,21 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
             EFT_PROF_INFO("Errors estimation method: Hesse");
             fitManager.SetErorsEvaluation(fit::Errors::HESSE);
         }
+        else if (error_str == "minos") {
+            EFT_PROF_INFO("Errors estimation method: Minos");
+            fitManager.SetErorsEvaluation(fit::Errors::MINOS_POIS);
+        }
+        else if (error_str == "user") {
+            EFT_PROF_INFO("Errors estimation method: User-defined for: ");
+            fitManager.SetErorsEvaluation(fit::Errors::USER_DEFINED);
+            vector<string> pois_to_estimate_errors;
+            cmdLineArgs->SetValIfArgExists("errors_for", pois_to_estimate_errors);
+            fitManager.fitSettings_.pois_to_estimate_errors = new RooArgSet{};
+            for (const auto& poi : pois_to_estimate_errors) {
+                EFT_PROF_INFO("{}", poi);
+                fitManager.fitSettings_.pois_to_estimate_errors->add(*manager->GetWs()->GetVar(poi));
+            }
+        }
         else {
             EFT_PROF_CRITICAL("FreeFit:: errors: {} are not supported - only hesse now", error_str);
             throw std::logic_error("inconsistent settings for errors");
@@ -189,11 +204,21 @@ void FreeFitManager::RunFit() {
         string is_const_str = "F";
         if (ptr->isConstant())
             is_const_str = "C";
-        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                       ptr->GetName(),
-                       ptr->getVal(),
-                       ptr->getError(),
-                       is_const_str);
+
+        if (fitSettings_.errors != fit::Errors::USER_DEFINED) {
+            EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
+                           ptr->GetName(),
+                           ptr->getVal(),
+                           ptr->getError(),
+                           is_const_str);
+        } else {
+            EFT_PROF_DEBUG("{:60} [{:10} + {:10} - {:10}] {}",
+                           ptr->GetName(),
+                           ptr->getVal(),
+                           ptr->getErrorHi(),
+                           ptr->getErrorLo(),
+                           is_const_str);
+        }
     }
     EFT_PROF_DEBUG("RunFreeFit: NPS after free fit");
     fitSettings_.nps->Print("v");
