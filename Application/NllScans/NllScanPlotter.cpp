@@ -243,54 +243,6 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
         curves_[ "full_prefit" ]. to_draw = true;
     }
 
-    //const string& poi_name = configs.begin()->poi_configs.at(0).Name();
-
-//    vector<NllScanResult> configs_sorted {configs.begin(), configs.end()};
-//
-//    std::sort(configs_sorted.begin(), configs_sorted.end(), [](NllScanResult& l, NllScanResult& r) -> bool{
-//        return l.poi_configs[0].Value() < r.poi_configs[0].Value();
-//    });
-//
-//    vector<double> nll_vals;
-//    nll_vals.reserve(configs_sorted.size());
-//
-//    vector<double> mu_vals;
-//    mu_vals.reserve(configs_sorted.size());
-//
-//    for (const auto& config : configs_sorted) {
-//        nll_vals.emplace_back(config.nll_val);
-//        mu_vals. emplace_back(config.poi_configs.at(0).Value());
-//    }
-//
-//    EFT_PROF_DEBUG("{:3} | {:5} | {:10}", "idx", "mu", "nll");
-//    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
-//        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
-//    }
-//
-//    const auto min_nll = *std::min_element(nll_vals.begin(), nll_vals.end());
-//    const auto max_nll = *std::max_element(nll_vals.begin(), nll_vals.end());
-//    const auto min_poi = *std::min_element(mu_vals.begin(), mu_vals.end());
-//    const auto max_poi = *std::max_element(mu_vals.begin(), mu_vals.end());
-//
-//    EFT_PROF_INFO("min_nll: {}", min_nll);
-//    EFT_PROF_INFO("max_nll: {}", max_nll);
-//    EFT_PROF_INFO("min_poi: {}", min_poi);
-//    EFT_PROF_INFO("max_poi: {}", max_poi);
-//
-//    std::for_each(nll_vals.begin(), nll_vals.end(), [&min_nll](double& val) -> void
-//        {
-//            auto val_copy = val;
-//            val -= min_nll;
-//            val *= 2;
-//            EFT_PROF_DEBUG("transform: {} into {}", val_copy, val);
-//        }
-//    );
-//
-//    EFT_PROF_DEBUG("{:3} | {:.4} | {:.6}", "idx", "mu", "2dnll");
-//    for (size_t idx {0}; idx < nll_vals.size(); ++idx) {
-//        EFT_PROF_DEBUG("{:3} | {:5} | {:10}", idx, mu_vals.at(idx), nll_vals.at(idx));
-//    }
-
     auto mg = make_shared<TMultiGraph>("mg", "mg");
     auto legend = make_shared<TLegend>(0.8, 0.8, 0.97, 0.98);
     legend->SetBorderSize(0);
@@ -301,28 +253,6 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     c.SetLeftMargin(0.07);
     c.SetTopMargin(0.02);
     c.SetBottomMargin(0.10);
-
-    //gr->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
-    //grFull->GetYaxis()->SetRangeUser(-1, 15);
-
-    //gr->GetXaxis()->SetTitle(("#mu_{" + poi_name.substr(3, poi_name.length()) + "}").c_str());
-    //gr->GetYaxis()->SetTitle("2 #Delta ln L");
-
-    //gr->SetMarkerColor(kBlue);
-
-//    if (grStat) {
-//        grStat->SetMarkerColor(kRed);
-//        grStat->SetLineColor(kRed);
-//        grStat->SetLineWidth(6);
-//        grStat->SetMarkerSize(2);
-//        grStat->SetMarkerStyle(24);
-//        mg->Add(grStat);
-//    }
-
-//    gr->SetLineWidth(6);
-//    gr->SetLineColor(kBlue);
-//    gr->SetMarkerSize(2);
-//    gr->SetMarkerStyle(24);
 
     for (auto& [name, curve] : curves_) {
         ofstream res(name + "_" + poi_name + ".txt");
@@ -365,9 +295,6 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     mg->GetXaxis()->SetTitle(poi_name.c_str());
     mg->GetYaxis()->SetTitle("2 #Delta ln L");
 
-    //mg->GetXaxis()->SetRangeUser(0.85 * min_poi, 1.05 * max_poi);
-    //mg->GetYaxis()->SetRangeUser(0.f,          max_nll);
-
     if (settings_.range_2dnll_h != 0) {
         mg->GetYaxis()->SetRangeUser(0.f, settings_.range_2dnll_h);
     }
@@ -387,6 +314,8 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     }
 
     EFT_PROF_DEBUG("Range for POI axis: [{} {}]", mg->GetXaxis()->GetXmin(), mg->GetXaxis()->GetXmax());
+
+    mg->Draw("AC");
     
     TLine l1;
     l1.SetLineWidth(4);
@@ -402,6 +331,7 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     float y_text = 0.93f;
     float x_text = 0.13f;
     float dy     = 0.05f;
+
 
     TLatex tex;
     tex.SetNDC();
@@ -433,7 +363,6 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
     tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 1.1f, "1#sigma");
     tex.DrawLatex(mg->GetXaxis()->GetXmin() * 0.90, 4.f, "95% CL");
 
-    mg->Draw("AC");
     legend->Draw("same");
 
     string stat_regime_str;
