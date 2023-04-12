@@ -46,6 +46,7 @@ private:
     std::string             snapshot_;
     std::string             data_name;
     bool                    force_data {false};
+    bool                    stat_only  {false};
     PrePostFit              prePostFit {PrePostFit::OBSERVED};
 
 

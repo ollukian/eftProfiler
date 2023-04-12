@@ -166,6 +166,14 @@ void FreeFitManager::RunFit() {
 
     fitSettings_.data = data;
 
+    if (stat_only) {
+        stat_only = false;
+
+    }
+    //if (fitma)
+    //RunFreeFit();
+    //ws_->FixValConst(fitSettings_.nps);
+
     ws_->FixValConst(all_pois);
     ws_->FloatVals(pois_to_float);
 
@@ -204,7 +212,7 @@ void FreeFitManager::RunFit() {
     fitSettings_.globalObs->Print("v");
 
     EFT_PROF_INFO("RunFreeFit: pois after free fit:");
-    for (auto poi : *pois_to_float) {
+    for (auto poi : *fitSettings_.pois_to_estimate_errors) {
         auto ptr = dynamic_cast<RooRealVar*>(poi);
 
         string is_const_str = "F";
@@ -226,6 +234,17 @@ void FreeFitManager::RunFit() {
                            is_const_str);
         }
     }
+
+    EFT_PROF_INFO("RunFreeFit: central values and errors:");
+    for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
+        auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
+        auto val   = poi_1->getVal();
+        auto errLo = poi_1->getErrorLo();
+        auto errHi = poi_1->getErrorLo();
+        EFT_PROF_INFO("{:6}: {:6} + {:6} - {:6}", poi_1->GetName(), val, errLo, errHi);
+        poi_1->getVal();
+    }
+
 
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
         for (size_t idx_poi_2 {idx_poi_1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
