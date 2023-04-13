@@ -31,6 +31,7 @@ struct  FitSettings {
     double      eps         {1E-3};
     bool        reuse_nll   {true};
     bool        save_res    {false};
+    double      error_level {1.0}; // 1 sigma for MINOS <=> 2 ln Delta L = 1^2
 };
 
 } // eft::stats::fit

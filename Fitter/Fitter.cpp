@@ -148,6 +148,12 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
       minim.save("hesse","")->Print();
       }*/
 
+    //
+    if (settings.error_level != 1.0) {
+        EFT_PROF_INFO("[Minimizer] set error level for MINOS to {} / 2", settings.error_level);
+        minim.setErrorLevel(settings.error_level / 2.0);
+    }
+
     switch (settings.errors) {
         case Errors::HESSE:
             EFT_PROF_INFO("[Minimizer] start HESSE...");

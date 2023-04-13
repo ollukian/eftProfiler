@@ -5,6 +5,7 @@
 #include "FreeFitManager.h"
 #include "FitManager.h"
 #include "StringUtils.h"
+#include "RooVarUtils.h"
 #include "Fitter.h"
 #include "RooStats/AsymptoticCalculator.h"
 
@@ -91,6 +92,12 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
         }
         else if (error_str == "minos") {
             EFT_PROF_INFO("Errors estimation method: Minos");
+
+            if (cmdLineArgs->HasKey("error_level")) {
+                cmdLineArgs->SetValIfArgExists("error_level", fitManager.fitSettings_.error_level);
+                EFT_PROF_INFO("Set error level for MINOS to {}", fitManager.fitSettings_.error_level);
+            }
+
             fitManager.SetErorsEvaluation(fit::Errors::MINOS_POIS);
             fitManager.fitSettings_.pois_to_estimate_errors = new RooArgSet{};
             for (const auto& poi : pois_to_float_) {
@@ -176,6 +183,8 @@ void FreeFitManager::RunFit() {
 
     }
 
+    // TODO: refactor this things to the building of the fit manager
+
     if (errors_type == fit::Errors::MINOS_POIS || errors_type == fit::Errors::USER_DEFINED) {
         fitSettings_.pois_to_estimate_errors = pois_to_float;
         fitSettings_.pois = pois_to_float;
@@ -189,18 +198,8 @@ void FreeFitManager::RunFit() {
 
 
     EFT_PROF_INFO("RunFreeFit: pois before free fit:");
-    for (auto poi : *all_pois) {
-        auto ptr = dynamic_cast<RooRealVar*>(poi);
+    EFT_PROF_INFO("{}", utils::RooVarUtils::PrintVars(*all_pois));
 
-        string is_const_str = "F";
-        if (ptr->isConstant())
-            is_const_str = "C";
-        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                       ptr->GetName(),
-                       ptr->getVal(),
-                       ptr->getError(),
-                       is_const_str);
-    }
     EFT_PROF_DEBUG("RunFreeFit: NPS before free fit");
     fitSettings_.nps->Print("v");
     EFT_PROF_DEBUG("RunFreeFit: globs before free fit");
@@ -222,39 +221,20 @@ void FreeFitManager::RunFit() {
     fitSettings_.globalObs->Print("v");
 
     EFT_PROF_INFO("RunFreeFit: pois after free fit:");
-    for (auto poi : *fitSettings_.pois_to_estimate_errors) {
-        auto ptr = dynamic_cast<RooRealVar*>(poi);
 
-        string is_const_str = "F";
-        if (ptr->isConstant())
-            is_const_str = "C";
+    EFT_PROF_INFO("RunFreeFit: pois before free fit:");
+    EFT_PROF_INFO("{}", utils::RooVarUtils::PrintVars(*all_pois));
 
-        if (fitSettings_.errors != fit::Errors::USER_DEFINED) {
-            EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                           ptr->GetName(),
-                           ptr->getVal(),
-                           ptr->getError(),
-                           is_const_str);
-        } else {
-            EFT_PROF_DEBUG("{:60} [{:10} + {:10} - {:10}] {}",
-                           ptr->GetName(),
-                           ptr->getVal(),
-                           ptr->getErrorHi(),
-                           ptr->getErrorLo(),
-                           is_const_str);
-        }
-    }
+    // TODO: refactor to PrintCentralValues
 
     EFT_PROF_INFO("RunFreeFit: central values and errors:");
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
         auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
-        auto val   = poi_1->getVal();
-        auto errLo = poi_1->getErrorLo();
-        auto errHi = poi_1->getErrorLo();
-        EFT_PROF_INFO("{:6}: {:6} + {:6} - {:6}", poi_1->GetName(), val, errLo, errHi);
-        poi_1->getVal();
+        EFT_PROF_INFO("{}",utils::RooVarUtils::PrintVar(*poi_1));
     }
 
+
+    // TODO: refactor to PrintCorrelations
 
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
         for (size_t idx_poi_2 {idx_poi_1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
