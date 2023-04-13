@@ -86,6 +86,7 @@ int main(int argc, char* argv[]) {
                 {"size_t",          "worker_id",        "0",            ""},
                 {"size_t",          "top",              "20",           "number of pois to plot"},
                 {"double",          "eps",              "1E-3",         "Fit precision"},
+                {"double",          "error_level",      "1.0",          "For MINOS: level of 2 Delta ln L to find an intersection with."},
                 {"size_t",          "strategy",         "1",            "Strategy from RooMinimizer (0, 1, 2)"},
                 {"size_t",          "retry",            "0",            "Nb of times to retry fit in case of failure (0, 1, 2)"},
                 {"double",          "poi_init_val",     "0.",           "Initial value of the POI to be set before each fit"},
@@ -381,6 +382,7 @@ int main(int argc, char* argv[]) {
         commandLineArgs->RegisterKey("prefit");
         commandLineArgs->RegisterKey("pois_float");
         commandLineArgs->RegisterKey("errors_for");
+        commandLineArgs->RegisterKey("error_level");
         auto fitManager = eft::stats::freefit::FreeFitManager::InitFromCommandLine(commandLineArgs);
         fitManager.RunFit();
     }

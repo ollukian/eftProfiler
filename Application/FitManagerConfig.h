@@ -25,6 +25,7 @@ struct FitManagerConfig {
     std::vector<std::string>    errors;
     size_t                      worker_id           {0};
     double                      eps                 {1E-3}; // to be divided on 1000 later on
+    double                      error_level         {1.0};  // to be divided on 2 for the usage in RooMinuit
     size_t                      strategy            {1};
     size_t                      retry               {0};
     double                      poi_init_val        {0.};
