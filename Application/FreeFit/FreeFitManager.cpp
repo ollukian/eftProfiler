@@ -92,6 +92,11 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
         else if (error_str == "minos") {
             EFT_PROF_INFO("Errors estimation method: Minos");
             fitManager.SetErorsEvaluation(fit::Errors::MINOS_POIS);
+            fitManager.fitSettings_.pois_to_estimate_errors = new RooArgSet{};
+            for (const auto& poi : pois_to_float_) {
+                EFT_PROF_INFO("Add MINOS estimation for: {:6}", poi);
+                fitManager.fitSettings_.pois_to_estimate_errors->add(*manager->GetWs()->GetVar(poi));
+            }
         }
         else if (error_str == "user") {
             EFT_PROF_INFO("Errors estimation method: User-defined for: ");
@@ -100,12 +105,12 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
             cmdLineArgs->SetValIfArgExists("errors_for", pois_to_estimate_errors);
             fitManager.fitSettings_.pois_to_estimate_errors = new RooArgSet{};
             for (const auto& poi : pois_to_estimate_errors) {
-                EFT_PROF_INFO("{}", poi);
+                EFT_PROF_INFO("Add MINOS estimation for:", poi);
                 fitManager.fitSettings_.pois_to_estimate_errors->add(*manager->GetWs()->GetVar(poi));
             }
         }
         else {
-            EFT_PROF_CRITICAL("FreeFit:: errors: {} are not supported - only hesse now", error_str);
+            EFT_PROF_CRITICAL("FreeFit:: errors: {} are not supported - only hesse and MINOS now", error_str);
             throw std::logic_error("inconsistent settings for errors");
         }
     }
@@ -169,6 +174,11 @@ void FreeFitManager::RunFit() {
     if (stat_only) {
         stat_only = false;
 
+    }
+
+    if (errors_type == fit::Errors::MINOS_POIS || errors_type == fit::Errors::USER_DEFINED) {
+        fitSettings_.pois_to_estimate_errors = pois_to_float;
+        fitSettings_.pois = pois_to_float;
     }
     //if (fitma)
     //RunFreeFit();

@@ -660,15 +660,15 @@ void FitManager::Init(FitManagerConfig config)
           );
     SetModelConfig(std::move(config.model_config));
 
-    EFT_PROF_INFO("[FitManager] extract NPs");
+    EFT_PROF_DEBUG("[FitManager] extract NPs");
     ExtractNP();
-    EFT_PROF_INFO("[FitManager] extract obs");
+    EFT_PROF_DEBUG("[FitManager] extract obs");
     ExtractObs();
-    EFT_PROF_INFO("[FitManager] extract global obs");
+    EFT_PROF_DEBUG("[FitManager] extract global obs");
     ExtractGlobObs();
-    EFT_PROF_INFO("[FitManager] extract cats");
+    EFT_PROF_DEBUG("[FitManager] extract cats");
     ExtractCats();
-    EFT_PROF_INFO("[FitManager] extract POIs");
+    EFT_PROF_DEBUG("[FitManager] extract POIs");
     ExtractPOIs();
 
     EFT_PROF_INFO("[FitManager] extract pdf total: {}", config.comb_pdf);
@@ -676,12 +676,12 @@ void FitManager::Init(FitManagerConfig config)
     EFT_PROF_INFO("[FitManager] extract data total: {}", config.comb_data);
     ExtractDataTotal( config.comb_data);
 
-    EFT_PROF_INFO("[FitManager] get constrains");
+    EFT_PROF_DEBUG("[FitManager] get constrains");
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
-    EFT_PROF_INFO("[FitManager] print obtained constrains");
-    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_constr_pdf->size());
-    EFT_PROF_INFO("[FitManager] paired_globs {}:",      pairConstr.paired_globs->size());
-    EFT_PROF_INFO("[FitManager] paired_nps {}:",        pairConstr.paired_nps->size());
+    EFT_PROF_DEBUG("[FitManager] print obtained constrains");
+    EFT_PROF_INFO("[FitManager] found {} paired_constr_pdf", pairConstr.paired_constr_pdf->size());
+    EFT_PROF_INFO("[FitManager] found {} paired_globs",      pairConstr.paired_globs->size());
+    EFT_PROF_INFO("[FitManager] found {} paired_nps",        pairConstr.paired_nps->size());
 
     lists_[ "paired_globs" ] = pairConstr.paired_globs;
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;
@@ -788,7 +788,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 #ifndef EFT_ADD_VEC_OPTION
 #define EFT_ADD_VEC_OPTION(args, config, param)                                                 \
     if (args.SetValIfArgExists(#param, config.param)) {                                         \
-        EFT_PROF_INFO("Add vector [{}] option with: {:15} params", #param, config.param.size());  \
+        EFT_PROF_DEBUG("Add vector [{}] option with: {:15} params", #param, config.param.size());  \
      }
 
 #endif
