@@ -19,7 +19,7 @@ message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
 
 message(CHECK_START "Checking for compiler information")
 string( TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMPILER_ID )
-if (COMPILER_ID STREQUAL "gcc")
+if (COMPILER_ID STREQUAL "gcc" OR COMPILER_ID STREQUAL "gnu")
     message(CHECK_PASS "Found GCC ${CMAKE_CXX_COMPILER_VERSION}")
 elseif (COMPILER_ID STREQUAL "clang")
     message(CHECK_PASS "Found Clang ${CMAKE_CXX_COMPILER_VERSION}")
