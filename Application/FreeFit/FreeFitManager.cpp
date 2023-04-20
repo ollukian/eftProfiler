@@ -198,7 +198,11 @@ void FreeFitManager::RunFit() {
 
 
     EFT_PROF_INFO("RunFreeFit: pois before free fit:");
-    EFT_PROF_INFO("{}", utils::RooVarUtils::PrintVars(*all_pois));
+    EFT_PROF_INFO("\n{}", utils::RooVarUtils::PrintVars(*all_pois));
+    EFT_PROF_INFO("Only {} will be floated: \n {}",
+                  pois_to_float->getSize(),
+                  utils::RooVarUtils::PrintVars(*pois_to_float)
+                  );
 
     EFT_PROF_DEBUG("RunFreeFit: NPS before free fit");
     fitSettings_.nps->Print("v");

@@ -18,7 +18,7 @@ std::string RooVarUtils::PrintVar(const RooRealVar& var) {
 
     std::string errors_str = fmt::format("+- {:10}", var.getError());
     if (var.getErrorLo() != var.getErrorHi())
-        errors_str = fmt::format("+ {:10} - {:10}", var.getErrorLo(), var.getErrorHi());
+        errors_str = fmt::format("+ {:10} - {:10}", var.getErrorHi(), var.getErrorLo());
 
     return fmt::format("{:60} [{:10} {}] {}",
                        var.GetName(),

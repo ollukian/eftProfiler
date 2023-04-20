@@ -679,9 +679,9 @@ void FitManager::Init(FitManagerConfig config)
     EFT_PROF_DEBUG("[FitManager] get constrains");
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
     EFT_PROF_DEBUG("[FitManager] print obtained constrains");
-    EFT_PROF_INFO("[FitManager] found {} paired_constr_pdf", pairConstr.paired_constr_pdf->size());
-    EFT_PROF_INFO("[FitManager] found {} paired_globs",      pairConstr.paired_globs->size());
-    EFT_PROF_INFO("[FitManager] found {} paired_nps",        pairConstr.paired_nps->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} paired_constr_pdf", pairConstr.paired_constr_pdf->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} paired_globs",      pairConstr.paired_globs->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} paired_nps",        pairConstr.paired_nps->size());
 
     lists_[ "paired_globs" ] = pairConstr.paired_globs;
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;

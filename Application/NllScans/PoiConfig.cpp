@@ -262,7 +262,7 @@ PoiConfig PoiConfig::readFromString(const std::string& s) {
     }
 
     if (res.is_range_in_sigmas) {
-        EFT_PROF_INFO("range for scan low is defined in units of sigma: compute real range");
+        EFT_PROF_DEBUG("range for scan low is defined in units of sigma: compute real range");
         res.ComputeRangeFromSigmasIfNeeded();
     }
 

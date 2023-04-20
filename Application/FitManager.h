@@ -192,7 +192,7 @@ inline void FitManager::ExtractNP()      noexcept
     //real_np->Print("v");
     //args_["np"] = real_np;
 
-    EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]:", args_["np_all"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} nuisance parameters", args_["np_all"]->size());
     for (const auto np : *args_["np_all"]) {
         auto np_var = dynamic_cast<RooRealVar*>(np);
         EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
@@ -208,7 +208,7 @@ inline void FitManager::ExtractObs() noexcept
     EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
-    EFT_PROF_INFO("Extracted {} Observables to args[obs]:", args_["obs"]->size());
+    EFT_PROF_INFO("FitManager] Extracted {} Observables", args_["obs"]->size());
 //    for (const auto& obs : *args_["obs"]) {
 //        auto obs_var = dynamic_cast<RooRealVar*>(obs);
 //        EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
@@ -223,7 +223,7 @@ inline void FitManager::ExtractGlobObs()     noexcept
     EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
-    EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]:", args_["globObs"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted global observables", args_["globObs"]->size());
     for (const auto& globObs : *args_["globObs"]) {
         auto np_var = dynamic_cast<RooRealVar*>(globObs);
         EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
