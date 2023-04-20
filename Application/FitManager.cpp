@@ -1031,7 +1031,7 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
 
 void FitManager::ExtractConfigFromFile(FitManagerConfig& config) noexcept {
     EFT_PROFILE_FN();
-    EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
+    EFT_PROF_DEBUG("[FitManager] Read Configuration from config file");
     const toml::table& settings = eft::Application::GetConfig();
     try {
         EFT_PROF_DEBUG("[FitManager] parse config file");
@@ -1043,7 +1043,10 @@ void FitManager::ExtractConfigFromFile(FitManagerConfig& config) noexcept {
             key);                                   \
                                                     \
             config.target = node_exact.value();     \
-    }
+    } else {                                      \
+        EFT_PROF_ERROR("[FitManager] For the target name: {}, could not extract value from key: {}", \
+            #target, key);                        \
+        }
 
         EFT_PARSE_CONFIG(settings["workspace"], "name", std::string, ws_name);
         EFT_PARSE_CONFIG(settings["workspace"], "path", std::string, ws_path);
