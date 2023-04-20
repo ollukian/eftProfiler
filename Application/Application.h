@@ -56,7 +56,7 @@ namespace eft {
         Application& operator= (const Application&) = delete;
         Application& operator= (Application&&) = delete;
     private:
-        void ReadConfig(const std::string& path = "config.toml");
+        static void ReadConfig(const std::string& path = "config.toml");
 
         static void PrintHelp(std::ostream& os);
         static void InitDebugLevel();

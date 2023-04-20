@@ -42,6 +42,8 @@ void Application::Init(int argc, char **argv) {
     gErrorIgnoreLevel = kError;
     gStyle->SetHistMinimumZero(true);
 
+    ReadConfig();
+
     eft::stats::Logger::Init();
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
     commandLineArgs_ = std::make_shared<CommandLineArgs>(argc, argv);
@@ -472,6 +474,11 @@ void Application::ProcessGetMissingNps() {
 
 void Application::ReadConfig(const std::string& path) {
     EFT_PROF_INFO("Read config from: {}", path);
+    if ( ! std::filesystem::exists(path) ) {
+        EFT_PROF_ERROR("Config file does not exist: {}", path);
+        setError();
+        return;
+    }
     try {
         config_settings_ = toml::parse_file(path);
     } catch (const toml::parse_error& e) {
