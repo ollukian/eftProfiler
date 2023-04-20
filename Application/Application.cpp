@@ -318,6 +318,7 @@ void Application::ProcessFreeFitComputation() {
     commandLineArgs_->RegisterKey("pois_float");
     commandLineArgs_->RegisterKey("errors_for");
     commandLineArgs_->RegisterKey("error_level");
+    commandLineArgs_->RegisterKey("stat_only");
 
     auto fitManager = eft::stats::freefit::FreeFitManager::InitFromCommandLine(commandLineArgs_);
     fitManager.RunFit();

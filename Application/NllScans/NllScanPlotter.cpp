@@ -265,6 +265,8 @@ void NllScanPlotter::PlotNll1D(const string& poi_name) {
             //EFT_PROF_DEBUG("{:5} {:10} {:5}", curve.poi_name, "nll", "fit_status");
             for (size_t idx {0}; idx < curve.NbPoints(); ++idx) {
                 //EFT_PROFILE_FN()
+                // TODO: an option wheher to print points or not
+                //  + their path
                 res  << fmt::format("{} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx) / 2., 0) << endl;
                 cout << fmt::format("{} {:10} {:5}", curve.mu_values.at(idx), curve.nll_values.at(idx) / 2., 0)  << endl;
                 //EFT_PROF_DEBUG("{:.3} ==> {:.3}", curve.mu_values.at(idx), curve.nll_values.at(idx));

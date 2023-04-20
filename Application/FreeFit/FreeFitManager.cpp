@@ -82,6 +82,10 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
         fitManager.prePostFit = PrePostFit::OBSERVED;
     }
 
+    if (cmdLineArgs->HasKey("stat_only")) {
+        fitManager.stat_only = true;
+    }
+
     string error_str;
     if (cmdLineArgs->HasKey("errors")) {
         cmdLineArgs->SetValIfArgExists("errors", error_str);
@@ -178,11 +182,6 @@ void FreeFitManager::RunFit() {
 
     fitSettings_.data = data;
 
-    if (stat_only) {
-        stat_only = false;
-
-    }
-
     // TODO: refactor this things to the building of the fit manager
 
     if (errors_type == fit::Errors::MINOS_POIS || errors_type == fit::Errors::USER_DEFINED) {
@@ -215,9 +214,28 @@ void FreeFitManager::RunFit() {
     //list_pois.add(*pois_to_float);
 
     fit::Fitter fitter;
+
+    if (stat_only) {
+        EFT_PROF_INFO("RunFreeFit: run free fit to fix NPs");
+        EFT_PROF_INFO("RunFreeFit: create nll before fixing nps constants...");
+        auto nll_for_stat_only = fitter.CreatNll(fitSettings_);
+        EFT_PROF_INFO("RunFreeFit: create nll before fixing nps constants DONE");
+        EFT_PROF_INFO("RunFreeFit: minimize nll to fix NPs at their best-fit-values....");
+        fitter.Minimize(fitSettings_, nll_for_stat_only);
+        EFT_PROF_INFO("RunFreeFit: minimize nll to fix NPs at their best-fit-values DONE");
+        EFT_PROF_INFO("RunFreeFit: Fix NPs at their best-fit-values");
+        ws_->FixValConst(fitSettings_.nps);
+    }
+
+    EFT_PROF_INFO("RunFreeFit: create nll for free fit...");
     auto nll_free_fit = fitter.CreatNll(fitSettings_);
+    EFT_PROF_INFO("RunFreeFit: create nll for free fit DONE");
+    EFT_PROF_INFO("RunFreeFit: minimize nll for free fit....");
     auto res = fitter.Minimize(fitSettings_, nll_free_fit);
+    EFT_PROF_INFO("RunFreeFit: minimize nll for free fit DONE");
+    EFT_PROF_INFO("RunFreeFit: extract the reduced covariance matrix for the given {} pois...", list_pois.size());
     auto cov = res->reducedCovarianceMatrix(list_pois);
+    EFT_PROF_INFO("RunFreeFit: extract the reduced covariance matrix for the given {} pois DONE", list_pois.size());
 
     EFT_PROF_DEBUG("RunFreeFit: NPS after free fit");
     fitSettings_.nps->Print("v");
@@ -225,9 +243,7 @@ void FreeFitManager::RunFit() {
     fitSettings_.globalObs->Print("v");
 
     EFT_PROF_INFO("RunFreeFit: pois after free fit:");
-
-    EFT_PROF_INFO("RunFreeFit: pois before free fit:");
-    EFT_PROF_INFO("{}", utils::RooVarUtils::PrintVars(*all_pois));
+    EFT_PROF_INFO("\n{}", utils::RooVarUtils::PrintVars(*all_pois));
 
     // TODO: refactor to PrintCentralValues
 
@@ -241,7 +257,7 @@ void FreeFitManager::RunFit() {
     // TODO: refactor to PrintCorrelations
 
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
-        for (size_t idx_poi_2 {idx_poi_1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
+        for (size_t idx_poi_2 {idx_poi_1 + 1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
             auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
             auto poi_2 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_2));
             //auto corr = cov.operator()(idx_poi_1, idx_poi_2);
