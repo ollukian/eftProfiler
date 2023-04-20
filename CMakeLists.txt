@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 project(eftProfiler)
 
 set(${PROJECT_NAME}_VERSION_MAJOR  1)
-set(${PROJECT_NAME}_VERSION_MINOR  2)
+set(${PROJECT_NAME}_VERSION_MINOR  3)
 set(${PROJECT_NAME}_VERSION_PATCH  0)
 set(${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}")
 
@@ -13,10 +13,26 @@ if(CMAKE_CXX_STANDARD LESS 17)
     message(WARNING "Incompatible C++ standard ${CMAKE_CXX_STANDARD}. EFT requires C++17")
 endif()
 
+message(CHECK_START "Checking for compiler information")
+string( TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMPILER_ID )
+if (COMPILER_ID STREQUAL "gcc")
+    message(CHECK_PASS "Found GCC ${CMAKE_CXX_COMPILER_VERSION}")
+elseif (COMPILER_ID STREQUAL "clang")
+    message(CHECK_PASS "Found Clang ${CMAKE_CXX_COMPILER_VERSION}")
+elseif (COMPILER_ID STREQUAL "msvc")
+    message(CHECK_PASS "Found MSVC ${CMAKE_CXX_COMPILER_VERSION}")
+else()
+    message(CHECK_FAIL "Unknown compiler")
+endif()
+
+string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
+## Check for compiler flags
+message(STATUS "Build type: ${BUILD_TYPE}")
+
 
 message("${PROJECT_NAME} version: ${${PROJECT_NAME}_VERSION}")
 message(STATUS C++ standard:    [${CMAKE_CXX_STANDARD}])
-message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
+#message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
 
 #add_compile_options(-D__ROOFIT_NOBANNER=1)
 
@@ -65,22 +81,22 @@ add_subdirectory(Test)
 
 add_executable(eftProfiler main.cpp Test/Tester.cpp)
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-message(STATUS "Adding compiler flags for debugging")
-message(STATUS "Address sanitizer enabled")
-target_compile_options(eftProfiler PRIVATE -fsanitize=address,undefined)
-target_compile_options(eftProfiler PRIVATE -fno-sanitize=signed-integer-overflow)
-target_compile_options(eftProfiler PRIVATE -fno-sanitize-recover=all)
-target_compile_options(eftProfiler PRIVATE -fno-omit-frame-pointer)
-target_link_libraries(eftProfiler  PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
-if (MSVC)
-    add_compile_options(/W3)
-else()
-    add_compile_options(-Wall -Wextra -pedantic -Werror -Wformat=2 -Wformat-truncation
+if (BUILD_TYPE STREQUAL "debug")
+    message(STATUS "Adding compiler flags for debugging")
+    message(STATUS "Address sanitizer enabled")
+    target_compile_options(eftProfiler PRIVATE -fsanitize=address,undefined)
+    target_compile_options(eftProfiler PRIVATE -fno-sanitize=signed-integer-overflow)
+    target_compile_options(eftProfiler PRIVATE -fno-sanitize-recover=all)
+    target_compile_options(eftProfiler PRIVATE -fno-omit-frame-pointer)
+    target_link_libraries(eftProfiler  PRIVATE -fsanitize=address,undefined -fuse-ld=gold)
+    if (MSVC)
+        add_compile_options(/W3)
+    else()
+        add_compile_options(-Wall -Wextra -pedantic -Werror -Wformat=2 -Wformat-truncation
             -fstack-usage
             -ffunction-sections -fdata-sections
             )
-endif()
+    endif()
 endif()
 
 # target ROOT
