@@ -13,6 +13,10 @@ if(CMAKE_CXX_STANDARD LESS 17)
     message(WARNING "Incompatible C++ standard ${CMAKE_CXX_STANDARD}. EFT requires C++17")
 endif()
 
+message("${PROJECT_NAME} version: ${${PROJECT_NAME}_VERSION}")
+message(STATUS C++ standard:    [${CMAKE_CXX_STANDARD}])
+message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
+
 message(CHECK_START "Checking for compiler information")
 string( TOLOWER "${CMAKE_CXX_COMPILER_ID}" COMPILER_ID )
 if (COMPILER_ID STREQUAL "gcc")
@@ -30,9 +34,7 @@ string(TOLOWER "${CMAKE_BUILD_TYPE}" BUILD_TYPE)
 message(STATUS "Build type: ${BUILD_TYPE}")
 
 
-message("${PROJECT_NAME} version: ${${PROJECT_NAME}_VERSION}")
-message(STATUS C++ standard:    [${CMAKE_CXX_STANDARD}])
-#message(STATUS C++ compiler id: [${CMAKE_CXX_COMPILER_ID}])
+
 
 #add_compile_options(-D__ROOFIT_NOBANNER=1)
 
