@@ -218,6 +218,9 @@ void FreeFitManager::RunFit() {
     if (stat_only) {
         EFT_PROF_INFO("RunFreeFit: run free fit to fix NPs");
         EFT_PROF_INFO("RunFreeFit: create nll before fixing nps constants...");
+        EFT_PROF_INFO("Back-up errors before this free fit, since only central values matter for fixing nps");
+        auto errors = fitSettings_.errors;
+        fitSettings_.errors = fit::Errors::DEFAULT;
         auto nll_for_stat_only = fitter.CreatNll(fitSettings_);
         EFT_PROF_INFO("RunFreeFit: create nll before fixing nps constants DONE");
         EFT_PROF_INFO("RunFreeFit: minimize nll to fix NPs at their best-fit-values....");
@@ -225,6 +228,8 @@ void FreeFitManager::RunFit() {
         EFT_PROF_INFO("RunFreeFit: minimize nll to fix NPs at their best-fit-values DONE");
         EFT_PROF_INFO("RunFreeFit: Fix NPs at their best-fit-values");
         ws_->FixValConst(fitSettings_.nps);
+        EFT_PROF_INFO("RunFreeFit: return back required errors estimation type");
+        fitSettings_.errors = errors;
     }
 
     EFT_PROF_INFO("RunFreeFit: create nll for free fit...");
