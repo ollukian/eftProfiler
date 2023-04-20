@@ -430,4 +430,42 @@ void Application::Run() {
     }
 }
 
+void Application::ProcessComputeHesseNps() {
+    using eft::stats::ranking::CorrelationStudyProcessor;
+        EFT_PROF_INFO("Compute hesse nps");
+
+        CorrelationStudyProcessor correlationStudyProcessor(commandLineArgs_.get());
+        auto res = correlationStudyProcessor.ComputeHesseNps();
+        correlationStudyProcessor.ExtractCorrelations(res);
+        const auto sorted = res.GetSorted();
+        correlationStudyProcessor.PlotCovariances(res);
+        std::string name_to_save = fmt::format("compute_hesse_nps{}.txt", res.poi);
+        correlationStudyProcessor.PrintSuggestedNpsRanking(std::move(name_to_save), res);
+}
+
+void Application::ProcessGetMissingNps() {
+    using std::cout;
+    using std::string;
+
+    commandLineArgs_->RegisterKey("out");
+    commandLineArgs_->RegisterKey("sep");
+    eft::stats::ranking::MissingNpsProcessor missingNpsProcessor;
+    missingNpsProcessor.ReadSettingsFromCommandLine(commandLineArgs_.get());
+    missingNpsProcessor.ComputeMissingNPs();
+
+    string separator {" \\ \n"};
+    if (commandLineArgs_->HasKey("sep")) {
+        commandLineArgs_->SetValIfArgExists("sep", separator);
+    }
+
+    if (commandLineArgs_->HasKey("out")) {
+        string out_file;
+        commandLineArgs_->SetValIfArgExists("out", out_file);
+        missingNpsProcessor.PrintMissingNps(out_file, separator);
+    }
+    else {
+        missingNpsProcessor.PrintMissingNps(cout, separator);
+    }
+}
+
 } // eft
