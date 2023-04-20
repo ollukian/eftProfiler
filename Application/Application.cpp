@@ -41,6 +41,7 @@ namespace eft {
 void Application::Init(int argc, char **argv) {
     gErrorIgnoreLevel = kError;
     gStyle->SetHistMinimumZero(true);
+    std::filesystem::current_path("../");
 
     eft::stats::Logger::Init();
     eft::stats::Logger::GetLogger()->set_level(spdlog::level::level_enum::err);
@@ -50,7 +51,6 @@ void Application::Init(int argc, char **argv) {
     eft::stats::Logger::SetRelease();
 
     InitDebugLevel();
-    std::filesystem::current_path("../");
 
     if (commandLineArgs_->HasKey("test")) {
         applicationState_ = ApplicationState::TEST;
