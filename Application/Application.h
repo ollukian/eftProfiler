@@ -8,6 +8,7 @@
 #include <iostream>
 
 #include "../Core/CommandLineArgs.h"
+#include "toml/toml.hpp"
 
 namespace eft {
 
@@ -39,7 +40,6 @@ namespace eft {
         static void Run();
         static void Finalize();
 
-
         static bool isReady() noexcept    { return applicationState_ == ApplicationState::WAITING_REQUEST; }
         static bool isFinished() noexcept { return applicationState_ == ApplicationState::FINISHED; }
         static bool isErrored() noexcept  { return applicationState_ == ApplicationState::APP_ERROR; }
@@ -47,6 +47,8 @@ namespace eft {
         static void setError() noexcept   { applicationState_ = ApplicationState::APP_ERROR; }
 
         static inline std::shared_ptr<CommandLineArgs> GetCommandLineArgs() noexcept { return commandLineArgs_; }
+        static inline const toml::table& GetConfig() noexcept { return config_settings_; }
+
 
         Application() = delete;
         Application(const Application&) = delete;
@@ -76,6 +78,7 @@ namespace eft {
         static inline std::shared_ptr<CommandLineArgs> commandLineArgs_;
         static inline DebugState debugState_ {DebugState::RELEASE};
         static inline ApplicationState applicationState_ {ApplicationState::INITIALISING};
+        static inline toml::table      config_settings_;
     };
 
 

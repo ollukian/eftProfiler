@@ -6,6 +6,7 @@
 #define EFTPROFILER_FITMANAGER_H
 
 #include <CommandLineArgs.h>
+#include "Application.h"
 
 #include <memory>
 #include "IFitManager.h"
@@ -28,6 +29,7 @@ public:
 
     void Init(FitManagerConfig config);
     static void ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept;
+    static void ExtractConfigFromFile(FitManagerConfig& config) noexcept;
 
     void ProcessGetCommand(const FitManagerConfig& config);
 

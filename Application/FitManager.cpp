@@ -1029,6 +1029,35 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
 
 }
 
+void FitManager::ExtractConfigFromFile(FitManagerConfig& config) noexcept {
+    EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("[FitManager] Read Configuration from Command Line");
+    const toml::table& settings = eft::Application::GetConfig();
+    try {
+        EFT_PROF_DEBUG("[FitManager] parse config file");
+
+#define EFT_PARSE_CONFIG(node, key, type, target) \
+        if (const auto& node_exact = node[key].value<type>(); node_exact.has_value()) { \
+        EFT_PROF_DEBUG("[FitManager] For the target name: {}, extracted value: {} from key: {}", \
+            #target,node_exact.value(),             \
+            key);                                   \
+                                                    \
+            config.target = node_exact.value();     \
+    }
+
+        EFT_PARSE_CONFIG(settings["workspace"], "name", std::string, ws_name);
+        EFT_PARSE_CONFIG(settings["workspace"], "path", std::string, ws_path);
+        EFT_PARSE_CONFIG(settings["workspace"], "data", std::string, comb_data);
+        EFT_PARSE_CONFIG(settings["workspace"], "pdf", std::string, comb_pdf);
+        EFT_PARSE_CONFIG(settings["workspace"], "model_config", std::string, model_config);
+
+#undef EFT_PARSE_CONFIG
+
+    } catch (const std::exception& e) {
+        EFT_PROF_ERROR("[FitManager] Error reading from config file: {}", e.what());
+    }
+}
+
 
 
 } // stats

@@ -74,6 +74,7 @@ include_directories(Utils)
 include_directories(Fitter)
 include_directories(Application)
 include_directories(Test)
+include_directories(Vendors/toml/include)
 
 add_subdirectory(Core)
 add_subdirectory(Utils)

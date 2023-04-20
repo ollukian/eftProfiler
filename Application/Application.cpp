@@ -34,6 +34,8 @@
 #include "TError.h"
 #include "TStyle.h"
 
+#include "toml/toml.hpp"
+
 namespace eft {
 
 void Application::Init(int argc, char **argv) {
@@ -465,6 +467,16 @@ void Application::ProcessGetMissingNps() {
     }
     else {
         missingNpsProcessor.PrintMissingNps(cout, separator);
+    }
+}
+
+void Application::ReadConfig(const std::string& path) {
+    EFT_PROF_INFO("Read config from: {}", path);
+    try {
+        config_settings_ = toml::parse_file(path);
+    } catch (const toml::parse_error& e) {
+        EFT_PROF_ERROR("Failed to parse config file: {}", e.what());
+        setError();
     }
 }
 
