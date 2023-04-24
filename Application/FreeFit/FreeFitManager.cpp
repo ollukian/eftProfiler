@@ -5,6 +5,7 @@
 #include "FreeFitManager.h"
 #include "FitManager.h"
 #include "StringUtils.h"
+#include "RooVarUtils.h"
 #include "Fitter.h"
 #include "RooStats/AsymptoticCalculator.h"
 
@@ -81,6 +82,10 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
         fitManager.prePostFit = PrePostFit::OBSERVED;
     }
 
+    if (cmdLineArgs->HasKey("stat_only")) {
+        fitManager.stat_only = true;
+    }
+
     string error_str;
     if (cmdLineArgs->HasKey("errors")) {
         cmdLineArgs->SetValIfArgExists("errors", error_str);
@@ -89,11 +94,46 @@ FreeFitManager FreeFitManager::InitFromCommandLine(const std::shared_ptr<Command
             EFT_PROF_INFO("Errors estimation method: Hesse");
             fitManager.SetErorsEvaluation(fit::Errors::HESSE);
         }
+        else if (error_str == "minos") {
+            EFT_PROF_INFO("Errors estimation method: Minos");
+
+            if (cmdLineArgs->HasKey("error_level")) {
+                cmdLineArgs->SetValIfArgExists("error_level", fitManager.fitSettings_.error_level);
+                EFT_PROF_INFO("Set error level for MINOS to {}", fitManager.fitSettings_.error_level);
+            }
+
+            fitManager.SetErorsEvaluation(fit::Errors::MINOS_POIS);
+            fitManager.fitSettings_.pois_to_estimate_errors = new RooArgSet{};
+            for (const auto& poi : pois_to_float_) {
+                EFT_PROF_INFO("Add MINOS estimation for: {:6}", poi);
+                fitManager.fitSettings_.pois_to_estimate_errors->add(*manager->GetWs()->GetVar(poi));
+            }
+        }
+        else if (error_str == "user") {
+            EFT_PROF_INFO("Errors estimation method: User-defined for: ");
+            fitManager.SetErorsEvaluation(fit::Errors::USER_DEFINED);
+            vector<string> pois_to_estimate_errors;
+            cmdLineArgs->SetValIfArgExists("errors_for", pois_to_estimate_errors);
+            fitManager.fitSettings_.pois_to_estimate_errors = new RooArgSet{};
+            for (const auto& poi : pois_to_estimate_errors) {
+                EFT_PROF_INFO("Add MINOS estimation for:", poi);
+                fitManager.fitSettings_.pois_to_estimate_errors->add(*manager->GetWs()->GetVar(poi));
+            }
+        }
         else {
-            EFT_PROF_CRITICAL("FreeFit:: errors: {} are not supported - only hesse now", error_str);
+            EFT_PROF_CRITICAL("FreeFit:: errors: {} are not supported - only hesse and MINOS now", error_str);
             throw std::logic_error("inconsistent settings for errors");
         }
     }
+
+    if (cmdLineArgs->HasKey("eps"))
+        cmdLineArgs->SetValIfArgExists("eps", fitManager.fitSettings_.eps);
+    if (cmdLineArgs->HasKey("retry"))
+        cmdLineArgs->SetValIfArgExists("retry", fitManager.fitSettings_.retry);
+    if (cmdLineArgs->HasKey("strategy"))
+        cmdLineArgs->SetValIfArgExists("strategy", fitManager.fitSettings_.strategy);
+
+
     return fitManager;
 
 }
@@ -142,23 +182,27 @@ void FreeFitManager::RunFit() {
 
     fitSettings_.data = data;
 
+    // TODO: refactor this things to the building of the fit manager
+
+    if (errors_type == fit::Errors::MINOS_POIS || errors_type == fit::Errors::USER_DEFINED) {
+        fitSettings_.pois_to_estimate_errors = pois_to_float;
+        fitSettings_.pois = pois_to_float;
+    }
+    //if (fitma)
+    //RunFreeFit();
+    //ws_->FixValConst(fitSettings_.nps);
+
     ws_->FixValConst(all_pois);
     ws_->FloatVals(pois_to_float);
 
 
     EFT_PROF_INFO("RunFreeFit: pois before free fit:");
-    for (auto poi : *all_pois) {
-        auto ptr = dynamic_cast<RooRealVar*>(poi);
+    EFT_PROF_INFO("\n{}", utils::RooVarUtils::PrintVars(*all_pois));
+    EFT_PROF_INFO("Only {} will be floated: \n {}",
+                  pois_to_float->getSize(),
+                  utils::RooVarUtils::PrintVars(*pois_to_float)
+                  );
 
-        string is_const_str = "F";
-        if (ptr->isConstant())
-            is_const_str = "C";
-        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                       ptr->GetName(),
-                       ptr->getVal(),
-                       ptr->getError(),
-                       is_const_str);
-    }
     EFT_PROF_DEBUG("RunFreeFit: NPS before free fit");
     fitSettings_.nps->Print("v");
     EFT_PROF_DEBUG("RunFreeFit: globs before free fit");
@@ -170,29 +214,55 @@ void FreeFitManager::RunFit() {
     //list_pois.add(*pois_to_float);
 
     fit::Fitter fitter;
-    auto nll_free_fit = fitter.CreatNll(fitSettings_);
-    auto res = fitter.Minimize(fitSettings_, nll_free_fit);
-    auto cov = res->reducedCovarianceMatrix(list_pois);
-    EFT_PROF_INFO("RunFreeFit: pois after free fit:");
-    for (auto poi : *all_pois) {
-        auto ptr = dynamic_cast<RooRealVar*>(poi);
 
-        string is_const_str = "F";
-        if (ptr->isConstant())
-            is_const_str = "C";
-        EFT_PROF_DEBUG("{:60} [{:10} +- {:10}] {}",
-                       ptr->GetName(),
-                       ptr->getVal(),
-                       ptr->getError(),
-                       is_const_str);
+    if (stat_only) {
+        EFT_PROF_INFO("RunFreeFit: run free fit to fix NPs");
+        EFT_PROF_INFO("RunFreeFit: create nll before fixing nps constants...");
+        EFT_PROF_INFO("Back-up errors before this free fit, since only central values matter for fixing nps");
+        auto errors = fitSettings_.errors;
+        fitSettings_.errors = fit::Errors::DEFAULT;
+        auto nll_for_stat_only = fitter.CreatNll(fitSettings_);
+        EFT_PROF_INFO("RunFreeFit: create nll before fixing nps constants DONE");
+        EFT_PROF_INFO("RunFreeFit: minimize nll to fix NPs at their best-fit-values....");
+        fitter.Minimize(fitSettings_, nll_for_stat_only);
+        EFT_PROF_INFO("RunFreeFit: minimize nll to fix NPs at their best-fit-values DONE");
+        EFT_PROF_INFO("RunFreeFit: Fix NPs at their best-fit-values");
+        ws_->FixValConst(fitSettings_.nps);
+        EFT_PROF_INFO("RunFreeFit: return back required errors estimation type");
+        fitSettings_.errors = errors;
     }
+
+    EFT_PROF_INFO("RunFreeFit: create nll for free fit...");
+    auto nll_free_fit = fitter.CreatNll(fitSettings_);
+    EFT_PROF_INFO("RunFreeFit: create nll for free fit DONE");
+    EFT_PROF_INFO("RunFreeFit: minimize nll for free fit....");
+    auto res = fitter.Minimize(fitSettings_, nll_free_fit);
+    EFT_PROF_INFO("RunFreeFit: minimize nll for free fit DONE");
+    EFT_PROF_INFO("RunFreeFit: extract the reduced covariance matrix for the given {} pois...", list_pois.size());
+    auto cov = res->reducedCovarianceMatrix(list_pois);
+    EFT_PROF_INFO("RunFreeFit: extract the reduced covariance matrix for the given {} pois DONE", list_pois.size());
+
     EFT_PROF_DEBUG("RunFreeFit: NPS after free fit");
     fitSettings_.nps->Print("v");
     EFT_PROF_DEBUG("RunFreeFit: globs after free fit");
     fitSettings_.globalObs->Print("v");
 
+    EFT_PROF_INFO("RunFreeFit: pois after free fit:");
+    EFT_PROF_INFO("\n{}", utils::RooVarUtils::PrintVars(*all_pois));
+
+    // TODO: refactor to PrintCentralValues
+
+    EFT_PROF_INFO("RunFreeFit: central values and errors:");
     for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
-        for (size_t idx_poi_2 {idx_poi_1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
+        auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
+        EFT_PROF_INFO("{}",utils::RooVarUtils::PrintVar(*poi_1));
+    }
+
+
+    // TODO: refactor to PrintCorrelations
+
+    for (size_t idx_poi_1 {0}; idx_poi_1 < list_pois.size(); ++idx_poi_1) {
+        for (size_t idx_poi_2 {idx_poi_1 + 1}; idx_poi_2 < list_pois.size(); ++idx_poi_2) {
             auto poi_1 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_1));
             auto poi_2 = dynamic_cast<RooRealVar *>(list_pois.at(idx_poi_2));
             //auto corr = cov.operator()(idx_poi_1, idx_poi_2);

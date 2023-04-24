@@ -88,19 +88,19 @@ inline void PoiConfig::ComputeRangeFromSigmasIfNeeded() const noexcept {
         EFT_PROF_DEBUG("The range is not in sigmas...");
         return;
     }
-    EFT_PROF_INFO("central value: {} +- {}", central_val, central_err);
-    EFT_PROF_INFO("sigma_h: {}", range_scan_sigmas_high);
+    EFT_PROF_DEBUG("central value: {} +- {}", central_val, central_err);
+    EFT_PROF_DEBUG("sigma_h: {}", range_scan_sigmas_high);
     if (range_scan_low == 0.f) {
-        EFT_PROF_INFO("Need to recompute range scan low");
-        EFT_PROF_INFO("sigma_l: {}", range_scan_sigmas_low);
+        EFT_PROF_DEBUG("Need to recompute range scan low");
+        EFT_PROF_DEBUG("sigma_l: {}", range_scan_sigmas_low);
         range_scan_low = central_val - range_scan_sigmas_low * central_err;
-        EFT_PROF_INFO("Set range_scan_low is set to: {}", range_scan_low);
+        EFT_PROF_DEBUG("Set range_scan_low is set to: {}", range_scan_low);
     }
     if (range_scan_high == 0.f) {
-        EFT_PROF_INFO("Need to recompute range scan high");
-        EFT_PROF_INFO("sigma_h: {}", range_scan_sigmas_high);
+        EFT_PROF_DEBUG("Need to recompute range scan high");
+        EFT_PROF_DEBUG("sigma_h: {}", range_scan_sigmas_high);
         range_scan_high = central_val + range_scan_sigmas_high * central_err;
-        EFT_PROF_INFO("Set range_scan_high to: {}", range_scan_high);
+        EFT_PROF_DEBUG("Set range_scan_high to: {}", range_scan_high);
     }
 
     is_range_computed_already = true;

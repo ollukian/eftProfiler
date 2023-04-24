@@ -30,6 +30,8 @@ public:
 
     inline  FreeFitManager& SetPOIsToFloat(RooArgSet* pois)  noexcept { pois_to_float = pois; return *this; }
     inline  FreeFitManager& SetPOIsFullList(RooArgSet* pois) noexcept { all_pois = pois; return *this; }
+    //inline  FreeFitManager& SetPOIsToEstimateErrorsFor(RooArgSet* pois) noexcept
+    //    { fitSettings_.pois_to_estimate_errors = pois; return *this; }
             FreeFitManager& SetPOIsToFloat(const std::vector<std::string>& list);
             //FreeFitManager& SetPOIsFullList(const std::vector<std::string>& list);
     inline  FreeFitManager& SetWS(IWorkspaceWrapper* ws)     noexcept { ws_ = ws; return *this; }
@@ -46,6 +48,7 @@ private:
     std::string             snapshot_;
     std::string             data_name;
     bool                    force_data {false};
+    bool                    stat_only  {false};
     PrePostFit              prePostFit {PrePostFit::OBSERVED};
 
 

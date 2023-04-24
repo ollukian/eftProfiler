@@ -9,7 +9,7 @@ set(utils_source_files
         WorkspaceUtils.cpp WorkspaceUtils.h
         Scene.cpp Scene.h
         Drawing/Latex.cpp Drawing/Latex.h
-        Drawing/Drawable.cpp Drawing/Drawable.h   )
+        Drawing/Drawable.cpp Drawing/Drawable.h RooVarUtils.cpp RooVarUtils.h)
 
 add_library(utils ${utils_source_files})
 target_link_libraries(utils PRIVATE nlohmann_json::nlohmann_json)

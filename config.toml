@@ -1,0 +1,107 @@
+[workspace]
+path = 'source/WS-Comb-EFT-STXS_HyyHzz__3ev_basis_lin_12Apr23.root'      # path to the workspace root
+name = 'combWS'
+data = 'combData'
+pdf  = 'combPdf'
+model_config = 'ModelConfig'
+
+[logging]
+path = 'log.txt'
+
+[fitter]
+epsilon = 1e-3 # fit precision
+retry = 1      # number of fit retries
+strategy = 1   # fit strategy from RooMinimizer (0-2)
+
+[fitter.pois]
+init_values = 0
+fit_all = false
+fit_single = true
+
+[fitter.errors]
+method = 'Hesse' # method to compute errors: Hesse, Minos, none
+
+#bool                        no_gamma            {false};
+#bool                        reuse_nll           {true};
+#bool                        save_prelim         {false};
+
+[fitter.Minos]
+error_level = 1.0 # delta log-likelihood used to identify errors
+
+[task.np.computation]
+res_path = '.'
+poi = 'mu'      # poi for which compute ranking
+
+
+#### Plotting of the nuisance parameters
+[task.np.plot]
+number_nps_to_plot = 20
+orientation = 'horizontal' # or 'vertical'
+
+[task.np.plot.colours]
+prefit_plus   = 'RGB(101,153,255)'
+prefit_minus  = 'RGB(1,255,255)'
+postfit_plus  = 'RGBA(101,153,255,160)'
+postfit_minus = 'RGBA(1,255,255,160)'
+
+[task.np.plot.margins]
+right = 0.05
+left = 0.10
+top = 0.03
+bottom = 0.40
+
+[tasl.nll]
+
+[[pois]]
+name = 'ev_01'
+central_value = 0.0
+central_error = 0.0
+
+
+
+
+#// PLOTTING
+#bool                        weighted            {false}; // for comparison
+
+#std::vector<size_t>         plt_size            {1200, 800};
+#float                       rmul                {0.};
+#float                       rmuh                {0.};
+#float                       np_scale            {1E-9};
+#float                       label_size          {0.02};
+#std::vector<std::string>    fileformat          {"pdf"};
+#std::vector<std::string>    ignore_name         {};
+#std::vector<std::string>    match_names         {};
+#size_t                      top                 {20};       // np pois to plot
+#std::string                 out_dir             {"figures"};
+#std::string                 output              {};
+#std::string                 input               {};
+#std::string                 suggestions         {}; // for suggestions
+#std::vector<std::string>    remove_prefix       {};
+#std::vector<std::string>    remove_suffix       {};
+#std::vector<std::string>    replace             {};
+#std::string                 ds_title            {"Higgs Combination"};
+#float                       energy              {13};
+#std::string                 lumi                {"36.1-139"};
+#std::string                 experiment          {"ATLAS"};
+#std::string                 res_status          {"Internal"};
+#float                       mu_offset           {1.4};
+#float                       np_offset           {1.0};
+#std::string                 mu_latex            {};
+#std::vector<std::string>    np_names            {};
+#float                       text_size           {0.030};
+#float                       text_font           {42};
+#float                       dy                  {0.03};
+#std::vector<std::string>    add_text            {};
+#std::vector<std::string>    add_text_ndc        {};
+#std::vector<std::string>    h_draw_options      {};
+#size_t                      empty_bins          {3};
+#float                       dx_legend           {0.15};
+#float                       dy_legend           {0.00};
+#size_t                      max_digits          {3};
+#bool                        draw_impact         {false};
+
+
+
+#[fitter]
+
+

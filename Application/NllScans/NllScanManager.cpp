@@ -361,13 +361,13 @@ void NllScanManager::RunScan() {
 //    EFT_PROF_INFO("Float required POIs (which are allowed to by a research)");
 //    ws_->FloatVals(pois_to_float);
 
-    EFT_PROF_INFO("Identify grid points to put the pois to");
+    EFT_PROF_DEBUG("Identify grid points to put the pois to");
     IdentifyScanPointCoordinateAllPois();
 
-    EFT_PROF_INFO("Set up the grid by forcing all POIs to bet at the required values");
+    EFT_PROF_DEBUG("Set up the grid by forcing all POIs to bet at the required values");
     SetPOIsToTheRequiredGridPosition();
 
-    EFT_PROF_INFO("Fix GRID POIs to be const");
+    EFT_PROF_DEBUG("Fix GRID POIs to be const");
     FixGridPOIs();
 
     // TODO: to handle post-fit things
@@ -376,12 +376,12 @@ void NllScanManager::RunScan() {
         ws_->SetVarVal(fitSettings_.globalObs, 0.);
     }
 
-    EFT_PROF_DEBUG("Globs before nll creation ....");
-    fitSettings_.globalObs->Print("v");
-    EFT_PROF_DEBUG("NPS before nll creation....");
-    fitSettings_.nps->Print("v");
+    //EFT_PROF_DEBUG("Globs before nll creation ....");
+    //fitSettings_.globalObs->Print("v");
+    //EFT_PROF_DEBUG("NPS before nll creation....");
+    //fitSettings_.nps->Print("v");
 
-    EFT_PROF_INFO("pois before final fit:");
+    EFT_PROF_DEBUG("pois before final fit:");
     for (auto poi : *all_pois) {
         auto ptr = dynamic_cast<RooRealVar*>(poi);
         string is_const_str = "F";
@@ -412,10 +412,10 @@ void NllScanManager::RunScan() {
                        is_const_str);
     }
 
-    EFT_PROF_DEBUG("Globs after final fit creation ....");
-    fitSettings_.globalObs->Print("v");
-    EFT_PROF_DEBUG("NPS after final fit creation....");
-    fitSettings_.nps->Print("v");
+    //EFT_PROF_DEBUG("Globs after final fit creation ....");
+    //fitSettings_.globalObs->Print("v");
+    //EFT_PROF_DEBUG("NPS after final fit creation....");
+    //fitSettings_.nps->Print("v");
 
     auto found_nll = nll->getVal();
     EFT_PROF_INFO("nll value: {}", found_nll);
@@ -448,6 +448,8 @@ NllScanManager NllScanManager::InitFromCommandLine(const std::shared_ptr<Command
     eft::stats::FitManagerConfig config;
     //auto manager = make_unique<eft::stats::FitManager>();
     auto manager = new FitManager{};
+
+    eft::stats::FitManager::ExtractConfigFromFile(config);
     eft::stats::FitManager::ReadConfigFromCommandLine(*cmdLineArgs, config);
     manager->Init(std::move(config));
 

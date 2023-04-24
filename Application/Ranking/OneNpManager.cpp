@@ -10,6 +10,8 @@
 #include "../Fitter/Fitter.h"
 #include "FitSettings.h"
 
+#include "../Utils/RooVarUtils.h"
+
 #include "RooRealVar.h"
 
 namespace eft::stats::ranking {
@@ -33,7 +35,7 @@ void OneNpManager::ResetPoi()
         poi_cast->setVal(poi_init_value);
         poi_cast->setError(poi_init_error);
         poi_cast->setConstant(true);
-        EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+        EFT_PROF_DEBUG("{}", utils::RooVarUtils::PrintVar(*poi_cast));
     }
 
     if (np_ranking_settings_.fit_all_pois) {
@@ -41,18 +43,13 @@ void OneNpManager::ResetPoi()
         for (auto poi : *pois_) {
             auto poi_cast = dynamic_cast<RooRealVar*>(poi);
             poi_cast->setConstant(false);
-            EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
+            EFT_PROF_DEBUG("{}", utils::RooVarUtils::PrintVar(*poi_cast));
         }
     }
     else {
         EFT_PROF_DEBUG("Fit one poi => float only {} and fix the rest", poi_);
         ws_->FloatVal(poi_);
-        EFT_PROF_DEBUG("Status of all pois:");
-        for (auto poi : *pois_) {
-            auto poi_cast = dynamic_cast<RooRealVar*>(poi);
-            //EFT_PROF_DEBUG("using macro:", *poi_cast);
-            EFT_PROF_DEBUG("Is {:10} const ==> {}", poi_cast->GetName(), poi_cast->isConstant());
-        }
+        EFT_PROF_DEBUG("Status of all pois: \n {}", utils::RooVarUtils::PrintVars(*pois_));
     }
     ws_->SetVarVal(poi_, poi_init_value);
     ws_->SetVarErr(poi_, poi_init_error);

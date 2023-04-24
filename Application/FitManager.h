@@ -6,6 +6,7 @@
 #define EFTPROFILER_FITMANAGER_H
 
 #include <CommandLineArgs.h>
+#include "Application.h"
 
 #include <memory>
 #include "IFitManager.h"
@@ -28,6 +29,7 @@ public:
 
     void Init(FitManagerConfig config);
     static void ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, FitManagerConfig& config) noexcept;
+    static void ExtractConfigFromFile(FitManagerConfig& config) noexcept;
 
     void ProcessGetCommand(const FitManagerConfig& config);
 
@@ -192,7 +194,7 @@ inline void FitManager::ExtractNP()      noexcept
     //real_np->Print("v");
     //args_["np"] = real_np;
 
-    EFT_PROF_INFO("[FitManager] Extracted {} np      to args[np_all]:", args_["np_all"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} nuisance parameters", args_["np_all"]->size());
     for (const auto np : *args_["np_all"]) {
         auto np_var = dynamic_cast<RooRealVar*>(np);
         EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
@@ -208,7 +210,7 @@ inline void FitManager::ExtractObs() noexcept
     EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
-    EFT_PROF_INFO("Extracted {} Observables to args[obs]:", args_["obs"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} Observables", args_["obs"]->size());
 //    for (const auto& obs : *args_["obs"]) {
 //        auto obs_var = dynamic_cast<RooRealVar*>(obs);
 //        EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
@@ -223,7 +225,7 @@ inline void FitManager::ExtractGlobObs()     noexcept
     EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["globObs"] = (RooArgSet *) ws_->GetGlobObs();
-    EFT_PROF_INFO("[FitManager] Extracted {} globObs to args[globObs]:", args_["globObs"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted global observables", args_["globObs"]->size());
     for (const auto& globObs : *args_["globObs"]) {
         auto np_var = dynamic_cast<RooRealVar*>(globObs);
         EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
@@ -252,9 +254,9 @@ inline void FitManager::SetWS(std::string path, std::string name)
     EFT_PROFILE_FN();
     EFT_PROF_INFO("[FitManager] Try to extract ws: [{}] from [{}]", name, path);
     if (ws_->SetWS(std::move(path), std::move(name)))
-        EFT_PROF_INFO("[FitManager] successfully set ws: [{}] from [{}]", name, path);
+        EFT_PROF_DEBUG("[FitManager] successfully set ws: [{}] from [{}]", name, path);
     else {
-        EFT_PROF_INFO("[FitManager] ERROR setting ws");
+        EFT_PROF_CRITICAL("[FitManager] ERROR setting ws");
         throw std::logic_error("specified ws doesn't exist, use --ws_path my_path");
     }
 }

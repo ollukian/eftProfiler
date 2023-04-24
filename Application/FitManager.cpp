@@ -662,15 +662,15 @@ void FitManager::Init(FitManagerConfig config)
           );
     SetModelConfig(std::move(config.model_config));
 
-    EFT_PROF_INFO("[FitManager] extract NPs");
+    EFT_PROF_DEBUG("[FitManager] extract NPs");
     ExtractNP();
-    EFT_PROF_INFO("[FitManager] extract obs");
+    EFT_PROF_DEBUG("[FitManager] extract obs");
     ExtractObs();
-    EFT_PROF_INFO("[FitManager] extract global obs");
+    EFT_PROF_DEBUG("[FitManager] extract global obs");
     ExtractGlobObs();
-    EFT_PROF_INFO("[FitManager] extract cats");
+    EFT_PROF_DEBUG("[FitManager] extract cats");
     ExtractCats();
-    EFT_PROF_INFO("[FitManager] extract POIs");
+    EFT_PROF_DEBUG("[FitManager] extract POIs");
     ExtractPOIs();
 
     EFT_PROF_INFO("[FitManager] extract pdf total: {}", config.comb_pdf);
@@ -678,12 +678,12 @@ void FitManager::Init(FitManagerConfig config)
     EFT_PROF_INFO("[FitManager] extract data total: {}", config.comb_data);
     ExtractDataTotal( config.comb_data);
 
-    EFT_PROF_INFO("[FitManager] get constrains");
+    EFT_PROF_DEBUG("[FitManager] get constrains");
     auto pairConstr = FitUtils::GetPairConstraints(funcs_["pdf_total"], args_["np_all"], args_["globObs"], args_["obs"]);
-    EFT_PROF_INFO("[FitManager] print obtained constrains");
-    EFT_PROF_INFO("[FitManager] paired_constr_pdf {}:", pairConstr.paired_constr_pdf->size());
-    EFT_PROF_INFO("[FitManager] paired_globs {}:",      pairConstr.paired_globs->size());
-    EFT_PROF_INFO("[FitManager] paired_nps {}:",        pairConstr.paired_nps->size());
+    EFT_PROF_DEBUG("[FitManager] print obtained constrains");
+    EFT_PROF_INFO("[FitManager] Extracted {} paired_constr_pdf", pairConstr.paired_constr_pdf->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} paired_globs",      pairConstr.paired_globs->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} paired_nps",        pairConstr.paired_nps->size());
 
     lists_[ "paired_globs" ] = pairConstr.paired_globs;
     lists_[ "paired_nps"   ] = pairConstr.paired_nps;
@@ -725,6 +725,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, comb_data);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, top);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, eps);
+    EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, error_level);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, study_type);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, snapshot);
     EFT_SET_VAL_IF_EXISTS(commandLineArgs, config, poi_init_val);
@@ -790,7 +791,7 @@ void FitManager::ReadConfigFromCommandLine(CommandLineArgs& commandLineArgs, Fit
 #ifndef EFT_ADD_VEC_OPTION
 #define EFT_ADD_VEC_OPTION(args, config, param)                                                 \
     if (args.SetValIfArgExists(#param, config.param)) {                                         \
-        EFT_PROF_INFO("Add vector [{}] option with: {:15} params", #param, config.param.size());  \
+        EFT_PROF_DEBUG("Add vector [{}] option with: {:15} params", #param, config.param.size());  \
      }
 
 #endif
@@ -1028,6 +1029,38 @@ void FitManager::ProcessGetCommand(const FitManagerConfig& config) {
 
     throw std::logic_error(fmt::format("--get {} is now known. Use: np, poi, globs, obs, paired_globs, paired_nps, non_gamma_nps"));
 
+}
+
+void FitManager::ExtractConfigFromFile(FitManagerConfig& config) noexcept {
+    EFT_PROFILE_FN();
+    EFT_PROF_DEBUG("[FitManager] Read Configuration from config file");
+    const toml::table& settings = eft::Application::GetConfig();
+    try {
+        EFT_PROF_DEBUG("[FitManager] parse config file");
+
+#define EFT_PARSE_CONFIG(node, key, type, target) \
+        if (const auto& node_exact = node[key].value<type>(); node_exact.has_value()) { \
+        EFT_PROF_DEBUG("[FitManager] For the target name: {}, extracted value: {} from key: {}", \
+            #target,node_exact.value(),             \
+            key);                                   \
+                                                    \
+            config.target = node_exact.value();     \
+    } else {                                      \
+        EFT_PROF_ERROR("[FitManager] For the target name: {}, could not extract value from key: {}", \
+            #target, key);                        \
+        }
+
+        EFT_PARSE_CONFIG(settings["workspace"], "name", std::string, ws_name);
+        EFT_PARSE_CONFIG(settings["workspace"], "path", std::string, ws_path);
+        EFT_PARSE_CONFIG(settings["workspace"], "data", std::string, comb_data);
+        EFT_PARSE_CONFIG(settings["workspace"], "pdf", std::string, comb_pdf);
+        EFT_PARSE_CONFIG(settings["workspace"], "model_config", std::string, model_config);
+
+#undef EFT_PARSE_CONFIG
+
+    } catch (const std::exception& e) {
+        EFT_PROF_ERROR("[FitManager] Error reading from config file: {}", e.what());
+    }
 }
 
 

@@ -7,7 +7,9 @@ set(app_source_files
         Ranking/MissingNpsProcessor.cpp
         HesseStudyResult.cpp
         Ranking/CorrelationStudyProcessor.cpp
-        Ranking/CorrelationStudyPlotSettings.cpp FreeFit/FreeFitManager.cpp FreeFit/FreeFitManager.h)
+        Ranking/CorrelationStudyPlotSettings.cpp
+        FreeFit/FreeFitManager.cpp
+        Application.cpp)
 
 include_directories(../Vendors)
 include_directories(../Core)
