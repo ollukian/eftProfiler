@@ -17,6 +17,8 @@
 #include "../Vendors/spdlog/fmt/fmt.h"
 #include "spdlog/fmt/ostr.h"
 
+#include "../Vendors/spdlog/fmt/fmt.h"
+
 #include "NpRankingStudyRes.h"
 #include "Ranking/OneNpManager.h"
 

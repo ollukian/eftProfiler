@@ -632,13 +632,14 @@ namespace eft::plot {
             latex.DrawLatex(x_selection_info, y_selection_info, selection_info.c_str());
         }
 
+
         EFT_PROF_WARN("latex.DrawLatex(x, y, selection_info; at {}, {}", x_selection_info, y_selection_info);
+
 
         if (settings->mu_latex.empty())
             latex.DrawLatex(x -= dx, y -= dy, settings->poi.c_str());
         else
             latex.DrawLatex(x -= dx, y -= dy, settings->mu_latex.c_str());
-
 
         const string stem_name = eft::utils::PlotterUtils::FormName(settings);
         for (const std::string& fileformat : settings->fileformat) {
@@ -943,5 +944,52 @@ vector<NpInfoForPlot> NpRankingPlotter::GetSelected(const EntriesSelector& selec
 }
 
 
+
+std::vector<NpRankingPlotter::Replacement>
+NpRankingPlotter::ParseReplacements(const std::vector<std::string>& replacements)
+{
+    // convert vector of "key:val" to vector of pairs: <key, val>
+    EFT_PROF_TRACE("ParseReplacements for {} objects", replacements.size());
+    vector<Replacement> res;
+    res.reserve(replacements.size());
+    for (const auto& raw : replacements)
+    {
+        EFT_PROF_DEBUG("Extract replacement from: {}", raw);
+        auto pos_separator = raw.find(':');
+        if (pos_separator == std::string::npos) {
+            throw std::logic_error(fmt::format("Cannot parse replacement string {}, {}",
+                                               raw,
+                                               ". Must have format: 'key1:val1, key2:val2, ...'"));
+
+        }
+
+        std::string key = raw.substr(0, pos_separator);
+        std::string val = raw.substr(pos_separator + 1, raw.length());
+        res.emplace_back(std::move(key), std::move(val));
+    }
+
+    for (const auto& key_val : res) {
+        EFT_PROF_DEBUG("Add replacing: {:10} ==> {:10}", key_val.first, key_val.second);
+    }
+
+    return res;
+}
+
+void NpRankingPlotter::ReplaceStrings(std::string& s, const std::vector<Replacement>& replacements)
+{
+    for (const auto& replacement : replacements) {
+        EFT_PROF_DEBUG("Replace {} using {:10} -> {:10} replacement", s, replacement.first, replacement.second);
+        StringUtils::Replace(s, replacement.first, replacement.second);
+    }
+}
+
+void NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes)
+{
+    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefix(string& s, const vector<string>& prefixes) is not implemented");
+}
+string NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes)
+{
+    EFT_PROF_CRITICAL("NpRankingPlotter::RemovePrefixCopy(std::string s, const std::vector<std::string>& prefixes) is not implemented");
+}
 
 }
