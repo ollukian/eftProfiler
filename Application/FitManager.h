@@ -210,7 +210,7 @@ inline void FitManager::ExtractObs() noexcept
     EFT_PROFILE_FN();
     assert(ws_ != nullptr);
     args_["obs"] = (RooArgSet *) ws_->GetObs();
-    EFT_PROF_INFO("FitManager] Extracted {} Observables", args_["obs"]->size());
+    EFT_PROF_INFO("[FitManager] Extracted {} Observables", args_["obs"]->size());
 //    for (const auto& obs : *args_["obs"]) {
 //        auto obs_var = dynamic_cast<RooRealVar*>(obs);
 //        EFT_PROF_DEBUG("{:50}, {} +- {}, const => {}",
