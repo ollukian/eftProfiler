@@ -84,11 +84,12 @@ struct NllScanPlotterSettings {
     //std::vector<std::string>    remove_prefix       {};
     //std::vector<std::string>    remove_suffix       {};
     std::vector<std::string>    replace             {};
-    std::string                 ds_title            {"Higgs Combination"}; // X
-    float                       energy              {13}; // X
-    std::string                 lumi                {"36.1-139"}; // X
-    std::string                 experiment          {"ATLAS"}; // X
-    std::string                 res_status          {"Internal"}; // X
+    std::string                 ds_title            {"H#rightarrow #gamma#gamma & H#rightarrow 4l STXS combination"};
+    float                       energy              {13};
+    std::string                 lumi                {"36.1-139"};
+    std::string                 experiment          {"ATLAS"};
+    std::string                 res_status          {"Internal"};
+    std::string                 obs_expected        {"Observed"};
     float                       mu_offset           {1.4}; // X
     std::string                 mu_latex            {}; // X
     float                       text_size           {0.030}; // X

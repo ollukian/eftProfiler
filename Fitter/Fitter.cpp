@@ -148,6 +148,12 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
       minim.save("hesse","")->Print();
       }*/
 
+    //
+    if (settings.error_level != 1.0) {
+        EFT_PROF_INFO("[Minimizer] set error level for MINOS to {} / 2", settings.error_level);
+        minim.setErrorLevel(settings.error_level / 2.0);
+    }
+
     switch (settings.errors) {
         case Errors::HESSE:
             EFT_PROF_INFO("[Minimizer] start HESSE...");
@@ -173,6 +179,14 @@ IFitter::FitResPtr Fitter::Minimize(const FitSettings& settings, RooAbsReal *nll
             break;
         case Errors::DEFAULT:
             EFT_PROF_INFO("[Minimizer] no need to re-estimate errors, default strategy is set");
+            break;
+        case Errors::USER_DEFINED:
+            EFT_PROF_INFO("[Minimizer] reestimate errors with Minos for a set of POIs");
+            if (settings.pois_to_estimate_errors == nullptr) {
+                EFT_PROF_CRITICAL("No POIs to estimate errors are provided! Use: --errors user --errors_for [POIs]");
+                throw std::runtime_error("No POIs to estimate errors are provided! Use: --errors user --errors_for [POIs]");
+            }
+            minim.minos(*settings.pois_to_estimate_errors);
             break;
     }
 

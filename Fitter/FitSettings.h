@@ -25,11 +25,13 @@ struct  FitSettings {
     RooArgSet*  pois        {nullptr};//{new RooArgSet{}};//{nullptr};
     RooAbsReal* nll         {nullptr};
     Errors      errors      {Errors::DEFAULT};
+    RooArgSet*  pois_to_estimate_errors {nullptr};
     uint8_t     retry       {0};
     uint8_t     strategy    {1};
     double      eps         {1E-3};
     bool        reuse_nll   {true};
     bool        save_res    {false};
+    double      error_level {1.0}; // 1 sigma for MINOS <=> 2 ln Delta L = 1^2
 };
 
 } // eft::stats::fit

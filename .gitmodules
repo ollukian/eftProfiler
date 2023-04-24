@@ -1,0 +1,3 @@
+[submodule "Vendors/toml"]
+	path = Vendors/toml
+	url = https://github.com/marzer/tomlplusplus.git

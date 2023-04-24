@@ -17,7 +17,8 @@ enum class Errors : uint8_t {
     HESSE = 1,
     MINOS_NPS,
     MINOS_POIS,
-    MINOS_ALL
+    MINOS_ALL,
+    USER_DEFINED
 };
 
 template<typename OStream>
@@ -37,6 +38,9 @@ OStream& operator<<(OStream& os, const Errors& c) {
             break;
         case Errors::MINOS_ALL:
             os << "MINOS_ALL";
+            break;
+        case Errors::USER_DEFINED:
+            os << "USER_DEFINED";
             break;
     }
     return os;

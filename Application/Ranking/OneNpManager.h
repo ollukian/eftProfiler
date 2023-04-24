@@ -19,6 +19,8 @@
 #include "Logger.h"
 #include "Profiler.h"
 
+#include "../Utils/RooVarUtils.h"
+
 class IWorkspaceWrapper;
 class RooArgSet;
 class RooAbsPdf;
@@ -149,25 +151,11 @@ inline void OneNpManager::ResetToInitState()
 {
     EFT_PROFILE_FN();
     EFT_PROF_TRACE("OneNpManagerBuilder::ResetToInitState");
-//    EFT_PROF_DEBUG("Nps before loading snapshot:");
-//    for (const auto np : *nps_) {
-//        auto np_var = dynamic_cast<RooRealVar*>(np);
-//        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-//                       np_var->GetName(),
-//                       np_var->getVal(),
-//                       np_var->getError(),
-//                       np_var->isConstant());
-//    }
+
     LoadSnapshot(snapshot_init_values_name_);
-//    EFT_PROF_DEBUG("Nps after loading snapshot:");
-//    for (const auto np : *nps_) {
-//        auto np_var = dynamic_cast<RooRealVar*>(np);
-//        EFT_PROF_DEBUG("{:40}, {} +- {}, const => {}",
-//                       np_var->GetName(),
-//                       np_var->getVal(),
-//                       np_var->getError(),
-//                       np_var->isConstant());
-//    }
+    EFT_PROF_DEBUG("Nps after loading snapshot:");
+    EFT_PROF_DEBUG("Nps after loading snapshot: \n{}",
+                   utils::RooVarUtils::PrintVars(*nps_));
     ResetNp();
     ResetPoi();
 }
@@ -273,7 +261,7 @@ inline OneNpManagerBuilder& OneNpManagerBuilder::ForNP(NP np) noexcept
 inline OneNpManagerBuilder& OneNpManagerBuilder::UsingPOIs(RooArgSet* pois) noexcept
 {
     EFT_PROFILE_FN();
-    EFT_PROF_TRACE("OneNpManagerBuilder::UsingPOIs");
+    EFT_PROF_TRACE("OneNpManagerBuilder::UsingPOIs {}", utils::RooVarUtils::PrintVars(*pois));
     result_.pois_ = pois;
     return *this;
 }
