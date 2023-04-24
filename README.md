@@ -22,6 +22,19 @@ Table of Contents
 * Or RooFit (https://github.com/roofit-dev) with ROOT
 - CMake >= 3.13
 - C++ compiler supporting c++17 (tested with MSVC 2022 and gcc (Debian 10.2.1-6) 10.2.1 20210110)
+
+## Installation
+To install the package, one needs to satisfy the recommendations above and to run the following commands:
+```bash
+git submodule update --init --recursive
+```
+to update the submodules and
+```bash
+mkdir build && cd build
+cmake -j ..
+make -j 
+```
+
 ## Update
 To update the package, simply run:
 ```
