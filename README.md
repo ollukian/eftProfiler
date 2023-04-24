@@ -193,18 +193,23 @@ sh job_script.sh --task plot_scan \
 
 * Optional options:
 
-| Option     | Type   | Mandatory | default value | description                                               | 
-|------------|--------|-----------|---------------|-----------------------------------------------------------|
-| yh         | float  | &check;   | -             | y-range of the plot (-2$\Delta$ ln(likelihood))           | 
-| rmul       | float  | &check;   | -             | x-range low of the plot (units of the POI) (left point)   |
-| rmuh       | float  | &check;   | -             | x-range high of the plot (units of the POI) (right point) |
-| out        | string | &cross;   | -             | path and prefix where to save plots                       | 
-| full       | bool   | &cross;   | false         | whether to plot the full scan (not the stat-only)         |
-| stat       | bool   | &cross;   | false         | whether to plot the stat-only scan                        |
-| exp        | bool   | &cross;   | false         | whether to plot the expected scan (postfit)               |
-| obs        | bool   | &cross;   | false         | whether to plot the observed scan                         |
-| force_data | bool   | &cross;   | false         | Whether to force using a specific dataset from  the WS    |
-| snapshot   | string | &cross;   | -             | Before each fit load this snapshot                        |
+| Option       | Type   | Mandatory | default value | description                                               | 
+|--------------|--------|-----------|---------------|-----------------------------------------------------------|
+| yh           | float  | &check;   | -             | y-range of the plot (-2$\Delta$ ln(likelihood))           | 
+| rmul         | float  | &check;   | -             | x-range low of the plot (units of the POI) (left point)   |
+| rmuh         | float  | &check;   | -             | x-range high of the plot (units of the POI) (right point) |
+| out          | string | &cross;   | -             | path and prefix where to save plots                       | 
+| full         | bool   | &cross;   | false         | whether to plot the full scan (not the stat-only)         |
+| stat         | bool   | &cross;   | false         | whether to plot the stat-only scan                        |
+| exp          | bool   | &cross;   | false         | whether to plot the expected scan (postfit)               |
+| obs          | bool   | &cross;   | false         | whether to plot the observed scan                         |
+| force_data   | bool   | &cross;   | false         | Whether to force using a specific dataset from  the WS    |
+| snapshot     | string | &cross;   | -             | Before each fit load this snapshot                        |
+| energy       | string | &cross;   | 13            | CEM Energy of the plot (TeV)                              |
+| res_status   | string | &cross;   | Internal      | Internal / Preliminary / Simulation...                    |
+| obs_expected | string | &cross;   | Observed      | Info: Expected/Observed/...                               |
+| experiment   | string | &cross;   | ATLAS         | Info: Experiment name                                     |
+| lumi         | string | &cross;   | "36.1-139"    | Luminosity                                                |
 
 ## Free fit
 To run a free fit with no conditions, floating only the required POIs. Errors re-evaluation may be performed (Hesse, Minos, etc). The command is:
@@ -217,12 +222,15 @@ sh job_script.sh --task free_fit \
 
 * Optional options:
 
-| Option  | Type   | Mandatory | default value     | description                                                                |
-|---------|--------|-----------|-------------------|----------------------------------------------------------------------------|
-| prefit  | bool   | &cross;   | false             | whether to use the prefit (generate Asimov prefit data)                    |
-| postfit | bool   | &cross;   | false             | whether to use the postfit (generate Asimov postfit data)                  |
-| out     | string | &cross;   | free_fit_res.root | path of the output ROOT file                                               |
-| errors  | string | &cross;   | -                 | errors to re-evaluate (Hesse, Minos, etc). See [Errors settings](##errors) |
+| Option      | Type         | Mandatory | default value     | description                                                                                                   |
+|-------------|--------------|-----------|-------------------|---------------------------------------------------------------------------------------------------------------|
+| prefit      | bool         | &cross;   | false             | whether to use the prefit (generate Asimov prefit data)                                                       |
+| postfit     | bool         | &cross;   | false             | whether to use the postfit (generate Asimov postfit data)                                                     |
+| out         | string       | &cross;   | free_fit_res.root | path of the output ROOT file                                                                                  |
+| errors      | string       | &cross;   | -                 | errors to re-evaluate (Hesse, Minos, etc). See [Errors settings](##errors)                                    |
+| pois_float  | vec<strings> | &cross;   | -                 | POIs to be float in the fit                                                                                   |
+| error_level | double       | &cross;   | 1.0               | For Minos. This is the level of 2 ($Delta ln L) to be used to estimate errors. "1" -> 1 sigma. 3.84 - 2 sigma |
+| errors_for  | vec<strings> | &cross;   | -                 | For Minos. Parameters for which the errors are to be estimated.                                               |
 
 ## Utilities
 To comfortify the work with the tool, some utilities are provided. They are:

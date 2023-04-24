@@ -56,7 +56,7 @@ struct FitManagerConfig {
     float                       rmul                {0.};
     float                       rmuh                {0.};
     float                       np_scale            {1E-9};
-    float                       label_size          {0.02};
+    float                       label_size          {0.03};
     std::vector<std::string>    fileformat          {"pdf"};
     std::vector<std::string>    ignore_name         {};
     std::vector<std::string>    match_names         {};
@@ -82,11 +82,11 @@ struct FitManagerConfig {
     float                       dy                  {0.03};
     std::vector<std::string>    add_text            {};
     std::vector<std::string>    add_text_ndc        {};
-    std::vector<std::string>    h_draw_options      {};
+    std::vector<std::string>    h_draw_options      {"h"};
     size_t                      empty_bins          {3};
-    float                       dx_legend           {0.15};
+    float                       dx_legend           {0.25};
     float                       dy_legend           {0.00};
-    size_t                      max_digits          {3};
+    size_t                      max_digits          {4};
     bool                        draw_impact         {false};
 };
 

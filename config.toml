@@ -1,5 +1,5 @@
 [workspace]
-path = '.'      # path to the workspace root
+path = 'source/WS-Comb-EFT-STXS_HyyHzz__3ev_basis_lin_12Apr23.root'      # path to the workspace root
 name = 'combWS'
 data = 'combData'
 pdf  = 'combPdf'
